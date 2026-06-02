@@ -3,179 +3,81 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>뉴헤어 클리닉 보고서</title>
-<link rel="preconnect" href="https://fonts.googleapis.com">
-<link href="https://fonts.googleapis.com/css2?family=Noto+Sans+KR:wght@400;500;700&family=Noto+Serif+KR:wght@400;600&display=swap" rel="stylesheet">
+<title>뉴헤어 성형외과 보고서</title>
+<link href="https://cdn.jsdelivr.net/gh/orioncactus/pretendard/dist/web/static/pretendard.css" rel="stylesheet">
 <style>
 * { box-sizing: border-box; margin: 0; padding: 0; }
 body {
-  font-family: 'Noto Sans KR', sans-serif;
-  background: #f0ede8;
+  font-family: 'Pretendard', 'Apple SD Gothic Neo', 'Malgun Gothic', sans-serif;
+  background: #F8F9FA;
   min-height: 100vh;
   display: flex;
   align-items: center;
   justify-content: center;
   padding: 20px;
+  -webkit-font-smoothing: antialiased;
 }
 .login-card {
   background: #fff;
   border-radius: 16px;
-  border: 0.5px solid #e0dbd4;
+  border: 0.5px solid #E9ECEF;
   padding: 48px 44px;
   width: 100%;
   max-width: 400px;
-  box-shadow: 0 4px 24px rgba(0,0,0,0.08);
+  box-shadow: 0 4px 24px rgba(0,0,0,0.07);
 }
 .clinic-mark {
-  width: 48px;
-  height: 48px;
+  width: 48px; height: 48px;
   background: #1a1a1a;
   border-radius: 12px;
-  display: flex;
-  align-items: center;
-  justify-content: center;
+  display: flex; align-items: center; justify-content: center;
   margin-bottom: 20px;
 }
-.clinic-mark span {
-  color: #fff;
-  font-family: 'Noto Serif KR', serif;
-  font-size: 18px;
-  font-weight: 600;
-}
-.login-title {
-  font-family: 'Noto Serif KR', serif;
-  font-size: 22px;
-  font-weight: 600;
-  color: #1a1a1a;
-  margin-bottom: 4px;
-}
-.login-sub {
-  font-size: 13px;
-  color: #6b6b6b;
-  margin-bottom: 32px;
-}
-.input-label {
-  font-size: 11px;
-  font-weight: 700;
-  letter-spacing: 0.08em;
-  text-transform: uppercase;
-  color: #6b6b6b;
-  margin-bottom: 8px;
-  display: block;
-}
-.pw-input {
-  width: 100%;
-  padding: 12px 16px;
-  border: 1px solid #e0dbd4;
-  border-radius: 10px;
-  font-size: 16px;
-  font-family: 'Noto Sans KR', sans-serif;
-  color: #1a1a1a;
-  background: #fafaf8;
-  outline: none;
-  transition: border-color 0.15s;
-  letter-spacing: 0.1em;
-}
-.pw-input:focus {
-  border-color: #1a1a1a;
-  background: #fff;
-}
-.pw-input.error {
-  border-color: #C0392B;
-  background: #FEF9F9;
-}
-.error-msg {
-  font-size: 12px;
-  color: #C0392B;
-  margin-top: 8px;
-  min-height: 16px;
-  display: none;
-}
+.clinic-mark span { color: #fff; font-size: 16px; font-weight: 700; }
+.login-title { font-size: 20px; font-weight: 700; color: #1a1a1a; margin-bottom: 4px; letter-spacing: -0.02em; }
+.login-sub { font-size: 13px; color: #6b6b6b; margin-bottom: 32px; }
+.input-label { font-size: 11px; font-weight: 700; letter-spacing: 0.08em; text-transform: uppercase; color: #6b6b6b; margin-bottom: 8px; display: block; }
+.pw-input { width: 100%; padding: 12px 16px; border: 1px solid #E9ECEF; border-radius: 10px; font-size: 16px; font-family: inherit; color: #1a1a1a; background: #fafaf8; outline: none; transition: border-color 0.15s; letter-spacing: 0.1em; }
+.pw-input:focus { border-color: #1a1a1a; background: #fff; }
+.pw-input.error { border-color: #D32F2F; background: #FFF5F5; }
+.error-msg { font-size: 12px; color: #D32F2F; margin-top: 8px; min-height: 16px; display: none; }
 .error-msg.show { display: block; }
-.login-btn {
-  width: 100%;
-  margin-top: 20px;
-  padding: 13px;
-  background: #1a1a1a;
-  color: #fff;
-  border: none;
-  border-radius: 10px;
-  font-size: 14px;
-  font-weight: 700;
-  font-family: 'Noto Sans KR', sans-serif;
-  cursor: pointer;
-  letter-spacing: 0.04em;
-  transition: background 0.15s;
-}
+.login-btn { width: 100%; margin-top: 20px; padding: 13px; background: #1a1a1a; color: #fff; border: none; border-radius: 10px; font-size: 14px; font-weight: 700; font-family: inherit; cursor: pointer; transition: background 0.15s; }
 .login-btn:hover { background: #333; }
-.login-btn:active { transform: scale(0.99); }
-.role-hint {
-  margin-top: 20px;
-  padding: 12px 16px;
-  background: #f5f5f3;
-  border-radius: 8px;
-  font-size: 11px;
-  color: #6b6b6b;
-  line-height: 1.6;
-  display: none;
-}
-.footer-note {
-  margin-top: 28px;
-  text-align: center;
-  font-size: 11px;
-  color: #aaa;
-}
+.footer-note { margin-top: 28px; text-align: center; font-size: 11px; color: #bbb; }
 </style>
 </head>
 <body>
 <div class="login-card">
   <div class="clinic-mark"><span>NH</span></div>
-  <div class="login-title">뉴헤어 클리닉</div>
-  <div class="login-sub">월간 경영 보고서 · 비공개 문서</div>
-
+  <div class="login-title">뉴헤어 성형외과</div>
+  <div class="login-sub">현황 보고서 · 비공개 문서</div>
   <label class="input-label" for="pw">비밀번호</label>
   <input class="pw-input" type="password" id="pw" placeholder="비밀번호를 입력하세요" autocomplete="off">
   <div class="error-msg" id="err">비밀번호가 올바르지 않습니다.</div>
-
-  <button class="login-btn" id="loginBtn" onclick="doLogin()">입장하기</button>
-
-  <div class="footer-note">뉴헤어 클리닉 내부 열람용</div>
+  <button class="login-btn" onclick="doLogin()">입장하기</button>
+  <div class="footer-note">뉴헤어성형외과 내부 열람용</div>
 </div>
-
 <script>
-const PASSWORDS = {
-  '2022': 'viewer',
-  '1222': 'editor'
-};
-
+const PASSWORDS = { '2022': 'viewer', '1222': 'editor' };
 function doLogin() {
   const pw = document.getElementById('pw').value.trim();
   const role = PASSWORDS[pw];
   const input = document.getElementById('pw');
   const err = document.getElementById('err');
-
   if (role) {
     sessionStorage.setItem('nh_role', role);
-    input.classList.remove('error');
-    err.classList.remove('show');
-    const redirect = sessionStorage.getItem('nh_redirect') || 'section01.html';
+    input.classList.remove('error'); err.classList.remove('show');
+    const redirect = sessionStorage.getItem('nh_redirect') || 'report.html';
     sessionStorage.removeItem('nh_redirect');
     location.href = redirect;
   } else {
-    input.classList.add('error');
-    err.classList.add('show');
-    input.focus();
-    input.select();
+    input.classList.add('error'); err.classList.add('show');
+    input.focus(); input.select();
   }
 }
-
-document.getElementById('pw').addEventListener('keydown', e => {
-  if (e.key === 'Enter') doLogin();
-});
-
-if (sessionStorage.getItem('nh_role')) {
-  location.href = 'section01.html';
-}
+document.getElementById('pw').addEventListener('keydown', e => { if (e.key === 'Enter') doLogin(); });
+if (sessionStorage.getItem('nh_role')) location.href = 'report.html';
 </script>
 </body>
 </html>
