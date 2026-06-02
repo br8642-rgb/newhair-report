@@ -724,17 +724,54 @@ function renderAnalysis(id, text) {
 }
 
 function editAnalysis(box, p, originalText) {
-  if(box.querySelector('textarea')) return;
-  const ta = document.createElement('textarea');
-  ta.value = p.innerHTML.replace(/<br>/g,'\n').replace(/<b>(.*?)<\/b>/g,'$1');
-  ta.style.cssText='width:100%;border:none;outline:none;font-family:Pretendard,sans-serif;font-size:14px;line-height:1.9;resize:vertical;background:transparent;min-height:80px;';
-  p.replaceWith(ta);
-  ta.focus();
-  ta.addEventListener('blur',()=>{
-    const newP=document.createElement('p');
-    newP.id=p.id;
-    newP.innerHTML=ta.value.replace(/\n/g,'<br>');
-    ta.replaceWith(newP);
+  if(box.querySelector('[contenteditable]')) return;
+
+  // contenteditable div로 교체 — innerHTML 그대로 유지
+  const editor = document.createElement('div');
+  editor.contentEditable = 'true';
+  editor.innerHTML = p.innerHTML;
+  editor.style.cssText = 'outline:none;font-family:Pretendard,sans-serif;font-size:14px;line-height:1.9;min-height:60px;cursor:text;';
+  p.replaceWith(editor);
+  editor.focus();
+
+  // 드래그 후 굵기 툴바
+  const toolbar = document.createElement('div');
+  toolbar.innerHTML = '<b style="cursor:pointer;padding:4px 10px;font-size:12px;">B</b>';
+  toolbar.style.cssText = 'position:fixed;background:#222;color:#fff;border-radius:6px;padding:2px 4px;display:none;z-index:9999;box-shadow:0 2px 8px rgba(0,0,0,.3);';
+  document.body.appendChild(toolbar);
+
+  toolbar.querySelector('b').addEventListener('mousedown', e => {
+    e.preventDefault();
+    document.execCommand('bold');
+  });
+
+  editor.addEventListener('mouseup', () => {
+    const sel = window.getSelection();
+    if (sel && sel.toString().trim().length > 0) {
+      const range = sel.getRangeAt(0);
+      const rect = range.getBoundingClientRect();
+      toolbar.style.display = 'block';
+      toolbar.style.left = (rect.left + rect.width/2 - 20) + 'px';
+      toolbar.style.top  = (rect.top - 36 + window.scrollY) + 'px';
+    } else {
+      toolbar.style.display = 'none';
+    }
+  });
+
+  document.addEventListener('mousedown', function hideBar(e) {
+    if (!toolbar.contains(e.target) && e.target !== editor) {
+      toolbar.style.display = 'none';
+    }
+  });
+
+  // 포커스 벗어나면 저장
+  editor.addEventListener('blur', () => {
+    toolbar.style.display = 'none';
+    toolbar.remove();
+    const newP = document.createElement('p');
+    newP.id = p.id;
+    newP.innerHTML = editor.innerHTML;
+    editor.replaceWith(newP);
   });
 }
 
