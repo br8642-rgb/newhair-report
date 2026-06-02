@@ -418,7 +418,42 @@
     </div>
     <div class="analysis-box" id="ana-box-s03"><p id="ana-s03"></p></div>
   </div>
-  <div class="section-panel" id="section-04"><div class="section-header"><div class="section-tag">Section 04</div><div class="section-title">성사 현황</div><div class="section-subtitle">작성 예정</div></div></div>
+  <div class="section-panel" id="section-04">
+    <div class="section-header">
+      <div class="section-tag">Section 04</div>
+      <div class="section-title">성사 현황</div>
+      <div class="section-subtitle" id="s04-subtitle"></div>
+    </div>
+    <div class="kpi-table-wrap">
+      <div class="kpi-label">핵심 지표 요약</div>
+      <div class="kpi-compare" id="s04-kpi"></div>
+    </div>
+    <div class="s02-section-label">과목별 체결률 비교</div>
+    <div class="card" style="margin-bottom:16px;">
+      <div class="card-title">체결률 비교 <span style="font-size:11px;color:#6b6b6b;font-weight:400;">(4월 vs 5월, %)</span></div>
+      <div class="chart-legend" id="lg-s04-rate"></div>
+      <div class="chart-wrap" style="height:220px"><canvas id="chart-s04-rate"></canvas></div>
+    </div>
+    <div class="s02-section-label">과목별 내원·체결 현황</div>
+    <div class="card">
+      <div class="card-title">과목별 상세</div>
+      <button class="table-toggle-btn" onclick="toggleTable(this)"><span class="toggle-arrow">▼</span> 표 펼치기</button>
+      <div class="table-collapsible"><div style="overflow-x:auto"><table class="data-table" id="tbl-s04"></table></div></div>
+    </div>
+    <div class="s02-charts-grid" style="margin-top:16px;">
+      <div class="card">
+        <div class="card-title">과목별 내원 비교</div>
+        <div class="chart-legend" id="lg-s04-visit"></div>
+        <div class="chart-wrap" style="height:210px"><canvas id="chart-s04-visit"></canvas></div>
+      </div>
+      <div class="card">
+        <div class="card-title">과목별 체결 비교</div>
+        <div class="chart-legend" id="lg-s04-contract"></div>
+        <div class="chart-wrap" style="height:210px"><canvas id="chart-s04-contract"></canvas></div>
+      </div>
+    </div>
+    <div class="analysis-box" id="ana-box-s04"><p id="ana-s04"></p></div>
+  </div>
   <div class="section-panel" id="section-05"><div class="section-header"><div class="section-tag">Section 05</div><div class="section-title">유입경로 분석</div><div class="section-subtitle">작성 예정</div></div></div>
   <div class="section-panel" id="section-06"><div class="section-header"><div class="section-tag">Section 06</div><div class="section-title">원장별 성사율</div><div class="section-subtitle">작성 예정</div></div></div>
   <div class="section-panel" id="section-07"><div class="section-header"><div class="section-tag">Section 07</div><div class="section-title">직원별 성사율</div><div class="section-subtitle">작성 예정</div></div></div>
@@ -527,6 +562,22 @@ const ALL_REPORTS = [
       visit_by_cat:[86,20,28,94,184,1,0,0,26,5],
     },
     analysis:'총 예약 491→518건으로 <b>+5.5% 증가</b>했고 내원도 422→444건으로 <b>+5.2% 증가</b>.\n<b>내원전 취소율이 5.1%→2.7%로 크게 개선</b> — 예약 후 이탈이 줄어든 긍정적 신호.\n다만 당일취소·부도가 21·23건 → 31·29건으로 <b>당일취소 31건으로 증가</b>, 당일 응대 관리 필요.\n과목별로는 <b>탈모치료 67→94건(+40%) 급증</b>이 눈에 띄며, 검사는 191→184건으로 소폭 감소.',
+  },
+  section04: {
+    cats: ['모발이식','헤어라인','SMP','탈모치료','기타이식'],
+    apr: {
+      total: { visit:190, contract:110, rate:58 },
+      visit:    [80, 22, 20, 67,  1],
+      contract: [27, 12, 16, 55,  0],
+      rate:     [34, 55, 80, 82,  0],
+    },
+    may: {
+      total: { visit:229, contract:150, rate:66 },
+      visit:    [86, 20, 28, 94,  1],
+      contract: [45,  7, 21, 77,  0],
+      rate:     [52, 35, 75, 82,  0],
+    },
+    analysis: '전체 체결률 58%→66%로 <b>+8%p 개선</b>, 체결 건수도 110→150건으로 <b>+36% 급증</b>.\n<b>모발이식 34%→52%로 가장 큰 폭 상승</b> — 내원 증가(80→86건)와 체결 급증(27→45건) 동시 달성.\n탈모치료는 67→94건 내원 급증에도 <b>체결률 82% 유지</b> — 안정적 전환율.\n<b>헤어라인 55%→35%로 급락</b> — 내원은 유지됐으나 체결이 12→7건으로 감소, 원인 분석 필요.\nSMP 80%→75%로 소폭 하락했으나 여전히 높은 체결률 유지.',
   },
 },
 ];
@@ -1075,6 +1126,85 @@ function renderReport(r) {
 
   /* 섹션 03 */
   renderSection03(r);
+
+  /* 섹션 04 */
+  renderSection04(r);
+}
+
+/* ═══════════════════════════════
+   섹션 04 렌더링
+═══════════════════════════════ */
+function renderSection04(r) {
+  const s = r.section04;
+  const a = s.apr, m = s.may;
+  document.getElementById('s04-subtitle').textContent = r.meta.compare + ' · 시술 과목별 내원·체결 성사 현황';
+
+  // ── KPI
+  function kpiItem(label, aprVal, mayVal, suffix) {
+    const d = mayVal - aprVal;
+    const cls = d>0?'up':d<0?'down':'flat';
+    const arrow = d>0?`▲ ${Math.abs(d)}`:d<0?`▼ ${Math.abs(d)}`:'— 0';
+    return `<div class="kpi-item">
+      <div class="kpi-item-label">${label}</div>
+      <div class="kpi-row">
+        <div class="kpi-month"><span class="kpi-month-label">4월</span><span class="kpi-month-val">${aprVal}${suffix}</span></div>
+        <span class="kpi-arrow">→</span>
+        <div class="kpi-month"><span class="kpi-month-label">5월</span><span class="kpi-month-val">${mayVal}${suffix}</span></div>
+        <span class="kpi-diff ${cls}">${arrow}${suffix&&d!==0?suffix:''}</span>
+      </div>
+    </div>`;
+  }
+  document.getElementById('s04-kpi').innerHTML =
+    kpiItem('총 내원',  a.total.visit,    m.total.visit,    '') +
+    kpiItem('총 체결',  a.total.contract, m.total.contract, '') +
+    kpiItem('체결률',   a.total.rate,     m.total.rate,     '%');
+
+  // ── 체결률 비교 그래프
+  legend('lg-s04-rate', [[C.aprInq,'4월 체결률'],[C.mayInq,'5월 체결률']]);
+  if(charts['chart-s04-rate']) charts['chart-s04-rate'].destroy();
+  charts['chart-s04-rate'] = new Chart(document.getElementById('chart-s04-rate'), {
+    type:'bar',
+    data:{
+      labels: s.cats,
+      datasets:[
+        { label:'4월 체결률', data:a.rate, backgroundColor:C.aprInq, borderRadius:3 },
+        { label:'5월 체결률', data:m.rate, backgroundColor:C.mayInq, borderRadius:3 },
+      ]
+    },
+    options:{
+      ...BASE,
+      scales:{
+        ...BASE.scales,
+        y:{ ...BASE.scales.y, max:105, ticks:{...BASE.scales.y.ticks, callback:v=>v+'%'} }
+      },
+      plugins:{
+        ...BASE.plugins,
+        tooltip:{...BASE.plugins.tooltip, callbacks:{label:c=>' '+c.dataset.label+': '+c.parsed.y+'%'}}
+      }
+    }
+  });
+
+  // ── 과목별 표
+  mkTable('tbl-s04',
+    ['구분','4월 내원','4월 체결','4월 체결률','5월 내원','5월 체결','5월 체결률','증감'],
+    ['합계', a.total.visit, a.total.contract, a.total.rate+'%',
+             m.total.visit, m.total.contract, m.total.rate+'%',
+             diff(a.total.contract, m.total.contract)],
+    s.cats.map((cat,i)=>[
+      cat,
+      a.visit[i], a.contract[i], a.rate[i]+'%',
+      m.visit[i], m.contract[i], m.rate[i]+'%',
+      diff(a.contract[i], m.contract[i])
+    ])
+  );
+
+  // ── 내원·체결 비교 그래프
+  legend('lg-s04-visit',    [[C.aprInq,'4월 내원'],   [C.mayInq,'5월 내원']]);
+  legend('lg-s04-contract', [[C.aprBook,'4월 체결'],  [C.mayBook,'5월 체결']]);
+  mkChart('chart-s04-visit',    s.cats, [mkDS('4월 내원',   a.visit,    C.aprInq),  mkDS('5월 내원',   m.visit,    C.mayInq)]);
+  mkChart('chart-s04-contract', s.cats, [mkDS('4월 체결',   a.contract, C.aprBook), mkDS('5월 체결',   m.contract, C.mayBook)]);
+
+  renderAnalysis('ana-s04', s.analysis);
 }
 
 /* ═══════════════════════════════
