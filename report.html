@@ -254,10 +254,10 @@ function legend(id, items) {
 
 const BASE = {
   responsive:true, maintainAspectRatio:false,
-  plugins:{ legend:{display:false}, tooltip:{callbacks:{label:c=>' '+c.dataset.label+': '+c.parsed.y+'건'}} },
+  plugins:{ legend:{display:false}, tooltip:{titleFont:{size:14,family:'Pretendard'}, bodyFont:{size:14,family:'Pretendard'}, callbacks:{label:c=>' '+c.dataset.label+': '+c.parsed.y+'건'}} },
   scales:{
-    x:{grid:{display:false}, ticks:{font:{size:11,family:'Pretendard'}}},
-    y:{grid:{color:'#F1F3F5'}, ticks:{font:{size:11,family:'Pretendard'}}}
+    x:{grid:{display:false}, ticks:{font:{size:13,family:'Pretendard'}, color:'#3d3d3d'}},
+    y:{grid:{color:'#F1F3F5'}, ticks:{font:{size:13,family:'Pretendard'}, color:'#3d3d3d'}}
   }
 };
 const charts={};
@@ -384,9 +384,9 @@ function renderReport(r) {
 
   /* 네이버 */
   const nv=s.naver, nc=nv.cats;
-  mkTable('tbl-naver',['구분','4월 문의','4월 부재','4월 예약률','5월 문의','5월 부재','5월 예약률','증감'],
-    ['합계',nv.total_apr.inq,nv.total_apr.absent,nv.total_apr.rate+'%',nv.total_may.inq,nv.total_may.absent,nv.total_may.rate+'%',diff(nv.total_apr.inq,nv.total_may.inq)],
-    nc.map((c,i)=>[c,nv.apr.inq[i],nv.apr.absent[i]||'—',nv.apr.rate[i]+'%',nv.may.inq[i],nv.may.absent[i]||'—',nv.may.rate[i]+'%',diff(nv.apr.inq[i],nv.may.inq[i])]));
+  mkTable('tbl-naver',['구분','4월 문의','4월 예약','4월 부재','4월 예약률','5월 문의','5월 예약','5월 부재','5월 예약률','증감'],
+    ['합계',nv.total_apr.inq,nv.total_apr.book,nv.total_apr.absent,nv.total_apr.rate+'%',nv.total_may.inq,nv.total_may.book,nv.total_may.absent,nv.total_may.rate+'%',diff(nv.total_apr.inq,nv.total_may.inq)],
+    nc.map((c,i)=>[c,nv.apr.inq[i],nv.apr.book[i],nv.apr.absent[i]||'—',nv.apr.rate[i]+'%',nv.may.inq[i],nv.may.book[i],nv.may.absent[i]||'—',nv.may.rate[i]+'%',diff(nv.apr.inq[i],nv.may.inq[i])]));
   legend('lg-naver',[[C.aprInq,'4월 문의'],[C.aprBook,'4월 예약'],[C.mayInq,'5월 문의'],[C.mayBook,'5월 예약']]);
   mkChart('chart-naver',nc,[mkDS('4월 문의',nv.apr.inq,C.aprInq),mkDS('4월 예약',nv.apr.book,C.aprBook),mkDS('5월 문의',nv.may.inq,C.mayInq),mkDS('5월 예약',nv.may.book,C.mayBook)]);
   const ny=s.naver_yoy;
