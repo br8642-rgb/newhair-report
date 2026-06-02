@@ -931,9 +931,9 @@ function renderReport(r) {
 
   /* 게시판 */
   const bd=s.board, bc=bd.cats;
-  mkTable('tbl-board',['구분','4월 문의','4월 부재','4월 예약률','5월 문의','5월 부재','5월 예약률','증감'],
-    ['합계',bd.total_apr.inq,bd.total_apr.absent,bd.total_apr.rate+'%',bd.total_may.inq,bd.total_may.absent,bd.total_may.rate+'%',diff(bd.total_apr.inq,bd.total_may.inq)],
-    bc.map((c,i)=>[c,bd.apr.inq[i],bd.apr.absent[i]||'—',bd.apr.rate[i]+'%',bd.may.inq[i],bd.may.absent[i]||'—',bd.may.rate[i]+'%',diff(bd.apr.inq[i],bd.may.inq[i])]));
+  mkTable('tbl-board',['구분','4월 문의','4월 부재','4월 예약','4월 예약률','5월 문의','5월 부재','5월 예약','5월 예약률','증감'],
+    ['합계',bd.total_apr.inq,bd.total_apr.absent,bd.total_apr.book,bd.total_apr.rate+'%',bd.total_may.inq,bd.total_may.absent,bd.total_may.book,bd.total_may.rate+'%',diff(bd.total_apr.inq,bd.total_may.inq)],
+    bc.map((c,i)=>[c,bd.apr.inq[i],bd.apr.absent[i]||'—',bd.apr.book[i],bd.apr.rate[i]+'%',bd.may.inq[i],bd.may.absent[i]||'—',bd.may.book[i],bd.may.rate[i]+'%',diff(bd.apr.inq[i],bd.may.inq[i])]));
   legend('lg-board',[[C.aprInq,'4월 문의'],[C.aprBook,'4월 예약'],[C.mayInq,'5월 문의'],[C.mayBook,'5월 예약']]);
   mkChart('chart-board',bc,[mkDS('4월 문의',bd.apr.inq,C.aprInq),mkDS('4월 예약',bd.apr.book,C.aprBook),mkDS('5월 문의',bd.may.inq,C.mayInq),mkDS('5월 예약',bd.may.book,C.mayBook)]);
   renderAnalysis('ana-board', s.analysis.board);
