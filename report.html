@@ -603,6 +603,7 @@ const ALL_REPORTS = [
     },
     analysis: '<b>박주성Dr 체결률 81%→83%로 전 원장 중 최고</b>, 탈모치료 특화(55→83건 내원, 45→71건 체결).\n<b>김진오Dr는 모발이식 41%→54%로 크게 개선</b>됐으나 헤어라인 60%→35%로 급락 — 과목별 편차 주목.\n김진욱Dr 0%→50%로 체결 시작, 조준상Dr도 0%→38%로 개선 — 두 원장 모두 5월 상승 전환.\n송영준Dr는 해당 기간 내원 없음.',
   },
+  section04: {
     cats: ['모발이식','헤어라인','SMP','탈모치료','기타이식'],
     apr: {
       total: { visit:190, contract:110, rate:58 },
@@ -620,14 +621,6 @@ const ALL_REPORTS = [
   },
 },
 ];
-
-function toggleTable(btn) {
-  const collapsible = btn.nextElementSibling;
-  const isOpen = collapsible.classList.contains('open');
-  collapsible.classList.toggle('open', !isOpen);
-  btn.classList.toggle('open', !isOpen);
-  btn.innerHTML = `<span class="toggle-arrow">▼</span> ${isOpen ? '표 펼치기' : '표 접기'}`;
-}
 
 function toggleTable(btn) {
   const collapsible = btn.nextElementSibling;
