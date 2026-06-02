@@ -457,20 +457,20 @@
   <div class="section-panel" id="section-05">
     <div class="section-header">
       <div class="section-tag">Section 05</div>
-      <div class="section-title">원장님별 성사율</div>
+      <div class="section-title">원장님 성사율</div>
       <div class="section-subtitle" id="s05-subtitle"></div>
     </div>
     <div class="kpi-table-wrap">
-      <div class="kpi-label">원장님별 핵심 지표</div>
+      <div class="kpi-label">원장님 핵심 지표</div>
       <div id="s05-kpi" class="ch-kpi-grid"></div>
     </div>
-    <div class="s02-section-label">원장님별 체결률 비교</div>
+    <div class="s02-section-label">원장님 체결률 비교</div>
     <div class="card" style="margin-bottom:16px;">
       <div class="card-title">전체 체결률 비교 <span style="font-size:11px;color:#6b6b6b;font-weight:400;">(4월 vs 5월, %)</span></div>
       <div class="chart-legend" id="lg-s05-rate"></div>
       <div class="chart-wrap" style="height:200px"><canvas id="chart-s05-rate"></canvas></div>
     </div>
-    <div class="s02-section-label">원장님별 과목 상세</div>
+    <div class="s02-section-label">원장님 과목 상세</div>
     <div class="s02-month-tabs">
       <button class="s02-month-tab active" data-month="apr" onclick="switchS05Month('apr')">4월</button>
       <button class="s02-month-tab" data-month="may" onclick="switchS05Month('may')">5월</button>
@@ -687,7 +687,7 @@ function buildCatChannelData(s, month) {
 const NAV_SECTIONS = [
   {id:'00',label:'종합 현황'},{id:'01',label:'진료과목별 문의·예약'},
   {id:'02',label:'채널별 문의·예약'},{id:'03',label:'내원 현황'},
-  {id:'04',label:'성사 현황'},{id:'05',label:'원장님별 성사율'},
+  {id:'04',label:'성사 현황'},{id:'05',label:'원장님 성사율'},
   {id:'06',label:'직원별 성사율'},{id:'07',label:'유입경로 분석'},
   {id:'08',label:'매출 현황'},{id:'09',label:'종합 리뷰'},
 ];
@@ -1173,7 +1173,7 @@ let s05ActiveMonth = 'apr';
 
 function renderSection05(r) {
   const s = r.section05;
-  document.getElementById('s05-subtitle').textContent = r.meta.compare + ' · 원장님별 내원·체결 성사 현황';
+  document.getElementById('s05-subtitle').textContent = r.meta.compare + ' · 원장님 내원·체결 성사 현황';
 
   // ── 원장별 KPI 카드
   const drColors = ['#5C6BC0','#C62828','#2E7D32','#E65100'];
