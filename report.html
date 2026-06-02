@@ -25,13 +25,17 @@
   box-shadow: 0 1px 4px rgba(0,0,0,.05);
 }
 .ch-kpi-card .ck-name {
-  font-size: 12px;
-  font-weight: 700;
-  letter-spacing: .04em;
-  margin-bottom: 10px;
+  font-size: 16px;
+  font-weight: 800;
+  letter-spacing: -.01em;
+  margin-bottom: 12px;
   display: flex;
   align-items: center;
-  gap: 6px;
+  gap: 7px;
+}
+.ch-kpi-card .ck-emoji {
+  font-size: 18px;
+  line-height: 1;
 }
 .ch-kpi-card .ck-dot {
   width: 8px; height: 8px; border-radius: 50%; display: inline-block;
@@ -436,11 +440,11 @@ const ALL_REPORTS = [
    채널 메타
 ════════════════════════════════════ */
 const CH_META = [
-  { key:'phone',    label:'전화',   color:'#5C6BC0', dotClass:'dot-phone' },
-  { key:'naver',    label:'네이버', color:'#2E7D32', dotClass:'dot-naver' },
-  { key:'kakao',    label:'플친',   color:'#F9A825', dotClass:'dot-kakao' },
-  { key:'board',    label:'게시판', color:'#00838F', dotClass:'dot-board' },
-  { key:'whatsapp', label:'왓츠앱', color:'#43A047', dotClass:'dot-whatsapp' },
+  { key:'phone',    label:'전화',   emoji:'📞', color:'#5C6BC0', dotClass:'dot-phone' },
+  { key:'naver',    label:'네이버', emoji:'<span style="display:inline-flex;align-items:center;justify-content:center;width:22px;height:22px;background:#03C75A;border-radius:4px;font-size:13px;font-weight:900;color:#fff;font-family:sans-serif;line-height:1;flex-shrink:0;">N</span>', color:'#2E7D32', dotClass:'dot-naver' },
+  { key:'kakao',    label:'플친',   emoji:'💬', color:'#F9A825', dotClass:'dot-kakao' },
+  { key:'board',    label:'게시판', emoji:'📋', color:'#00838F', dotClass:'dot-board' },
+  { key:'whatsapp', label:'왓츠앱', emoji:'🌍', color:'#43A047', dotClass:'dot-whatsapp' },
 ];
 
 // 채널별 총계 헬퍼
@@ -632,7 +636,7 @@ function renderSection02(r) {
     kpiGrid.innerHTML += `
       <div class="ch-kpi-card">
         <div class="ck-name">
-          <span class="ck-dot" style="background:${ch.color}"></span>
+          <span class="ck-emoji" style="line-height:1;">${ch.emoji}</span>
           ${ch.label}
         </div>
         <div class="ck-row">
