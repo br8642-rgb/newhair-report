@@ -6,6 +6,191 @@
 <title>뉴헤어 유입·내원 현황 결산</title>
 <link href="https://cdn.jsdelivr.net/gh/orioncactus/pretendard/dist/web/static/pretendard.css" rel="stylesheet">
 <link rel="stylesheet" href="assets/css/report.css">
+<style>
+/* ── 섹션 02 전용 스타일 ── */
+.ch-kpi-grid {
+  display: grid;
+  grid-template-columns: repeat(5, 1fr);
+  gap: 12px;
+  margin-bottom: 28px;
+}
+@media(max-width:900px){ .ch-kpi-grid{ grid-template-columns: repeat(3,1fr); } }
+@media(max-width:600px){ .ch-kpi-grid{ grid-template-columns: repeat(2,1fr); } }
+
+.ch-kpi-card {
+  background: #fff;
+  border: 1px solid #e8eaed;
+  border-radius: 12px;
+  padding: 16px 14px 14px;
+  box-shadow: 0 1px 4px rgba(0,0,0,.05);
+}
+.ch-kpi-card .ck-name {
+  font-size: 12px;
+  font-weight: 700;
+  letter-spacing: .04em;
+  margin-bottom: 10px;
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+.ch-kpi-card .ck-dot {
+  width: 8px; height: 8px; border-radius: 50%; display: inline-block;
+}
+.ch-kpi-card .ck-row {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  font-size: 11px;
+  color: #6b6b6b;
+  margin-bottom: 4px;
+}
+.ch-kpi-card .ck-row .ck-vals {
+  display: flex;
+  align-items: center;
+  gap: 5px;
+  font-size: 13px;
+  color: #1a1a1a;
+  font-weight: 600;
+}
+.ch-kpi-card .ck-vals .arrow { color: #aaa; font-size: 11px; }
+.ch-kpi-card .ck-diff {
+  font-size: 11px;
+  font-weight: 700;
+  padding: 1px 5px;
+  border-radius: 4px;
+}
+.ch-kpi-card .ck-diff.up   { color: #C62828; background: #FFEBEE; }
+.ch-kpi-card .ck-diff.down { color: #1565C0; background: #E3F2FD; }
+.ch-kpi-card .ck-diff.flat { color: #888;    background: #f0f0f0; }
+.ch-kpi-card .ck-divider { border: none; border-top: 1px solid #f0f0f0; margin: 8px 0; }
+
+/* 채널 색상 */
+.dot-phone    { background: #5C6BC0; }
+.dot-kakao    { background: #F9A825; }
+.dot-naver    { background: #2E7D32; }
+.dot-board    { background: #00838F; }
+.dot-whatsapp { background: #2E7D32; filter: brightness(1.4); }
+
+/* 섹션 02 그래프 카드 */
+.s02-charts-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 16px;
+  margin-bottom: 28px;
+}
+@media(max-width:700px){ .s02-charts-grid{ grid-template-columns:1fr; } }
+
+/* 과목별 채널 분포 */
+.cat-channel-grid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 16px;
+  margin-bottom: 28px;
+}
+@media(max-width:900px){ .cat-channel-grid{ grid-template-columns: repeat(2,1fr); } }
+@media(max-width:550px){ .cat-channel-grid{ grid-template-columns: 1fr; } }
+
+.cat-channel-card {
+  background: #fff;
+  border: 1px solid #e8eaed;
+  border-radius: 12px;
+  padding: 16px;
+  box-shadow: 0 1px 4px rgba(0,0,0,.05);
+}
+.cat-channel-card .ccc-title {
+  font-size: 13px;
+  font-weight: 700;
+  color: #1a1a1a;
+  margin-bottom: 14px;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+.cat-channel-card .ccc-badge {
+  font-size: 10px;
+  font-weight: 600;
+  padding: 2px 7px;
+  border-radius: 20px;
+  background: #f0f0f0;
+  color: #555;
+}
+
+/* 가로 bar */
+.hbar-wrap { display: flex; flex-direction: column; gap: 7px; }
+.hbar-item { }
+.hbar-label {
+  display: flex;
+  justify-content: space-between;
+  font-size: 11px;
+  color: #555;
+  margin-bottom: 3px;
+}
+.hbar-label .hbl-ch { font-weight: 600; }
+.hbar-label .hbl-num { color: #1a1a1a; font-weight: 700; }
+.hbar-track {
+  height: 7px;
+  background: #f0f0f0;
+  border-radius: 4px;
+  overflow: hidden;
+}
+.hbar-fill {
+  height: 100%;
+  border-radius: 4px;
+  transition: width .6s ease;
+}
+
+/* 월 전환 탭 */
+.s02-month-tabs {
+  display: flex;
+  gap: 8px;
+  margin-bottom: 20px;
+}
+.s02-month-tab {
+  padding: 6px 18px;
+  border-radius: 20px;
+  font-size: 13px;
+  font-weight: 600;
+  cursor: pointer;
+  border: 1.5px solid #ddd;
+  background: #fff;
+  color: #888;
+  transition: all .2s;
+  font-family: Pretendard, sans-serif;
+}
+.s02-month-tab.active {
+  background: #1565C0;
+  border-color: #1565C0;
+  color: #fff;
+}
+
+.s02-section-label {
+  font-size: 12px;
+  font-weight: 700;
+  letter-spacing: .08em;
+  color: #888;
+  text-transform: uppercase;
+  margin-bottom: 12px;
+  margin-top: 28px;
+}
+
+/* 채널 비교 그래프 범례 */
+.ch-legend-row {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 10px;
+  margin-bottom: 8px;
+}
+.ch-legend-item {
+  display: flex;
+  align-items: center;
+  gap: 5px;
+  font-size: 12px;
+  color: #555;
+}
+.ch-legend-dot {
+  width: 10px; height: 10px; border-radius: 50%;
+}
+</style>
 </head>
 <body>
 
@@ -103,16 +288,60 @@
     </div>
   </div>
 
+  <!-- 섹션 02 -->
+  <div class="section-panel" id="section-02">
+    <div class="section-header">
+      <div class="section-tag">Section 02</div>
+      <div class="section-title">채널별 문의·예약</div>
+      <div class="section-subtitle" id="s02-subtitle"></div>
+    </div>
+
+    <!-- KPI -->
+    <div class="kpi-table-wrap">
+      <div class="kpi-label">채널별 핵심 지표</div>
+      <div id="s02-kpi" class="ch-kpi-grid"></div>
+    </div>
+
+    <!-- 채널 비교 그래프 -->
+    <div class="s02-section-label">채널 간 비교</div>
+    <div class="s02-charts-grid">
+      <div class="card">
+        <div class="card-title">채널별 문의 비교</div>
+        <div class="ch-legend-row" id="lg-s02-inq"></div>
+        <div class="chart-wrap" style="height:220px"><canvas id="chart-s02-inq"></canvas></div>
+      </div>
+      <div class="card">
+        <div class="card-title">채널별 예약 비교</div>
+        <div class="ch-legend-row" id="lg-s02-book"></div>
+        <div class="chart-wrap" style="height:220px"><canvas id="chart-s02-book"></canvas></div>
+      </div>
+    </div>
+    <div class="card" style="margin-bottom:28px;">
+      <div class="card-title">채널별 예약률 비교 <span style="font-size:11px;color:#6b6b6b;font-weight:400;">(4월 vs 5월)</span></div>
+      <div class="ch-legend-row" id="lg-s02-rate"></div>
+      <div class="chart-wrap" style="height:200px"><canvas id="chart-s02-rate"></canvas></div>
+    </div>
+
+    <!-- 과목별 채널 분포 -->
+    <div class="s02-section-label">진료과목별 채널 분포</div>
+    <div class="s02-month-tabs">
+      <button class="s02-month-tab active" data-month="apr" onclick="switchS02Month('apr')">4월</button>
+      <button class="s02-month-tab" data-month="may" onclick="switchS02Month('may')">5월</button>
+    </div>
+    <div class="cat-channel-grid" id="s02-cat-grid"></div>
+
+    <div class="analysis-box" id="ana-box-s02"><p id="ana-s02"></p></div>
+  </div>
+
   <!-- 나머지 섹션 패널 -->
   <div class="section-panel" id="section-00"><div class="section-header"><div class="section-tag">Section 00</div><div class="section-title">전체 종합 현황</div><div class="section-subtitle">작성 예정</div></div></div>
-  <div class="section-panel" id="section-02"><div class="section-header"><div class="section-tag">Section 02</div><div class="section-title">채널별 문의·예약</div><div class="section-subtitle">작성 예정</div></div></div>
   <div class="section-panel" id="section-03"><div class="section-header"><div class="section-tag">Section 03</div><div class="section-title">내원 현황</div><div class="section-subtitle">작성 예정</div></div></div>
   <div class="section-panel" id="section-04"><div class="section-header"><div class="section-tag">Section 04</div><div class="section-title">성사 현황</div><div class="section-subtitle">작성 예정</div></div></div>
   <div class="section-panel" id="section-05"><div class="section-header"><div class="section-tag">Section 05</div><div class="section-title">유입경로 분석</div><div class="section-subtitle">작성 예정</div></div></div>
   <div class="section-panel" id="section-06"><div class="section-header"><div class="section-tag">Section 06</div><div class="section-title">원장별 성사율</div><div class="section-subtitle">작성 예정</div></div></div>
   <div class="section-panel" id="section-07"><div class="section-header"><div class="section-tag">Section 07</div><div class="section-title">직원별 성사율</div><div class="section-subtitle">작성 예정</div></div></div>
   <div class="section-panel" id="section-08"><div class="section-header"><div class="section-tag">Section 08</div><div class="section-title">매출 현황</div><div class="section-subtitle">작성 예정</div></div></div>
-  <div class="section-panel" id="section-09"><div class="section-header"><div class="section-tag">Section 09</div><div class="section-title">종합 리뷰 & 과제</div><div class="section-subtitle">작성 예정</div></div></div>
+  <div class="section-panel" id="section-09"><div class="section-header"><div class="section-tag">Section 09</div><div class="section-title">종합 리뷰 &amp; 과제</div><div class="section-subtitle">작성 예정</div></div></div>
 </div>
 
 <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.4.1/chart.umd.js"></script>
@@ -197,8 +426,62 @@ const ALL_REPORTS = [
       total:    '전체 문의 576→559건으로 <b>−3.0% 소폭 감소</b>했으나 예약률 80%→82%로 개선.\n<b>모발이식만 유일하게 158→174건(+10.1%) 증가</b> — 플친·게시판·왓츠앱 등 다채널 동시 성장.\n검사 250→238건 감소했지만 예약률 94%→95%로 안정적.\n<b>해외 문의 74→65건 감소 중 왓츠앱은 증가세</b> — 채널별 해외 전략 차별화 검토 필요.',
     },
   },
+  section02: {
+    analysis: '문의 채널 1위는 <b>전화(434~445건)</b>로 압도적 비중. 네이버(150~156건)·게시판(87~89건)이 2·3위로 온라인 문의의 주요 경로.\n<b>플친(87~95건)은 해외·이식 특화 채널</b>로 예약률이 낮은 대신 해외 환자 유입 기능 수행.\n왓츠앱은 소량이지만 <b>5월 39건으로 유일하게 증가</b>, 해외 이식 잠재 수요 채널로 성장 중.\n과목별로는 <b>검사·모발이식이 전 채널에서 상위 2개 과목</b>을 차지하며 채널 불문 핵심 과목임을 확인.',
+  },
 },
 ];
+
+/* ════════════════════════════════════
+   채널 메타
+════════════════════════════════════ */
+const CH_META = [
+  { key:'phone',    label:'전화',   color:'#5C6BC0', dotClass:'dot-phone' },
+  { key:'naver',    label:'네이버', color:'#2E7D32', dotClass:'dot-naver' },
+  { key:'kakao',    label:'플친',   color:'#F9A825', dotClass:'dot-kakao' },
+  { key:'board',    label:'게시판', color:'#00838F', dotClass:'dot-board' },
+  { key:'whatsapp', label:'왓츠앱', color:'#43A047', dotClass:'dot-whatsapp' },
+];
+
+// 채널별 총계 헬퍼
+function getChTotals(s, key) {
+  const d = s[key];
+  return {
+    apr_inq:  d.total_apr.inq,
+    apr_book: d.total_apr.book,
+    apr_rate: d.total_apr.rate,
+    may_inq:  d.total_may.inq,
+    may_book: d.total_may.book,
+    may_rate: d.total_may.rate,
+  };
+}
+
+// 과목별 채널 문의 데이터 재조합
+// 반환: { catLabel: { phone, naver, kakao, board, whatsapp } }
+function buildCatChannelData(s, month) {
+  const allCats = ['모발이식','검사','탈모치료','SMP','헤어라인','처방전'];
+
+  // 각 채널에서 과목별 문의 꺼내기 (채널마다 cats 순서 다름)
+  function getVal(channelData, cat) {
+    const idx = channelData.cats.indexOf(cat);
+    if (idx === -1) return 0;
+    return channelData[month].inq[idx] || 0;
+  }
+  function getValPhone(s, cat) {
+    const idx = s.cats.indexOf(cat);
+    if (idx === -1) return 0;
+    return s.phone[month].inq[idx] || 0;
+  }
+
+  return allCats.map(cat => {
+    const phone    = getValPhone(s, cat);
+    const naver    = getVal(s.naver, cat);
+    const kakao    = getVal(s.kakao, cat);
+    const board    = getVal(s.board, cat);
+    const whatsapp = getVal(s.whatsapp, cat);
+    return { cat, phone, naver, kakao, board, whatsapp };
+  });
+}
 
 /* ════════════════════════════════════
    앱 코어
@@ -212,6 +495,8 @@ const NAV_SECTIONS = [
 ];
 
 let isEditor = false;
+let currentReport = null;
+let s02ActiveMonth = 'apr';
 
 function checkAuth() {
   const role = sessionStorage.getItem('nh_role');
@@ -285,7 +570,6 @@ function mkTable(id,headers,totalRow,rows){
   rows.forEach(row=>{ const tr=tbody.insertRow(); row.forEach((v,i)=>{ const td=tr.insertCell(); td.innerHTML=v; if(i===0) td.style.textAlign='left'; if(i===4||i===5) td.className='sep'; }); });
 }
 
-/* 분석 텍스트 렌더링 */
 function renderAnalysis(id, text) {
   const p = document.getElementById(id);
   if(!p) return;
@@ -313,7 +597,6 @@ function editAnalysis(box, p, originalText) {
   });
 }
 
-/* 제목 편집 */
 function setupTitleEdit() {
   const title = document.getElementById('dh-title');
   if(!isEditor) { title.querySelector('.edit-hint').remove(); return; }
@@ -329,7 +612,160 @@ function setupTitleEdit() {
   });
 }
 
+/* ═══════════════════════════════
+   섹션 02 렌더링
+═══════════════════════════════ */
+function renderSection02(r) {
+  const s = r.section01;
+  document.getElementById('s02-subtitle').textContent = r.meta.compare + ' · 채널별 문의·예약 현황 및 과목 분포';
+
+  // ── KPI 카드
+  const kpiGrid = document.getElementById('s02-kpi');
+  kpiGrid.innerHTML = '';
+  CH_META.forEach(ch => {
+    const t = getChTotals(s, ch.key);
+    const inqD = t.may_inq - t.apr_inq;
+    const bookD = t.may_book - t.apr_book;
+    const rateD = t.may_rate - t.apr_rate;
+    function cls(d){ return d>0?'up':d<0?'down':'flat'; }
+    function arrow(d){ return d>0?`▲ ${d}`:d<0?`▼ ${Math.abs(d)}`:'— 0'; }
+    kpiGrid.innerHTML += `
+      <div class="ch-kpi-card">
+        <div class="ck-name">
+          <span class="ck-dot" style="background:${ch.color}"></span>
+          ${ch.label}
+        </div>
+        <div class="ck-row">
+          <span>문의</span>
+          <div style="display:flex;align-items:center;gap:6px;">
+            <div class="ck-vals"><span>${t.apr_inq}</span><span class="arrow">→</span><span>${t.may_inq}</span></div>
+            <span class="ck-diff ${cls(inqD)}">${arrow(inqD)}</span>
+          </div>
+        </div>
+        <hr class="ck-divider">
+        <div class="ck-row">
+          <span>예약</span>
+          <div style="display:flex;align-items:center;gap:6px;">
+            <div class="ck-vals"><span>${t.apr_book}</span><span class="arrow">→</span><span>${t.may_book}</span></div>
+            <span class="ck-diff ${cls(bookD)}">${arrow(bookD)}</span>
+          </div>
+        </div>
+        <hr class="ck-divider">
+        <div class="ck-row">
+          <span>예약률</span>
+          <div style="display:flex;align-items:center;gap:6px;">
+            <div class="ck-vals"><span>${t.apr_rate}%</span><span class="arrow">→</span><span>${t.may_rate}%</span></div>
+            <span class="ck-diff ${cls(rateD)}">${arrow(rateD)}${rateD!==0?'%p':''}</span>
+          </div>
+        </div>
+      </div>`;
+  });
+
+  // ── 채널별 문의 비교 그래프
+  const chLabels = CH_META.map(c=>c.label);
+  const aprInqData  = CH_META.map(c=>getChTotals(s,c.key).apr_inq);
+  const mayInqData  = CH_META.map(c=>getChTotals(s,c.key).may_inq);
+  const aprBookData = CH_META.map(c=>getChTotals(s,c.key).apr_book);
+  const mayBookData = CH_META.map(c=>getChTotals(s,c.key).may_book);
+  const aprRateData = CH_META.map(c=>getChTotals(s,c.key).apr_rate);
+  const mayRateData = CH_META.map(c=>getChTotals(s,c.key).may_rate);
+
+  // 채널 범례 (가로)
+  function chLegend(id, items) {
+    const el = document.getElementById(id); if(!el) return;
+    el.innerHTML = items.map(([c,l])=>`<div class="ch-legend-item"><span class="ch-legend-dot" style="background:${c}"></span>${l}</div>`).join('');
+  }
+
+  chLegend('lg-s02-inq',  [[C.aprInq,'4월 문의'],[C.mayInq,'5월 문의']]);
+  mkChart('chart-s02-inq', chLabels, [mkDS('4월 문의',aprInqData,C.aprInq), mkDS('5월 문의',mayInqData,C.mayInq)]);
+
+  chLegend('lg-s02-book', [[C.aprBook,'4월 예약'],[C.mayBook,'5월 예약']]);
+  mkChart('chart-s02-book', chLabels, [mkDS('4월 예약',aprBookData,C.aprBook), mkDS('5월 예약',mayBookData,C.mayBook)]);
+
+  // 예약률 — line chart
+  if(charts['chart-s02-rate']) charts['chart-s02-rate'].destroy();
+  chLegend('lg-s02-rate', [['#90CAF9','4월 예약률'],['#1565C0','5월 예약률']]);
+  charts['chart-s02-rate'] = new Chart(document.getElementById('chart-s02-rate'), {
+    type: 'bar',
+    data: {
+      labels: chLabels,
+      datasets: [
+        { label:'4월 예약률', data: aprRateData, backgroundColor:'#90CAF9', borderRadius:3 },
+        { label:'5월 예약률', data: mayRateData, backgroundColor:'#1565C0', borderRadius:3 },
+      ]
+    },
+    options: {
+      ...BASE,
+      scales: {
+        ...BASE.scales,
+        y: { ...BASE.scales.y, max:105, ticks:{ ...BASE.scales.y.ticks, callback: v=>v+'%' } }
+      },
+      plugins: {
+        ...BASE.plugins,
+        tooltip: { ...BASE.plugins.tooltip, callbacks: { label: c=>' '+c.dataset.label+': '+c.parsed.y+'%' } }
+      }
+    }
+  });
+
+  // ── 과목별 채널 분포 (초기 렌더)
+  renderCatChannelGrid(s, s02ActiveMonth);
+
+  // ── 분석
+  renderAnalysis('ana-s02', r.section02.analysis);
+}
+
+function renderCatChannelGrid(s, month) {
+  const grid = document.getElementById('s02-cat-grid');
+  grid.innerHTML = '';
+  const data = buildCatChannelData(s, month);
+  const catLabels = { '모발이식':'이식', '검사':'검사', '탈모치료':'치료', 'SMP':'SMP', '헤어라인':'헤어라인', '처방전':'처방전' };
+  const catColors = { '모발이식':'#C62828', '검사':'#1565C0', '탈모치료':'#6A1B9A', 'SMP':'#E65100', '헤어라인':'#00695C', '처방전':'#4E342E' };
+
+  data.forEach(({ cat, phone, naver, kakao, board, whatsapp }) => {
+    const total = phone + naver + kakao + board + whatsapp;
+    if (total === 0) return;
+    const channels = [
+      { label:'전화',   val:phone,    color:'#5C6BC0' },
+      { label:'네이버', val:naver,    color:'#2E7D32' },
+      { label:'게시판', val:board,    color:'#00838F' },
+      { label:'플친',   val:kakao,    color:'#F9A825' },
+      { label:'왓츠앱', val:whatsapp, color:'#43A047' },
+    ].filter(c=>c.val>0).sort((a,b)=>b.val-a.val);
+
+    const bars = channels.map(ch => `
+      <div class="hbar-item">
+        <div class="hbar-label">
+          <span class="hbl-ch">${ch.label}</span>
+          <span class="hbl-num">${ch.val}건 <span style="color:#aaa;font-weight:400;">(${Math.round(ch.val/total*100)}%)</span></span>
+        </div>
+        <div class="hbar-track">
+          <div class="hbar-fill" style="width:${Math.round(ch.val/total*100)}%;background:${ch.color};"></div>
+        </div>
+      </div>`).join('');
+
+    grid.innerHTML += `
+      <div class="cat-channel-card">
+        <div class="ccc-title">
+          <span style="width:10px;height:10px;border-radius:50%;background:${catColors[cat]};display:inline-block;flex-shrink:0;"></span>
+          ${cat}
+          <span class="ccc-badge">총 ${total}건</span>
+        </div>
+        <div class="hbar-wrap">${bars}</div>
+      </div>`;
+  });
+}
+
+function switchS02Month(month) {
+  s02ActiveMonth = month;
+  document.querySelectorAll('.s02-month-tab').forEach(t => t.classList.toggle('active', t.dataset.month === month));
+  if (currentReport) renderCatChannelGrid(currentReport.section01, month);
+}
+
+/* ═══════════════════════════════
+   섹션 01 렌더링
+═══════════════════════════════ */
 function renderReport(r) {
+  currentReport = r;
   const s=r.section01;
   document.getElementById('dh-period').textContent=r.meta.period;
   document.getElementById('dh-type').textContent=r.meta.type==='monthly'?'월간':'주간';
@@ -439,6 +875,9 @@ function renderReport(r) {
   mkChart('chart-total-yoy',ty.cats,[mkDS('25년 4월',ty.apr25.inq,C.aprInq),mkDS('25년 5월',ty.may25.inq,C.mayInq),mkDS('26년 4월',tt.apr.inq,C.aprBook),mkDS('26년 5월',tt.may.inq,C.mayBook)]);
   if(ty.may25.note) document.getElementById('note-total-yoy').textContent='* '+ty.may25.note;
   renderAnalysis('ana-total', s.analysis.total);
+
+  /* 섹션 02 */
+  renderSection02(r);
 }
 
 /* 초기화 */
