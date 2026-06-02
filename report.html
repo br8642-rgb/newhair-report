@@ -454,7 +454,30 @@
     </div>
     <div class="analysis-box" id="ana-box-s04"><p id="ana-s04"></p></div>
   </div>
-  <div class="section-panel" id="section-05"><div class="section-header"><div class="section-tag">Section 05</div><div class="section-title">원장별 성사율</div><div class="section-subtitle">작성 예정</div></div></div>
+  <div class="section-panel" id="section-05">
+    <div class="section-header">
+      <div class="section-tag">Section 05</div>
+      <div class="section-title">원장별 성사율</div>
+      <div class="section-subtitle" id="s05-subtitle"></div>
+    </div>
+    <div class="kpi-table-wrap">
+      <div class="kpi-label">원장별 핵심 지표</div>
+      <div id="s05-kpi" class="ch-kpi-grid"></div>
+    </div>
+    <div class="s02-section-label">원장별 체결률 비교</div>
+    <div class="card" style="margin-bottom:16px;">
+      <div class="card-title">전체 체결률 비교 <span style="font-size:11px;color:#6b6b6b;font-weight:400;">(4월 vs 5월, %)</span></div>
+      <div class="chart-legend" id="lg-s05-rate"></div>
+      <div class="chart-wrap" style="height:200px"><canvas id="chart-s05-rate"></canvas></div>
+    </div>
+    <div class="s02-section-label">원장별 과목 상세</div>
+    <div class="s02-month-tabs">
+      <button class="s02-month-tab active" data-month="apr" onclick="switchS05Month('apr')">4월</button>
+      <button class="s02-month-tab" data-month="may" onclick="switchS05Month('may')">5월</button>
+    </div>
+    <div id="s05-detail-grid"></div>
+    <div class="analysis-box" id="ana-box-s05"><p id="ana-s05"></p></div>
+  </div>
   <div class="section-panel" id="section-06"><div class="section-header"><div class="section-tag">Section 06</div><div class="section-title">직원별 성사율</div><div class="section-subtitle">작성 예정</div></div></div>
   <div class="section-panel" id="section-07"><div class="section-header"><div class="section-tag">Section 07</div><div class="section-title">유입경로 분석</div><div class="section-subtitle">작성 예정</div></div></div>
   <div class="section-panel" id="section-08"><div class="section-header"><div class="section-tag">Section 08</div><div class="section-title">매출 현황</div><div class="section-subtitle">작성 예정</div></div></div>
@@ -563,7 +586,23 @@ const ALL_REPORTS = [
     },
     analysis:'총 예약 491→518건으로 <b>+5.5% 증가</b>했고 내원도 422→444건으로 <b>+5.2% 증가</b>.\n<b>내원전 취소율이 5.1%→2.7%로 크게 개선</b> — 예약 후 이탈이 줄어든 긍정적 신호.\n다만 당일취소·부도가 21·23건 → 31·29건으로 <b>당일취소 31건으로 증가</b>, 당일 응대 관리 필요.\n과목별로는 <b>탈모치료 67→94건(+40%) 급증</b>이 눈에 띄며, 검사는 191→184건으로 소폭 감소.',
   },
-  section04: {
+  section05: {
+    doctors: ['김진오Dr','박주성Dr','김진욱Dr','조준상Dr'],
+    cats: ['모발이식','헤어라인','SMP','탈모치료','기타이식'],
+    apr: {
+      total:    { visit:[99,74,12,4],  contract:[49,60,0,0],  rate:[49,81,0,0] },
+      visit:    [[66,20,1,11,1],[0,0,19,55,0],[10,2,0,0,0],[4,0,0,0,0]],
+      contract: [[27,12,1,9,0],[0,0,15,45,0],[0,0,0,0,0],[0,0,0,0,0]],
+      rate:     [[41,60,100,82,0],[0,0,79,82,0],[0,0,0,0,0],[0,0,0,0,0]],
+    },
+    may: {
+      total:    { visit:[102,110,8,8],  contract:[51,91,4,3],  rate:[50,83,50,38] },
+      visit:    [[71,20,1,10,0],[0,0,27,83,0],[7,0,0,0,1],[8,0,0,0,0]],
+      contract: [[38,7,1,5,0],[0,0,20,71,0],[4,0,0,0,0],[3,0,0,0,0]],
+      rate:     [[54,35,100,50,0],[0,0,74,86,0],[57,0,0,0,0],[38,0,0,0,0]],
+    },
+    analysis: '<b>박주성Dr 체결률 81%→83%로 전 원장 중 최고</b>, 탈모치료 특화(55→83건 내원, 45→71건 체결).\n<b>김진오Dr는 모발이식 41%→54%로 크게 개선</b>됐으나 헤어라인 60%→35%로 급락 — 과목별 편차 주목.\n김진욱Dr 0%→50%로 체결 시작, 조준상Dr도 0%→38%로 개선 — 두 원장 모두 5월 상승 전환.\n송영준Dr는 해당 기간 내원 없음.',
+  },
     cats: ['모발이식','헤어라인','SMP','탈모치료','기타이식'],
     apr: {
       total: { visit:190, contract:110, rate:58 },
@@ -1129,6 +1168,109 @@ function renderReport(r) {
 
   /* 섹션 04 */
   renderSection04(r);
+
+  /* 섹션 05 */
+  renderSection05(r);
+}
+
+/* ═══════════════════════════════
+   섹션 05 렌더링
+═══════════════════════════════ */
+let s05ActiveMonth = 'apr';
+
+function renderSection05(r) {
+  const s = r.section05;
+  document.getElementById('s05-subtitle').textContent = r.meta.compare + ' · 원장별 내원·체결 성사 현황';
+
+  // ── 원장별 KPI 카드
+  const drColors = ['#5C6BC0','#C62828','#2E7D32','#E65100'];
+  const kpiGrid = document.getElementById('s05-kpi');
+  kpiGrid.innerHTML = '';
+  kpiGrid.style.gridTemplateColumns = 'repeat(4,1fr)';
+  s.doctors.forEach((dr, di) => {
+    const av = s.apr.total.visit[di], ac = s.apr.total.contract[di], ar = s.apr.total.rate[di];
+    const mv = s.may.total.visit[di], mc = s.may.total.contract[di], mr = s.may.total.rate[di];
+    const rd = mr - ar;
+    const cls = rd>0?'up':rd<0?'down':'flat';
+    const arrow = rd>0?`▲ ${Math.abs(rd)}`:rd<0?`▼ ${Math.abs(rd)}`:'— 0';
+    kpiGrid.innerHTML += `
+      <div class="ch-kpi-card">
+        <div class="ck-name"><span class="ck-dot" style="background:${drColors[di]}"></span>${dr}</div>
+        <div class="ck-row"><span>내원</span><div style="display:flex;align-items:center;gap:6px;">
+          <div class="ck-vals"><span>${av}</span><span class="arrow">→</span><span>${mv}</span></div>
+          <span class="ck-diff ${mv-av>0?'up':mv-av<0?'down':'flat'}">${mv-av>0?'▲':'▼'} ${Math.abs(mv-av)}</span>
+        </div></div>
+        <hr class="ck-divider">
+        <div class="ck-row"><span>체결</span><div style="display:flex;align-items:center;gap:6px;">
+          <div class="ck-vals"><span>${ac}</span><span class="arrow">→</span><span>${mc}</span></div>
+          <span class="ck-diff ${mc-ac>0?'up':mc-ac<0?'down':'flat'}">${mc-ac>0?'▲':'▼'} ${Math.abs(mc-ac)}</span>
+        </div></div>
+        <hr class="ck-divider">
+        <div class="ck-row"><span>체결률</span><div style="display:flex;align-items:center;gap:6px;">
+          <div class="ck-vals"><span>${ar}%</span><span class="arrow">→</span><span>${mr}%</span></div>
+          <span class="ck-diff ${cls}">${arrow}${rd!==0?'%p':''}</span>
+        </div></div>
+      </div>`;
+  });
+
+  // ── 체결률 비교 그래프
+  legend('lg-s05-rate', [[C.aprInq,'4월 체결률'],[C.mayInq,'5월 체결률']]);
+  if(charts['chart-s05-rate']) charts['chart-s05-rate'].destroy();
+  charts['chart-s05-rate'] = new Chart(document.getElementById('chart-s05-rate'), {
+    type:'bar',
+    data:{
+      labels: s.doctors,
+      datasets:[
+        { label:'4월 체결률', data:s.apr.total.rate, backgroundColor:C.aprInq, borderRadius:3 },
+        { label:'5월 체결률', data:s.may.total.rate, backgroundColor:C.mayInq, borderRadius:3 },
+      ]
+    },
+    options:{
+      ...BASE,
+      scales:{ ...BASE.scales, y:{ ...BASE.scales.y, max:105, ticks:{...BASE.scales.y.ticks, callback:v=>v+'%'} } },
+      plugins:{ ...BASE.plugins, tooltip:{...BASE.plugins.tooltip, callbacks:{label:c=>' '+c.dataset.label+': '+c.parsed.y+'%'}} }
+    }
+  });
+
+  // ── 과목 상세 그리드
+  renderS05Detail(s, s05ActiveMonth, drColors);
+  renderAnalysis('ana-s05', s.analysis);
+}
+
+function renderS05Detail(s, month, drColors) {
+  const grid = document.getElementById('s05-detail-grid');
+  grid.style.cssText = 'display:grid;grid-template-columns:repeat(2,1fr);gap:16px;margin-bottom:28px;';
+  grid.innerHTML = '';
+  const d = s[month];
+  s.doctors.forEach((dr, di) => {
+    const pairs = s.cats.map((cat,ci) => ({
+      cat, visit: d.visit[di][ci], contract: d.contract[di][ci], rate: d.rate[di][ci]
+    })).filter(p => p.visit > 0 || p.contract > 0);
+    if(pairs.length === 0) return;
+    const bars = pairs.map(p => `
+      <div class="hbar-item">
+        <div class="hbar-label">
+          <span class="hbl-ch">${p.cat}</span>
+          <span class="hbl-num">${p.contract}/${p.visit}건 <span style="color:#aaa;font-weight:400;">(${p.rate}%)</span></span>
+        </div>
+        <div class="hbar-track"><div class="hbar-fill" style="width:${p.rate}%;background:${drColors[di]};opacity:0.75;"></div></div>
+      </div>`).join('');
+    grid.innerHTML += `
+      <div class="cat-channel-card">
+        <div class="ccc-title">
+          <span style="width:10px;height:10px;border-radius:50%;background:${drColors[di]};display:inline-block;flex-shrink:0;"></span>
+          ${dr}
+          <span class="ccc-badge">체결률 ${s[month].total.rate[di]}%</span>
+        </div>
+        <div class="hbar-wrap">${bars}</div>
+      </div>`;
+  });
+}
+
+function switchS05Month(month) {
+  s05ActiveMonth = month;
+  document.querySelectorAll('[onclick^="switchS05"]').forEach(t => t.classList.toggle('active', t.dataset.month === month));
+  if(currentReport) renderS05Detail(currentReport.section05, month, ['#5C6BC0','#C62828','#2E7D32','#E65100']);
 }
 
 /* ═══════════════════════════════
