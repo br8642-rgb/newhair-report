@@ -7,6 +7,29 @@
 <link href="https://cdn.jsdelivr.net/gh/orioncactus/pretendard/dist/web/static/pretendard.css" rel="stylesheet">
 <link rel="stylesheet" href="assets/css/report.css">
 <style>
+/* ── 표 접기/펼치기 ── */
+.table-toggle-btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  font-size: 12px;
+  font-weight: 600;
+  color: #1565C0;
+  background: #E3F2FD;
+  border: none;
+  border-radius: 6px;
+  padding: 5px 12px;
+  cursor: pointer;
+  font-family: Pretendard, sans-serif;
+  margin-bottom: 10px;
+  transition: background .15s;
+}
+.table-toggle-btn:hover { background: #BBDEFB; }
+.table-toggle-btn .toggle-arrow { font-size: 10px; transition: transform .2s; }
+.table-toggle-btn.open .toggle-arrow { transform: rotate(180deg); }
+.table-collapsible { display: none; }
+.table-collapsible.open { display: block; }
+
 /* ── 섹션 02 전용 스타일 ── */
 .ch-kpi-grid {
   display: grid;
@@ -236,7 +259,7 @@
     <!-- 전화 -->
     <div class="channel-section">
       <div class="channel-header"><div class="channel-name">전화</div><span class="badge badge-phone">신규 문의</span></div>
-      <div class="card"><div class="card-title">문의·예약 상세 현황</div><div style="overflow-x:auto"><table class="data-table" id="tbl-phone"></table></div></div>
+      <div class="card"><div class="card-title">문의·예약 상세 현황</div><button class="table-toggle-btn" onclick="toggleTable(this)"><span class="toggle-arrow">▼</span> 표 펼치기</button><div class="table-collapsible"><div style="overflow-x:auto"><table class="data-table" id="tbl-phone"></table></div></div></div>
       <div class="card"><div class="card-title">4월 vs 5월 비교 그래프</div><div class="chart-legend" id="lg-phone"></div><div class="chart-wrap" style="height:250px"><canvas id="chart-phone" role="img" aria-label="전화 문의예약 비교"></canvas></div></div>
       <div class="card"><div class="card-title">전년 동월 비교 (2025년)</div><div class="chart-legend" id="lg-phone-yoy"></div><div class="chart-wrap" style="height:210px"><canvas id="chart-phone-yoy" role="img" aria-label="전화 전년 비교"></canvas></div><p class="yoy-note" id="note-phone-yoy"></p></div>
       <div class="analysis-box" id="ana-box-phone"><p id="ana-phone"></p></div>
@@ -246,7 +269,7 @@
     <!-- 네이버 -->
     <div class="channel-section">
       <div class="channel-header"><div class="channel-name">네이버</div><span class="badge badge-naver">신규 문의</span></div>
-      <div class="card"><div class="card-title">문의·예약 상세 현황</div><div style="overflow-x:auto"><table class="data-table" id="tbl-naver"></table></div></div>
+      <div class="card"><div class="card-title">문의·예약 상세 현황</div><button class="table-toggle-btn" onclick="toggleTable(this)"><span class="toggle-arrow">▼</span> 표 펼치기</button><div class="table-collapsible"><div style="overflow-x:auto"><table class="data-table" id="tbl-naver"></table></div></div></div>
       <div class="card"><div class="card-title">4월 vs 5월 비교 그래프</div><div class="chart-legend" id="lg-naver"></div><div class="chart-wrap" style="height:230px"><canvas id="chart-naver" role="img" aria-label="네이버 문의예약 비교"></canvas></div></div>
       <div class="card"><div class="card-title">전년 동월 비교 (2025년)</div><div class="chart-legend" id="lg-naver-yoy"></div><div class="chart-wrap" style="height:210px"><canvas id="chart-naver-yoy" role="img" aria-label="네이버 전년 비교"></canvas></div><p class="yoy-note" id="note-naver-yoy"></p></div>
       <div class="analysis-box" id="ana-box-naver"><p id="ana-naver"></p></div>
@@ -256,7 +279,7 @@
     <!-- 플친 -->
     <div class="channel-section">
       <div class="channel-header"><div class="channel-name">플친</div><span class="badge badge-kakao">카카오채널</span></div>
-      <div class="card"><div class="card-title">문의·예약 상세 현황 <span style="font-size:11px;color:#6b6b6b;font-weight:400;">(해외 포함)</span></div><div style="overflow-x:auto"><table class="data-table" id="tbl-kakao"></table></div></div>
+      <div class="card"><div class="card-title">문의·예약 상세 현황 <span style="font-size:11px;color:#6b6b6b;font-weight:400;">(해외 포함)</span></div><button class="table-toggle-btn" onclick="toggleTable(this)"><span class="toggle-arrow">▼</span> 표 펼치기</button><div class="table-collapsible"><div style="overflow-x:auto"><table class="data-table" id="tbl-kakao"></table></div></div></div>
       <div class="card"><div class="card-title">4월 vs 5월 비교 그래프</div><div class="chart-legend" id="lg-kakao"></div><div class="chart-wrap" style="height:230px"><canvas id="chart-kakao" role="img" aria-label="플친 문의예약 비교"></canvas></div></div>
       <div class="card"><div class="card-title">해외 문의 현황</div><div class="chart-legend" id="lg-kakao-os"></div><div class="chart-wrap" style="height:170px"><canvas id="chart-kakao-os" role="img" aria-label="플친 해외 비교"></canvas></div></div>
       <div class="analysis-box" id="ana-box-kakao"><p id="ana-kakao"></p></div>
@@ -266,7 +289,7 @@
     <!-- 게시판 -->
     <div class="channel-section">
       <div class="channel-header"><div class="channel-name">게시판</div><span class="badge badge-board">온라인</span></div>
-      <div class="card"><div class="card-title">문의·예약 상세 현황</div><div style="overflow-x:auto"><table class="data-table" id="tbl-board"></table></div></div>
+      <div class="card"><div class="card-title">문의·예약 상세 현황</div><button class="table-toggle-btn" onclick="toggleTable(this)"><span class="toggle-arrow">▼</span> 표 펼치기</button><div class="table-collapsible"><div style="overflow-x:auto"><table class="data-table" id="tbl-board"></table></div></div></div>
       <div class="card"><div class="card-title">4월 vs 5월 비교 그래프</div><div class="chart-legend" id="lg-board"></div><div class="chart-wrap" style="height:230px"><canvas id="chart-board" role="img" aria-label="게시판 문의예약 비교"></canvas></div></div>
       <div class="analysis-box" id="ana-box-board"><p id="ana-board"></p></div>
     </div>
@@ -275,7 +298,7 @@
     <!-- 왓츠앱 -->
     <div class="channel-section">
       <div class="channel-header"><div class="channel-name">왓츠앱</div><span class="badge badge-whatsapp">해외 채널</span></div>
-      <div class="card"><div class="card-title">문의·예약 상세 현황 <span style="font-size:11px;color:#6b6b6b;font-weight:400;">(이식 수술 확정 포함)</span></div><div style="overflow-x:auto"><table class="data-table" id="tbl-whatsapp"></table></div></div>
+      <div class="card"><div class="card-title">문의·예약 상세 현황 <span style="font-size:11px;color:#6b6b6b;font-weight:400;">(이식 수술 확정 포함)</span></div><button class="table-toggle-btn" onclick="toggleTable(this)"><span class="toggle-arrow">▼</span> 표 펼치기</button><div class="table-collapsible"><div style="overflow-x:auto"><table class="data-table" id="tbl-whatsapp"></table></div></div></div>
       <div class="card"><div class="card-title">4월 vs 5월 비교 그래프</div><div class="chart-legend" id="lg-wa"></div><div class="chart-wrap" style="height:210px"><canvas id="chart-wa" role="img" aria-label="왓츠앱 문의예약 비교"></canvas></div></div>
       <div class="analysis-box" id="ana-box-whatsapp"><p id="ana-whatsapp"></p></div>
     </div>
@@ -285,7 +308,7 @@
     <div class="channel-section">
       <div class="channel-header"><div class="channel-name">전체 합산</div><span class="badge badge-total">전화 + 플친 + 왓츠앱</span></div>
       <p style="font-size:12px;color:#6b6b6b;margin-bottom:12px;">* 네이버·게시판은 전화 예약으로 처리되므로 전화 채널에 포함됩니다.</p>
-      <div class="card"><div class="card-title">문의·예약 상세 현황</div><div style="overflow-x:auto"><table class="data-table" id="tbl-total"></table></div></div>
+      <div class="card"><div class="card-title">문의·예약 상세 현황</div><button class="table-toggle-btn" onclick="toggleTable(this)"><span class="toggle-arrow">▼</span> 표 펼치기</button><div class="table-collapsible"><div style="overflow-x:auto"><table class="data-table" id="tbl-total"></table></div></div></div>
       <div class="card"><div class="card-title">진료과목별 4월 vs 5월 비교</div><div class="chart-legend" id="lg-total"></div><div class="chart-wrap" style="height:260px"><canvas id="chart-total" role="img" aria-label="전체 문의예약 비교"></canvas></div></div>
       <div class="card"><div class="card-title">전년 동월 비교 (2025년)</div><div class="chart-legend" id="lg-total-yoy"></div><div class="chart-wrap" style="height:210px"><canvas id="chart-total-yoy" role="img" aria-label="전체 전년 비교"></canvas></div><p class="yoy-note" id="note-total-yoy"></p></div>
       <div class="analysis-box" id="ana-box-total"><p id="ana-total"></p></div>
@@ -435,6 +458,14 @@ const ALL_REPORTS = [
   },
 },
 ];
+
+function toggleTable(btn) {
+  const collapsible = btn.nextElementSibling;
+  const isOpen = collapsible.classList.contains('open');
+  collapsible.classList.toggle('open', !isOpen);
+  btn.classList.toggle('open', !isOpen);
+  btn.innerHTML = `<span class="toggle-arrow">▼</span> ${isOpen ? '표 펼치기' : '표 접기'}`;
+}
 
 /* ════════════════════════════════════
    채널 메타
