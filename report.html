@@ -1130,10 +1130,10 @@ function renderSection03(r) {
   mkFunnel('chart-s03-funnel-may', m);
 
   // ── 당일취소·부도
-  legend('lg-s03-noshow', [[C.aprInq,'4월'],[C.mayInq,'5월']]);
+  legend('lg-s03-noshow', [['#BDBDBD','4월'],['#616161','5월']]);
   mkChart('chart-s03-noshow', ['당일취소','부도'],
-    [mkDS('4월',[a.same_day_cancel,a.noshow],C.aprInq),
-     mkDS('5월',[m.same_day_cancel,m.noshow],C.mayInq)]);
+    [mkDS('4월',[a.same_day_cancel,a.noshow],'#BDBDBD'),
+     mkDS('5월',[m.same_day_cancel,m.noshow],'#616161')]);
 
   // ── 과목별 내원 (0건 제외)
   const catPairs = a.cats.map((cat,i)=>({cat, apr:a.visit_by_cat[i], may:m.visit_by_cat[i]}))
