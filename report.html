@@ -748,7 +748,7 @@ function editAnalysis(box, p) {
     if (sel && sel.toString().trim().length > 0) {
       const rect = sel.getRangeAt(0).getBoundingClientRect();
       toolbar.style.left = (rect.left + rect.width/2 - 18) + 'px';
-      toolbar.style.top  = (rect.top + window.scrollY - 38) + 'px';
+      toolbar.style.top  = (rect.top - 38) + 'px';
       toolbar.style.display = 'block';
     } else {
       toolbar.style.display = 'none';
