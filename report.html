@@ -7,6 +7,29 @@
 <link href="https://cdn.jsdelivr.net/gh/orioncactus/pretendard/dist/web/static/pretendard.css" rel="stylesheet">
 <link rel="stylesheet" href="assets/css/report.css">
 <style>
+/* ── 표 열 배경색 ── */
+/* 4월 문의 열 — 연하늘 */
+.data-table th.col-apr-inq,
+.data-table td.col-apr-inq { background: #EFF6FF; }
+/* 4월 예약 열 — 연핑크 */
+.data-table th.col-apr-book,
+.data-table td.col-apr-book { background: #FFF0F0; }
+/* 5월 문의 열 — 진하늘 (살짝) */
+.data-table th.col-may-inq,
+.data-table td.col-may-inq { background: #DBEAFE; }
+/* 5월 예약 열 — 진핑크 (살짝) */
+.data-table th.col-may-book,
+.data-table td.col-may-book { background: #FFE4E4; }
+/* 예약률 열 — 중립 회색 */
+.data-table th.col-rate,
+.data-table td.col-rate { background: #F8F9FA; color: #555; }
+/* total-row는 조금 더 진하게 */
+.data-table tr.total-row td.col-apr-inq { background: #DBEAFE; }
+.data-table tr.total-row td.col-apr-book { background: #FFE4E4; }
+.data-table tr.total-row td.col-may-inq  { background: #BFDBFE; }
+.data-table tr.total-row td.col-may-book { background: #FECACA; }
+.data-table tr.total-row td.col-rate     { background: #F0F0F0; }
+
 /* ── 표 접기/펼치기 ── */
 .table-toggle-btn {
   display: inline-flex;
@@ -595,14 +618,40 @@ function diff(a,b){
   return `<span class="flat">— 0</span>`;
 }
 
-function mkTable(id,headers,totalRow,rows){
-  const tbl=document.getElementById(id); if(!tbl) return;
-  tbl.innerHTML='';
-  const thead=tbl.createTHead(); const hr=thead.insertRow();
-  headers.forEach((h,i)=>{ const th=document.createElement('th'); th.textContent=h; if(h==='5월 문의'||h==='5월 예약'||h==='5월 예약률'||h==='5월 문의'||h==='5월 부재'||h==='5월 이식수술'||h==='5월 해외') th.className='sep'; hr.appendChild(th); });
-  const tbody=tbl.createTBody();
-  if(totalRow){ const tr=tbody.insertRow(); tr.className='total-row'; totalRow.forEach((v,i)=>{ const td=tr.insertCell(); td.innerHTML=v; if(i===0) td.style.textAlign='left'; if(i===4||i===5) td.className='sep'; }); }
-  rows.forEach(row=>{ const tr=tbody.insertRow(); row.forEach((v,i)=>{ const td=tr.insertCell(); td.innerHTML=v; if(i===0) td.style.textAlign='left'; if(i===4||i===5) td.className='sep'; }); });
+// 헤더명 → 열 클래스 매핑
+const COL_CLASS = {
+  '4월 문의':'col-apr-inq', '4월 예약':'col-apr-book', '4월 예약률':'col-rate',
+  '4월 부재':'col-rate',    '4월 해외':'col-rate',      '4월 이식수술':'col-rate',
+  '5월 문의':'col-may-inq', '5월 예약':'col-may-book', '5월 예약률':'col-rate',
+  '5월 부재':'col-rate',    '5월 해외':'col-rate',      '5월 이식수술':'col-rate',
+};
+
+function mkTable(id, headers, totalRow, rows) {
+  const tbl = document.getElementById(id); if (!tbl) return;
+  tbl.innerHTML = '';
+  const thead = tbl.createTHead(); const hr = thead.insertRow();
+  headers.forEach(h => {
+    const th = document.createElement('th');
+    th.textContent = h;
+    if (COL_CLASS[h]) th.classList.add(COL_CLASS[h]);
+    if (h==='5월 문의'||h==='5월 예약'||h==='5월 예약률'||h==='5월 부재'||h==='5월 이식수술'||h==='5월 해외') th.classList.add('sep');
+    hr.appendChild(th);
+  });
+  const tbody = tbl.createTBody();
+  const addRow = (rowData, isTotal) => {
+    const tr = tbody.insertRow();
+    if (isTotal) tr.className = 'total-row';
+    rowData.forEach((v, i) => {
+      const td = tr.insertCell();
+      td.innerHTML = v;
+      if (i === 0) td.style.textAlign = 'left';
+      const h = headers[i];
+      if (COL_CLASS[h]) td.classList.add(COL_CLASS[h]);
+      if (i===4||i===5) td.classList.add('sep');
+    });
+  };
+  if (totalRow) addRow(totalRow, true);
+  rows.forEach(row => addRow(row, false));
 }
 
 function renderAnalysis(id, text) {
