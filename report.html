@@ -719,14 +719,17 @@ function renderAnalysis(id, text) {
     const box = p.closest('.analysis-box');
     box.classList.add('editable');
     box.title = '클릭하여 수정';
-    box.addEventListener('click', ()=>editAnalysis(box, p, text));
+    function clickHandler() {
+      box.removeEventListener('click', clickHandler);
+      editAnalysis(box, p);
+    }
+    box.addEventListener('click', clickHandler);
   }
 }
 
-function editAnalysis(box, p, originalText) {
+function editAnalysis(box, p) {
   if(box.querySelector('[contenteditable]')) return;
 
-  // contenteditable div로 교체 — innerHTML 그대로 유지
   const editor = document.createElement('div');
   editor.contentEditable = 'true';
   editor.innerHTML = p.innerHTML;
@@ -734,44 +737,57 @@ function editAnalysis(box, p, originalText) {
   p.replaceWith(editor);
   editor.focus();
 
-  // 드래그 후 굵기 툴바
+  // 툴바
   const toolbar = document.createElement('div');
-  toolbar.innerHTML = '<b style="cursor:pointer;padding:4px 10px;font-size:12px;">B</b>';
-  toolbar.style.cssText = 'position:fixed;background:#222;color:#fff;border-radius:6px;padding:2px 4px;display:none;z-index:9999;box-shadow:0 2px 8px rgba(0,0,0,.3);';
+  toolbar.innerHTML = '<span style="cursor:pointer;padding:3px 10px;font-size:13px;font-weight:900;color:#fff;user-select:none;">B</span>';
+  toolbar.style.cssText = 'position:fixed;background:#222;border-radius:6px;padding:2px;display:none;z-index:9999;box-shadow:0 2px 8px rgba(0,0,0,.35);';
   document.body.appendChild(toolbar);
 
-  toolbar.querySelector('b').addEventListener('mousedown', e => {
-    e.preventDefault();
-    document.execCommand('bold');
-  });
-
-  editor.addEventListener('mouseup', () => {
+  function showToolbar() {
     const sel = window.getSelection();
     if (sel && sel.toString().trim().length > 0) {
-      const range = sel.getRangeAt(0);
-      const rect = range.getBoundingClientRect();
+      const rect = sel.getRangeAt(0).getBoundingClientRect();
+      toolbar.style.left = (rect.left + rect.width/2 - 18) + 'px';
+      toolbar.style.top  = (rect.top + window.scrollY - 38) + 'px';
       toolbar.style.display = 'block';
-      toolbar.style.left = (rect.left + rect.width/2 - 20) + 'px';
-      toolbar.style.top  = (rect.top - 36 + window.scrollY) + 'px';
     } else {
       toolbar.style.display = 'none';
     }
-  });
+  }
 
-  document.addEventListener('mousedown', function hideBar(e) {
-    if (!toolbar.contains(e.target) && e.target !== editor) {
-      toolbar.style.display = 'none';
-    }
-  });
+  // editor 안팎 mouseup 모두 감지
+  document.addEventListener('mouseup', showToolbar);
 
-  // 포커스 벗어나면 저장
-  editor.addEventListener('blur', () => {
+  toolbar.querySelector('span').addEventListener('mousedown', e => {
+    e.preventDefault();
+    document.execCommand('bold');
     toolbar.style.display = 'none';
+  });
+
+  function cleanup() {
+    document.removeEventListener('mouseup', showToolbar);
     toolbar.remove();
-    const newP = document.createElement('p');
-    newP.id = p.id;
-    newP.innerHTML = editor.innerHTML;
-    editor.replaceWith(newP);
+  }
+
+  editor.addEventListener('blur', e => {
+    // 툴바 클릭이면 blur 무시
+    if (e.relatedTarget && toolbar.contains(e.relatedTarget)) return;
+    setTimeout(() => {
+      if (document.activeElement === editor) return;
+      cleanup();
+      toolbar.style.display = 'none';
+      const newP = document.createElement('p');
+      newP.id = p.id;
+      newP.innerHTML = editor.innerHTML;
+      editor.replaceWith(newP);
+      // 재편집 가능하도록 이벤트 재등록
+      if(isEditor) {
+        newP.closest('.analysis-box').addEventListener('click', function handler() {
+          this.removeEventListener('click', handler);
+          editAnalysis(this, newP);
+        });
+      }
+    }, 100);
   });
 }
 
