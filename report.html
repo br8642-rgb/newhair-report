@@ -490,88 +490,6 @@ function toggleTable(btn) {
   btn.innerHTML = `<span class="toggle-arrow">▼</span> ${isOpen ? '표 펼치기' : '표 접기'}`;
 }
 
-// YoY 혼합 차트 — 26년은 막대, 25년은 선
-// Y축 max = 26년 데이터 기준 자동 계산, 25년이 넘으면 clip:false로 튀어나옴
-function mkYoyChart(id, labels, apr25, may25, apr26, may26) {
-  if (charts[id]) charts[id].destroy();
-
-  // 26년 데이터 기준 Y축 max 계산 (여유 20%)
-  const max26 = Math.max(...apr26, ...may26);
-  const yMax = Math.ceil(max26 * 1.25 / 10) * 10;
-
-  // 25년 최대값이 yMax 넘는지 확인
-  const max25 = Math.max(...apr25, ...may25);
-  const hasOverflow = max25 > yMax;
-
-  charts[id] = new Chart(document.getElementById(id), {
-    data: {
-      labels,
-      datasets: [
-        // 26년 — 막대
-        { type:'bar',  label:'26년 4월', data: apr26, backgroundColor: C.aprBook, borderRadius: 3 },
-        { type:'bar',  label:'26년 5월', data: may26, backgroundColor: C.mayBook, borderRadius: 3 },
-        // 25년 — 선
-        {
-          type:'line', label:'25년 4월', data: apr25,
-          borderColor: C.aprInq, backgroundColor: C.aprInq,
-          borderWidth: 2, pointRadius: 4, pointHoverRadius: 6,
-          borderDash: [], tension: 0.3, fill: false,
-        },
-        {
-          type:'line', label:'25년 5월', data: may25,
-          borderColor: C.mayInq, backgroundColor: C.mayInq,
-          borderWidth: 2, pointRadius: 4, pointHoverRadius: 6,
-          borderDash: [], tension: 0.3, fill: false,
-        },
-      ]
-    },
-    options: {
-      responsive: true,
-      maintainAspectRatio: false,
-      clip: false,
-      scales: {
-        x: { grid:{display:false}, ticks:{font:{size:13,family:'Pretendard'},color:'#3d3d3d'} },
-        y: {
-          grid: { color:'#F1F3F5' },
-          ticks: { font:{size:13,family:'Pretendard'}, color:'#3d3d3d' },
-          max: yMax,
-        }
-      },
-      plugins: {
-        legend: { display: false },
-        tooltip: {
-          titleFont:{size:14,family:'Pretendard'},
-          bodyFont:{size:14,family:'Pretendard'},
-          callbacks: { label: c => ' ' + c.dataset.label + ': ' + c.parsed.y + '건' }
-        },
-        // 25년 데이터가 Y축 범위 초과 시 꼭짓점에 숫자 표시
-        datalabels: false,
-      }
-    },
-    plugins: hasOverflow ? [{
-      id: 'overflowLabel',
-      afterDatasetsDraw(chart) {
-        const { ctx } = chart;
-        chart.data.datasets.forEach((ds, di) => {
-          if (ds.type !== 'line') return;
-          const meta = chart.getDatasetMeta(di);
-          meta.data.forEach((pt, i) => {
-            const val = ds.data[i];
-            if (val > yMax) {
-              ctx.save();
-              ctx.font = 'bold 11px Pretendard, sans-serif';
-              ctx.fillStyle = ds.borderColor;
-              ctx.textAlign = 'center';
-              ctx.fillText(val + '건', pt.x, chart.chartArea.top + 10);
-              ctx.restore();
-            }
-          });
-        });
-      }
-    }] : [],
-  });
-}
-
 /* ════════════════════════════════════
    채널 메타
 ════════════════════════════════════ */
@@ -979,9 +897,9 @@ function renderReport(r) {
   legend('lg-phone',[[C.aprInq,'4월 문의'],[C.aprBook,'4월 예약'],[C.mayInq,'5월 문의'],[C.mayBook,'5월 예약']]);
   mkChart('chart-phone',pc,[mkDS('4월 문의',ph.apr.inq,C.aprInq),mkDS('4월 예약',ph.apr.book,C.aprBook),mkDS('5월 문의',ph.may.inq,C.mayInq),mkDS('5월 예약',ph.may.book,C.mayBook)],280);
   const py=s.phone_yoy;
-  legend('lg-phone-yoy',[[C.aprBook,'26년 4월'],[C.mayBook,'26년 5월'],[C.aprInq,'25년 4월 (선)'],[C.mayInq,'25년 5월 (선)']]);
-  mkYoyChart('chart-phone-yoy', py.cats, py.apr25.inq, py.may25.inq, ph.apr.inq, ph.may.inq);
-  if(py.may25.note) document.getElementById('note-phone-yoy').textContent='* '+py.may25.note+' (선 그래프가 범위 초과 시 수치 표시)';
+  legend('lg-phone-yoy',[[C.aprInq,'25년 4월'],[C.mayInq,'25년 5월'],[C.aprBook,'26년 4월'],[C.mayBook,'26년 5월']]);
+  mkChart('chart-phone-yoy',py.cats,[mkDS('25년 4월',py.apr25.inq,C.aprInq),mkDS('25년 5월',py.may25.inq,C.mayInq),mkDS('26년 4월',ph.apr.inq,C.aprBook),mkDS('26년 5월',ph.may.inq,C.mayBook)]);
+  if(py.may25.note) document.getElementById('note-phone-yoy').textContent='* '+py.may25.note;
   renderAnalysis('ana-phone', s.analysis.phone);
 
   /* 네이버 */
@@ -992,9 +910,9 @@ function renderReport(r) {
   legend('lg-naver',[[C.aprInq,'4월 문의'],[C.aprBook,'4월 예약'],[C.mayInq,'5월 문의'],[C.mayBook,'5월 예약']]);
   mkChart('chart-naver',nc,[mkDS('4월 문의',nv.apr.inq,C.aprInq),mkDS('4월 예약',nv.apr.book,C.aprBook),mkDS('5월 문의',nv.may.inq,C.mayInq),mkDS('5월 예약',nv.may.book,C.mayBook)]);
   const ny=s.naver_yoy;
-  legend('lg-naver-yoy',[[C.aprBook,'26년 4월'],[C.mayBook,'26년 5월'],[C.aprInq,'25년 4월 (선)'],[C.mayInq,'25년 5월 (선)']]);
-  mkYoyChart('chart-naver-yoy', ny.cats, ny.apr25.inq, ny.may25.inq, nv.apr.inq, nv.may.inq);
-  if(ny.may25.note) document.getElementById('note-naver-yoy').textContent='* '+ny.may25.note+' (선 그래프가 범위 초과 시 수치 표시)';
+  legend('lg-naver-yoy',[[C.aprInq,'25년 4월'],[C.mayInq,'25년 5월'],[C.aprBook,'26년 4월'],[C.mayBook,'26년 5월']]);
+  mkChart('chart-naver-yoy',ny.cats,[mkDS('25년 4월',ny.apr25.inq,C.aprInq),mkDS('25년 5월',ny.may25.inq,C.mayInq),mkDS('26년 4월',nv.apr.inq,C.aprBook),mkDS('26년 5월',nv.may.inq,C.mayBook)]);
+  if(ny.may25.note) document.getElementById('note-naver-yoy').textContent='* '+ny.may25.note;
   renderAnalysis('ana-naver', s.analysis.naver);
 
   /* 플친 */
@@ -1037,9 +955,9 @@ function renderReport(r) {
   legend('lg-total',[[C.aprInq,'4월 문의'],[C.aprBook,'4월 예약'],[C.mayInq,'5월 문의'],[C.mayBook,'5월 예약']]);
   mkChart('chart-total',tc,[mkDS('4월 문의',tt.apr.inq,C.aprInq),mkDS('4월 예약',tt.apr.book,C.aprBook),mkDS('5월 문의',tt.may.inq,C.mayInq),mkDS('5월 예약',tt.may.book,C.mayBook)],300);
   const ty=s.total_yoy;
-  legend('lg-total-yoy',[[C.aprBook,'26년 4월'],[C.mayBook,'26년 5월'],[C.aprInq,'25년 4월 (선)'],[C.mayInq,'25년 5월 (선)']]);
-  mkYoyChart('chart-total-yoy', ty.cats, ty.apr25.inq, ty.may25.inq, tt.apr.inq, tt.may.inq);
-  if(ty.may25.note) document.getElementById('note-total-yoy').textContent='* '+ty.may25.note+' (선 그래프가 범위 초과 시 수치 표시)';
+  legend('lg-total-yoy',[[C.aprInq,'25년 4월'],[C.mayInq,'25년 5월'],[C.aprBook,'26년 4월'],[C.mayBook,'26년 5월']]);
+  mkChart('chart-total-yoy',ty.cats,[mkDS('25년 4월',ty.apr25.inq,C.aprInq),mkDS('25년 5월',ty.may25.inq,C.mayInq),mkDS('26년 4월',tt.apr.inq,C.aprBook),mkDS('26년 5월',tt.may.inq,C.mayBook)]);
+  if(ty.may25.note) document.getElementById('note-total-yoy').textContent='* '+ty.may25.note;
   renderAnalysis('ana-total', s.analysis.total);
 
   /* 섹션 02 */
