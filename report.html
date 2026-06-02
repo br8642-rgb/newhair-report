@@ -457,20 +457,20 @@
   <div class="section-panel" id="section-05">
     <div class="section-header">
       <div class="section-tag">Section 05</div>
-      <div class="section-title">원장별 성사율</div>
+      <div class="section-title">원장님별 성사율</div>
       <div class="section-subtitle" id="s05-subtitle"></div>
     </div>
     <div class="kpi-table-wrap">
-      <div class="kpi-label">원장별 핵심 지표</div>
+      <div class="kpi-label">원장님별 핵심 지표</div>
       <div id="s05-kpi" class="ch-kpi-grid"></div>
     </div>
-    <div class="s02-section-label">원장별 체결률 비교</div>
+    <div class="s02-section-label">원장님별 체결률 비교</div>
     <div class="card" style="margin-bottom:16px;">
       <div class="card-title">전체 체결률 비교 <span style="font-size:11px;color:#6b6b6b;font-weight:400;">(4월 vs 5월, %)</span></div>
       <div class="chart-legend" id="lg-s05-rate"></div>
       <div class="chart-wrap" style="height:200px"><canvas id="chart-s05-rate"></canvas></div>
     </div>
-    <div class="s02-section-label">원장별 과목 상세</div>
+    <div class="s02-section-label">원장님별 과목 상세</div>
     <div class="s02-month-tabs">
       <button class="s02-month-tab active" data-month="apr" onclick="switchS05Month('apr')">4월</button>
       <button class="s02-month-tab" data-month="may" onclick="switchS05Month('may')">5월</button>
@@ -587,7 +587,7 @@ const ALL_REPORTS = [
     analysis:'총 예약 491→518건으로 <b>+5.5% 증가</b>했고 내원도 422→444건으로 <b>+5.2% 증가</b>.\n<b>내원전 취소율이 5.1%→2.7%로 크게 개선</b> — 예약 후 이탈이 줄어든 긍정적 신호.\n다만 당일취소·부도가 21·23건 → 31·29건으로 <b>당일취소 31건으로 증가</b>, 당일 응대 관리 필요.\n과목별로는 <b>탈모치료 67→94건(+40%) 급증</b>이 눈에 띄며, 검사는 191→184건으로 소폭 감소.',
   },
   section05: {
-    doctors: ['김진오Dr','박주성Dr','김진욱Dr','조준상Dr'],
+    doctors: ['김진오 원장님','박주성 원장님','김진욱 원장님','조준상 원장님'],
     cats: ['모발이식','헤어라인','SMP','탈모치료','기타이식'],
     apr: {
       total:    { visit:[99,74,12,4],  contract:[49,60,0,0],  rate:[49,81,0,0] },
@@ -601,7 +601,7 @@ const ALL_REPORTS = [
       contract: [[38,7,1,5,0],[0,0,20,71,0],[4,0,0,0,0],[3,0,0,0,0]],
       rate:     [[54,35,100,50,0],[0,0,74,86,0],[57,0,0,0,0],[38,0,0,0,0]],
     },
-    analysis: '<b>박주성Dr 체결률 81%→83%로 전 원장 중 최고</b>, 탈모치료 특화(55→83건 내원, 45→71건 체결).\n<b>김진오Dr는 모발이식 41%→54%로 크게 개선</b>됐으나 헤어라인 60%→35%로 급락 — 과목별 편차 주목.\n김진욱Dr 0%→50%로 체결 시작, 조준상Dr도 0%→38%로 개선 — 두 원장 모두 5월 상승 전환.\n송영준Dr는 해당 기간 내원 없음.',
+    analysis: '<b>박주성 원장님 체결률 81%→83%로 전 원장 중 최고</b>, 탈모치료 특화(55→83건 내원, 45→71건 체결).\n<b>김진오 원장님은 모발이식 41%→54%로 크게 개선</b>됐으나 헤어라인 60%→35%로 급락 — 과목별 편차 주목.\n김진욱 원장님 0%→50%로 체결 시작, 조준상 원장님도 0%→38%로 개선 — 두 원장 모두 5월 상승 전환.\n',
   },
   section04: {
     cats: ['모발이식','헤어라인','SMP','탈모치료','기타이식'],
@@ -687,7 +687,7 @@ function buildCatChannelData(s, month) {
 const NAV_SECTIONS = [
   {id:'00',label:'종합 현황'},{id:'01',label:'진료과목별 문의·예약'},
   {id:'02',label:'채널별 문의·예약'},{id:'03',label:'내원 현황'},
-  {id:'04',label:'성사 현황'},{id:'05',label:'원장별 성사율'},
+  {id:'04',label:'성사 현황'},{id:'05',label:'원장님별 성사율'},
   {id:'06',label:'직원별 성사율'},{id:'07',label:'유입경로 분석'},
   {id:'08',label:'매출 현황'},{id:'09',label:'종합 리뷰'},
 ];
@@ -1173,7 +1173,7 @@ let s05ActiveMonth = 'apr';
 
 function renderSection05(r) {
   const s = r.section05;
-  document.getElementById('s05-subtitle').textContent = r.meta.compare + ' · 원장별 내원·체결 성사 현황';
+  document.getElementById('s05-subtitle').textContent = r.meta.compare + ' · 원장님별 내원·체결 성사 현황';
 
   // ── 원장별 KPI 카드
   const drColors = ['#5C6BC0','#C62828','#2E7D32','#E65100'];
