@@ -1,0 +1,481 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>뉴헤어 클리닉 경영보고서</title>
+<link href="https://cdn.jsdelivr.net/gh/orioncactus/pretendard/dist/web/static/pretendard.css" rel="stylesheet">
+<link rel="stylesheet" href="assets/css/report.css">
+</head>
+<body>
+<nav id="top-nav"></nav>
+
+<div class="page-wrapper">
+
+  <!-- 보고서 선택 바 -->
+  <div class="report-bar">
+    <select id="report-select"></select>
+    <span class="type-badge" id="type-badge">월간</span>
+  </div>
+
+  <!-- 섹션 탭 -->
+  <div class="section-tabs" id="section-tabs"></div>
+
+  <!-- ══ 섹션 01 ══ -->
+  <div class="section-panel active" id="section-01">
+    <div class="section-header">
+      <div class="section-tag">Section 01</div>
+      <div class="section-title">진료과목별 문의·예약</div>
+      <div class="section-subtitle" id="s01-subtitle"></div>
+    </div>
+
+    <!-- KPI -->
+    <div class="kpi-grid" id="s01-kpi"></div>
+
+    <!-- 전화 -->
+    <div class="channel-section">
+      <div class="channel-header">
+        <div class="channel-name">전화</div>
+        <span class="badge badge-phone">신규 문의</span>
+      </div>
+      <div class="card">
+        <div class="card-title">문의·예약 상세 현황</div>
+        <div style="overflow-x:auto"><table class="data-table" id="tbl-phone"></table></div>
+      </div>
+      <div class="card">
+        <div class="card-title">4월 vs 5월 비교 그래프</div>
+        <div id="lg-phone" style="display:flex;flex-wrap:wrap;gap:14px;margin-bottom:12px;font-size:12px;color:#6b6b6b;"></div>
+        <div class="chart-wrap" style="height:260px"><canvas id="chart-phone" role="img" aria-label="전화 채널 문의예약 비교"></canvas></div>
+      </div>
+      <div class="card">
+        <div class="card-title">전년 동월 비교 (2025년)</div>
+        <div id="lg-phone-yoy" style="display:flex;flex-wrap:wrap;gap:14px;margin-bottom:12px;font-size:12px;color:#6b6b6b;"></div>
+        <div class="chart-wrap" style="height:220px"><canvas id="chart-phone-yoy" role="img" aria-label="전화 전년 비교"></canvas></div>
+        <p class="yoy-note" id="note-phone-yoy"></p>
+      </div>
+      <div class="analysis-box"><p id="ana-phone"></p></div>
+    </div>
+
+    <div class="section-divider"></div>
+
+    <!-- 네이버 -->
+    <div class="channel-section">
+      <div class="channel-header">
+        <div class="channel-name">네이버</div>
+        <span class="badge badge-naver">신규 문의</span>
+      </div>
+      <div class="card">
+        <div class="card-title">문의·예약 상세 현황</div>
+        <div style="overflow-x:auto"><table class="data-table" id="tbl-naver"></table></div>
+      </div>
+      <div class="card">
+        <div class="card-title">4월 vs 5월 비교 그래프</div>
+        <div id="lg-naver" style="display:flex;flex-wrap:wrap;gap:14px;margin-bottom:12px;font-size:12px;color:#6b6b6b;"></div>
+        <div class="chart-wrap" style="height:240px"><canvas id="chart-naver" role="img" aria-label="네이버 채널 문의예약 비교"></canvas></div>
+      </div>
+      <div class="card">
+        <div class="card-title">전년 동월 비교 (2025년)</div>
+        <div id="lg-naver-yoy" style="display:flex;flex-wrap:wrap;gap:14px;margin-bottom:12px;font-size:12px;color:#6b6b6b;"></div>
+        <div class="chart-wrap" style="height:220px"><canvas id="chart-naver-yoy" role="img" aria-label="네이버 전년 비교"></canvas></div>
+        <p class="yoy-note" id="note-naver-yoy"></p>
+      </div>
+      <div class="analysis-box"><p id="ana-naver"></p></div>
+    </div>
+
+    <div class="section-divider"></div>
+
+    <!-- 플친 -->
+    <div class="channel-section">
+      <div class="channel-header">
+        <div class="channel-name">플친</div>
+        <span class="badge badge-kakao">카카오채널</span>
+      </div>
+      <div class="card">
+        <div class="card-title">문의·예약 상세 현황 <span style="font-size:11px;color:#6b6b6b;font-weight:400;">(해외 포함)</span></div>
+        <div style="overflow-x:auto"><table class="data-table" id="tbl-kakao"></table></div>
+      </div>
+      <div class="card">
+        <div class="card-title">4월 vs 5월 비교 그래프</div>
+        <div id="lg-kakao" style="display:flex;flex-wrap:wrap;gap:14px;margin-bottom:12px;font-size:12px;color:#6b6b6b;"></div>
+        <div class="chart-wrap" style="height:240px"><canvas id="chart-kakao" role="img" aria-label="플친 채널 문의예약 비교"></canvas></div>
+      </div>
+      <div class="card">
+        <div class="card-title">해외 문의 현황</div>
+        <div id="lg-kakao-os" style="display:flex;flex-wrap:wrap;gap:14px;margin-bottom:12px;font-size:12px;color:#6b6b6b;"></div>
+        <div class="chart-wrap" style="height:180px"><canvas id="chart-kakao-os" role="img" aria-label="플친 해외 문의 비교"></canvas></div>
+      </div>
+      <div class="analysis-box"><p id="ana-kakao"></p></div>
+    </div>
+
+    <div class="section-divider"></div>
+
+    <!-- 게시판 -->
+    <div class="channel-section">
+      <div class="channel-header">
+        <div class="channel-name">게시판</div>
+        <span class="badge badge-board">온라인</span>
+      </div>
+      <div class="card">
+        <div class="card-title">문의·예약 상세 현황</div>
+        <div style="overflow-x:auto"><table class="data-table" id="tbl-board"></table></div>
+      </div>
+      <div class="card">
+        <div class="card-title">4월 vs 5월 비교 그래프</div>
+        <div id="lg-board" style="display:flex;flex-wrap:wrap;gap:14px;margin-bottom:12px;font-size:12px;color:#6b6b6b;"></div>
+        <div class="chart-wrap" style="height:240px"><canvas id="chart-board" role="img" aria-label="게시판 채널 문의예약 비교"></canvas></div>
+      </div>
+      <div class="analysis-box"><p id="ana-board"></p></div>
+    </div>
+
+    <div class="section-divider"></div>
+
+    <!-- 왓츠앱 -->
+    <div class="channel-section">
+      <div class="channel-header">
+        <div class="channel-name">왓츠앱</div>
+        <span class="badge badge-whatsapp">해외 채널</span>
+      </div>
+      <div class="card">
+        <div class="card-title">문의·예약 상세 현황 <span style="font-size:11px;color:#6b6b6b;font-weight:400;">(이식 수술 확정 포함)</span></div>
+        <div style="overflow-x:auto"><table class="data-table" id="tbl-whatsapp"></table></div>
+      </div>
+      <div class="card">
+        <div class="card-title">4월 vs 5월 비교 그래프</div>
+        <div id="lg-wa" style="display:flex;flex-wrap:wrap;gap:14px;margin-bottom:12px;font-size:12px;color:#6b6b6b;"></div>
+        <div class="chart-wrap" style="height:220px"><canvas id="chart-wa" role="img" aria-label="왓츠앱 채널 문의예약 비교"></canvas></div>
+      </div>
+      <div class="analysis-box"><p id="ana-whatsapp"></p></div>
+    </div>
+
+    <div class="section-divider"></div>
+
+    <!-- 전체합산 -->
+    <div class="channel-section">
+      <div class="channel-header">
+        <div class="channel-name">전체 합산</div>
+        <span class="badge badge-total">전화 + 플친 + 왓츠앱</span>
+      </div>
+      <p style="font-size:12px;color:#6b6b6b;margin-bottom:14px;">* 네이버·게시판은 전화 예약으로 처리되므로 전화 채널에 포함됩니다.</p>
+      <div class="card">
+        <div class="card-title">문의·예약 상세 현황</div>
+        <div style="overflow-x:auto"><table class="data-table" id="tbl-total"></table></div>
+      </div>
+      <div class="card">
+        <div class="card-title">진료과목별 4월 vs 5월 비교 그래프</div>
+        <div id="lg-total" style="display:flex;flex-wrap:wrap;gap:14px;margin-bottom:12px;font-size:12px;color:#6b6b6b;"></div>
+        <div class="chart-wrap" style="height:270px"><canvas id="chart-total" role="img" aria-label="전체 합산 문의예약 비교"></canvas></div>
+      </div>
+      <div class="card">
+        <div class="card-title">전년 동월 비교 (2025년)</div>
+        <div id="lg-total-yoy" style="display:flex;flex-wrap:wrap;gap:14px;margin-bottom:12px;font-size:12px;color:#6b6b6b;"></div>
+        <div class="chart-wrap" style="height:220px"><canvas id="chart-total-yoy" role="img" aria-label="전체 전년 비교"></canvas></div>
+        <p class="yoy-note" id="note-total-yoy"></p>
+      </div>
+      <div class="analysis-box"><p id="ana-total"></p></div>
+    </div>
+  </div>
+  <!-- /section-01 -->
+
+  <!-- 나머지 섹션 패널 (추후 추가) -->
+  <div class="section-panel" id="section-00"><div class="section-header"><div class="section-tag">Section 00</div><div class="section-title">전체 종합 현황</div><div class="section-subtitle">작성 예정</div></div></div>
+  <div class="section-panel" id="section-02"><div class="section-header"><div class="section-tag">Section 02</div><div class="section-title">채널별 문의·예약</div><div class="section-subtitle">작성 예정</div></div></div>
+  <div class="section-panel" id="section-03"><div class="section-header"><div class="section-tag">Section 03</div><div class="section-title">내원 현황</div><div class="section-subtitle">작성 예정</div></div></div>
+  <div class="section-panel" id="section-04"><div class="section-header"><div class="section-tag">Section 04</div><div class="section-title">성사 현황</div><div class="section-subtitle">작성 예정</div></div></div>
+  <div class="section-panel" id="section-05"><div class="section-header"><div class="section-tag">Section 05</div><div class="section-title">유입경로 분석</div><div class="section-subtitle">작성 예정</div></div></div>
+  <div class="section-panel" id="section-06"><div class="section-header"><div class="section-tag">Section 06</div><div class="section-title">원장별 성사율</div><div class="section-subtitle">작성 예정</div></div></div>
+  <div class="section-panel" id="section-07"><div class="section-header"><div class="section-tag">Section 07</div><div class="section-title">직원별 성사율</div><div class="section-subtitle">작성 예정</div></div></div>
+  <div class="section-panel" id="section-08"><div class="section-header"><div class="section-tag">Section 08</div><div class="section-title">매출 현황</div><div class="section-subtitle">작성 예정</div></div></div>
+  <div class="section-panel" id="section-09"><div class="section-header"><div class="section-tag">Section 09</div><div class="section-title">종합 리뷰 & 과제</div><div class="section-subtitle">작성 예정</div></div></div>
+
+</div>
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.4.1/chart.umd.js"></script>
+<script src="assets/js/nav.js"></script>
+<script>
+checkAuth();
+buildNav('01');
+buildSectionTabs('01');
+buildReportSelector();
+
+/* 색상 */
+const C = {
+  aprInq:  '#90CAF9', aprBook: '#F8BBD9',
+  mayInq:  '#1565C0', mayBook: '#C2185B',
+  yoy25:   '#B0BEC5',
+};
+
+/* 범례 */
+function legend(id, items) {
+  const el = document.getElementById(id);
+  if (!el) return;
+  el.innerHTML = items.map(([c,l]) =>
+    `<span style="display:flex;align-items:center;gap:4px;"><span style="width:10px;height:10px;border-radius:2px;background:${c};display:inline-block;"></span>${l}</span>`
+  ).join('');
+}
+
+/* 기본 차트 옵션 */
+const BASE = {
+  responsive: true, maintainAspectRatio: false,
+  plugins: { legend:{ display:false }, tooltip:{ callbacks:{ label: c=>' '+c.dataset.label+': '+c.parsed.y+'건' } } },
+  scales: {
+    x:{ grid:{ display:false }, ticks:{ font:{ size:11, family:'Pretendard' } } },
+    y:{ grid:{ color:'#f0ede8' }, ticks:{ font:{ size:11, family:'Pretendard' } } }
+  }
+};
+
+function mkDS(label, data, color) {
+  return { label, data, backgroundColor: color, borderRadius: 3 };
+}
+
+/* 테이블 생성 */
+function mkTable(id, headers, rows, totalRow) {
+  const tbl = document.getElementById(id);
+  if (!tbl) return;
+  tbl.innerHTML = '';
+  const thead = tbl.createTHead();
+  const hr = thead.insertRow();
+  headers.forEach(h => { const th = document.createElement('th'); th.textContent = h; hr.appendChild(th); });
+  const tbody = tbl.createTBody();
+  if (totalRow) {
+    const tr = tbody.insertRow();
+    tr.className = 'total-row';
+    totalRow.forEach((v,i) => {
+      const td = tr.insertCell();
+      td.innerHTML = v;
+      if (i === 0) td.style.textAlign = 'left';
+    });
+  }
+  rows.forEach(row => {
+    const tr = tbody.insertRow();
+    row.forEach((v,i) => {
+      const td = tr.insertCell();
+      td.innerHTML = v;
+      if (i === 0) td.style.textAlign = 'left';
+    });
+  });
+}
+
+function diff(a, b) {
+  const d = b - a;
+  if (d > 0) return `<span class="up">▲ ${d}</span>`;
+  if (d < 0) return `<span class="down">▼ ${Math.abs(d)}</span>`;
+  return `<span class="flat">— 0</span>`;
+}
+
+let charts = {};
+function destroyChart(id) { if (charts[id]) { charts[id].destroy(); delete charts[id]; } }
+
+function renderSection01(d) {
+  const s = d.section01;
+  document.getElementById('s01-subtitle').textContent = d.meta.compare + ' · 전화 / 네이버 / 플친 / 게시판 / 왓츠앱 · 엑셀 데이터 기준';
+
+  /* KPI */
+  const totalAprInq = s.total.total_apr.inq;
+  const totalMayInq = s.total.total_may.inq;
+  const totalAprBook = s.total.total_apr.book;
+  const totalMayBook = s.total.total_may.book;
+  document.getElementById('s01-kpi').innerHTML = `
+    <div class="kpi-card"><div class="kpi-label">4월 총 문의</div><div class="kpi-value">${totalAprInq}</div><div class="kpi-sub kpi-flat">전체 채널 합산</div></div>
+    <div class="kpi-card"><div class="kpi-label">5월 총 문의</div><div class="kpi-value">${totalMayInq}</div><div class="kpi-sub kpi-down">▼ ${totalAprInq-totalMayInq}건 (${((totalMayInq-totalAprInq)/totalAprInq*100).toFixed(1)}%)</div></div>
+    <div class="kpi-card"><div class="kpi-label">4월 총 예약</div><div class="kpi-value">${totalAprBook}</div><div class="kpi-sub kpi-flat">예약률 ${s.total.total_apr.rate}%</div></div>
+    <div class="kpi-card"><div class="kpi-label">5월 총 예약</div><div class="kpi-value">${totalMayBook}</div><div class="kpi-sub kpi-down">▼ ${totalAprBook-totalMayBook}건 (${((totalMayBook-totalAprBook)/totalAprBook*100).toFixed(1)}%)</div></div>
+    <div class="kpi-card"><div class="kpi-label">최다 문의 (4월)</div><div class="kpi-value" style="font-size:20px">검사</div><div class="kpi-sub kpi-flat">전체 합산 ${s.total.apr.inq[1]}건</div></div>
+    <div class="kpi-card"><div class="kpi-label">최다 문의 (5월)</div><div class="kpi-value" style="font-size:20px">검사</div><div class="kpi-sub kpi-flat">전체 합산 ${s.total.may.inq[1]}건</div></div>
+  `;
+
+  /* 전화 테이블 */
+  const pc = s.cats;
+  mkTable('tbl-phone',
+    ['구분','4월 문의','4월 예약','4월 예약률','5월 문의','5월 예약','5월 예약률','증감'],
+    pc.map((c,i) => [c, s.phone.apr.inq[i], s.phone.apr.book[i], s.phone.apr.rate[i]+'%',
+                        s.phone.may.inq[i], s.phone.may.book[i], s.phone.may.rate[i]+'%',
+                        diff(s.phone.apr.inq[i], s.phone.may.inq[i])]),
+    ['합계', s.phone.total_apr.inq, s.phone.total_apr.book, s.phone.total_apr.rate+'%',
+             s.phone.total_may.inq, s.phone.total_may.book, s.phone.total_may.rate+'%',
+             diff(s.phone.total_apr.inq, s.phone.total_may.inq)]
+  );
+  legend('lg-phone', [[C.aprInq,'4월 문의'],[C.aprBook,'4월 예약'],[C.mayInq,'5월 문의'],[C.mayBook,'5월 예약']]);
+  destroyChart('chart-phone');
+  charts['chart-phone'] = new Chart(document.getElementById('chart-phone'), {
+    type:'bar', data:{ labels:pc, datasets:[
+      mkDS('4월 문의', s.phone.apr.inq, C.aprInq), mkDS('4월 예약', s.phone.apr.book, C.aprBook),
+      mkDS('5월 문의', s.phone.may.inq, C.mayInq), mkDS('5월 예약', s.phone.may.book, C.mayBook),
+    ]}, options:{ ...BASE, scales:{ ...BASE.scales, y:{ ...BASE.scales.y, max:280 } } }
+  });
+
+  /* 전화 YoY */
+  const py = s.phone_yoy;
+  legend('lg-phone-yoy', [[C.aprInq,'25년 4월 문의'],[C.mayInq,'25년 5월 문의'],[C.aprBook,'26년 4월 문의'],[C.mayBook,'26년 5월 문의']]);
+  destroyChart('chart-phone-yoy');
+  charts['chart-phone-yoy'] = new Chart(document.getElementById('chart-phone-yoy'), {
+    type:'bar', data:{ labels:pc, datasets:[
+      mkDS('25년 4월 문의', py.apr25.inq, C.aprInq), mkDS('25년 5월 문의', py.may25.inq, C.mayInq),
+      mkDS('26년 4월 문의', s.phone.apr.inq, C.aprBook), mkDS('26년 5월 문의', s.phone.may.inq, C.mayBook),
+    ]}, options: BASE
+  });
+  if (py.may25.note) document.getElementById('note-phone-yoy').textContent = '* ' + py.may25.note;
+
+  document.getElementById('ana-phone').innerHTML = s.analysis.phone.replace(/\*\*(.*?)\*\*/g,'<em>$1</em>');
+
+  /* 네이버 테이블 */
+  const nc = s.naver.cats;
+  mkTable('tbl-naver',
+    ['구분','4월 문의','4월 부재','4월 예약','4월 예약률','5월 문의','5월 부재','5월 예약','5월 예약률','증감'],
+    nc.map((c,i) => [c, s.naver.apr.inq[i], s.naver.apr.absent[i]||'—', s.naver.apr.book[i], s.naver.apr.rate[i]+'%',
+                        s.naver.may.inq[i], s.naver.may.absent[i]||'—', s.naver.may.book[i], s.naver.may.rate[i]+'%',
+                        diff(s.naver.apr.inq[i], s.naver.may.inq[i])]),
+    ['합계', s.naver.total_apr.inq, s.naver.total_apr.absent, s.naver.total_apr.book, s.naver.total_apr.rate+'%',
+             s.naver.total_may.inq, s.naver.total_may.absent, s.naver.total_may.book, s.naver.total_may.rate+'%',
+             diff(s.naver.total_apr.inq, s.naver.total_may.inq)]
+  );
+  legend('lg-naver', [[C.aprInq,'4월 문의'],[C.aprBook,'4월 예약'],[C.mayInq,'5월 문의'],[C.mayBook,'5월 예약']]);
+  destroyChart('chart-naver');
+  charts['chart-naver'] = new Chart(document.getElementById('chart-naver'), {
+    type:'bar', data:{ labels:nc, datasets:[
+      mkDS('4월 문의', s.naver.apr.inq, C.aprInq), mkDS('4월 예약', s.naver.apr.book, C.aprBook),
+      mkDS('5월 문의', s.naver.may.inq, C.mayInq), mkDS('5월 예약', s.naver.may.book, C.mayBook),
+    ]}, options: BASE
+  });
+
+  /* 네이버 YoY */
+  const ny = s.naver_yoy;
+  legend('lg-naver-yoy', [[C.aprInq,'25년 4월 문의'],[C.mayInq,'25년 5월 문의'],[C.aprBook,'26년 4월 문의'],[C.mayBook,'26년 5월 문의']]);
+  destroyChart('chart-naver-yoy');
+  charts['chart-naver-yoy'] = new Chart(document.getElementById('chart-naver-yoy'), {
+    type:'bar', data:{ labels:nc, datasets:[
+      mkDS('25년 4월 문의', ny.apr25.inq, C.aprInq), mkDS('25년 5월 문의', ny.may25.inq, C.mayInq),
+      mkDS('26년 4월 문의', s.naver.apr.inq, C.aprBook), mkDS('26년 5월 문의', s.naver.may.inq, C.mayBook),
+    ]}, options: BASE
+  });
+  if (ny.may25.note) document.getElementById('note-naver-yoy').textContent = '* ' + ny.may25.note;
+
+  document.getElementById('ana-naver').textContent = s.analysis.naver;
+
+  /* 플친 테이블 */
+  const kc = s.kakao.cats;
+  mkTable('tbl-kakao',
+    ['구분','4월 문의','4월 예약','4월 예약률','4월 해외','5월 문의','5월 예약','5월 예약률','5월 해외','증감'],
+    kc.map((c,i) => [c, s.kakao.apr.inq[i], s.kakao.apr.book[i], s.kakao.apr.rate[i]+'%', s.kakao.apr.overseas[i]||'—',
+                        s.kakao.may.inq[i], s.kakao.may.book[i], s.kakao.may.rate[i]+'%', s.kakao.may.overseas[i]||'—',
+                        diff(s.kakao.apr.inq[i], s.kakao.may.inq[i])]),
+    ['합계', s.kakao.total_apr.inq, s.kakao.total_apr.book, s.kakao.total_apr.rate+'%', s.kakao.total_apr.overseas,
+             s.kakao.total_may.inq, s.kakao.total_may.book, s.kakao.total_may.rate+'%', s.kakao.total_may.overseas,
+             diff(s.kakao.total_apr.inq, s.kakao.total_may.inq)]
+  );
+  legend('lg-kakao', [[C.aprInq,'4월 문의'],[C.aprBook,'4월 예약'],[C.mayInq,'5월 문의'],[C.mayBook,'5월 예약']]);
+  destroyChart('chart-kakao');
+  charts['chart-kakao'] = new Chart(document.getElementById('chart-kakao'), {
+    type:'bar', data:{ labels:kc, datasets:[
+      mkDS('4월 문의', s.kakao.apr.inq, C.aprInq), mkDS('4월 예약', s.kakao.apr.book, C.aprBook),
+      mkDS('5월 문의', s.kakao.may.inq, C.mayInq), mkDS('5월 예약', s.kakao.may.book, C.mayBook),
+    ]}, options: BASE
+  });
+  const osLabels = kc.filter((_,i) => s.kakao.apr.overseas[i] > 0 || s.kakao.may.overseas[i] > 0);
+  const osApr = s.kakao.apr.overseas.filter(v => v > 0);
+  const osMay = s.kakao.may.overseas.filter((_,i) => s.kakao.apr.overseas[i] > 0 || s.kakao.may.overseas[i] > 0).filter((_,i) => osApr[i] !== undefined || _ > 0);
+  legend('lg-kakao-os', [[C.aprInq,'4월 해외'],[C.mayInq,'5월 해외']]);
+  destroyChart('chart-kakao-os');
+  charts['chart-kakao-os'] = new Chart(document.getElementById('chart-kakao-os'), {
+    type:'bar', data:{ labels: kc.filter((_,i) => s.kakao.apr.overseas[i]>0 || s.kakao.may.overseas[i]>0),
+      datasets:[
+        mkDS('4월 해외', s.kakao.apr.overseas.filter(v=>v>0), C.aprInq),
+        mkDS('5월 해외', s.kakao.may.overseas.filter((_,i)=>s.kakao.apr.overseas[i]>0||s.kakao.may.overseas[i]>0), C.mayInq),
+      ]}, options: BASE
+  });
+  document.getElementById('ana-kakao').textContent = s.analysis.kakao;
+
+  /* 게시판 테이블 */
+  const bc = s.board.cats;
+  mkTable('tbl-board',
+    ['구분','4월 문의','4월 부재','4월 예약','4월 예약률','5월 문의','5월 부재','5월 예약','5월 예약률','증감'],
+    bc.map((c,i) => [c, s.board.apr.inq[i], s.board.apr.absent[i]||'—', s.board.apr.book[i], s.board.apr.rate[i]+'%',
+                        s.board.may.inq[i], s.board.may.absent[i]||'—', s.board.may.book[i], s.board.may.rate[i]+'%',
+                        diff(s.board.apr.inq[i], s.board.may.inq[i])]),
+    ['합계', s.board.total_apr.inq, s.board.total_apr.absent, s.board.total_apr.book, s.board.total_apr.rate+'%',
+             s.board.total_may.inq, s.board.total_may.absent, s.board.total_may.book, s.board.total_may.rate+'%',
+             diff(s.board.total_apr.inq, s.board.total_may.inq)]
+  );
+  legend('lg-board', [[C.aprInq,'4월 문의'],[C.aprBook,'4월 예약'],[C.mayInq,'5월 문의'],[C.mayBook,'5월 예약']]);
+  destroyChart('chart-board');
+  charts['chart-board'] = new Chart(document.getElementById('chart-board'), {
+    type:'bar', data:{ labels:bc, datasets:[
+      mkDS('4월 문의', s.board.apr.inq, C.aprInq), mkDS('4월 예약', s.board.apr.book, C.aprBook),
+      mkDS('5월 문의', s.board.may.inq, C.mayInq), mkDS('5월 예약', s.board.may.book, C.mayBook),
+    ]}, options: BASE
+  });
+  document.getElementById('ana-board').textContent = s.analysis.board;
+
+  /* 왓츠앱 테이블 */
+  const wc = s.whatsapp.cats;
+  mkTable('tbl-whatsapp',
+    ['구분','4월 문의','4월 예약','4월 예약률','4월 이식수술','5월 문의','5월 예약','5월 예약률','5월 이식수술','증감'],
+    wc.map((c,i) => [c, s.whatsapp.apr.inq[i], s.whatsapp.apr.book[i], s.whatsapp.apr.rate[i]+'%', s.whatsapp.apr.surgery[i]||'—',
+                        s.whatsapp.may.inq[i], s.whatsapp.may.book[i], s.whatsapp.may.rate[i]+'%', s.whatsapp.may.surgery[i]||'—',
+                        diff(s.whatsapp.apr.inq[i], s.whatsapp.may.inq[i])]),
+    ['합계', s.whatsapp.total_apr.inq, s.whatsapp.total_apr.book, s.whatsapp.total_apr.rate+'%', '—',
+             s.whatsapp.total_may.inq, s.whatsapp.total_may.book, s.whatsapp.total_may.rate+'%', '—',
+             diff(s.whatsapp.total_apr.inq, s.whatsapp.total_may.inq)]
+  );
+  legend('lg-wa', [[C.aprInq,'4월 문의'],[C.aprBook,'4월 예약'],[C.mayInq,'5월 문의'],[C.mayBook,'5월 예약']]);
+  destroyChart('chart-wa');
+  charts['chart-wa'] = new Chart(document.getElementById('chart-wa'), {
+    type:'bar', data:{ labels:wc, datasets:[
+      mkDS('4월 문의', s.whatsapp.apr.inq, C.aprInq), mkDS('4월 예약', s.whatsapp.apr.book, C.aprBook),
+      mkDS('5월 문의', s.whatsapp.may.inq, C.mayInq), mkDS('5월 예약', s.whatsapp.may.book, C.mayBook),
+    ]}, options: BASE
+  });
+  document.getElementById('ana-whatsapp').textContent = s.analysis.whatsapp;
+
+  /* 전체합산 테이블 */
+  const tc = s.total.cats;
+  mkTable('tbl-total',
+    ['구분','4월 문의','4월 예약','4월 예약률','4월 해외','5월 문의','5월 예약','5월 예약률','5월 해외','증감'],
+    tc.map((c,i) => [c, s.total.apr.inq[i], s.total.apr.book[i], s.total.apr.rate[i]+'%', s.total.apr.overseas[i]||'—',
+                        s.total.may.inq[i], s.total.may.book[i], s.total.may.rate[i]+'%', s.total.may.overseas[i]||'—',
+                        diff(s.total.apr.inq[i], s.total.may.inq[i])]),
+    ['합계', s.total.total_apr.inq, s.total.total_apr.book, s.total.total_apr.rate+'%', s.total.total_apr.overseas,
+             s.total.total_may.inq, s.total.total_may.book, s.total.total_may.rate+'%', s.total.total_may.overseas,
+             diff(s.total.total_apr.inq, s.total.total_may.inq)]
+  );
+  legend('lg-total', [[C.aprInq,'4월 문의'],[C.aprBook,'4월 예약'],[C.mayInq,'5월 문의'],[C.mayBook,'5월 예약']]);
+  destroyChart('chart-total');
+  charts['chart-total'] = new Chart(document.getElementById('chart-total'), {
+    type:'bar', data:{ labels:tc, datasets:[
+      mkDS('4월 문의', s.total.apr.inq, C.aprInq), mkDS('4월 예약', s.total.apr.book, C.aprBook),
+      mkDS('5월 문의', s.total.may.inq, C.mayInq), mkDS('5월 예약', s.total.may.book, C.mayBook),
+    ]}, options:{ ...BASE, scales:{ ...BASE.scales, y:{ ...BASE.scales.y, max:300 } } }
+  });
+
+  /* 전체 YoY */
+  const ty = s.total_yoy;
+  legend('lg-total-yoy', [[C.aprInq,'25년 4월 문의'],[C.mayInq,'25년 5월 문의'],[C.aprBook,'26년 4월 문의'],[C.mayBook,'26년 5월 문의']]);
+  destroyChart('chart-total-yoy');
+  charts['chart-total-yoy'] = new Chart(document.getElementById('chart-total-yoy'), {
+    type:'bar', data:{ labels:tc, datasets:[
+      mkDS('25년 4월 문의', ty.apr25.inq, C.aprInq), mkDS('25년 5월 문의', ty.may25.inq, C.mayInq),
+      mkDS('26년 4월 문의', s.total.apr.inq, C.aprBook), mkDS('26년 5월 문의', s.total.may.inq, C.mayBook),
+    ]}, options: BASE
+  });
+  if (ty.may25.note) document.getElementById('note-total-yoy').textContent = '* ' + ty.may25.note;
+
+  document.getElementById('ana-total').textContent = s.analysis.total;
+}
+
+/* 보고서 로드 */
+function loadReport(file) {
+  const existing = document.getElementById('dynamic-data');
+  if (existing) existing.remove();
+  const s = document.createElement('script');
+  s.id = 'dynamic-data';
+  s.src = file;
+  s.onload = () => {
+    document.getElementById('type-badge').textContent = REPORT_META.type === 'monthly' ? '월간' : '주간';
+    renderSection01(REPORT_DATA);
+  };
+  document.body.appendChild(s);
+}
+
+loadReport('data/2026-05-monthly.js');
+</script>
+</body>
+</html>
