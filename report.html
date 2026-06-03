@@ -427,6 +427,11 @@
       <div class="section-subtitle" id="s07-subtitle"></div>
     </div>
 
+    <!-- 중복 선택 안내 -->
+    <div style="background:#FFF8E1;border:1px solid #FFE082;border-radius:8px;padding:10px 16px;margin-bottom:20px;font-size:12px;color:#6D4C00;line-height:1.7;">
+      ⚠️ <b>중복 응답 데이터</b> — 유입경로는 고객 1인이 복수 선택 가능합니다. 따라서 경로별 응답수 합계는 실제 내원수(Section 03)보다 높으며, 경로 간 단순 합산은 실제 내원수를 의미하지 않습니다. 전환율은 경로별 상담수 기준으로 산출됩니다.
+    </div>
+
     <!-- KPI -->
     <div class="kpi-table-wrap">
       <div class="kpi-label">핵심 지표 요약</div>
@@ -434,10 +439,10 @@
     </div>
 
     <!-- 상위 경로 비중 도넛 + 막대 -->
-    <div class="s02-section-label">유입경로 비중 TOP 10</div>
+    <div class="s02-section-label">유입경로 비중 TOP 10 <span style="font-size:11px;font-weight:400;color:#aaa;letter-spacing:0;">(응답수 기준, 중복 포함)</span></div>
     <div class="s02-charts-grid" style="grid-template-columns:1fr 1.6fr;">
       <div class="card">
-        <div class="card-title">비중 분포 <span style="font-size:11px;color:#6b6b6b;font-weight:400;" id="s07-donut-label"></span></div>
+        <div class="card-title">응답수 비중 분포 <span style="font-size:11px;color:#6b6b6b;font-weight:400;" id="s07-donut-label"></span></div>
         <div class="s02-month-tabs" style="margin-bottom:12px;">
           <button class="s02-month-tab active" data-month="apr" onclick="switchS07Month('apr')">4월</button>
           <button class="s02-month-tab" data-month="may" onclick="switchS07Month('may')">5월</button>
@@ -445,7 +450,7 @@
         <div class="chart-wrap" style="height:260px"><canvas id="chart-s07-donut"></canvas></div>
       </div>
       <div class="card">
-        <div class="card-title">4월 vs 5월 상위경로 내원수 비교</div>
+        <div class="card-title">4월 vs 5월 상위경로 응답수 비교 <span style="font-size:11px;color:#6b6b6b;font-weight:400;">(중복 포함)</span></div>
         <div class="ch-legend-row" id="lg-s07-bar"></div>
         <div class="chart-wrap" style="height:300px"><canvas id="chart-s07-bar"></canvas></div>
       </div>
@@ -454,7 +459,7 @@
     <!-- 전환율 비교 -->
     <div class="s02-section-label">유입경로별 성사 전환율</div>
     <div class="card" style="margin-bottom:16px;">
-      <div class="card-title">전환율 비교 <span style="font-size:11px;color:#6b6b6b;font-weight:400;">(4월 vs 5월, % — 상담수 5건 이상 경로)</span></div>
+      <div class="card-title">전환율 비교 <span style="font-size:11px;color:#6b6b6b;font-weight:400;">(4월 vs 5월, % — 경로별 상담수 기준, 5건 이상 경로)</span></div>
       <div class="ch-legend-row" id="lg-s07-rate"></div>
       <div class="chart-wrap" style="height:260px"><canvas id="chart-s07-rate"></canvas></div>
     </div>
@@ -484,7 +489,7 @@
     <!-- 전체 상세 테이블 -->
     <div class="s02-section-label">전체 경로 상세</div>
     <div class="card">
-      <div class="card-title">유입경로별 내원수 · 전환율 전체</div>
+      <div class="card-title">유입경로별 응답수 · 전환율 전체 <span style="font-size:11px;color:#6b6b6b;font-weight:400;">(응답수 중복 포함)</span></div>
       <button class="table-toggle-btn" onclick="toggleTable(this)"><span class="toggle-arrow">▼</span> 표 펼치기</button>
       <div class="table-collapsible"><div style="overflow-x:auto"><table class="data-table" id="tbl-s07"></table></div></div>
     </div>
@@ -756,7 +761,7 @@ const ALL_REPORTS = [
         rate:     [44,23,18,35,42,50,50,20,0,0,33,0,43,40,88,17,100,50,50,0,38,50,40,29,0,0,0],
       },
     },
-    analysis: '유입 총수 589→666건으로 <b>+13.1% 성장</b>. 네이버검색(20~24%)·유튜브(13~14%)가 양대 디지털 채널로 자리 잡음.\n<b>AI 유입 24→34건(+42%) 급증</b>, 전환율도 23%→50%로 동반 상승 — 신규 고성장 채널로 주목.\n<b>기존고객 38→69건(+82%) 폭증</b>, 전환율 43% 유지 — 재방문·리텐션 전략 효과 뚜렷.\n<b>DB마케팅(외부DB) 9→39건으로 급증</b>, 탈모치료 유입 집중 (8→32건) — ROI 검토 필요.\n네이버지도 전환율 10%→18%로 개선됐으나 여전히 최저 수준 — 지도 리뷰·정보 최적화 검토.\n<b>대다모 전환율 44%→50%로 최상위권</b> — 커뮤니티 채널 중 가장 높은 전환율 유지.',
+    analysis: '유입 응답수 589→666건으로 <b>+13.1% 증가</b> (중복 선택 포함, 실제 내원수와 상이). 네이버검색(20~24%)·유튜브(13~14%)가 양대 디지털 채널.\n<b>AI 응답 24→34건(+42%) 급증</b>, 전환율도 23%→50%로 동반 상승 — 신규 고성장 채널로 주목.\n<b>기존고객 38→69건(+82%) 폭증</b>, 전환율 43% 유지 — 재방문·리텐션 전략 효과 뚜렷.\n<b>DB마케팅(외부DB 포함) 응답 9→39건 급증</b>, 탈모치료 유입 집중 — ROI 검토 필요.\n네이버지도 전환율 10%→18%로 개선됐으나 여전히 최저권 — 지도 리뷰·정보 최적화 검토.\n<b>대다모 전환율 44%→50%로 커뮤니티 채널 중 최상위</b> — 이식 특화 커뮤니티 유입 품질 높음.',
   },
   section08: {
     cats: ['모발이식','헤어라인','SMP','HairLap','키오머','기타'],
@@ -1526,7 +1531,7 @@ const S07_COLORS = [
 
 function renderSection07(r) {
   const s = r.section07;
-  document.getElementById('s07-subtitle').textContent = r.meta.compare + ' · 유입경로별 내원 현황 및 성사 전환율';
+  document.getElementById('s07-subtitle').textContent = r.meta.compare + ' · 유입경로별 응답수 및 성사 전환율 (중복 선택 포함)';
 
   // ── KPI
   const aprTotal = s.apr.total, mayTotal = s.may.total;
@@ -1535,10 +1540,10 @@ function renderSection07(r) {
   const aprRate = Math.round(aprConv / s.apr.conv.consult.reduce((a,b)=>a+b,0) * 100);
   const mayRate = Math.round(mayConv / s.may.conv.consult.reduce((a,b)=>a+b,0) * 100);
 
-  function kpiItem(label, av, mv, suffix) {
+  function kpiItem(label, av, mv, suffix, note) {
     const d = mv-av, cls = d>0?'up':d<0?'down':'flat';
     const arrow = d>0?`▲ ${Math.abs(d)}`:d<0?`▼ ${Math.abs(d)}`:'— 0';
-    return `<div class="kpi-item"><div class="kpi-item-label">${label}</div><div class="kpi-row">
+    return `<div class="kpi-item"><div class="kpi-item-label">${label}${note?`<span style="font-size:10px;color:#aaa;font-weight:400;margin-left:4px;">${note}</span>`:''}</div><div class="kpi-row">
       <div class="kpi-month"><span class="kpi-month-label">4월</span><span class="kpi-month-val">${av}${suffix}</span></div>
       <span class="kpi-arrow">→</span>
       <div class="kpi-month"><span class="kpi-month-label">5월</span><span class="kpi-month-val">${mv}${suffix}</span></div>
@@ -1546,20 +1551,20 @@ function renderSection07(r) {
     </div></div>`;
   }
   document.getElementById('s07-kpi').innerHTML =
-    kpiItem('총 내원수',   aprTotal, mayTotal, '') +
-    kpiItem('성사 확정수', aprConv,  mayConv,  '') +
-    kpiItem('전체 전환율', aprRate,  mayRate,  '%');
+    kpiItem('유입 응답수', aprTotal, mayTotal, '', '중복포함') +
+    kpiItem('성사 확정수', aprConv,  mayConv,  '', '수술+치료') +
+    kpiItem('전체 전환율', aprRate,  mayRate,  '%', '상담수 기준');
 
   // ── 도넛 차트 초기 렌더
   renderS07Donut(s, s07ActiveMonth);
 
-  // ── 상위경로 내원 비교 막대
+  // ── 상위경로 응답수 비교 막대
   const top10 = s07Top(s, 10);
   const topLabels = top10.map(r => r.name);
-  chLegend('lg-s07-bar', [[C.aprInq,'4월'],[C.mayInq,'5월']]);
+  chLegend('lg-s07-bar', [[C.aprInq,'4월 응답수'],[C.mayInq,'5월 응답수']]);
   mkChart('chart-s07-bar', topLabels,
-    [mkDS('4월', top10.map(r=>s.apr.count[r.i]), C.aprInq),
-     mkDS('5월', top10.map(r=>s.may.count[r.i]), C.mayInq)]);
+    [mkDS('4월 응답수', top10.map(r=>s.apr.count[r.i]), C.aprInq),
+     mkDS('5월 응답수', top10.map(r=>s.may.count[r.i]), C.mayInq)]);
 
   // ── 전환율 비교 (상담수 5건 이상 경로)
   const convRoutes = s.routes.map((name,i)=>({
@@ -1613,8 +1618,8 @@ function renderSection07(r) {
   ])];
 
   mkTable('tbl-s07',
-    ['유입경로','4월 내원','4월 상담','4월 수술','4월 치료','4월 전환율','5월 내원','5월 상담','5월 수술','5월 치료','5월 전환율'],
-    ['합계',
+    ['유입경로','4월 응답수','4월 상담수','4월 수술','4월 치료','4월 전환율','5월 응답수','5월 상담수','5월 수술','5월 치료','5월 전환율'],
+    [`합계 <span style="font-size:10px;color:#aaa;font-weight:400;">(중복포함)</span>`,
       aprTotal, s.apr.conv.consult.reduce((a,b)=>a+b,0),
       s.apr.conv.surgery.reduce((a,b)=>a+b,0), s.apr.conv.treat.reduce((a,b)=>a+b,0), aprRate+'%',
       mayTotal, s.may.conv.consult.reduce((a,b)=>a+b,0),
