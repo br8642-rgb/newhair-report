@@ -8,22 +8,16 @@
 <link rel="stylesheet" href="assets/css/report.css">
 <style>
 /* ── 표 열 배경색 ── */
-/* 4월 문의 열 — 연하늘 */
 .data-table th.col-apr-inq,
 .data-table td.col-apr-inq { background: #EFF6FF; }
-/* 4월 예약 열 — 연핑크 */
 .data-table th.col-apr-book,
 .data-table td.col-apr-book { background: #FFF0F0; }
-/* 5월 문의 열 — 진하늘 (살짝) */
 .data-table th.col-may-inq,
 .data-table td.col-may-inq { background: #DBEAFE; }
-/* 5월 예약 열 — 진핑크 (살짝) */
 .data-table th.col-may-book,
 .data-table td.col-may-book { background: #FFE4E4; }
-/* 예약률 열 — 중립 회색 */
 .data-table th.col-rate,
 .data-table td.col-rate { background: #F8F9FA; color: #555; }
-/* total-row는 조금 더 진하게 */
 .data-table tr.total-row td.col-apr-inq { background: #DBEAFE; }
 .data-table tr.total-row td.col-apr-book { background: #FFE4E4; }
 .data-table tr.total-row td.col-may-inq  { background: #BFDBFE; }
@@ -32,19 +26,11 @@
 
 /* ── 표 접기/펼치기 ── */
 .table-toggle-btn {
-  display: inline-flex;
-  align-items: center;
-  gap: 6px;
-  font-size: 12px;
-  font-weight: 600;
-  color: #1565C0;
-  background: #E3F2FD;
-  border: none;
-  border-radius: 6px;
-  padding: 5px 12px;
-  cursor: pointer;
-  font-family: Pretendard, sans-serif;
-  margin-bottom: 10px;
+  display: inline-flex; align-items: center; gap: 6px;
+  font-size: 12px; font-weight: 600; color: #1565C0;
+  background: #E3F2FD; border: none; border-radius: 6px;
+  padding: 5px 12px; cursor: pointer;
+  font-family: Pretendard, sans-serif; margin-bottom: 10px;
   transition: background .15s;
 }
 .table-toggle-btn:hover { background: #BBDEFB; }
@@ -55,201 +41,126 @@
 
 /* ── 섹션 02 전용 스타일 ── */
 .ch-kpi-grid {
-  display: grid;
-  grid-template-columns: repeat(5, 1fr);
-  gap: 12px;
-  margin-bottom: 28px;
+  display: grid; grid-template-columns: repeat(5, 1fr);
+  gap: 12px; margin-bottom: 28px;
 }
 @media(max-width:900px){ .ch-kpi-grid{ grid-template-columns: repeat(3,1fr); } }
 @media(max-width:600px){ .ch-kpi-grid{ grid-template-columns: repeat(2,1fr); } }
 
 .ch-kpi-card {
-  background: #fff;
-  border: 1px solid #e8eaed;
-  border-radius: 12px;
-  padding: 16px 14px 14px;
-  box-shadow: 0 1px 4px rgba(0,0,0,.05);
+  background: #fff; border: 1px solid #e8eaed; border-radius: 12px;
+  padding: 16px 14px 14px; box-shadow: 0 1px 4px rgba(0,0,0,.05);
 }
 .ch-kpi-card .ck-name {
-  font-size: 16px;
-  font-weight: 800;
-  letter-spacing: -.01em;
-  margin-bottom: 12px;
-  display: flex;
-  align-items: center;
-  gap: 7px;
+  font-size: 16px; font-weight: 800; letter-spacing: -.01em;
+  margin-bottom: 12px; display: flex; align-items: center; gap: 7px;
 }
-.ch-kpi-card .ck-emoji {
-  font-size: 18px;
-  line-height: 1;
-}
-.ch-kpi-card .ck-dot {
-  width: 8px; height: 8px; border-radius: 50%; display: inline-block;
-}
+.ch-kpi-card .ck-emoji { font-size: 18px; line-height: 1; }
+.ch-kpi-card .ck-dot { width: 8px; height: 8px; border-radius: 50%; display: inline-block; }
 .ch-kpi-card .ck-row {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  font-size: 11px;
-  color: #6b6b6b;
-  margin-bottom: 4px;
+  display: flex; justify-content: space-between; align-items: center;
+  font-size: 11px; color: #6b6b6b; margin-bottom: 4px;
 }
 .ch-kpi-card .ck-row .ck-vals {
-  display: flex;
-  align-items: center;
-  gap: 5px;
-  font-size: 13px;
-  color: #1a1a1a;
-  font-weight: 600;
+  display: flex; align-items: center; gap: 5px;
+  font-size: 13px; color: #1a1a1a; font-weight: 600;
 }
 .ch-kpi-card .ck-vals .arrow { color: #aaa; font-size: 11px; }
 .ch-kpi-card .ck-diff {
-  font-size: 11px;
-  font-weight: 700;
-  padding: 1px 5px;
-  border-radius: 4px;
+  font-size: 11px; font-weight: 700; padding: 1px 5px; border-radius: 4px;
 }
 .ch-kpi-card .ck-diff.up   { color: #C62828; background: #FFEBEE; }
 .ch-kpi-card .ck-diff.down { color: #1565C0; background: #E3F2FD; }
 .ch-kpi-card .ck-diff.flat { color: #888;    background: #f0f0f0; }
 .ch-kpi-card .ck-divider { border: none; border-top: 1px solid #f0f0f0; margin: 8px 0; }
 
-/* 채널 색상 */
 .dot-phone    { background: #5C6BC0; }
 .dot-kakao    { background: #F9A825; }
 .dot-naver    { background: #2E7D32; }
 .dot-board    { background: #00838F; }
 .dot-whatsapp { background: #2E7D32; filter: brightness(1.4); }
 
-/* 섹션 02 그래프 카드 */
 .s02-charts-grid {
-  display: grid;
-  grid-template-columns: 1fr 1fr;
-  gap: 16px;
-  margin-bottom: 28px;
+  display: grid; grid-template-columns: 1fr 1fr; gap: 16px; margin-bottom: 28px;
 }
 @media(max-width:700px){ .s02-charts-grid{ grid-template-columns:1fr; } }
 
-/* 과목별 채널 분포 */
 .cat-channel-grid {
-  display: grid;
-  grid-template-columns: repeat(3, 1fr);
-  gap: 16px;
-  margin-bottom: 28px;
+  display: grid; grid-template-columns: repeat(3, 1fr); gap: 16px; margin-bottom: 28px;
 }
 @media(max-width:900px){ .cat-channel-grid{ grid-template-columns: repeat(2,1fr); } }
 @media(max-width:550px){ .cat-channel-grid{ grid-template-columns: 1fr; } }
 
 .cat-channel-card {
-  background: #fff;
-  border: 1px solid #e8eaed;
-  border-radius: 12px;
-  padding: 16px;
-  box-shadow: 0 1px 4px rgba(0,0,0,.05);
+  background: #fff; border: 1px solid #e8eaed; border-radius: 12px;
+  padding: 16px; box-shadow: 0 1px 4px rgba(0,0,0,.05);
 }
 .cat-channel-card .ccc-title {
-  font-size: 13px;
-  font-weight: 700;
-  color: #1a1a1a;
-  margin-bottom: 14px;
-  display: flex;
-  align-items: center;
-  gap: 8px;
+  font-size: 13px; font-weight: 700; color: #1a1a1a;
+  margin-bottom: 14px; display: flex; align-items: center; gap: 8px;
 }
 .cat-channel-card .ccc-badge {
-  font-size: 10px;
-  font-weight: 600;
-  padding: 2px 7px;
-  border-radius: 20px;
-  background: #f0f0f0;
-  color: #555;
+  font-size: 10px; font-weight: 600; padding: 2px 7px;
+  border-radius: 20px; background: #f0f0f0; color: #555;
 }
 
-/* 가로 bar */
 .hbar-wrap { display: flex; flex-direction: column; gap: 7px; }
 .hbar-item { }
-.hbar-label {
-  display: flex;
-  justify-content: space-between;
-  font-size: 11px;
-  color: #555;
-  margin-bottom: 3px;
-}
+.hbar-label { display: flex; justify-content: space-between; font-size: 11px; color: #555; margin-bottom: 3px; }
 .hbar-label .hbl-ch { font-weight: 600; }
 .hbar-label .hbl-num { color: #1a1a1a; font-weight: 700; }
-.hbar-track {
-  height: 7px;
-  background: #f0f0f0;
-  border-radius: 4px;
-  overflow: hidden;
-}
-.hbar-fill {
-  height: 100%;
-  border-radius: 4px;
-  transition: width .6s ease;
-}
+.hbar-track { height: 7px; background: #f0f0f0; border-radius: 4px; overflow: hidden; }
+.hbar-fill { height: 100%; border-radius: 4px; transition: width .6s ease; }
 
-/* 월 전환 탭 */
-.s02-month-tabs {
-  display: flex;
-  gap: 8px;
-  margin-bottom: 20px;
-}
+.s02-month-tabs { display: flex; gap: 8px; margin-bottom: 20px; }
 .s02-month-tab {
-  padding: 6px 18px;
-  border-radius: 20px;
-  font-size: 13px;
-  font-weight: 600;
-  cursor: pointer;
-  border: 1.5px solid #ddd;
-  background: #fff;
-  color: #888;
-  transition: all .2s;
-  font-family: Pretendard, sans-serif;
+  padding: 6px 18px; border-radius: 20px; font-size: 13px; font-weight: 600;
+  cursor: pointer; border: 1.5px solid #ddd; background: #fff; color: #888;
+  transition: all .2s; font-family: Pretendard, sans-serif;
 }
-.s02-month-tab.active {
-  background: #1565C0;
-  border-color: #1565C0;
-  color: #fff;
-}
+.s02-month-tab.active { background: #1565C0; border-color: #1565C0; color: #fff; }
 
 .s02-section-label {
-  font-size: 12px;
-  font-weight: 700;
-  letter-spacing: .08em;
-  color: #888;
-  text-transform: uppercase;
-  margin-bottom: 12px;
-  margin-top: 28px;
+  font-size: 12px; font-weight: 700; letter-spacing: .08em; color: #888;
+  text-transform: uppercase; margin-bottom: 12px; margin-top: 28px;
 }
 
-/* 채널 비교 그래프 범례 */
-.ch-legend-row {
-  display: flex;
-  flex-wrap: wrap;
-  gap: 10px;
-  margin-bottom: 8px;
+.ch-legend-row { display: flex; flex-wrap: wrap; gap: 10px; margin-bottom: 8px; }
+.ch-legend-item { display: flex; align-items: center; gap: 5px; font-size: 12px; color: #555; }
+.ch-legend-dot { width: 10px; height: 10px; border-radius: 50%; }
+
+/* ══ Section 06 전용 ══ */
+.s06-staff-grid {
+  display: grid; grid-template-columns: repeat(3, 1fr); gap: 16px; margin-bottom: 28px;
 }
-.ch-legend-item {
-  display: flex;
-  align-items: center;
-  gap: 5px;
-  font-size: 12px;
-  color: #555;
+@media(max-width:900px){ .s06-staff-grid{ grid-template-columns: repeat(2,1fr); } }
+@media(max-width:550px){ .s06-staff-grid{ grid-template-columns: 1fr; } }
+
+.s06-rank-badge {
+  display: inline-flex; align-items: center; justify-content: center;
+  width: 22px; height: 22px; border-radius: 50%; font-size: 11px; font-weight: 800;
+  flex-shrink: 0;
 }
-.ch-legend-dot {
-  width: 10px; height: 10px; border-radius: 50%;
+.s06-rank-1 { background: #FFD700; color: #7a5c00; }
+.s06-rank-2 { background: #E0E0E0; color: #555; }
+.s06-rank-3 { background: #FFCC80; color: #7a3c00; }
+.s06-rank-other { background: #F5F5F5; color: #888; }
+
+.s06-rate-pill {
+  display: inline-block; padding: 2px 8px; border-radius: 20px;
+  font-size: 12px; font-weight: 700;
 }
+.s06-rate-up   { background: #FFEBEE; color: #C62828; }
+.s06-rate-down { background: #E3F2FD; color: #1565C0; }
+.s06-rate-flat { background: #f0f0f0; color: #888; }
 </style>
 </head>
 <body>
 
-<!-- 상단 고정 네비 -->
 <nav id="top-nav"></nav>
 
 <div class="page-wrapper">
 
-  <!-- 대시보드 헤더 -->
   <div class="dash-header">
     <div class="dh-period">
       <span class="dh-period-badge" id="dh-period"></span>
@@ -259,7 +170,6 @@
     <div class="dh-desc">문의·예약·내원·성사 현황을 채널별·과목별로 정리한 경영 보고서입니다.</div>
   </div>
 
-  <!-- 보고서 선택 -->
   <div class="report-bar">
     <select id="report-select"></select>
   </div>
@@ -271,68 +181,54 @@
       <div class="section-title">진료과목별 문의·예약</div>
       <div class="section-subtitle" id="s01-subtitle"></div>
     </div>
-
-    <!-- KPI -->
     <div class="kpi-table-wrap">
       <div class="kpi-label">핵심 지표 요약</div>
       <div class="kpi-compare" id="s01-kpi"></div>
     </div>
-
-    <!-- 전화 -->
     <div class="channel-section">
       <div class="channel-header"><div class="channel-name">전화</div><span class="badge badge-phone">신규 문의</span></div>
       <div class="card"><div class="card-title">문의·예약 상세 현황</div><button class="table-toggle-btn" onclick="toggleTable(this)"><span class="toggle-arrow">▼</span> 표 펼치기</button><div class="table-collapsible"><div style="overflow-x:auto"><table class="data-table" id="tbl-phone"></table></div></div></div>
-      <div class="card"><div class="card-title">4월 vs 5월 비교 그래프</div><div class="chart-legend" id="lg-phone"></div><div class="chart-wrap" style="height:250px"><canvas id="chart-phone" role="img" aria-label="전화 문의예약 비교"></canvas></div></div>
-      <div class="card"><div class="card-title">전년 동월 비교 (2025년)</div><div class="chart-legend" id="lg-phone-yoy"></div><div class="chart-wrap" style="height:210px"><canvas id="chart-phone-yoy" role="img" aria-label="전화 전년 비교"></canvas></div><p class="yoy-note" id="note-phone-yoy"></p></div>
+      <div class="card"><div class="card-title">4월 vs 5월 비교 그래프</div><div class="chart-legend" id="lg-phone"></div><div class="chart-wrap" style="height:250px"><canvas id="chart-phone"></canvas></div></div>
+      <div class="card"><div class="card-title">전년 동월 비교 (2025년)</div><div class="chart-legend" id="lg-phone-yoy"></div><div class="chart-wrap" style="height:210px"><canvas id="chart-phone-yoy"></canvas></div><p class="yoy-note" id="note-phone-yoy"></p></div>
       <div class="analysis-box" id="ana-box-phone"><p id="ana-phone"></p></div>
     </div>
     <div class="section-divider"></div>
-
-    <!-- 네이버 -->
     <div class="channel-section">
       <div class="channel-header"><div class="channel-name">네이버</div><span class="badge badge-naver">신규 문의</span></div>
       <div class="card"><div class="card-title">문의·예약 상세 현황</div><button class="table-toggle-btn" onclick="toggleTable(this)"><span class="toggle-arrow">▼</span> 표 펼치기</button><div class="table-collapsible"><div style="overflow-x:auto"><table class="data-table" id="tbl-naver"></table></div></div></div>
-      <div class="card"><div class="card-title">4월 vs 5월 비교 그래프</div><div class="chart-legend" id="lg-naver"></div><div class="chart-wrap" style="height:230px"><canvas id="chart-naver" role="img" aria-label="네이버 문의예약 비교"></canvas></div></div>
-      <div class="card"><div class="card-title">전년 동월 비교 (2025년)</div><div class="chart-legend" id="lg-naver-yoy"></div><div class="chart-wrap" style="height:210px"><canvas id="chart-naver-yoy" role="img" aria-label="네이버 전년 비교"></canvas></div><p class="yoy-note" id="note-naver-yoy"></p></div>
+      <div class="card"><div class="card-title">4월 vs 5월 비교 그래프</div><div class="chart-legend" id="lg-naver"></div><div class="chart-wrap" style="height:230px"><canvas id="chart-naver"></canvas></div></div>
+      <div class="card"><div class="card-title">전년 동월 비교 (2025년)</div><div class="chart-legend" id="lg-naver-yoy"></div><div class="chart-wrap" style="height:210px"><canvas id="chart-naver-yoy"></canvas></div><p class="yoy-note" id="note-naver-yoy"></p></div>
       <div class="analysis-box" id="ana-box-naver"><p id="ana-naver"></p></div>
     </div>
     <div class="section-divider"></div>
-
-    <!-- 플친 -->
     <div class="channel-section">
       <div class="channel-header"><div class="channel-name">플친</div><span class="badge badge-kakao">카카오채널</span></div>
       <div class="card"><div class="card-title">문의·예약 상세 현황 <span style="font-size:11px;color:#6b6b6b;font-weight:400;">(해외 포함)</span></div><button class="table-toggle-btn" onclick="toggleTable(this)"><span class="toggle-arrow">▼</span> 표 펼치기</button><div class="table-collapsible"><div style="overflow-x:auto"><table class="data-table" id="tbl-kakao"></table></div></div></div>
-      <div class="card"><div class="card-title">4월 vs 5월 비교 그래프</div><div class="chart-legend" id="lg-kakao"></div><div class="chart-wrap" style="height:230px"><canvas id="chart-kakao" role="img" aria-label="플친 문의예약 비교"></canvas></div></div>
-      <div class="card"><div class="card-title">해외 문의 현황</div><div class="chart-legend" id="lg-kakao-os"></div><div class="chart-wrap" style="height:170px"><canvas id="chart-kakao-os" role="img" aria-label="플친 해외 비교"></canvas></div></div>
+      <div class="card"><div class="card-title">4월 vs 5월 비교 그래프</div><div class="chart-legend" id="lg-kakao"></div><div class="chart-wrap" style="height:230px"><canvas id="chart-kakao"></canvas></div></div>
+      <div class="card"><div class="card-title">해외 문의 현황</div><div class="chart-legend" id="lg-kakao-os"></div><div class="chart-wrap" style="height:170px"><canvas id="chart-kakao-os"></canvas></div></div>
       <div class="analysis-box" id="ana-box-kakao"><p id="ana-kakao"></p></div>
     </div>
     <div class="section-divider"></div>
-
-    <!-- 게시판 -->
     <div class="channel-section">
       <div class="channel-header"><div class="channel-name">게시판</div><span class="badge badge-board">온라인</span></div>
       <div class="card"><div class="card-title">문의·예약 상세 현황</div><button class="table-toggle-btn" onclick="toggleTable(this)"><span class="toggle-arrow">▼</span> 표 펼치기</button><div class="table-collapsible"><div style="overflow-x:auto"><table class="data-table" id="tbl-board"></table></div></div></div>
-      <div class="card"><div class="card-title">4월 vs 5월 비교 그래프</div><div class="chart-legend" id="lg-board"></div><div class="chart-wrap" style="height:230px"><canvas id="chart-board" role="img" aria-label="게시판 문의예약 비교"></canvas></div></div>
+      <div class="card"><div class="card-title">4월 vs 5월 비교 그래프</div><div class="chart-legend" id="lg-board"></div><div class="chart-wrap" style="height:230px"><canvas id="chart-board"></canvas></div></div>
       <div class="analysis-box" id="ana-box-board"><p id="ana-board"></p></div>
     </div>
     <div class="section-divider"></div>
-
-    <!-- 왓츠앱 -->
     <div class="channel-section">
       <div class="channel-header"><div class="channel-name">왓츠앱</div><span class="badge badge-whatsapp">해외 채널</span></div>
       <div class="card"><div class="card-title">문의·예약 상세 현황 <span style="font-size:11px;color:#6b6b6b;font-weight:400;">(이식 수술 확정 포함)</span></div><button class="table-toggle-btn" onclick="toggleTable(this)"><span class="toggle-arrow">▼</span> 표 펼치기</button><div class="table-collapsible"><div style="overflow-x:auto"><table class="data-table" id="tbl-whatsapp"></table></div></div></div>
-      <div class="card"><div class="card-title">4월 vs 5월 비교 그래프</div><div class="chart-legend" id="lg-wa"></div><div class="chart-wrap" style="height:210px"><canvas id="chart-wa" role="img" aria-label="왓츠앱 문의예약 비교"></canvas></div></div>
+      <div class="card"><div class="card-title">4월 vs 5월 비교 그래프</div><div class="chart-legend" id="lg-wa"></div><div class="chart-wrap" style="height:210px"><canvas id="chart-wa"></canvas></div></div>
       <div class="analysis-box" id="ana-box-whatsapp"><p id="ana-whatsapp"></p></div>
     </div>
     <div class="section-divider"></div>
-
-    <!-- 전체합산 -->
     <div class="channel-section">
       <div class="channel-header"><div class="channel-name">전체 합산</div><span class="badge badge-total">전화 + 플친 + 왓츠앱</span></div>
       <p style="font-size:12px;color:#6b6b6b;margin-bottom:12px;">* 네이버·게시판은 전화 예약으로 처리되므로 전화 채널에 포함됩니다.</p>
       <div class="card"><div class="card-title">문의·예약 상세 현황</div><button class="table-toggle-btn" onclick="toggleTable(this)"><span class="toggle-arrow">▼</span> 표 펼치기</button><div class="table-collapsible"><div style="overflow-x:auto"><table class="data-table" id="tbl-total"></table></div></div></div>
-      <div class="card"><div class="card-title">진료과목별 4월 vs 5월 비교</div><div class="chart-legend" id="lg-total"></div><div class="chart-wrap" style="height:260px"><canvas id="chart-total" role="img" aria-label="전체 문의예약 비교"></canvas></div></div>
-      <div class="card"><div class="card-title">전년 동월 비교 (2025년)</div><div class="chart-legend" id="lg-total-yoy"></div><div class="chart-wrap" style="height:210px"><canvas id="chart-total-yoy" role="img" aria-label="전체 전년 비교"></canvas></div><p class="yoy-note" id="note-total-yoy"></p></div>
+      <div class="card"><div class="card-title">진료과목별 4월 vs 5월 비교</div><div class="chart-legend" id="lg-total"></div><div class="chart-wrap" style="height:260px"><canvas id="chart-total"></canvas></div></div>
+      <div class="card"><div class="card-title">전년 동월 비교 (2025년)</div><div class="chart-legend" id="lg-total-yoy"></div><div class="chart-wrap" style="height:210px"><canvas id="chart-total-yoy"></canvas></div><p class="yoy-note" id="note-total-yoy"></p></div>
       <div class="analysis-box" id="ana-box-total"><p id="ana-total"></p></div>
     </div>
   </div>
@@ -344,46 +240,35 @@
       <div class="section-title">채널별 문의·예약</div>
       <div class="section-subtitle" id="s02-subtitle"></div>
     </div>
-
-    <!-- KPI -->
     <div class="kpi-table-wrap">
       <div class="kpi-label">채널별 핵심 지표</div>
       <div id="s02-kpi" class="ch-kpi-grid"></div>
     </div>
-
-    <!-- 채널 비교 그래프 -->
     <div class="s02-section-label">채널 간 비교</div>
     <div class="s02-charts-grid">
-      <div class="card">
-        <div class="card-title">채널별 문의 비교</div>
-        <div class="ch-legend-row" id="lg-s02-inq"></div>
-        <div class="chart-wrap" style="height:220px"><canvas id="chart-s02-inq"></canvas></div>
-      </div>
-      <div class="card">
-        <div class="card-title">채널별 예약 비교</div>
-        <div class="ch-legend-row" id="lg-s02-book"></div>
-        <div class="chart-wrap" style="height:220px"><canvas id="chart-s02-book"></canvas></div>
-      </div>
+      <div class="card"><div class="card-title">채널별 문의 비교</div><div class="ch-legend-row" id="lg-s02-inq"></div><div class="chart-wrap" style="height:220px"><canvas id="chart-s02-inq"></canvas></div></div>
+      <div class="card"><div class="card-title">채널별 예약 비교</div><div class="ch-legend-row" id="lg-s02-book"></div><div class="chart-wrap" style="height:220px"><canvas id="chart-s02-book"></canvas></div></div>
     </div>
     <div class="card" style="margin-bottom:28px;">
       <div class="card-title">채널별 예약률 비교 <span style="font-size:11px;color:#6b6b6b;font-weight:400;">(4월 vs 5월)</span></div>
       <div class="ch-legend-row" id="lg-s02-rate"></div>
       <div class="chart-wrap" style="height:200px"><canvas id="chart-s02-rate"></canvas></div>
     </div>
-
-    <!-- 과목별 채널 분포 -->
     <div class="s02-section-label">진료과목별 채널 분포</div>
     <div class="s02-month-tabs">
       <button class="s02-month-tab active" data-month="apr" onclick="switchS02Month('apr')">4월</button>
       <button class="s02-month-tab" data-month="may" onclick="switchS02Month('may')">5월</button>
     </div>
     <div class="cat-channel-grid" id="s02-cat-grid"></div>
-
     <div class="analysis-box" id="ana-box-s02"><p id="ana-s02"></p></div>
   </div>
 
-  <!-- 나머지 섹션 패널 -->
-  <div class="section-panel" id="section-00"><div class="section-header"><div class="section-tag">Section 00</div><div class="section-title">전체 종합 현황</div><div class="section-subtitle">작성 예정</div></div></div>
+  <!-- 섹션 00 -->
+  <div class="section-panel" id="section-00">
+    <div class="section-header"><div class="section-tag">Section 00</div><div class="section-title">전체 종합 현황</div><div class="section-subtitle">작성 예정</div></div>
+  </div>
+
+  <!-- 섹션 03 -->
   <div class="section-panel" id="section-03">
     <div class="section-header">
       <div class="section-tag">Section 03</div>
@@ -417,6 +302,8 @@
     </div>
     <div class="analysis-box" id="ana-box-s03"><p id="ana-s03"></p></div>
   </div>
+
+  <!-- 섹션 04 -->
   <div class="section-panel" id="section-04">
     <div class="section-header">
       <div class="section-tag">Section 04</div>
@@ -440,19 +327,13 @@
       <div class="table-collapsible"><div style="overflow-x:auto"><table class="data-table" id="tbl-s04"></table></div></div>
     </div>
     <div class="s02-charts-grid" style="margin-top:16px;">
-      <div class="card">
-        <div class="card-title">과목별 내원 비교</div>
-        <div class="chart-legend" id="lg-s04-visit"></div>
-        <div class="chart-wrap" style="height:210px"><canvas id="chart-s04-visit"></canvas></div>
-      </div>
-      <div class="card">
-        <div class="card-title">과목별 체결 비교</div>
-        <div class="chart-legend" id="lg-s04-contract"></div>
-        <div class="chart-wrap" style="height:210px"><canvas id="chart-s04-contract"></canvas></div>
-      </div>
+      <div class="card"><div class="card-title">과목별 내원 비교</div><div class="chart-legend" id="lg-s04-visit"></div><div class="chart-wrap" style="height:210px"><canvas id="chart-s04-visit"></canvas></div></div>
+      <div class="card"><div class="card-title">과목별 체결 비교</div><div class="chart-legend" id="lg-s04-contract"></div><div class="chart-wrap" style="height:210px"><canvas id="chart-s04-contract"></canvas></div></div>
     </div>
     <div class="analysis-box" id="ana-box-s04"><p id="ana-s04"></p></div>
   </div>
+
+  <!-- 섹션 05 -->
   <div class="section-panel" id="section-05">
     <div class="section-header">
       <div class="section-tag">Section 05</div>
@@ -477,7 +358,65 @@
     <div id="s05-detail-grid"></div>
     <div class="analysis-box" id="ana-box-s05"><p id="ana-s05"></p></div>
   </div>
-  <div class="section-panel" id="section-06"><div class="section-header"><div class="section-tag">Section 06</div><div class="section-title">직원별 성사율</div><div class="section-subtitle">작성 예정</div></div></div>
+
+  <!-- ══════════════════════════
+       섹션 06 — 직원별 성사율
+  ══════════════════════════════ -->
+  <div class="section-panel" id="section-06">
+    <div class="section-header">
+      <div class="section-tag">Section 06</div>
+      <div class="section-title">직원별 성사율</div>
+      <div class="section-subtitle" id="s06-subtitle"></div>
+    </div>
+
+    <!-- KPI 카드 6개 -->
+    <div class="kpi-table-wrap">
+      <div class="kpi-label">직원별 핵심 지표</div>
+      <div id="s06-kpi" class="ch-kpi-grid" style="grid-template-columns:repeat(3,1fr);"></div>
+    </div>
+
+    <!-- 체결률 비교 그래프 -->
+    <div class="s02-section-label">전체 체결률 비교</div>
+    <div class="card" style="margin-bottom:16px;">
+      <div class="card-title">직원별 체결률 비교 <span style="font-size:11px;color:#6b6b6b;font-weight:400;">(4월 vs 5월, %)</span></div>
+      <div class="ch-legend-row" id="lg-s06-rate"></div>
+      <div class="chart-wrap" style="height:220px"><canvas id="chart-s06-rate"></canvas></div>
+    </div>
+
+    <!-- 내원·체결 추이 그래프 -->
+    <div class="s02-charts-grid">
+      <div class="card">
+        <div class="card-title">직원별 내원 비교</div>
+        <div class="ch-legend-row" id="lg-s06-visit"></div>
+        <div class="chart-wrap" style="height:210px"><canvas id="chart-s06-visit"></canvas></div>
+      </div>
+      <div class="card">
+        <div class="card-title">직원별 체결 비교</div>
+        <div class="ch-legend-row" id="lg-s06-contract"></div>
+        <div class="chart-wrap" style="height:210px"><canvas id="chart-s06-contract"></canvas></div>
+      </div>
+    </div>
+
+    <!-- 직원별 상세 테이블 -->
+    <div class="s02-section-label">직원별 상세 현황</div>
+    <div class="card">
+      <div class="card-title">직원별 과목 상세</div>
+      <button class="table-toggle-btn" onclick="toggleTable(this)"><span class="toggle-arrow">▼</span> 표 펼치기</button>
+      <div class="table-collapsible"><div style="overflow-x:auto"><table class="data-table" id="tbl-s06"></table></div></div>
+    </div>
+
+    <!-- 직원별 과목 분포 (탭 전환) -->
+    <div class="s02-section-label">직원별 과목 성과 상세</div>
+    <div class="s02-month-tabs">
+      <button class="s02-month-tab active" data-month="apr" onclick="switchS06Month('apr')">4월</button>
+      <button class="s02-month-tab" data-month="may" onclick="switchS06Month('may')">5월</button>
+    </div>
+    <div class="s06-staff-grid" id="s06-detail-grid"></div>
+
+    <div class="analysis-box" id="ana-box-s06"><p id="ana-s06"></p></div>
+  </div>
+
+  <!-- 나머지 예정 섹션 -->
   <div class="section-panel" id="section-07"><div class="section-header"><div class="section-tag">Section 07</div><div class="section-title">유입경로 분석</div><div class="section-subtitle">작성 예정</div></div></div>
   <div class="section-panel" id="section-08"><div class="section-header"><div class="section-tag">Section 08</div><div class="section-title">매출 현황</div><div class="section-subtitle">작성 예정</div></div></div>
   <div class="section-panel" id="section-09"><div class="section-header"><div class="section-tag">Section 09</div><div class="section-title">종합 리뷰 &amp; 과제</div><div class="section-subtitle">작성 예정</div></div></div>
@@ -487,7 +426,7 @@
 <script>
 
 /* ════════════════════════════════════
-   데이터 — 매달 이 블록만 교체
+   데이터
 ════════════════════════════════════ */
 const ALL_REPORTS = [
 {
@@ -585,6 +524,22 @@ const ALL_REPORTS = [
     },
     analysis:'총 예약 491→518건으로 <b>+5.5% 증가</b>했고 내원도 422→444건으로 <b>+5.2% 증가</b>.\n<b>내원전 취소율이 5.1%→2.7%로 크게 개선</b> — 예약 후 이탈이 줄어든 긍정적 신호.\n다만 당일취소·부도가 21·23건 → 31·29건으로 <b>당일취소 31건으로 증가</b>, 당일 응대 관리 필요.\n과목별로는 <b>탈모치료 67→94건(+40%) 급증</b>이 눈에 띄며, 검사는 191→184건으로 소폭 감소.',
   },
+  section04: {
+    cats: ['모발이식','헤어라인','SMP','탈모치료','기타이식'],
+    apr: {
+      total: { visit:190, contract:110, rate:58 },
+      visit:    [80, 22, 20, 67,  1],
+      contract: [27, 12, 16, 55,  0],
+      rate:     [34, 55, 80, 82,  0],
+    },
+    may: {
+      total: { visit:229, contract:150, rate:66 },
+      visit:    [86, 20, 28, 94,  1],
+      contract: [45,  7, 21, 77,  0],
+      rate:     [52, 35, 75, 82,  0],
+    },
+    analysis: '전체 체결률 58%→66%로 <b>+8%p 개선</b>, 체결 건수도 110→150건으로 <b>+36% 급증</b>.\n<b>모발이식 34%→52%로 가장 큰 폭 상승</b> — 내원 증가(80→86건)와 체결 급증(27→45건) 동시 달성.\n탈모치료는 67→94건 내원 급증에도 <b>체결률 82% 유지</b> — 안정적 전환율.\n<b>헤어라인 55%→35%로 급락</b> — 내원은 유지됐으나 체결이 12→7건으로 감소, 원인 분석 필요.\nSMP 80%→75%로 소폭 하락했으나 여전히 높은 체결률 유지.',
+  },
   section05: {
     doctors: ['김진오 원장님','박주성 원장님','김진욱 원장님','조준상 원장님'],
     cats: ['모발이식','헤어라인','SMP','탈모치료','기타이식'],
@@ -602,25 +557,40 @@ const ALL_REPORTS = [
     },
     analysis: '<b>박주성 원장님 체결률 81%→83%로 전 원장 중 최고</b>, 탈모치료 특화(55→83건 내원, 45→71건 체결).\n<b>김진오 원장님은 모발이식 41%→54%로 크게 개선</b>됐으나 헤어라인 60%→35%로 급락 — 과목별 편차 주목.\n김진욱 원장님 0%→50%로 체결 시작, 조준상 원장님도 0%→38%로 개선 — 두 원장 모두 5월 상승 전환.\n',
   },
-  section04: {
-    cats: ['모발이식','헤어라인','SMP','탈모치료','기타이식'],
+  section06: {
+    staff: ['전소영','손예진','신유지','조영은','최무근','김승희'],
+    cats: ['모발이식','헤어라인','SMP','탈모치료'],
+    // visit[과목인덱스][직원인덱스]
     apr: {
-      total: { visit:190, contract:110, rate:58 },
-      visit:    [80, 22, 20, 67,  1],
-      contract: [27, 12, 16, 55,  0],
-      rate:     [34, 55, 80, 82,  0],
+      total: {
+        visit:    [37, 41, 34, 32, 20,  5],
+        contract: [19, 23, 21, 17, 16,  3],
+        rate:     [51, 56, 62, 53, 80, 60],
+      },
+      // [직원][과목] 순서: 전소영,손예진,신유지,조영은,최무근,김승희
+      // 과목: 모발이식,헤어라인,SMP,탈모치료
+      visit:    [[18,5,0,14],[19,3,0,19],[11,4,0,19],[18,3,0,11],[0,0,20,0],[3,2,0,0]],
+      contract: [[ 7,2,0,10],[ 6,2,0,15],[ 3,2,0,16],[ 5,1,0,11],[0,0,16,0],[2,1,0,0]],
+      rate:     [[39,40,0,71],[32,67,0,79],[27,50,0,84],[28,33,0,100],[0,0,80,0],[67,50,0,0]],
     },
     may: {
-      total: { visit:229, contract:150, rate:66 },
-      visit:    [86, 20, 28, 94,  1],
-      contract: [45,  7, 21, 77,  0],
-      rate:     [52, 35, 75, 82,  0],
+      total: {
+        visit:    [45, 51, 40, 41, 26,  8],
+        contract: [26, 34, 31, 27, 20,  2],
+        rate:     [58, 67, 78, 66, 77, 25],
+      },
+      visit:    [[15,9,0,21],[21,1,0,29],[13,4,0,23],[20,6,1,14],[0,0,26,0],[6,0,0,2]],
+      contract: [[ 9,2,0,15],[10,0,0,24],[ 7,3,0,21],[12,2,1,12],[0,0,20,0],[0,0,0,2]],
+      rate:     [[60,22,0,71],[48, 0,0,83],[54,75,0,91],[60,33,100,86],[0,0,77,0],[0,0,0,100]],
     },
-    analysis: '전체 체결률 58%→66%로 <b>+8%p 개선</b>, 체결 건수도 110→150건으로 <b>+36% 급증</b>.\n<b>모발이식 34%→52%로 가장 큰 폭 상승</b> — 내원 증가(80→86건)와 체결 급증(27→45건) 동시 달성.\n탈모치료는 67→94건 내원 급증에도 <b>체결률 82% 유지</b> — 안정적 전환율.\n<b>헤어라인 55%→35%로 급락</b> — 내원은 유지됐으나 체결이 12→7건으로 감소, 원인 분석 필요.\nSMP 80%→75%로 소폭 하락했으나 여전히 높은 체결률 유지.',
+    analysis: '<b>신유지 62%→78%로 전 직원 중 최고 상승폭</b>, 모발이식·탈모치료·헤어라인 전 과목 개선.\n<b>손예진 56%→67%로 2위</b>, 탈모치료 79%→83% 안정적 유지하며 체결 건수도 최다(23→34건).\n<b>최무근 SMP 전담 80%→77%</b>로 소폭 하락했으나 SMP 과목 내 최고 체결률 유지.\n<b>김승희 60%→25%로 급락</b> — 5월 모발이식 0% 전환 집중 점검 필요.\n조영은 53%→66%로 개선, 헤어라인 SMP 체결 시작하며 과목 다양화 눈에 띔.',
   },
 },
 ];
 
+/* ════════════════════════════════════
+   유틸
+════════════════════════════════════ */
 function toggleTable(btn) {
   const collapsible = btn.nextElementSibling;
   const isOpen = collapsible.classList.contains('open');
@@ -629,9 +599,6 @@ function toggleTable(btn) {
   btn.innerHTML = `<span class="toggle-arrow">▼</span> ${isOpen ? '표 펼치기' : '표 접기'}`;
 }
 
-/* ════════════════════════════════════
-   채널 메타
-════════════════════════════════════ */
 const CH_META = [
   { key:'phone',    label:'전화',   emoji:'📞', color:'#5C6BC0', dotClass:'dot-phone' },
   { key:'naver',    label:'네이버', emoji:'<span style="display:inline-flex;align-items:center;justify-content:center;width:22px;height:22px;background:#03C75A;border-radius:4px;font-size:13px;font-weight:900;color:#fff;font-family:sans-serif;line-height:1;flex-shrink:0;">N</span>', color:'#2E7D32', dotClass:'dot-naver' },
@@ -640,49 +607,26 @@ const CH_META = [
   { key:'whatsapp', label:'왓츠앱', emoji:'🌍', color:'#43A047', dotClass:'dot-whatsapp' },
 ];
 
-// 채널별 총계 헬퍼
 function getChTotals(s, key) {
   const d = s[key];
-  return {
-    apr_inq:  d.total_apr.inq,
-    apr_book: d.total_apr.book,
-    apr_rate: d.total_apr.rate,
-    may_inq:  d.total_may.inq,
-    may_book: d.total_may.book,
-    may_rate: d.total_may.rate,
-  };
+  return { apr_inq:d.total_apr.inq, apr_book:d.total_apr.book, apr_rate:d.total_apr.rate,
+           may_inq:d.total_may.inq, may_book:d.total_may.book, may_rate:d.total_may.rate };
 }
 
-// 과목별 채널 문의 데이터 재조합
-// 반환: { catLabel: { phone, naver, kakao, board, whatsapp } }
 function buildCatChannelData(s, month) {
   const allCats = ['모발이식','검사','탈모치료','SMP','헤어라인','처방전'];
-
-  // 각 채널에서 과목별 문의 꺼내기 (채널마다 cats 순서 다름)
-  function getVal(channelData, cat) {
-    const idx = channelData.cats.indexOf(cat);
-    if (idx === -1) return 0;
-    return channelData[month].inq[idx] || 0;
-  }
-  function getValPhone(s, cat) {
-    const idx = s.cats.indexOf(cat);
-    if (idx === -1) return 0;
-    return s.phone[month].inq[idx] || 0;
-  }
-
-  return allCats.map(cat => {
-    const phone    = getValPhone(s, cat);
-    const naver    = getVal(s.naver, cat);
-    const kakao    = getVal(s.kakao, cat);
-    const board    = getVal(s.board, cat);
-    const whatsapp = getVal(s.whatsapp, cat);
-    return { cat, phone, naver, kakao, board, whatsapp };
-  });
+  function getVal(ch, cat) { const i=ch.cats.indexOf(cat); return i===-1?0:(ch[month].inq[i]||0); }
+  function getValPhone(s, cat) { const i=s.cats.indexOf(cat); return i===-1?0:(s.phone[month].inq[i]||0); }
+  return allCats.map(cat=>({
+    cat,
+    phone:    getValPhone(s,cat),
+    naver:    getVal(s.naver,cat),
+    kakao:    getVal(s.kakao,cat),
+    board:    getVal(s.board,cat),
+    whatsapp: getVal(s.whatsapp,cat),
+  }));
 }
 
-/* ════════════════════════════════════
-   앱 코어
-════════════════════════════════════ */
 const NAV_SECTIONS = [
   {id:'00',label:'종합 현황'},{id:'01',label:'진료과목별 문의·예약'},
   {id:'02',label:'채널별 문의·예약'},{id:'03',label:'내원 현황'},
@@ -694,6 +638,7 @@ const NAV_SECTIONS = [
 let isEditor = false;
 let currentReport = null;
 let s02ActiveMonth = 'apr';
+let s06ActiveMonth = 'apr';
 
 function checkAuth() {
   const role = sessionStorage.getItem('nh_role');
@@ -726,12 +671,16 @@ function buildSelector() {
   sel.addEventListener('change',()=>renderReport(ALL_REPORTS[+sel.value]));
 }
 
-/* 색상 */
 const C = { aprInq:'#90CAF9', aprBook:'#EF9A9A', mayInq:'#1565C0', mayBook:'#C62828' };
 
 function legend(id, items) {
   const el=document.getElementById(id); if(!el) return;
   el.innerHTML=items.map(([c,l])=>`<span><span class="legend-dot" style="background:${c}"></span>${l}</span>`).join('');
+}
+
+function chLegend(id, items) {
+  const el=document.getElementById(id); if(!el) return;
+  el.innerHTML=items.map(([c,l])=>`<div class="ch-legend-item"><span class="ch-legend-dot" style="background:${c}"></span>${l}</div>`).join('');
 }
 
 const BASE = {
@@ -757,12 +706,13 @@ function diff(a,b){
   return `<span class="flat">— 0</span>`;
 }
 
-// 헤더명 → 열 클래스 매핑
 const COL_CLASS = {
   '4월 문의':'col-apr-inq', '4월 예약':'col-apr-book', '4월 예약률':'col-rate',
-  '4월 부재':'col-rate',    '4월 해외':'col-rate',      '4월 이식수술':'col-rate',
+  '4월 부재':'col-rate', '4월 해외':'col-rate', '4월 이식수술':'col-rate',
+  '4월 내원':'col-apr-inq', '4월 체결':'col-apr-book', '4월 체결률':'col-rate',
   '5월 문의':'col-may-inq', '5월 예약':'col-may-book', '5월 예약률':'col-rate',
-  '5월 부재':'col-rate',    '5월 해외':'col-rate',      '5월 이식수술':'col-rate',
+  '5월 부재':'col-rate', '5월 해외':'col-rate', '5월 이식수술':'col-rate',
+  '5월 내원':'col-may-inq', '5월 체결':'col-may-book', '5월 체결률':'col-rate',
 };
 
 function mkTable(id, headers, totalRow, rows) {
@@ -773,7 +723,7 @@ function mkTable(id, headers, totalRow, rows) {
     const th = document.createElement('th');
     th.textContent = h;
     if (COL_CLASS[h]) th.classList.add(COL_CLASS[h]);
-    if (h==='5월 문의'||h==='5월 예약'||h==='5월 예약률'||h==='5월 부재'||h==='5월 이식수술'||h==='5월 해외') th.classList.add('sep');
+    if (h.startsWith('5월')) th.classList.add('sep');
     hr.appendChild(th);
   });
   const tbody = tbl.createTBody();
@@ -786,7 +736,7 @@ function mkTable(id, headers, totalRow, rows) {
       if (i === 0) td.style.textAlign = 'left';
       const h = headers[i];
       if (COL_CLASS[h]) td.classList.add(COL_CLASS[h]);
-      if (i===4||i===5) td.classList.add('sep');
+      if (h && h.startsWith('5월')) td.classList.add('sep');
     });
   };
   if (totalRow) addRow(totalRow, true);
@@ -811,20 +761,16 @@ function renderAnalysis(id, text) {
 
 function editAnalysis(box, p) {
   if(box.querySelector('[contenteditable]')) return;
-
   const editor = document.createElement('div');
   editor.contentEditable = 'true';
   editor.innerHTML = p.innerHTML;
   editor.style.cssText = 'outline:none;font-family:Pretendard,sans-serif;font-size:14px;line-height:1.9;min-height:60px;cursor:text;';
   p.replaceWith(editor);
   editor.focus();
-
-  // 툴바
   const toolbar = document.createElement('div');
   toolbar.innerHTML = '<span style="cursor:pointer;padding:3px 10px;font-size:13px;font-weight:900;color:#fff;user-select:none;">B</span>';
   toolbar.style.cssText = 'position:fixed;background:#222;border-radius:6px;padding:2px;display:none;z-index:9999;box-shadow:0 2px 8px rgba(0,0,0,.35);';
   document.body.appendChild(toolbar);
-
   function showToolbar() {
     const sel = window.getSelection();
     if (sel && sel.toString().trim().length > 0) {
@@ -832,41 +778,24 @@ function editAnalysis(box, p) {
       toolbar.style.left = (rect.left + rect.width/2 - 18) + 'px';
       toolbar.style.top  = (rect.top - 38) + 'px';
       toolbar.style.display = 'block';
-    } else {
-      toolbar.style.display = 'none';
-    }
+    } else { toolbar.style.display = 'none'; }
   }
-
-  // editor 안팎 mouseup 모두 감지
   document.addEventListener('mouseup', showToolbar);
-
   toolbar.querySelector('span').addEventListener('mousedown', e => {
-    e.preventDefault();
-    document.execCommand('bold');
-    toolbar.style.display = 'none';
+    e.preventDefault(); document.execCommand('bold'); toolbar.style.display = 'none';
   });
-
-  function cleanup() {
-    document.removeEventListener('mouseup', showToolbar);
-    toolbar.remove();
-  }
-
+  function cleanup() { document.removeEventListener('mouseup', showToolbar); toolbar.remove(); }
   editor.addEventListener('blur', e => {
-    // 툴바 클릭이면 blur 무시
     if (e.relatedTarget && toolbar.contains(e.relatedTarget)) return;
     setTimeout(() => {
       if (document.activeElement === editor) return;
-      cleanup();
-      toolbar.style.display = 'none';
+      cleanup(); toolbar.style.display = 'none';
       const newP = document.createElement('p');
-      newP.id = p.id;
-      newP.innerHTML = editor.innerHTML;
+      newP.id = p.id; newP.innerHTML = editor.innerHTML;
       editor.replaceWith(newP);
-      // 재편집 가능하도록 이벤트 재등록
       if(isEditor) {
         newP.closest('.analysis-box').addEventListener('click', function handler() {
-          this.removeEventListener('click', handler);
-          editAnalysis(this, newP);
+          this.removeEventListener('click', handler); editAnalysis(this, newP);
         });
       }
     }, 100);
@@ -881,8 +810,7 @@ function setupTitleEdit() {
     const input = document.createElement('input');
     input.type='text'; input.value=cur;
     input.style.cssText='font-size:32px;font-weight:700;border:none;border-bottom:2px solid #1565C0;outline:none;width:100%;background:transparent;font-family:inherit;letter-spacing:-0.03em;';
-    title.innerHTML=''; title.appendChild(input);
-    input.focus();
+    title.innerHTML=''; title.appendChild(input); input.focus();
     input.addEventListener('blur',()=>{ title.innerHTML=input.value+'<span class="edit-hint">✎ 클릭하여 수정</span>'; });
     input.addEventListener('keydown',e=>{ if(e.key==='Enter') input.blur(); });
   });
@@ -894,50 +822,23 @@ function setupTitleEdit() {
 function renderSection02(r) {
   const s = r.section01;
   document.getElementById('s02-subtitle').textContent = r.meta.compare + ' · 채널별 문의·예약 현황 및 과목 분포';
-
-  // ── KPI 카드
   const kpiGrid = document.getElementById('s02-kpi');
   kpiGrid.innerHTML = '';
   CH_META.forEach(ch => {
     const t = getChTotals(s, ch.key);
-    const inqD = t.may_inq - t.apr_inq;
-    const bookD = t.may_book - t.apr_book;
-    const rateD = t.may_rate - t.apr_rate;
+    const inqD = t.may_inq - t.apr_inq, bookD = t.may_book - t.apr_book, rateD = t.may_rate - t.apr_rate;
     function cls(d){ return d>0?'up':d<0?'down':'flat'; }
     function arrow(d){ return d>0?`▲ ${d}`:d<0?`▼ ${Math.abs(d)}`:'— 0'; }
     kpiGrid.innerHTML += `
       <div class="ch-kpi-card">
-        <div class="ck-name">
-          <span class="ck-emoji" style="line-height:1;">${ch.emoji}</span>
-          ${ch.label}
-        </div>
-        <div class="ck-row">
-          <span>문의</span>
-          <div style="display:flex;align-items:center;gap:6px;">
-            <div class="ck-vals"><span>${t.apr_inq}</span><span class="arrow">→</span><span>${t.may_inq}</span></div>
-            <span class="ck-diff ${cls(inqD)}">${arrow(inqD)}</span>
-          </div>
-        </div>
+        <div class="ck-name"><span class="ck-emoji" style="line-height:1;">${ch.emoji}</span>${ch.label}</div>
+        <div class="ck-row"><span>문의</span><div style="display:flex;align-items:center;gap:6px;"><div class="ck-vals"><span>${t.apr_inq}</span><span class="arrow">→</span><span>${t.may_inq}</span></div><span class="ck-diff ${cls(inqD)}">${arrow(inqD)}</span></div></div>
         <hr class="ck-divider">
-        <div class="ck-row">
-          <span>예약</span>
-          <div style="display:flex;align-items:center;gap:6px;">
-            <div class="ck-vals"><span>${t.apr_book}</span><span class="arrow">→</span><span>${t.may_book}</span></div>
-            <span class="ck-diff ${cls(bookD)}">${arrow(bookD)}</span>
-          </div>
-        </div>
+        <div class="ck-row"><span>예약</span><div style="display:flex;align-items:center;gap:6px;"><div class="ck-vals"><span>${t.apr_book}</span><span class="arrow">→</span><span>${t.may_book}</span></div><span class="ck-diff ${cls(bookD)}">${arrow(bookD)}</span></div></div>
         <hr class="ck-divider">
-        <div class="ck-row">
-          <span>예약률</span>
-          <div style="display:flex;align-items:center;gap:6px;">
-            <div class="ck-vals"><span>${t.apr_rate}%</span><span class="arrow">→</span><span>${t.may_rate}%</span></div>
-            <span class="ck-diff ${cls(rateD)}">${arrow(rateD)}${rateD!==0?'%p':''}</span>
-          </div>
-        </div>
+        <div class="ck-row"><span>예약률</span><div style="display:flex;align-items:center;gap:6px;"><div class="ck-vals"><span>${t.apr_rate}%</span><span class="arrow">→</span><span>${t.may_rate}%</span></div><span class="ck-diff ${cls(rateD)}">${arrow(rateD)}${rateD!==0?'%p':''}</span></div></div>
       </div>`;
   });
-
-  // ── 채널별 문의 비교 그래프
   const chLabels = CH_META.map(c=>c.label);
   const aprInqData  = CH_META.map(c=>getChTotals(s,c.key).apr_inq);
   const mayInqData  = CH_META.map(c=>getChTotals(s,c.key).may_inq);
@@ -945,48 +846,21 @@ function renderSection02(r) {
   const mayBookData = CH_META.map(c=>getChTotals(s,c.key).may_book);
   const aprRateData = CH_META.map(c=>getChTotals(s,c.key).apr_rate);
   const mayRateData = CH_META.map(c=>getChTotals(s,c.key).may_rate);
-
-  // 채널 범례 (가로)
-  function chLegend(id, items) {
-    const el = document.getElementById(id); if(!el) return;
-    el.innerHTML = items.map(([c,l])=>`<div class="ch-legend-item"><span class="ch-legend-dot" style="background:${c}"></span>${l}</div>`).join('');
-  }
-
   chLegend('lg-s02-inq',  [[C.aprInq,'4월 문의'],[C.mayInq,'5월 문의']]);
   mkChart('chart-s02-inq', chLabels, [mkDS('4월 문의',aprInqData,C.aprInq), mkDS('5월 문의',mayInqData,C.mayInq)]);
-
   chLegend('lg-s02-book', [[C.aprBook,'4월 예약'],[C.mayBook,'5월 예약']]);
   mkChart('chart-s02-book', chLabels, [mkDS('4월 예약',aprBookData,C.aprBook), mkDS('5월 예약',mayBookData,C.mayBook)]);
-
-  // 예약률 — line chart
   if(charts['chart-s02-rate']) charts['chart-s02-rate'].destroy();
   chLegend('lg-s02-rate', [['#90CAF9','4월 예약률'],['#1565C0','5월 예약률']]);
   charts['chart-s02-rate'] = new Chart(document.getElementById('chart-s02-rate'), {
-    type: 'bar',
-    data: {
-      labels: chLabels,
-      datasets: [
-        { label:'4월 예약률', data: aprRateData, backgroundColor:'#90CAF9', borderRadius:3 },
-        { label:'5월 예약률', data: mayRateData, backgroundColor:'#1565C0', borderRadius:3 },
-      ]
-    },
-    options: {
-      ...BASE,
-      scales: {
-        ...BASE.scales,
-        y: { ...BASE.scales.y, max:105, ticks:{ ...BASE.scales.y.ticks, callback: v=>v+'%' } }
-      },
-      plugins: {
-        ...BASE.plugins,
-        tooltip: { ...BASE.plugins.tooltip, callbacks: { label: c=>' '+c.dataset.label+': '+c.parsed.y+'%' } }
-      }
-    }
+    type:'bar', data:{ labels:chLabels, datasets:[
+      {label:'4월 예약률',data:aprRateData,backgroundColor:'#90CAF9',borderRadius:3},
+      {label:'5월 예약률',data:mayRateData,backgroundColor:'#1565C0',borderRadius:3},
+    ]},
+    options:{...BASE, scales:{...BASE.scales,y:{...BASE.scales.y,max:105,ticks:{...BASE.scales.y.ticks,callback:v=>v+'%'}}},
+      plugins:{...BASE.plugins,tooltip:{...BASE.plugins.tooltip,callbacks:{label:c=>' '+c.dataset.label+': '+c.parsed.y+'%'}}}}
   });
-
-  // ── 과목별 채널 분포 (초기 렌더)
   renderCatChannelGrid(s, s02ActiveMonth);
-
-  // ── 분석
   renderAnalysis('ana-s02', r.section02.analysis);
 }
 
@@ -994,38 +868,23 @@ function renderCatChannelGrid(s, month) {
   const grid = document.getElementById('s02-cat-grid');
   grid.innerHTML = '';
   const data = buildCatChannelData(s, month);
-  const catLabels = { '모발이식':'이식', '검사':'검사', '탈모치료':'치료', 'SMP':'SMP', '헤어라인':'헤어라인', '처방전':'처방전' };
-  const catColors = { '모발이식':'#C62828', '검사':'#1565C0', '탈모치료':'#6A1B9A', 'SMP':'#E65100', '헤어라인':'#00695C', '처방전':'#4E342E' };
-
+  const catColors = { '모발이식':'#C62828','검사':'#1565C0','탈모치료':'#6A1B9A','SMP':'#E65100','헤어라인':'#00695C','처방전':'#4E342E' };
   data.forEach(({ cat, phone, naver, kakao, board, whatsapp }) => {
     const total = phone + naver + kakao + board + whatsapp;
     if (total === 0) return;
     const channels = [
-      { label:'전화',   val:phone,    color:'#5C6BC0' },
-      { label:'네이버', val:naver,    color:'#2E7D32' },
-      { label:'게시판', val:board,    color:'#00838F' },
-      { label:'플친',   val:kakao,    color:'#F9A825' },
-      { label:'왓츠앱', val:whatsapp, color:'#43A047' },
+      { label:'전화',val:phone,color:'#5C6BC0' },{ label:'네이버',val:naver,color:'#2E7D32' },
+      { label:'게시판',val:board,color:'#00838F' },{ label:'플친',val:kakao,color:'#F9A825' },
+      { label:'왓츠앱',val:whatsapp,color:'#43A047' },
     ].filter(c=>c.val>0).sort((a,b)=>b.val-a.val);
-
-    const bars = channels.map(ch => `
+    const bars = channels.map(ch=>`
       <div class="hbar-item">
-        <div class="hbar-label">
-          <span class="hbl-ch">${ch.label}</span>
-          <span class="hbl-num">${ch.val}건 <span style="color:#aaa;font-weight:400;">(${Math.round(ch.val/total*100)}%)</span></span>
-        </div>
-        <div class="hbar-track">
-          <div class="hbar-fill" style="width:${Math.round(ch.val/total*100)}%;background:${ch.color};"></div>
-        </div>
+        <div class="hbar-label"><span class="hbl-ch">${ch.label}</span><span class="hbl-num">${ch.val}건 <span style="color:#aaa;font-weight:400;">(${Math.round(ch.val/total*100)}%)</span></span></div>
+        <div class="hbar-track"><div class="hbar-fill" style="width:${Math.round(ch.val/total*100)}%;background:${ch.color};"></div></div>
       </div>`).join('');
-
     grid.innerHTML += `
       <div class="cat-channel-card">
-        <div class="ccc-title">
-          <span style="width:10px;height:10px;border-radius:50%;background:${catColors[cat]};display:inline-block;flex-shrink:0;"></span>
-          ${cat}
-          <span class="ccc-badge">총 ${total}건</span>
-        </div>
+        <div class="ccc-title"><span style="width:10px;height:10px;border-radius:50%;background:${catColors[cat]};display:inline-block;flex-shrink:0;"></span>${cat}<span class="ccc-badge">총 ${total}건</span></div>
         <div class="hbar-wrap">${bars}</div>
       </div>`;
   });
@@ -1046,42 +905,12 @@ function renderReport(r) {
   document.getElementById('dh-period').textContent=r.meta.period;
   document.getElementById('dh-type').textContent=r.meta.type==='monthly'?'월간':'주간';
   document.getElementById('s01-subtitle').textContent=r.meta.compare+' · 전화 / 네이버 / 플친 / 게시판 / 왓츠앱 · 엑셀 데이터 기준';
-
-  /* KPI */
   const tt=s.total;
-  const inqDiff=tt.total_may.inq-tt.total_apr.inq;
-  const bookDiff=tt.total_may.book-tt.total_apr.book;
-  const rateDiff=tt.total_may.rate-tt.total_apr.rate;
+  const inqDiff=tt.total_may.inq-tt.total_apr.inq, bookDiff=tt.total_may.book-tt.total_apr.book, rateDiff=tt.total_may.rate-tt.total_apr.rate;
   document.getElementById('s01-kpi').innerHTML=`
-    <div class="kpi-item">
-      <div class="kpi-item-label">총 문의</div>
-      <div class="kpi-row">
-        <div class="kpi-month"><span class="kpi-month-label">4월</span><span class="kpi-month-val">${tt.total_apr.inq}</span></div>
-        <span class="kpi-arrow">→</span>
-        <div class="kpi-month"><span class="kpi-month-label">5월</span><span class="kpi-month-val">${tt.total_may.inq}</span></div>
-        <span class="kpi-diff ${inqDiff>0?'up':inqDiff<0?'down':'flat'}">${inqDiff>0?'▲':'▼'} ${Math.abs(inqDiff)}</span>
-      </div>
-    </div>
-    <div class="kpi-item">
-      <div class="kpi-item-label">총 예약</div>
-      <div class="kpi-row">
-        <div class="kpi-month"><span class="kpi-month-label">4월</span><span class="kpi-month-val">${tt.total_apr.book}</span></div>
-        <span class="kpi-arrow">→</span>
-        <div class="kpi-month"><span class="kpi-month-label">5월</span><span class="kpi-month-val">${tt.total_may.book}</span></div>
-        <span class="kpi-diff ${bookDiff>0?'up':bookDiff<0?'down':'flat'}">${bookDiff>0?'▲':'▼'} ${Math.abs(bookDiff)}</span>
-      </div>
-    </div>
-    <div class="kpi-item">
-      <div class="kpi-item-label">예약률</div>
-      <div class="kpi-row">
-        <div class="kpi-month"><span class="kpi-month-label">4월</span><span class="kpi-month-val">${tt.total_apr.rate}%</span></div>
-        <span class="kpi-arrow">→</span>
-        <div class="kpi-month"><span class="kpi-month-label">5월</span><span class="kpi-month-val">${tt.total_may.rate}%</span></div>
-        <span class="kpi-diff ${rateDiff>0?'up':rateDiff<0?'down':'flat'}">${rateDiff>0?'▲':'▼'} ${Math.abs(rateDiff)}%p</span>
-      </div>
-    </div>`;
-
-  /* 전화 */
+    <div class="kpi-item"><div class="kpi-item-label">총 문의</div><div class="kpi-row"><div class="kpi-month"><span class="kpi-month-label">4월</span><span class="kpi-month-val">${tt.total_apr.inq}</span></div><span class="kpi-arrow">→</span><div class="kpi-month"><span class="kpi-month-label">5월</span><span class="kpi-month-val">${tt.total_may.inq}</span></div><span class="kpi-diff ${inqDiff>0?'up':inqDiff<0?'down':'flat'}">${inqDiff>0?'▲':'▼'} ${Math.abs(inqDiff)}</span></div></div>
+    <div class="kpi-item"><div class="kpi-item-label">총 예약</div><div class="kpi-row"><div class="kpi-month"><span class="kpi-month-label">4월</span><span class="kpi-month-val">${tt.total_apr.book}</span></div><span class="kpi-arrow">→</span><div class="kpi-month"><span class="kpi-month-label">5월</span><span class="kpi-month-val">${tt.total_may.book}</span></div><span class="kpi-diff ${bookDiff>0?'up':bookDiff<0?'down':'flat'}">${bookDiff>0?'▲':'▼'} ${Math.abs(bookDiff)}</span></div></div>
+    <div class="kpi-item"><div class="kpi-item-label">예약률</div><div class="kpi-row"><div class="kpi-month"><span class="kpi-month-label">4월</span><span class="kpi-month-val">${tt.total_apr.rate}%</span></div><span class="kpi-arrow">→</span><div class="kpi-month"><span class="kpi-month-label">5월</span><span class="kpi-month-val">${tt.total_may.rate}%</span></div><span class="kpi-diff ${rateDiff>0?'up':rateDiff<0?'down':'flat'}">${rateDiff>0?'▲':'▼'} ${Math.abs(rateDiff)}%p</span></div></div>`;
   const ph=s.phone, pc=s.cats;
   mkTable('tbl-phone',['구분','4월 문의','4월 예약','4월 예약률','5월 문의','5월 예약','5월 예약률','증감'],
     ['합계',ph.total_apr.inq,ph.total_apr.book,ph.total_apr.rate+'%',ph.total_may.inq,ph.total_may.book,ph.total_may.rate+'%',diff(ph.total_apr.inq,ph.total_may.inq)],
@@ -1093,8 +922,6 @@ function renderReport(r) {
   mkChart('chart-phone-yoy',py.cats,[mkDS('25년 4월',py.apr25.inq,C.aprInq),mkDS('25년 5월',py.may25.inq,C.mayInq),mkDS('26년 4월',ph.apr.inq,C.aprBook),mkDS('26년 5월',ph.may.inq,C.mayBook)]);
   if(py.may25.note) document.getElementById('note-phone-yoy').textContent='* '+py.may25.note;
   renderAnalysis('ana-phone', s.analysis.phone);
-
-  /* 네이버 */
   const nv=s.naver, nc=nv.cats;
   mkTable('tbl-naver',['구분','4월 문의','4월 예약','4월 부재','4월 예약률','5월 문의','5월 예약','5월 부재','5월 예약률','증감'],
     ['합계',nv.total_apr.inq,nv.total_apr.book,nv.total_apr.absent,nv.total_apr.rate+'%',nv.total_may.inq,nv.total_may.book,nv.total_may.absent,nv.total_may.rate+'%',diff(nv.total_apr.inq,nv.total_may.inq)],
@@ -1106,8 +933,6 @@ function renderReport(r) {
   mkChart('chart-naver-yoy',ny.cats,[mkDS('25년 4월',ny.apr25.inq,C.aprInq),mkDS('25년 5월',ny.may25.inq,C.mayInq),mkDS('26년 4월',nv.apr.inq,C.aprBook),mkDS('26년 5월',nv.may.inq,C.mayBook)]);
   if(ny.may25.note) document.getElementById('note-naver-yoy').textContent='* '+ny.may25.note;
   renderAnalysis('ana-naver', s.analysis.naver);
-
-  /* 플친 */
   const kk=s.kakao, kc=kk.cats;
   mkTable('tbl-kakao',['구분','4월 문의','4월 예약','4월 해외','5월 문의','5월 예약','5월 해외','증감'],
     ['합계',kk.total_apr.inq,kk.total_apr.book,kk.total_apr.overseas,kk.total_may.inq,kk.total_may.book,kk.total_may.overseas,diff(kk.total_apr.inq,kk.total_may.inq)],
@@ -1120,8 +945,6 @@ function renderReport(r) {
   legend('lg-kakao-os',[[C.aprInq,'4월 해외'],[C.mayInq,'5월 해외']]);
   mkChart('chart-kakao-os',osL,[mkDS('4월 해외',osA,C.aprInq),mkDS('5월 해외',osM,C.mayInq)]);
   renderAnalysis('ana-kakao', s.analysis.kakao);
-
-  /* 게시판 */
   const bd=s.board, bc=bd.cats;
   mkTable('tbl-board',['구분','4월 문의','4월 부재','4월 예약','4월 예약률','5월 문의','5월 부재','5월 예약','5월 예약률','증감'],
     ['합계',bd.total_apr.inq,bd.total_apr.absent,bd.total_apr.book,bd.total_apr.rate+'%',bd.total_may.inq,bd.total_may.absent,bd.total_may.book,bd.total_may.rate+'%',diff(bd.total_apr.inq,bd.total_may.inq)],
@@ -1129,8 +952,6 @@ function renderReport(r) {
   legend('lg-board',[[C.aprInq,'4월 문의'],[C.aprBook,'4월 예약'],[C.mayInq,'5월 문의'],[C.mayBook,'5월 예약']]);
   mkChart('chart-board',bc,[mkDS('4월 문의',bd.apr.inq,C.aprInq),mkDS('4월 예약',bd.apr.book,C.aprBook),mkDS('5월 문의',bd.may.inq,C.mayInq),mkDS('5월 예약',bd.may.book,C.mayBook)]);
   renderAnalysis('ana-board', s.analysis.board);
-
-  /* 왓츠앱 */
   const wa=s.whatsapp, wc=wa.cats;
   mkTable('tbl-whatsapp',['구분','4월 문의','4월 예약','4월 이식수술','5월 문의','5월 예약','5월 이식수술','증감'],
     ['합계',wa.total_apr.inq,wa.total_apr.book,'—',wa.total_may.inq,wa.total_may.book,'—',diff(wa.total_apr.inq,wa.total_may.inq)],
@@ -1138,8 +959,6 @@ function renderReport(r) {
   legend('lg-wa',[[C.aprInq,'4월 문의'],[C.aprBook,'4월 예약'],[C.mayInq,'5월 문의'],[C.mayBook,'5월 예약']]);
   mkChart('chart-wa',wc,[mkDS('4월 문의',wa.apr.inq,C.aprInq),mkDS('4월 예약',wa.apr.book,C.aprBook),mkDS('5월 문의',wa.may.inq,C.mayInq),mkDS('5월 예약',wa.may.book,C.mayBook)]);
   renderAnalysis('ana-whatsapp', s.analysis.whatsapp);
-
-  /* 전체합산 */
   const tc=tt.cats;
   mkTable('tbl-total',['구분','4월 문의','4월 예약','4월 해외','5월 문의','5월 예약','5월 해외','증감'],
     ['합계',tt.total_apr.inq,tt.total_apr.book,tt.total_apr.overseas,tt.total_may.inq,tt.total_may.book,tt.total_may.overseas,diff(tt.total_apr.inq,tt.total_may.inq)],
@@ -1152,17 +971,11 @@ function renderReport(r) {
   if(ty.may25.note) document.getElementById('note-total-yoy').textContent='* '+ty.may25.note;
   renderAnalysis('ana-total', s.analysis.total);
 
-  /* 섹션 02 */
   renderSection02(r);
-
-  /* 섹션 03 */
   renderSection03(r);
-
-  /* 섹션 04 */
   renderSection04(r);
-
-  /* 섹션 05 */
   renderSection05(r);
+  renderSection06(r);
 }
 
 /* ═══════════════════════════════
@@ -1173,58 +986,35 @@ let s05ActiveMonth = 'apr';
 function renderSection05(r) {
   const s = r.section05;
   document.getElementById('s05-subtitle').textContent = r.meta.compare + ' · 원장님 내원·체결 성사 현황';
-
-  // ── 원장별 KPI 카드
   const drColors = ['#5C6BC0','#C62828','#2E7D32','#E65100'];
   const kpiGrid = document.getElementById('s05-kpi');
   kpiGrid.innerHTML = '';
   kpiGrid.style.gridTemplateColumns = 'repeat(4,1fr)';
   s.doctors.forEach((dr, di) => {
-    const av = s.apr.total.visit[di], ac = s.apr.total.contract[di], ar = s.apr.total.rate[di];
-    const mv = s.may.total.visit[di], mc = s.may.total.contract[di], mr = s.may.total.rate[di];
-    const rd = mr - ar;
-    const cls = rd>0?'up':rd<0?'down':'flat';
-    const arrow = rd>0?`▲ ${Math.abs(rd)}`:rd<0?`▼ ${Math.abs(rd)}`:'— 0';
+    const av=s.apr.total.visit[di],ac=s.apr.total.contract[di],ar=s.apr.total.rate[di];
+    const mv=s.may.total.visit[di],mc=s.may.total.contract[di],mr=s.may.total.rate[di];
+    const rd=mr-ar, cls=rd>0?'up':rd<0?'down':'flat';
+    const arrow=rd>0?`▲ ${Math.abs(rd)}`:rd<0?`▼ ${Math.abs(rd)}`:'— 0';
     kpiGrid.innerHTML += `
       <div class="ch-kpi-card">
         <div class="ck-name"><span class="ck-dot" style="background:${drColors[di]}"></span>${dr}</div>
-        <div class="ck-row"><span>내원</span><div style="display:flex;align-items:center;gap:6px;">
-          <div class="ck-vals"><span>${av}</span><span class="arrow">→</span><span>${mv}</span></div>
-          <span class="ck-diff ${mv-av>0?'up':mv-av<0?'down':'flat'}">${mv-av>0?'▲':'▼'} ${Math.abs(mv-av)}</span>
-        </div></div>
+        <div class="ck-row"><span>내원</span><div style="display:flex;align-items:center;gap:6px;"><div class="ck-vals"><span>${av}</span><span class="arrow">→</span><span>${mv}</span></div><span class="ck-diff ${mv-av>0?'up':mv-av<0?'down':'flat'}">${mv-av>0?'▲':'▼'} ${Math.abs(mv-av)}</span></div></div>
         <hr class="ck-divider">
-        <div class="ck-row"><span>체결</span><div style="display:flex;align-items:center;gap:6px;">
-          <div class="ck-vals"><span>${ac}</span><span class="arrow">→</span><span>${mc}</span></div>
-          <span class="ck-diff ${mc-ac>0?'up':mc-ac<0?'down':'flat'}">${mc-ac>0?'▲':'▼'} ${Math.abs(mc-ac)}</span>
-        </div></div>
+        <div class="ck-row"><span>체결</span><div style="display:flex;align-items:center;gap:6px;"><div class="ck-vals"><span>${ac}</span><span class="arrow">→</span><span>${mc}</span></div><span class="ck-diff ${mc-ac>0?'up':mc-ac<0?'down':'flat'}">${mc-ac>0?'▲':'▼'} ${Math.abs(mc-ac)}</span></div></div>
         <hr class="ck-divider">
-        <div class="ck-row"><span>체결률</span><div style="display:flex;align-items:center;gap:6px;">
-          <div class="ck-vals"><span>${ar}%</span><span class="arrow">→</span><span>${mr}%</span></div>
-          <span class="ck-diff ${cls}">${arrow}${rd!==0?'%p':''}</span>
-        </div></div>
+        <div class="ck-row"><span>체결률</span><div style="display:flex;align-items:center;gap:6px;"><div class="ck-vals"><span>${ar}%</span><span class="arrow">→</span><span>${mr}%</span></div><span class="ck-diff ${cls}">${arrow}${rd!==0?'%p':''}</span></div></div>
       </div>`;
   });
-
-  // ── 체결률 비교 그래프
   legend('lg-s05-rate', [[C.aprInq,'4월 체결률'],[C.mayInq,'5월 체결률']]);
   if(charts['chart-s05-rate']) charts['chart-s05-rate'].destroy();
   charts['chart-s05-rate'] = new Chart(document.getElementById('chart-s05-rate'), {
-    type:'bar',
-    data:{
-      labels: s.doctors,
-      datasets:[
-        { label:'4월 체결률', data:s.apr.total.rate, backgroundColor:C.aprInq, borderRadius:3 },
-        { label:'5월 체결률', data:s.may.total.rate, backgroundColor:C.mayInq, borderRadius:3 },
-      ]
-    },
-    options:{
-      ...BASE,
-      scales:{ ...BASE.scales, y:{ ...BASE.scales.y, max:105, ticks:{...BASE.scales.y.ticks, callback:v=>v+'%'} } },
-      plugins:{ ...BASE.plugins, tooltip:{...BASE.plugins.tooltip, callbacks:{label:c=>' '+c.dataset.label+': '+c.parsed.y+'%'}} }
-    }
+    type:'bar', data:{ labels:s.doctors, datasets:[
+      {label:'4월 체결률',data:s.apr.total.rate,backgroundColor:C.aprInq,borderRadius:3},
+      {label:'5월 체결률',data:s.may.total.rate,backgroundColor:C.mayInq,borderRadius:3},
+    ]},
+    options:{...BASE, scales:{...BASE.scales,y:{...BASE.scales.y,max:105,ticks:{...BASE.scales.y.ticks,callback:v=>v+'%'}}},
+      plugins:{...BASE.plugins,tooltip:{...BASE.plugins.tooltip,callbacks:{label:c=>' '+c.dataset.label+': '+c.parsed.y+'%'}}}}
   });
-
-  // ── 과목 상세 그리드
   renderS05Detail(s, s05ActiveMonth, drColors);
   renderAnalysis('ana-s05', s.analysis);
 }
@@ -1235,25 +1025,16 @@ function renderS05Detail(s, month, drColors) {
   grid.innerHTML = '';
   const d = s[month];
   s.doctors.forEach((dr, di) => {
-    const pairs = s.cats.map((cat,ci) => ({
-      cat, visit: d.visit[di][ci], contract: d.contract[di][ci], rate: d.rate[di][ci]
-    })).filter(p => p.visit > 0 || p.contract > 0);
-    if(pairs.length === 0) return;
-    const bars = pairs.map(p => `
+    const pairs = s.cats.map((cat,ci)=>({cat, visit:d.visit[di][ci], contract:d.contract[di][ci], rate:d.rate[di][ci]})).filter(p=>p.visit>0||p.contract>0);
+    if(pairs.length===0) return;
+    const bars = pairs.map(p=>`
       <div class="hbar-item">
-        <div class="hbar-label">
-          <span class="hbl-ch">${p.cat}</span>
-          <span class="hbl-num">${p.contract}/${p.visit}건 <span style="color:#aaa;font-weight:400;">(${p.rate}%)</span></span>
-        </div>
+        <div class="hbar-label"><span class="hbl-ch">${p.cat}</span><span class="hbl-num">${p.contract}/${p.visit}건 <span style="color:#aaa;font-weight:400;">(${p.rate}%)</span></span></div>
         <div class="hbar-track"><div class="hbar-fill" style="width:${p.rate}%;background:${drColors[di]};opacity:0.75;"></div></div>
       </div>`).join('');
     grid.innerHTML += `
       <div class="cat-channel-card">
-        <div class="ccc-title">
-          <span style="width:10px;height:10px;border-radius:50%;background:${drColors[di]};display:inline-block;flex-shrink:0;"></span>
-          ${dr}
-          <span class="ccc-badge">체결률 ${s[month].total.rate[di]}%</span>
-        </div>
+        <div class="ccc-title"><span style="width:10px;height:10px;border-radius:50%;background:${drColors[di]};display:inline-block;flex-shrink:0;"></span>${dr}<span class="ccc-badge">체결률 ${d.total.rate[di]}%</span></div>
         <div class="hbar-wrap">${bars}</div>
       </div>`;
   });
@@ -1261,7 +1042,7 @@ function renderS05Detail(s, month, drColors) {
 
 function switchS05Month(month) {
   s05ActiveMonth = month;
-  document.querySelectorAll('[onclick^="switchS05"]').forEach(t => t.classList.toggle('active', t.dataset.month === month));
+  document.querySelectorAll('[onclick^="switchS05"]').forEach(t=>t.classList.toggle('active',t.dataset.month===month));
   if(currentReport) renderS05Detail(currentReport.section05, month, ['#5C6BC0','#C62828','#2E7D32','#E65100']);
 }
 
@@ -1269,75 +1050,33 @@ function switchS05Month(month) {
    섹션 04 렌더링
 ═══════════════════════════════ */
 function renderSection04(r) {
-  const s = r.section04;
-  const a = s.apr, m = s.may;
+  const s=r.section04, a=s.apr, m=s.may;
   document.getElementById('s04-subtitle').textContent = r.meta.compare + ' · 시술 과목별 내원·체결 성사 현황';
-
-  // ── KPI
-  function kpiItem(label, aprVal, mayVal, suffix) {
-    const d = mayVal - aprVal;
-    const cls = d>0?'up':d<0?'down':'flat';
-    const arrow = d>0?`▲ ${Math.abs(d)}`:d<0?`▼ ${Math.abs(d)}`:'— 0';
-    return `<div class="kpi-item">
-      <div class="kpi-item-label">${label}</div>
-      <div class="kpi-row">
-        <div class="kpi-month"><span class="kpi-month-label">4월</span><span class="kpi-month-val">${aprVal}${suffix}</span></div>
-        <span class="kpi-arrow">→</span>
-        <div class="kpi-month"><span class="kpi-month-label">5월</span><span class="kpi-month-val">${mayVal}${suffix}</span></div>
-        <span class="kpi-diff ${cls}">${arrow}${suffix&&d!==0?suffix:''}</span>
-      </div>
-    </div>`;
+  function kpiItem(label,aprVal,mayVal,suffix){
+    const d=mayVal-aprVal, cls=d>0?'up':d<0?'down':'flat', arrow=d>0?`▲ ${Math.abs(d)}`:d<0?`▼ ${Math.abs(d)}`:'— 0';
+    return `<div class="kpi-item"><div class="kpi-item-label">${label}</div><div class="kpi-row"><div class="kpi-month"><span class="kpi-month-label">4월</span><span class="kpi-month-val">${aprVal}${suffix}</span></div><span class="kpi-arrow">→</span><div class="kpi-month"><span class="kpi-month-label">5월</span><span class="kpi-month-val">${mayVal}${suffix}</span></div><span class="kpi-diff ${cls}">${arrow}${suffix&&d!==0?suffix:''}</span></div></div>`;
   }
   document.getElementById('s04-kpi').innerHTML =
-    kpiItem('총 내원',  a.total.visit,    m.total.visit,    '') +
-    kpiItem('총 체결',  a.total.contract, m.total.contract, '') +
-    kpiItem('체결률',   a.total.rate,     m.total.rate,     '%');
-
-  // ── 체결률 비교 그래프
-  legend('lg-s04-rate', [[C.aprInq,'4월 체결률'],[C.mayInq,'5월 체결률']]);
+    kpiItem('총 내원',a.total.visit,m.total.visit,'') +
+    kpiItem('총 체결',a.total.contract,m.total.contract,'') +
+    kpiItem('체결률',a.total.rate,m.total.rate,'%');
+  legend('lg-s04-rate',[[C.aprInq,'4월 체결률'],[C.mayInq,'5월 체결률']]);
   if(charts['chart-s04-rate']) charts['chart-s04-rate'].destroy();
   charts['chart-s04-rate'] = new Chart(document.getElementById('chart-s04-rate'), {
-    type:'bar',
-    data:{
-      labels: s.cats,
-      datasets:[
-        { label:'4월 체결률', data:a.rate, backgroundColor:C.aprInq, borderRadius:3 },
-        { label:'5월 체결률', data:m.rate, backgroundColor:C.mayInq, borderRadius:3 },
-      ]
-    },
-    options:{
-      ...BASE,
-      scales:{
-        ...BASE.scales,
-        y:{ ...BASE.scales.y, max:105, ticks:{...BASE.scales.y.ticks, callback:v=>v+'%'} }
-      },
-      plugins:{
-        ...BASE.plugins,
-        tooltip:{...BASE.plugins.tooltip, callbacks:{label:c=>' '+c.dataset.label+': '+c.parsed.y+'%'}}
-      }
-    }
+    type:'bar', data:{ labels:s.cats, datasets:[
+      {label:'4월 체결률',data:a.rate,backgroundColor:C.aprInq,borderRadius:3},
+      {label:'5월 체결률',data:m.rate,backgroundColor:C.mayInq,borderRadius:3},
+    ]},
+    options:{...BASE, scales:{...BASE.scales,y:{...BASE.scales.y,max:105,ticks:{...BASE.scales.y.ticks,callback:v=>v+'%'}}},
+      plugins:{...BASE.plugins,tooltip:{...BASE.plugins.tooltip,callbacks:{label:c=>' '+c.dataset.label+': '+c.parsed.y+'%'}}}}
   });
-
-  // ── 과목별 표
-  mkTable('tbl-s04',
-    ['구분','4월 내원','4월 체결','4월 체결률','5월 내원','5월 체결','5월 체결률','증감'],
-    ['합계', a.total.visit, a.total.contract, a.total.rate+'%',
-             m.total.visit, m.total.contract, m.total.rate+'%',
-             diff(a.total.contract, m.total.contract)],
-    s.cats.map((cat,i)=>[
-      cat,
-      a.visit[i], a.contract[i], a.rate[i]+'%',
-      m.visit[i], m.contract[i], m.rate[i]+'%',
-      diff(a.contract[i], m.contract[i])
-    ])
-  );
-
-  // ── 내원·체결 비교 그래프
-  legend('lg-s04-visit',    [[C.aprInq,'4월 내원'],   [C.mayInq,'5월 내원']]);
-  legend('lg-s04-contract', [[C.aprBook,'4월 체결'],  [C.mayBook,'5월 체결']]);
-  mkChart('chart-s04-visit',    s.cats, [mkDS('4월 내원',   a.visit,    C.aprInq),  mkDS('5월 내원',   m.visit,    C.mayInq)]);
-  mkChart('chart-s04-contract', s.cats, [mkDS('4월 체결',   a.contract, C.aprBook), mkDS('5월 체결',   m.contract, C.mayBook)]);
-
+  mkTable('tbl-s04',['구분','4월 내원','4월 체결','4월 체결률','5월 내원','5월 체결','5월 체결률','증감'],
+    ['합계',a.total.visit,a.total.contract,a.total.rate+'%',m.total.visit,m.total.contract,m.total.rate+'%',diff(a.total.contract,m.total.contract)],
+    s.cats.map((cat,i)=>[cat,a.visit[i],a.contract[i],a.rate[i]+'%',m.visit[i],m.contract[i],m.rate[i]+'%',diff(a.contract[i],m.contract[i])]));
+  legend('lg-s04-visit',    [[C.aprInq,'4월 내원'],  [C.mayInq,'5월 내원']]);
+  legend('lg-s04-contract', [[C.aprBook,'4월 체결'], [C.mayBook,'5월 체결']]);
+  mkChart('chart-s04-visit',    s.cats, [mkDS('4월 내원',  a.visit,    C.aprInq), mkDS('5월 내원',   m.visit,    C.mayInq)]);
+  mkChart('chart-s04-contract', s.cats, [mkDS('4월 체결',  a.contract, C.aprBook),mkDS('5월 체결',   m.contract, C.mayBook)]);
   renderAnalysis('ana-s04', s.analysis);
 }
 
@@ -1345,75 +1084,187 @@ function renderSection04(r) {
    섹션 03 렌더링
 ═══════════════════════════════ */
 function renderSection03(r) {
-  const s = r.section03;
-  const a = s.apr, m = s.may;
+  const s=r.section03, a=s.apr, m=s.may;
   document.getElementById('s03-subtitle').textContent = r.meta.compare + ' · 예약 흐름 및 과목별 내원 현황';
-
-  // ── KPI
-  function kpiItem(label, aprVal, mayVal, suffix) {
-    const d = mayVal - aprVal;
-    const cls = d>0?'up':d<0?'down':'flat';
-    const arrow = d>0?`▲ ${Math.abs(d)}`:d<0?`▼ ${Math.abs(d)}`:'— 0';
-    return `<div class="kpi-item">
-      <div class="kpi-item-label">${label}</div>
-      <div class="kpi-row">
-        <div class="kpi-month"><span class="kpi-month-label">4월</span><span class="kpi-month-val">${aprVal}${suffix}</span></div>
-        <span class="kpi-arrow">→</span>
-        <div class="kpi-month"><span class="kpi-month-label">5월</span><span class="kpi-month-val">${mayVal}${suffix}</span></div>
-        <span class="kpi-diff ${cls}">${arrow}${suffix&&d!==0?suffix:''}</span>
-      </div>
-    </div>`;
+  function kpiItem(label,aprVal,mayVal,suffix){
+    const d=mayVal-aprVal, cls=d>0?'up':d<0?'down':'flat', arrow=d>0?`▲ ${Math.abs(d)}`:d<0?`▼ ${Math.abs(d)}`:'— 0';
+    return `<div class="kpi-item"><div class="kpi-item-label">${label}</div><div class="kpi-row"><div class="kpi-month"><span class="kpi-month-label">4월</span><span class="kpi-month-val">${aprVal}${suffix}</span></div><span class="kpi-arrow">→</span><div class="kpi-month"><span class="kpi-month-label">5월</span><span class="kpi-month-val">${mayVal}${suffix}</span></div><span class="kpi-diff ${cls}">${arrow}${suffix&&d!==0?suffix:''}</span></div></div>`;
   }
   document.getElementById('s03-kpi').innerHTML =
-    kpiItem('총 예약',    a.total_book,      m.total_book,      '') +
-    kpiItem('내원',       a.visit,           m.visit,           '') +
-    kpiItem('내원율',     a.visit_rate,      m.visit_rate,      '%') +
-    kpiItem('최종내원율', a.final_visit_rate,m.final_visit_rate,'%');
-
-  // ── 예약 흐름 가로 막대
-  const funnelMax = Math.ceil(Math.max(a.total_book, m.total_book) * 1.1 / 10) * 10;
-  function mkFunnel(id, d) {
-    if (charts[id]) charts[id].destroy();
+    kpiItem('총 예약',   a.total_book,       m.total_book,       '') +
+    kpiItem('내원',      a.visit,            m.visit,            '') +
+    kpiItem('내원율',    a.visit_rate,       m.visit_rate,       '%') +
+    kpiItem('최종내원율',a.final_visit_rate, m.final_visit_rate, '%');
+  const funnelMax = Math.ceil(Math.max(a.total_book,m.total_book)*1.1/10)*10;
+  function mkFunnel(id,d){
+    if(charts[id]) charts[id].destroy();
     charts[id] = new Chart(document.getElementById(id), {
-      type: 'bar',
-      data: {
-        labels: ['총 예약', '잔여 예약', '내원'],
-        datasets: [{ data:[d.total_book, d.remain, d.visit], backgroundColor:['#90CAF9','#42A5F5','#1565C0'], borderRadius:4 }]
-      },
-      options: {
-        indexAxis:'y', responsive:true, maintainAspectRatio:false,
+      type:'bar', data:{ labels:['총 예약','잔여 예약','내원'], datasets:[{data:[d.total_book,d.remain,d.visit],backgroundColor:['#90CAF9','#42A5F5','#1565C0'],borderRadius:4}]},
+      options:{ indexAxis:'y', responsive:true, maintainAspectRatio:false,
         plugins:{ legend:{display:false}, tooltip:{callbacks:{label:c=>' '+c.parsed.x+'건'}} },
-        scales:{
-          x:{ grid:{color:'#F1F3F5'}, ticks:{font:{size:12,family:'Pretendard'},color:'#3d3d3d'}, max:funnelMax },
-          y:{ grid:{display:false}, ticks:{font:{size:13,family:'Pretendard'},color:'#3d3d3d'} }
-        }
-      }
+        scales:{ x:{grid:{color:'#F1F3F5'},ticks:{font:{size:12,family:'Pretendard'},color:'#3d3d3d'},max:funnelMax}, y:{grid:{display:false},ticks:{font:{size:13,family:'Pretendard'},color:'#3d3d3d'}} }}
     });
   }
-  mkFunnel('chart-s03-funnel-apr', a);
-  mkFunnel('chart-s03-funnel-may', m);
-
-  // ── 당일취소·부도
-  legend('lg-s03-noshow', [['#BDBDBD','4월'],['#616161','5월']]);
-  mkChart('chart-s03-noshow', ['당일취소','부도'],
-    [mkDS('4월',[a.same_day_cancel,a.noshow],'#BDBDBD'),
-     mkDS('5월',[m.same_day_cancel,m.noshow],'#616161')]);
-
-  // ── 과목별 내원 (0건 제외)
-  const catPairs = a.cats.map((cat,i)=>({cat, apr:a.visit_by_cat[i], may:m.visit_by_cat[i]}))
-                         .filter(p=>p.apr>0||p.may>0);
-  mkTable('tbl-s03-cats',
-    ['구분','4월 내원','5월 내원','증감'],
-    ['합계', a.visit, m.visit, diff(a.visit, m.visit)],
-    catPairs.map(p=>[p.cat, p.apr, p.may, diff(p.apr, p.may)]));
-
-  legend('lg-s03-cats', [[C.aprInq,'4월 내원'],[C.mayInq,'5월 내원']]);
-  mkChart('chart-s03-cats',
-    catPairs.map(p=>p.cat),
-    [mkDS('4월 내원',catPairs.map(p=>p.apr),C.aprInq),
-     mkDS('5월 내원',catPairs.map(p=>p.may),C.mayInq)]);
-
+  mkFunnel('chart-s03-funnel-apr',a);
+  mkFunnel('chart-s03-funnel-may',m);
+  legend('lg-s03-noshow',[['#BDBDBD','4월'],['#616161','5월']]);
+  mkChart('chart-s03-noshow',['당일취소','부도'],[mkDS('4월',[a.same_day_cancel,a.noshow],'#BDBDBD'),mkDS('5월',[m.same_day_cancel,m.noshow],'#616161')]);
+  const catPairs=a.cats.map((cat,i)=>({cat,apr:a.visit_by_cat[i],may:m.visit_by_cat[i]})).filter(p=>p.apr>0||p.may>0);
+  mkTable('tbl-s03-cats',['구분','4월 내원','5월 내원','증감'],['합계',a.visit,m.visit,diff(a.visit,m.visit)],catPairs.map(p=>[p.cat,p.apr,p.may,diff(p.apr,p.may)]));
+  legend('lg-s03-cats',[[C.aprInq,'4월 내원'],[C.mayInq,'5월 내원']]);
+  mkChart('chart-s03-cats',catPairs.map(p=>p.cat),[mkDS('4월 내원',catPairs.map(p=>p.apr),C.aprInq),mkDS('5월 내원',catPairs.map(p=>p.may),C.mayInq)]);
   renderAnalysis('ana-s03', s.analysis);
+}
+
+/* ═══════════════════════════════
+   섹션 06 렌더링 — 직원별 성사율
+═══════════════════════════════ */
+// 직원별 색상
+const STAFF_COLORS = ['#5C6BC0','#C62828','#2E7D32','#E65100','#6A1B9A','#00838F'];
+
+function renderSection06(r) {
+  const s = r.section06;
+  document.getElementById('s06-subtitle').textContent = r.meta.compare + ' · 직원별 내원·체결 성사 현황';
+
+  // ── KPI 카드 (체결률 순위 표시)
+  const kpiGrid = document.getElementById('s06-kpi');
+  kpiGrid.innerHTML = '';
+
+  // 5월 체결률 기준 순위
+  const ranked = s.staff.map((name, i) => ({ name, i, rate: s.may.total.rate[i] }))
+                        .sort((a, b) => b.rate - a.rate);
+  const rankOf = {};
+  ranked.forEach((item, ri) => { rankOf[item.i] = ri + 1; });
+
+  s.staff.forEach((name, si) => {
+    const av = s.apr.total.visit[si],    ac = s.apr.total.contract[si], ar = s.apr.total.rate[si];
+    const mv = s.may.total.visit[si],    mc = s.may.total.contract[si], mr = s.may.total.rate[si];
+    const rd = mr - ar;
+    const cls   = rd > 0 ? 'up' : rd < 0 ? 'down' : 'flat';
+    const arrow = rd > 0 ? `▲ ${Math.abs(rd)}` : rd < 0 ? `▼ ${Math.abs(rd)}` : '— 0';
+    const rank  = rankOf[si];
+    const rankCls = rank === 1 ? 's06-rank-1' : rank === 2 ? 's06-rank-2' : rank === 3 ? 's06-rank-3' : 's06-rank-other';
+
+    kpiGrid.innerHTML += `
+      <div class="ch-kpi-card">
+        <div class="ck-name">
+          <span class="s06-rank-badge ${rankCls}">${rank}</span>
+          <span class="ck-dot" style="background:${STAFF_COLORS[si]}"></span>
+          ${name}
+        </div>
+        <div class="ck-row"><span>내원</span>
+          <div style="display:flex;align-items:center;gap:6px;">
+            <div class="ck-vals"><span>${av}</span><span class="arrow">→</span><span>${mv}</span></div>
+            <span class="ck-diff ${mv-av>0?'up':mv-av<0?'down':'flat'}">${mv-av>0?'▲':'▼'} ${Math.abs(mv-av)}</span>
+          </div>
+        </div>
+        <hr class="ck-divider">
+        <div class="ck-row"><span>체결</span>
+          <div style="display:flex;align-items:center;gap:6px;">
+            <div class="ck-vals"><span>${ac}</span><span class="arrow">→</span><span>${mc}</span></div>
+            <span class="ck-diff ${mc-ac>0?'up':mc-ac<0?'down':'flat'}">${mc-ac>0?'▲':'▼'} ${Math.abs(mc-ac)}</span>
+          </div>
+        </div>
+        <hr class="ck-divider">
+        <div class="ck-row"><span>체결률</span>
+          <div style="display:flex;align-items:center;gap:6px;">
+            <div class="ck-vals"><span>${ar}%</span><span class="arrow">→</span><span>${mr}%</span></div>
+            <span class="ck-diff ${cls}">${arrow}${rd!==0?'%p':''}</span>
+          </div>
+        </div>
+      </div>`;
+  });
+
+  // ── 체결률 비교 그래프
+  chLegend('lg-s06-rate', [[C.aprInq,'4월 체결률'],[C.mayInq,'5월 체결률']]);
+  if(charts['chart-s06-rate']) charts['chart-s06-rate'].destroy();
+  charts['chart-s06-rate'] = new Chart(document.getElementById('chart-s06-rate'), {
+    type:'bar',
+    data:{ labels: s.staff, datasets:[
+      { label:'4월 체결률', data:s.apr.total.rate, backgroundColor:C.aprInq, borderRadius:3 },
+      { label:'5월 체결률', data:s.may.total.rate, backgroundColor:C.mayInq, borderRadius:3 },
+    ]},
+    options:{
+      ...BASE,
+      scales:{...BASE.scales, y:{...BASE.scales.y, max:105, ticks:{...BASE.scales.y.ticks, callback:v=>v+'%'}}},
+      plugins:{...BASE.plugins, tooltip:{...BASE.plugins.tooltip, callbacks:{label:c=>' '+c.dataset.label+': '+c.parsed.y+'%'}}}
+    }
+  });
+
+  // ── 내원·체결 비교 그래프
+  chLegend('lg-s06-visit',    [[C.aprInq,'4월 내원'],  [C.mayInq,'5월 내원']]);
+  chLegend('lg-s06-contract', [[C.aprBook,'4월 체결'], [C.mayBook,'5월 체결']]);
+  mkChart('chart-s06-visit',    s.staff, [mkDS('4월 내원',   s.apr.total.visit,    C.aprInq),  mkDS('5월 내원',   s.may.total.visit,    C.mayInq)]);
+  mkChart('chart-s06-contract', s.staff, [mkDS('4월 체결',   s.apr.total.contract, C.aprBook), mkDS('5월 체결',   s.may.total.contract, C.mayBook)]);
+
+  // ── 통합 테이블
+  mkTable('tbl-s06',
+    ['직원','4월 내원','4월 체결','4월 체결률','5월 내원','5월 체결','5월 체결률','증감'],
+    ['합계',
+      s.apr.total.visit.reduce((a,b)=>a+b,0),
+      s.apr.total.contract.reduce((a,b)=>a+b,0),
+      Math.round(s.apr.total.contract.reduce((a,b)=>a+b,0)/s.apr.total.visit.reduce((a,b)=>a+b,0)*100)+'%',
+      s.may.total.visit.reduce((a,b)=>a+b,0),
+      s.may.total.contract.reduce((a,b)=>a+b,0),
+      Math.round(s.may.total.contract.reduce((a,b)=>a+b,0)/s.may.total.visit.reduce((a,b)=>a+b,0)*100)+'%',
+      diff(s.apr.total.contract.reduce((a,b)=>a+b,0), s.may.total.contract.reduce((a,b)=>a+b,0))
+    ],
+    s.staff.map((name,si) => [
+      name,
+      s.apr.total.visit[si], s.apr.total.contract[si], s.apr.total.rate[si]+'%',
+      s.may.total.visit[si], s.may.total.contract[si], s.may.total.rate[si]+'%',
+      diff(s.apr.total.contract[si], s.may.total.contract[si])
+    ])
+  );
+
+  // ── 직원별 과목 상세 그리드
+  renderS06Detail(s, s06ActiveMonth);
+  renderAnalysis('ana-s06', s.analysis);
+}
+
+function renderS06Detail(s, month) {
+  const grid = document.getElementById('s06-detail-grid');
+  grid.innerHTML = '';
+  const d = s[month];
+
+  s.staff.forEach((name, si) => {
+    // 해당 직원의 과목별 데이터 (내원>0 또는 체결>0인 과목만)
+    const pairs = s.cats.map((cat, ci) => ({
+      cat,
+      visit:    d.visit[si][ci],
+      contract: d.contract[si][ci],
+      rate:     d.rate[si][ci],
+    })).filter(p => p.visit > 0 || p.contract > 0);
+
+    if (pairs.length === 0) return;
+
+    const bars = pairs.map(p => `
+      <div class="hbar-item">
+        <div class="hbar-label">
+          <span class="hbl-ch">${p.cat}</span>
+          <span class="hbl-num">${p.contract}/${p.visit}건 <span style="color:#aaa;font-weight:400;">(${p.rate}%)</span></span>
+        </div>
+        <div class="hbar-track">
+          <div class="hbar-fill" style="width:${p.rate}%;background:${STAFF_COLORS[si]};opacity:0.8;"></div>
+        </div>
+      </div>`).join('');
+
+    grid.innerHTML += `
+      <div class="cat-channel-card">
+        <div class="ccc-title">
+          <span style="width:10px;height:10px;border-radius:50%;background:${STAFF_COLORS[si]};display:inline-block;flex-shrink:0;"></span>
+          ${name}
+          <span class="ccc-badge">체결률 ${d.total.rate[si]}%</span>
+        </div>
+        <div class="hbar-wrap">${bars}</div>
+      </div>`;
+  });
+}
+
+function switchS06Month(month) {
+  s06ActiveMonth = month;
+  document.querySelectorAll('[onclick^="switchS06"]').forEach(t => t.classList.toggle('active', t.dataset.month === month));
+  if(currentReport) renderS06Detail(currentReport.section06, month);
 }
 
 /* 초기화 */
