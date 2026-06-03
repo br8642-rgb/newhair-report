@@ -417,7 +417,80 @@
   </div>
 
   <!-- 나머지 예정 섹션 -->
-  <div class="section-panel" id="section-07"><div class="section-header"><div class="section-tag">Section 07</div><div class="section-title">유입경로 분석</div><div class="section-subtitle">작성 예정</div></div></div>
+  <!-- ══════════════════════════
+       섹션 07 — 유입경로 분석
+  ══════════════════════════════ -->
+  <div class="section-panel" id="section-07">
+    <div class="section-header">
+      <div class="section-tag">Section 07</div>
+      <div class="section-title">유입경로 분석</div>
+      <div class="section-subtitle" id="s07-subtitle"></div>
+    </div>
+
+    <!-- KPI -->
+    <div class="kpi-table-wrap">
+      <div class="kpi-label">핵심 지표 요약</div>
+      <div class="kpi-compare" id="s07-kpi"></div>
+    </div>
+
+    <!-- 상위 경로 비중 도넛 + 막대 -->
+    <div class="s02-section-label">유입경로 비중 TOP 10</div>
+    <div class="s02-charts-grid" style="grid-template-columns:1fr 1.6fr;">
+      <div class="card">
+        <div class="card-title">비중 분포 <span style="font-size:11px;color:#6b6b6b;font-weight:400;" id="s07-donut-label"></span></div>
+        <div class="s02-month-tabs" style="margin-bottom:12px;">
+          <button class="s02-month-tab active" data-month="apr" onclick="switchS07Month('apr')">4월</button>
+          <button class="s02-month-tab" data-month="may" onclick="switchS07Month('may')">5월</button>
+        </div>
+        <div class="chart-wrap" style="height:260px"><canvas id="chart-s07-donut"></canvas></div>
+      </div>
+      <div class="card">
+        <div class="card-title">4월 vs 5월 상위경로 내원수 비교</div>
+        <div class="ch-legend-row" id="lg-s07-bar"></div>
+        <div class="chart-wrap" style="height:300px"><canvas id="chart-s07-bar"></canvas></div>
+      </div>
+    </div>
+
+    <!-- 전환율 비교 -->
+    <div class="s02-section-label">유입경로별 성사 전환율</div>
+    <div class="card" style="margin-bottom:16px;">
+      <div class="card-title">전환율 비교 <span style="font-size:11px;color:#6b6b6b;font-weight:400;">(4월 vs 5월, % — 상담수 5건 이상 경로)</span></div>
+      <div class="ch-legend-row" id="lg-s07-rate"></div>
+      <div class="chart-wrap" style="height:260px"><canvas id="chart-s07-rate"></canvas></div>
+    </div>
+
+    <!-- 수술/치료 확정 비교 -->
+    <div class="s02-charts-grid">
+      <div class="card">
+        <div class="card-title">수술 확정 비교</div>
+        <div class="ch-legend-row" id="lg-s07-surg"></div>
+        <div class="chart-wrap" style="height:260px"><canvas id="chart-s07-surg"></canvas></div>
+      </div>
+      <div class="card">
+        <div class="card-title">치료 확정 비교</div>
+        <div class="ch-legend-row" id="lg-s07-treat"></div>
+        <div class="chart-wrap" style="height:260px"><canvas id="chart-s07-treat"></canvas></div>
+      </div>
+    </div>
+
+    <!-- 과목별 경로 분포 -->
+    <div class="s02-section-label">진료과목별 주요 유입경로</div>
+    <div class="s02-month-tabs">
+      <button class="s02-month-tab active" data-month="apr" onclick="switchS07CatMonth('apr')">4월</button>
+      <button class="s02-month-tab" data-month="may" onclick="switchS07CatMonth('may')">5월</button>
+    </div>
+    <div class="cat-channel-grid" id="s07-cat-grid" style="grid-template-columns:repeat(3,1fr);"></div>
+
+    <!-- 전체 상세 테이블 -->
+    <div class="s02-section-label">전체 경로 상세</div>
+    <div class="card">
+      <div class="card-title">유입경로별 내원수 · 전환율 전체</div>
+      <button class="table-toggle-btn" onclick="toggleTable(this)"><span class="toggle-arrow">▼</span> 표 펼치기</button>
+      <div class="table-collapsible"><div style="overflow-x:auto"><table class="data-table" id="tbl-s07"></table></div></div>
+    </div>
+
+    <div class="analysis-box" id="ana-box-s07"><p id="ana-s07"></p></div>
+  </div>
   <div class="section-panel" id="section-08"><div class="section-header"><div class="section-tag">Section 08</div><div class="section-title">매출 현황</div><div class="section-subtitle">작성 예정</div></div></div>
   <div class="section-panel" id="section-09"><div class="section-header"><div class="section-tag">Section 09</div><div class="section-title">종합 리뷰 &amp; 과제</div><div class="section-subtitle">작성 예정</div></div></div>
 </div>
@@ -556,6 +629,97 @@ const ALL_REPORTS = [
       rate:     [[54,35,100,50,0],[0,0,74,86,0],[57,0,0,0,0],[38,0,0,0,0]],
     },
     analysis: '<b>박주성 원장님 체결률 81%→83%로 전 원장 중 최고</b>, 탈모치료 특화(55→83건 내원, 45→71건 체결).\n<b>김진오 원장님은 모발이식 41%→54%로 크게 개선</b>됐으나 헤어라인 60%→35%로 급락 — 과목별 편차 주목.\n김진욱 원장님 0%→50%로 체결 시작, 조준상 원장님도 0%→38%로 개선 — 두 원장 모두 5월 상승 전환.\n',
+  },
+  section07: {
+    cats: ['모발이식','헤어라인','SMP','탈모치료','검사','처방'],
+    // 유입경로 (합계 1건 이상인 경로만)
+    routes: ['유튜브','네이버검색','네이버지도','구글검색','고객소개','대다모','이마반','뉴헤어네이버카페','타카페(타커뮤니티)','뉴헤어홈페이지','뉴헤어네이버블로그','대머리블로그','기존고객','직원소개','타병원소개','기타(타채널/타SNS)','왓츠앱','해외','AI','위챗','인스타그램','기타-입소문','DB마케팅','외부DB','미기재','나만의닥터','HOLD'],
+    apr: {
+      total: 589,
+      // [경로순서대로] 합계 내원수
+      count:  [77,142,67,48,57,33,3,0,0,24,15,2,38,1,8,8,4,8,24,1,2,8,9,4,1,1,3],
+      share:  [13,24,11,8,10,6,1,0,0,4,3,0,6,0,1,1,1,1,4,0,0,1,2,1,0,0,1],
+      // 과목별 [모발이식,헤어라인,SMP,탈모치료,검사,처방]
+      byCat: [
+        [17,6,6,15,32,1],   // 유튜브
+        [26,5,2,21,80,8],   // 네이버검색
+        [5,0,1,8,47,6],     // 네이버지도
+        [7,5,2,7,23,4],     // 구글검색
+        [10,6,5,7,26,3],    // 고객소개
+        [14,1,3,3,9,3],     // 대다모
+        [3,0,0,0,0,0],      // 이마반
+        [0,0,0,0,0,0],      // 뉴헤어네이버카페
+        [0,0,0,0,0,0],      // 타카페
+        [7,0,5,2,9,1],      // 뉴헤어홈페이지
+        [3,1,0,4,6,1],      // 뉴헤어네이버블로그
+        [0,0,0,0,2,0],      // 대머리블로그
+        [3,1,4,10,16,4],    // 기존고객
+        [0,0,0,0,0,1],      // 직원소개
+        [3,4,0,0,1,0],      // 타병원소개
+        [0,1,0,5,2,0],      // 기타(타채널/타SNS)
+        [0,2,0,2,0,0],      // 왓츠앱
+        [0,3,0,2,2,1],      // 해외
+        [9,0,0,5,7,3],      // AI
+        [0,0,0,1,0,0],      // 위챗
+        [0,0,0,1,1,0],      // 인스타그램
+        [2,1,0,2,2,1],      // 기타-입소문
+        [0,1,0,8,0,0],      // DB마케팅
+        [0,0,0,4,0,0],      // 외부DB
+        [0,0,0,0,0,1],      // 미기재
+        [0,0,0,0,0,1],      // 나만의닥터
+        [0,0,1,0,0,2],      // HOLD
+      ],
+      // 전환율 데이터
+      conv: {
+        consult:  [74,116,68,48,53,32,3,0,0,11,15,2,35,1,8,3,4,8,22,1,3,7,2,0,1,1,3],
+        surgery:  [18,11,2,7,13,11,2,0,0,2,4,0,7,0,2,0,0,1,3,0,0,0,0,0,0,0,1],
+        treat:    [12,15,5,6,7,3,0,0,0,1,3,0,8,0,1,1,2,2,2,0,0,2,1,0,0,0,0],
+        total:    [30,26,7,13,20,14,2,0,0,3,7,0,15,0,3,1,2,3,5,0,0,2,1,0,0,0,1],
+        rate:     [41,22,10,27,38,44,67,0,0,27,47,0,43,0,38,33,50,38,23,0,0,29,50,0,0,0,33],
+      },
+    },
+    may: {
+      total: 666,
+      count:  [95,133,71,51,66,26,2,5,2,17,9,1,69,4,8,6,3,3,34,0,9,5,21,18,4,2,2],
+      share:  [14,20,11,8,10,4,0,1,0,3,1,0,10,1,1,1,0,0,5,0,1,1,3,3,1,0,0],
+      byCat: [
+        [14,7,8,31,32,3],   // 유튜브
+        [22,7,7,20,69,8],   // 네이버검색
+        [5,1,0,11,50,4],    // 네이버지도
+        [10,0,9,7,24,1],    // 구글검색
+        [16,5,1,14,23,7],   // 고객소개
+        [18,0,2,4,2,0],     // 대다모
+        [1,0,0,1,0,0],      // 이마반
+        [1,0,0,0,4,0],      // 뉴헤어네이버카페
+        [0,0,1,0,1,0],      // 타카페
+        [4,2,1,3,6,1],      // 뉴헤어홈페이지
+        [3,0,1,0,4,1],      // 뉴헤어네이버블로그
+        [1,0,0,0,0,0],      // 대머리블로그
+        [5,5,5,21,27,6],    // 기존고객
+        [2,0,0,0,1,1],      // 직원소개
+        [2,1,1,3,1,0],      // 타병원소개
+        [0,2,0,3,1,0],      // 기타(타채널/타SNS)
+        [2,0,0,1,0,0],      // 왓츠앱
+        [2,0,0,0,1,0],      // 해외
+        [15,4,3,7,4,1],     // AI
+        [0,0,0,0,0,0],      // 위챗
+        [1,0,1,2,3,2],      // 인스타그램
+        [0,1,1,1,2,0],      // 기타-입소문
+        [1,0,0,17,3,0],     // DB마케팅
+        [1,0,0,15,2,0],     // 외부DB
+        [2,0,0,1,1,0],      // 미기재
+        [0,0,0,0,1,1],      // 나만의닥터
+        [0,0,0,0,1,1],      // HOLD
+      ],
+      conv: {
+        consult:  [82,109,73,51,62,24,2,5,2,4,9,1,65,5,8,6,2,2,34,0,8,6,10,7,6,1,2],
+        surgery:  [12,11,3,13,15,8,1,1,0,0,3,0,8,2,5,0,1,1,10,0,1,2,0,0,0,0,0],
+        treat:    [24,14,10,5,11,4,0,0,0,0,0,0,20,0,2,1,1,0,7,0,2,1,4,2,0,0,0],
+        total:    [36,25,13,18,26,12,1,1,0,0,3,0,28,2,7,1,2,1,17,0,3,3,4,2,0,0,0],
+        rate:     [44,23,18,35,42,50,50,20,0,0,33,0,43,40,88,17,100,50,50,0,38,50,40,29,0,0,0],
+      },
+    },
+    analysis: '유입 총수 589→666건으로 <b>+13.1% 성장</b>. 네이버검색(20~24%)·유튜브(13~14%)가 양대 디지털 채널로 자리 잡음.\n<b>AI 유입 24→34건(+42%) 급증</b>, 전환율도 23%→50%로 동반 상승 — 신규 고성장 채널로 주목.\n<b>기존고객 38→69건(+82%) 폭증</b>, 전환율 43% 유지 — 재방문·리텐션 전략 효과 뚜렷.\n<b>DB마케팅(외부DB) 9→39건으로 급증</b>, 탈모치료 유입 집중 (8→32건) — ROI 검토 필요.\n네이버지도 전환율 10%→18%로 개선됐으나 여전히 최저 수준 — 지도 리뷰·정보 최적화 검토.\n<b>대다모 전환율 44%→50%로 최상위권</b> — 커뮤니티 채널 중 가장 높은 전환율 유지.',
   },
   section06: {
     staff: ['전소영','손예진','신유지','조영은','최무근','김승희'],
@@ -981,6 +1145,7 @@ function renderReport(r) {
   renderSection04(r);
   renderSection05(r);
   renderSection06(r);
+  renderSection07(r);
 }
 
 /* ═══════════════════════════════
@@ -1270,6 +1435,228 @@ function switchS06Month(month) {
   s06ActiveMonth = month;
   document.querySelectorAll('[onclick^="switchS06"]').forEach(t => t.classList.toggle('active', t.dataset.month === month));
   if(currentReport) renderS06Detail(currentReport.section06, month);
+}
+
+/* ═══════════════════════════════
+   섹션 07 렌더링 — 유입경로 분석
+═══════════════════════════════ */
+let s07ActiveMonth = 'apr';
+let s07CatMonth    = 'apr';
+
+// 실적 있는 경로만 추림 (합계 > 0)
+function s07ActiveRoutes(s, month) {
+  return s.routes.map((name, i) => ({
+    name, i,
+    count:   s[month].count[i],
+    share:   s[month].share[i],
+    byCat:   s[month].byCat[i],
+    consult: s[month].conv.consult[i],
+    surgery: s[month].conv.surgery[i],
+    treat:   s[month].conv.treat[i],
+    total:   s[month].conv.total[i],
+    rate:    s[month].conv.rate[i],
+  })).filter(r => r.count > 0 || r.consult > 0);
+}
+
+// TOP N 경로 (4월+5월 합산 기준)
+function s07Top(s, n) {
+  return s.routes.map((name, i) => ({
+    name, i,
+    sum: (s.apr.count[i] || 0) + (s.may.count[i] || 0),
+  })).filter(r => r.sum > 0).sort((a,b) => b.sum - a.sum).slice(0, n);
+}
+
+// 도넛 색상 팔레트
+const S07_COLORS = [
+  '#1565C0','#C62828','#2E7D32','#E65100','#6A1B9A',
+  '#00838F','#F9A825','#AD1457','#4E342E','#37474F',
+  '#1B5E20','#0D47A1','#BF360C','#880E4F','#01579B',
+];
+
+function renderSection07(r) {
+  const s = r.section07;
+  document.getElementById('s07-subtitle').textContent = r.meta.compare + ' · 유입경로별 내원 현황 및 성사 전환율';
+
+  // ── KPI
+  const aprTotal = s.apr.total, mayTotal = s.may.total;
+  const aprConv = s.apr.conv.total.reduce((a,b)=>a+b,0);
+  const mayConv = s.may.conv.total.reduce((a,b)=>a+b,0);
+  const aprRate = Math.round(aprConv / s.apr.conv.consult.reduce((a,b)=>a+b,0) * 100);
+  const mayRate = Math.round(mayConv / s.may.conv.consult.reduce((a,b)=>a+b,0) * 100);
+
+  function kpiItem(label, av, mv, suffix) {
+    const d = mv-av, cls = d>0?'up':d<0?'down':'flat';
+    const arrow = d>0?`▲ ${Math.abs(d)}`:d<0?`▼ ${Math.abs(d)}`:'— 0';
+    return `<div class="kpi-item"><div class="kpi-item-label">${label}</div><div class="kpi-row">
+      <div class="kpi-month"><span class="kpi-month-label">4월</span><span class="kpi-month-val">${av}${suffix}</span></div>
+      <span class="kpi-arrow">→</span>
+      <div class="kpi-month"><span class="kpi-month-label">5월</span><span class="kpi-month-val">${mv}${suffix}</span></div>
+      <span class="kpi-diff ${cls}">${arrow}${suffix&&d!==0?suffix:''}</span>
+    </div></div>`;
+  }
+  document.getElementById('s07-kpi').innerHTML =
+    kpiItem('총 내원수',   aprTotal, mayTotal, '') +
+    kpiItem('성사 확정수', aprConv,  mayConv,  '') +
+    kpiItem('전체 전환율', aprRate,  mayRate,  '%');
+
+  // ── 도넛 차트 초기 렌더
+  renderS07Donut(s, s07ActiveMonth);
+
+  // ── 상위경로 내원 비교 막대
+  const top10 = s07Top(s, 10);
+  const topLabels = top10.map(r => r.name);
+  chLegend('lg-s07-bar', [[C.aprInq,'4월'],[C.mayInq,'5월']]);
+  mkChart('chart-s07-bar', topLabels,
+    [mkDS('4월', top10.map(r=>s.apr.count[r.i]), C.aprInq),
+     mkDS('5월', top10.map(r=>s.may.count[r.i]), C.mayInq)]);
+
+  // ── 전환율 비교 (상담수 5건 이상 경로)
+  const convRoutes = s.routes.map((name,i)=>({
+    name, i,
+    aprC: s.apr.conv.consult[i], mayC: s.may.conv.consult[i],
+    aprR: s.apr.conv.rate[i],    mayR: s.may.conv.rate[i],
+  })).filter(r => r.aprC >= 5 || r.mayC >= 5)
+     .sort((a,b) => (b.aprR+b.mayR) - (a.aprR+a.mayR));
+
+  chLegend('lg-s07-rate', [['#90CAF9','4월 전환율'],['#1565C0','5월 전환율']]);
+  if(charts['chart-s07-rate']) charts['chart-s07-rate'].destroy();
+  charts['chart-s07-rate'] = new Chart(document.getElementById('chart-s07-rate'), {
+    type: 'bar',
+    data: { labels: convRoutes.map(r=>r.name), datasets: [
+      { label:'4월 전환율', data: convRoutes.map(r=>r.aprR), backgroundColor: C.aprInq, borderRadius:3 },
+      { label:'5월 전환율', data: convRoutes.map(r=>r.mayR), backgroundColor: C.mayInq, borderRadius:3 },
+    ]},
+    options: { ...BASE,
+      scales: { ...BASE.scales, y: { ...BASE.scales.y, max:110, ticks:{...BASE.scales.y.ticks,callback:v=>v+'%'} }},
+      plugins:{ ...BASE.plugins, tooltip:{...BASE.plugins.tooltip,callbacks:{label:c=>' '+c.dataset.label+': '+c.parsed.y+'%'}}}
+    }
+  });
+
+  // ── 수술/치료 확정 비교 (상담수 > 0 경로)
+  const surgRoutes = s.routes.map((name,i)=>({
+    name, i,
+    aprS: s.apr.conv.surgery[i], mayS: s.may.conv.surgery[i],
+    aprT: s.apr.conv.treat[i],   mayT: s.may.conv.treat[i],
+  })).filter(r => r.aprS+r.mayS+r.aprT+r.mayT > 0)
+     .sort((a,b) => (b.aprS+b.mayS) - (a.aprS+a.mayS));
+
+  chLegend('lg-s07-surg',  [[C.aprBook,'4월 수술'],[C.mayBook,'5월 수술']]);
+  chLegend('lg-s07-treat', [[C.aprInq, '4월 치료'],[C.mayInq, '5월 치료']]);
+  mkChart('chart-s07-surg',  surgRoutes.map(r=>r.name),
+    [mkDS('4월 수술', surgRoutes.map(r=>r.aprS), C.aprBook),
+     mkDS('5월 수술', surgRoutes.map(r=>r.mayS), C.mayBook)]);
+  mkChart('chart-s07-treat', surgRoutes.map(r=>r.name),
+    [mkDS('4월 치료', surgRoutes.map(r=>r.aprT), C.aprInq),
+     mkDS('5월 치료', surgRoutes.map(r=>r.mayT), C.mayInq)]);
+
+  // ── 과목별 경로 분포
+  renderS07CatGrid(s, s07CatMonth);
+
+  // ── 전체 테이블
+  const allRoutes = s07ActiveRoutes(s, 'apr').concat(
+    s07ActiveRoutes(s, 'may').filter(r => !s07ActiveRoutes(s,'apr').find(a=>a.i===r.i))
+  );
+  const uniqIdx = [...new Set([
+    ...s07ActiveRoutes(s,'apr').map(r=>r.i),
+    ...s07ActiveRoutes(s,'may').map(r=>r.i),
+  ])];
+
+  mkTable('tbl-s07',
+    ['유입경로','4월 내원','4월 상담','4월 수술','4월 치료','4월 전환율','5월 내원','5월 상담','5월 수술','5월 치료','5월 전환율'],
+    ['합계',
+      aprTotal, s.apr.conv.consult.reduce((a,b)=>a+b,0),
+      s.apr.conv.surgery.reduce((a,b)=>a+b,0), s.apr.conv.treat.reduce((a,b)=>a+b,0), aprRate+'%',
+      mayTotal, s.may.conv.consult.reduce((a,b)=>a+b,0),
+      s.may.conv.surgery.reduce((a,b)=>a+b,0), s.may.conv.treat.reduce((a,b)=>a+b,0), mayRate+'%',
+    ],
+    uniqIdx.map(i => [
+      s.routes[i],
+      s.apr.count[i]||0,    s.apr.conv.consult[i]||0,
+      s.apr.conv.surgery[i]||0, s.apr.conv.treat[i]||0,
+      (s.apr.conv.rate[i]||0)+'%',
+      s.may.count[i]||0,    s.may.conv.consult[i]||0,
+      s.may.conv.surgery[i]||0, s.may.conv.treat[i]||0,
+      (s.may.conv.rate[i]||0)+'%',
+    ])
+  );
+
+  renderAnalysis('ana-s07', s.analysis);
+}
+
+function renderS07Donut(s, month) {
+  const d = s[month];
+  const top10 = s.routes.map((name,i)=>({name,i,count:d.count[i]}))
+                        .filter(r=>r.count>0).sort((a,b)=>b.count-a.count);
+  const top9   = top10.slice(0,9);
+  const others = top10.slice(9).reduce((sum,r)=>sum+r.count,0);
+  const labels = [...top9.map(r=>r.name), ...(others>0?['기타']:[])] ;
+  const data   = [...top9.map(r=>r.count), ...(others>0?[others]:[])];
+  const colors = [...S07_COLORS.slice(0,9), '#BDBDBD'];
+
+  document.getElementById('s07-donut-label').textContent = month==='apr'?'(4월)':'(5월)';
+
+  if(charts['chart-s07-donut']) charts['chart-s07-donut'].destroy();
+  charts['chart-s07-donut'] = new Chart(document.getElementById('chart-s07-donut'), {
+    type: 'doughnut',
+    data: { labels, datasets: [{ data, backgroundColor: colors, borderWidth: 2, borderColor:'#fff' }] },
+    options: {
+      responsive: true, maintainAspectRatio: false,
+      cutout: '60%',
+      plugins: {
+        legend: { display: true, position: 'bottom',
+          labels: { font:{size:11,family:'Pretendard'}, color:'#555', boxWidth:10, padding:8 }},
+        tooltip: { titleFont:{size:13,family:'Pretendard'}, bodyFont:{size:13,family:'Pretendard'},
+          callbacks: { label: c => ` ${c.label}: ${c.parsed}건 (${Math.round(c.parsed/d.total*100)}%)` }}
+      }
+    }
+  });
+}
+
+function renderS07CatGrid(s, month) {
+  const grid = document.getElementById('s07-cat-grid');
+  grid.innerHTML = '';
+  const d = s[month];
+  const catColors = ['#C62828','#1565C0','#6A1B9A','#E65100','#00695C','#4E342E'];
+
+  s.cats.forEach((cat, ci) => {
+    const entries = s.routes.map((name,i)=>({ name, val: d.byCat[i][ci] }))
+                            .filter(e=>e.val>0).sort((a,b)=>b.val-a.val).slice(0,6);
+    if(entries.length===0) return;
+    const total = entries.reduce((sum,e)=>sum+e.val,0);
+
+    const bars = entries.map((e,ei) => `
+      <div class="hbar-item">
+        <div class="hbar-label">
+          <span class="hbl-ch">${e.name}</span>
+          <span class="hbl-num">${e.val}건 <span style="color:#aaa;font-weight:400;">(${Math.round(e.val/total*100)}%)</span></span>
+        </div>
+        <div class="hbar-track">
+          <div class="hbar-fill" style="width:${Math.round(e.val/total*100)}%;background:${S07_COLORS[ei]};"></div>
+        </div>
+      </div>`).join('');
+
+    grid.innerHTML += `
+      <div class="cat-channel-card">
+        <div class="ccc-title">
+          <span style="width:10px;height:10px;border-radius:50%;background:${catColors[ci]};display:inline-block;flex-shrink:0;"></span>
+          ${cat}
+          <span class="ccc-badge">총 ${total}건</span>
+        </div>
+        <div class="hbar-wrap">${bars}</div>
+      </div>`;
+  });
+}
+
+function switchS07Month(month) {
+  s07ActiveMonth = month;
+  document.querySelectorAll('[onclick^="switchS07Month"]').forEach(t=>t.classList.toggle('active',t.dataset.month===month));
+  if(currentReport) renderS07Donut(currentReport.section07, month);
+}
+
+function switchS07CatMonth(month) {
+  s07CatMonth = month;
+  document.querySelectorAll('[onclick^="switchS07CatMonth"]').forEach(t=>t.classList.toggle('active',t.dataset.month===month));
+  if(currentReport) renderS07CatGrid(currentReport.section07, month);
 }
 
 /* 초기화 */
