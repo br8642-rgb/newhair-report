@@ -155,7 +155,7 @@
 .s06-rate-flat { background: #f0f0f0; color: #888; }
 </style>
 </head>
-<body>
+<body style="display:none">
 
 <nav id="top-nav"></nav>
 
@@ -642,8 +642,13 @@ let s06ActiveMonth = 'apr';
 
 function checkAuth() {
   const role = sessionStorage.getItem('nh_role');
-  if (!role) { sessionStorage.setItem('nh_redirect', location.href); location.href = 'login.html'; return; }
+  if (!role) {
+    sessionStorage.setItem('nh_redirect', location.href);
+    location.replace('login.html');
+    return;
+  }
   isEditor = role === 'editor';
+  document.body.style.display = '';
 }
 
 function buildNav(activeId) {
