@@ -2054,12 +2054,26 @@ function renderSection00(r) {
       </div>
     </div>`;
   }
+  function kpi00Rev(label, av, mv) {
+    const d = mv - av, cls = d > 0 ? 'up' : d < 0 ? 'down' : 'flat';
+    const arrow = d > 0 ? `▲ ${fmtWon(d)}` : d < 0 ? `▼ ${fmtWon(Math.abs(d))}` : '— 0';
+    const pct = ((d / av) * 100).toFixed(1);
+    return `<div class="kpi-item">
+      <div class="kpi-item-label">${label}</div>
+      <div class="kpi-row">
+        <div class="kpi-month"><span class="kpi-month-label">4월</span><span class="kpi-month-val">${fmtWon(av)}</span></div>
+        <span class="kpi-arrow">→</span>
+        <div class="kpi-month"><span class="kpi-month-label">5월</span><span class="kpi-month-val">${fmtWon(mv)}</span></div>
+        <span class="kpi-diff ${cls}">${arrow} (${d >= 0 ? '+' : ''}${pct}%)</span>
+      </div>
+    </div>`;
+  }
   document.getElementById('s00-kpi').innerHTML =
     kpi00('총 문의',   s1.total_apr.inq,        s1.total_may.inq,        '') +
     kpi00('예약률',    s1.total_apr.rate,        s1.total_may.rate,       '%') +
     kpi00('총 내원',   s3.apr.visit,             s3.may.visit,            '') +
     kpi00('체결률',    s4.apr.total.rate,        s4.may.total.rate,       '%') +
-    kpi00('총 매출',   fmtWon(s8.apr.total),     fmtWon(s8.may.total),   '');
+    kpi00Rev('총 매출', s8.apr.total,            s8.may.total);
 
   // ── 섹션별 요약 카드
   const drBest = (month) => {
