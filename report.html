@@ -263,13 +263,73 @@
     <div class="analysis-box" id="ana-box-s02"><p id="ana-s02"></p></div>
   </div>
 
-  <!-- 섹션 03 — DB 현황 (데이터 추가 예정) -->
+  <!-- 섹션 03 — DB 현황 -->
   <div class="section-panel" id="section-03">
     <div class="section-header">
       <div class="section-tag">Section 03</div>
       <div class="section-title">DB 현황</div>
-      <div class="section-subtitle">작성 예정 — 데이터 전달 후 추가</div>
+      <div class="section-subtitle" id="s03db-subtitle"></div>
     </div>
+
+    <!-- 운영 조건 안내 -->
+    <div style="display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-bottom:24px;">
+      <div style="background:#EFF6FF;border:1px solid #BFDBFE;border-radius:10px;padding:14px 16px;font-size:12px;line-height:1.8;">
+        <div style="font-weight:800;color:#1565C0;margin-bottom:4px;">📞 1차 DB (3/6 ~ 4/25)</div>
+        <div style="color:#374151;">병원 전화 <b>02-557-2022</b> 단독 운영</div>
+      </div>
+      <div style="background:#F0FDF4;border:1px solid #BBF7D0;border-radius:10px;padding:14px 16px;font-size:12px;line-height:1.8;">
+        <div style="font-weight:800;color:#15803D;margin-bottom:4px;">📱 2차 DB (4/27 ~ 5/30)</div>
+        <div style="color:#374151;">병원 전화 + <b>업무용 핸드폰</b> 병행 운영</div>
+      </div>
+    </div>
+
+    <!-- KPI 카드 비교 -->
+    <div class="kpi-table-wrap">
+      <div class="kpi-label">핵심 지표 비교</div>
+      <div class="kpi-compare" id="s03db-kpi"></div>
+    </div>
+
+    <!-- 1차 vs 2차 상세 카드 -->
+    <div class="s02-section-label">1차 · 2차 상세 현황</div>
+    <div id="s03db-detail-cards" style="display:grid;grid-template-columns:1fr 1fr;gap:16px;margin-bottom:28px;"></div>
+
+    <!-- 전환 흐름 비교 -->
+    <div class="s02-section-label">전환 흐름 비교 (DB → 예약 → 내원 → 체결)</div>
+    <div class="s02-charts-grid">
+      <div class="card">
+        <div class="card-title">1차 DB 전환 흐름 <span style="font-size:11px;color:#6b6b6b;font-weight:400;">(3/6~4/25)</span></div>
+        <div class="chart-wrap" style="height:200px"><canvas id="chart-s03db-funnel1"></canvas></div>
+      </div>
+      <div class="card">
+        <div class="card-title">2차 DB 전환 흐름 <span style="font-size:11px;color:#6b6b6b;font-weight:400;">(4/27~5/30)</span></div>
+        <div class="chart-wrap" style="height:200px"><canvas id="chart-s03db-funnel2"></canvas></div>
+      </div>
+    </div>
+
+    <!-- 통화 결과 분포 -->
+    <div class="s02-section-label">통화 결과 분포</div>
+    <div class="s02-charts-grid">
+      <div class="card">
+        <div class="card-title">통화 결과 비교 <span style="font-size:11px;color:#6b6b6b;font-weight:400;">(건수)</span></div>
+        <div class="ch-legend-row" id="lg-s03db-call"></div>
+        <div class="chart-wrap" style="height:220px"><canvas id="chart-s03db-call"></canvas></div>
+      </div>
+      <div class="card">
+        <div class="card-title">주요 전환율 비교 <span style="font-size:11px;color:#6b6b6b;font-weight:400;">(%)</span></div>
+        <div class="ch-legend-row" id="lg-s03db-rate"></div>
+        <div class="chart-wrap" style="height:220px"><canvas id="chart-s03db-rate"></canvas></div>
+      </div>
+    </div>
+
+    <!-- 상세 테이블 -->
+    <div class="s02-section-label">전체 수치 상세</div>
+    <div class="card">
+      <div class="card-title">DB 운영 전체 지표</div>
+      <button class="table-toggle-btn" onclick="toggleTable(this)"><span class="toggle-arrow">▼</span> 표 펼치기</button>
+      <div class="table-collapsible"><div style="overflow-x:auto"><table class="data-table" id="tbl-s03db"></table></div></div>
+    </div>
+
+    <div class="analysis-box" id="ana-box-s03db"><p id="ana-s03db"></p></div>
   </div>
 
   <!-- 섹션 00 — 전체 종합 현황 -->
@@ -630,6 +690,37 @@ const ALL_REPORTS = [
     label: '2026년 5월 (월간)',
     period: '2026.04 — 2026.05',
     compare: '2026년 4월 vs 5월',
+  },
+  section03db: {
+    rounds: ['1차 DB','2차 DB'],
+    period: ['3/6~4/25','4/27~5/30'],
+    condition: ['병원 전화 단독','병원 전화 + 업무용 핸드폰'],
+    total:        [172, 141],
+    newDb:        [103, 114],   // 신규 DB (홈피신규)
+    // 통화연결
+    book:         [24,  24],    // 예약
+    recontact:    [44,  13],    // 재연락부재
+    hold:         [14,   9],    // 보류
+    refuse:       [49,  59],    // 예약거부
+    unfit:        [ 0,   0],    // 부적합
+    connTotal:    [87,  92],    // 연결소계 (부재제외)
+    // 통화실패
+    newAbsent:    [41,  36],    // 신규부재
+    deadNum:      [24,  14],    // 결번
+    // 전환
+    visitBook:    [23,  18],    // 내원예약
+    cancel:       [15,  8],     // 취소
+    visit:        [ 8,   9],    // 내원
+    contract:     [ 3,   2],    // 체결
+    contractAmt:  [14800000, 7200000], // 체결액
+    // 비율
+    bookRateDb:   [23,  21],    // 총콜대비 예약% (디비대비)
+    bookRateConn: [28,  26],    // 연결대비 예약%
+    cancelRate:   [65,  44],    // 예약대비 취소%
+    visitRate:    [35,  50],    // 예약대비 내원%
+    contractRateVisit: [38, 22], // 내원대비 체결%
+    contractRateDb:    [ 3,  2], // 디비대비 체결%
+    analysis: '<b>1차(172건) vs 2차(141건)</b> — 신규 DB 비중은 60%→81%로 증가, 더 정제된 리스트 운영.\n<b>예약 전환율은 두 차수 모두 23~24건으로 동일</b>하나, 연결 방식 차이(병원전화 단독 vs 병행)가 통화 구조에 영향.\n<b>재연락 부재 44→13건으로 급감</b> — 핸드폰 병행 후 연락 가능성이 높아진 효과로 해석 가능.\n<b>내원율 35%→50%로 크게 개선</b> — 예약 후 실제 방문 전환 품질 향상.\n다만 <b>체결 건수 3→2건, 체결액 1,480만→720만원으로 감소</b> — 내원 증가 대비 체결 전환 미흡, 상담 질 점검 필요.\n<b>취소율 65%→44%로 개선</b> — 예약 후 이탈이 줄어든 점은 긍정적 신호.',
   },
   section01: {
     cats: ['검사','모발이식','탈모치료','SMP','헤어라인','처방전'],
@@ -1304,6 +1395,7 @@ function renderReport(r) {
   renderAnalysis('ana-total', s.analysis.total);
 
   renderSection02(r);
+  renderSection03db(r);
   renderSection03(r);
   renderSection04(r);
   renderSection05(r);
@@ -2191,6 +2283,151 @@ function renderSection00(r) {
   renderAnalysis('ana-s00',
     `5월은 <b>내원(+5.2%)·체결(+36%)·매출(+13.4%)</b> 핵심 3대 지표 동반 성장.\n문의 −3.0% 소폭 감소에도 예약률·체결률·매출 모두 개선 — <b>양보다 질 중심의 전환 효율 상승</b>.\nHairLap 매출 +44.9%·모발이식 다채널 성장이 실적 견인. 헤어라인 체결 급락·당일취소 증가는 6월 핵심 과제.`
   );
+}
+
+/* ═══════════════════════════════
+   섹션 03 렌더링 — DB 현황
+═══════════════════════════════ */
+function renderSection03db(r) {
+  const s = r.section03db;
+  document.getElementById('s03db-subtitle').textContent =
+    '1차(3/6~4/25) · 2차(4/27~5/30) · DB 콜 운영 전환 흐름';
+
+  const C1 = '#1565C0', C2 = '#2E7D32'; // 1차=파랑, 2차=초록
+
+  // ── KPI 비교
+  function kpiDbItem(label, v1, v2, suffix) {
+    const d = v2 - v1, cls = d > 0 ? 'up' : d < 0 ? 'down' : 'flat';
+    const arrow = d > 0 ? `▲ ${Math.abs(d)}` : d < 0 ? `▼ ${Math.abs(d)}` : '— 0';
+    return `<div class="kpi-item">
+      <div class="kpi-item-label">${label}</div>
+      <div class="kpi-row">
+        <div class="kpi-month"><span class="kpi-month-label">1차</span><span class="kpi-month-val">${v1}${suffix}</span></div>
+        <span class="kpi-arrow">→</span>
+        <div class="kpi-month"><span class="kpi-month-label">2차</span><span class="kpi-month-val">${v2}${suffix}</span></div>
+        <span class="kpi-diff ${cls}">${arrow}${suffix && d !== 0 ? suffix : ''}</span>
+      </div>
+    </div>`;
+  }
+  document.getElementById('s03db-kpi').innerHTML =
+    kpiDbItem('총 DB', s.total[0], s.total[1], '') +
+    kpiDbItem('예약', s.book[0], s.book[1], '') +
+    kpiDbItem('내원', s.visit[0], s.visit[1], '') +
+    kpiDbItem('체결', s.contract[0], s.contract[1], '') +
+    kpiDbItem('취소율', s.cancelRate[0], s.cancelRate[1], '%') +
+    kpiDbItem('내원율', s.visitRate[0], s.visitRate[1], '%');
+
+  // ── 1차/2차 상세 카드
+  const colors = [C1, C2];
+  document.getElementById('s03db-detail-cards').innerHTML = [0, 1].map(i => {
+    const rows = [
+      { label:'총 DB',         val: s.total[i]+'건',        sub: `신규 ${s.newDb[i]}건` },
+      { label:'통화연결 소계', val: s.connTotal[i]+'건',    sub: `총콜 대비 연결률` },
+      { label:'예약',          val: s.book[i]+'건',         sub: `DB대비 ${s.bookRateDb[i]}% / 연결대비 ${s.bookRateConn[i]}%` },
+      { label:'재연락 부재',   val: s.recontact[i]+'건',    sub: `보류 ${s.hold[i]}건` },
+      { label:'신규 부재',     val: s.newAbsent[i]+'건',    sub: `결번 ${s.deadNum[i]}건` },
+      { label:'내원예약',      val: s.visitBook[i]+'건',    sub: `취소 ${s.cancel[i]}건 (${s.cancelRate[i]}%)` },
+      { label:'내원',          val: s.visit[i]+'건',        sub: `예약대비 ${s.visitRate[i]}%` },
+      { label:'체결',          val: s.contract[i]+'건',     sub: `내원대비 ${s.contractRateVisit[i]}% / DB대비 ${s.contractRateDb[i]}%` },
+      { label:'체결액',        val: fmtWon(s.contractAmt[i]), sub: '' },
+    ];
+    return `<div class="cat-channel-card" style="border-top:3px solid ${colors[i]};">
+      <div class="ccc-title">
+        <span style="background:${colors[i]};color:#fff;font-size:11px;font-weight:700;padding:2px 8px;border-radius:10px;">${i+1}차 DB</span>
+        <span style="font-size:12px;color:#888;">${s.period[i]}</span>
+        <span class="ccc-badge">${s.condition[i]}</span>
+      </div>
+      ${rows.map(row => `
+        <div style="display:flex;justify-content:space-between;align-items:center;padding:6px 0;border-bottom:1px solid #f5f5f5;">
+          <span style="font-size:12px;color:#6b6b6b;">${row.label}</span>
+          <div style="text-align:right;">
+            <span style="font-size:13px;font-weight:700;color:#1a1a1a;">${row.val}</span>
+            ${row.sub ? `<div style="font-size:10px;color:#aaa;">${row.sub}</div>` : ''}
+          </div>
+        </div>`).join('')}
+    </div>`;
+  }).join('');
+
+  // ── 전환 흐름 펀넬
+  function mkDbFunnel(id, i, color) {
+    if (charts[id]) charts[id].destroy();
+    charts[id] = new Chart(document.getElementById(id), {
+      type: 'bar',
+      data: {
+        labels: ['총 DB', '통화연결', '예약', '내원예약', '내원', '체결'],
+        datasets: [{
+          data: [s.total[i], s.connTotal[i], s.book[i], s.visitBook[i], s.visit[i], s.contract[i]],
+          backgroundColor: [
+            color+'33', color+'55', color+'77', color+'99', color+'BB', color,
+          ],
+          borderRadius: 4,
+        }]
+      },
+      options: {
+        indexAxis: 'y', responsive: true, maintainAspectRatio: false,
+        plugins: { legend: { display: false },
+          tooltip: { callbacks: { label: c => ` ${c.parsed.x}건` } } },
+        scales: {
+          x: { grid: { color: '#F1F3F5' }, ticks: { font: { size: 12, family: 'Pretendard' }, color: '#3d3d3d' } },
+          y: { grid: { display: false }, ticks: { font: { size: 12, family: 'Pretendard' }, color: '#3d3d3d' } }
+        }
+      }
+    });
+  }
+  mkDbFunnel('chart-s03db-funnel1', 0, C1);
+  mkDbFunnel('chart-s03db-funnel2', 1, C2);
+
+  // ── 통화 결과 비교 막대
+  const callLabels = ['예약', '재연락부재', '보류', '예약거부', '신규부재', '결번'];
+  const callData1  = [s.book[0], s.recontact[0], s.hold[0], s.refuse[0], s.newAbsent[0], s.deadNum[0]];
+  const callData2  = [s.book[1], s.recontact[1], s.hold[1], s.refuse[1], s.newAbsent[1], s.deadNum[1]];
+  chLegend('lg-s03db-call', [[C1+'99','1차'],[C2,'2차']]);
+  mkChart('chart-s03db-call', callLabels,
+    [mkDS('1차', callData1, C1+'99'), mkDS('2차', callData2, C2)]);
+
+  // ── 전환율 비교
+  const rateLabels = ['DB→예약율','연결→예약율','취소율','내원율','내원→체결율','DB→체결율'];
+  const rateData1  = [s.bookRateDb[0], s.bookRateConn[0], s.cancelRate[0], s.visitRate[0], s.contractRateVisit[0], s.contractRateDb[0]];
+  const rateData2  = [s.bookRateDb[1], s.bookRateConn[1], s.cancelRate[1], s.visitRate[1], s.contractRateVisit[1], s.contractRateDb[1]];
+  chLegend('lg-s03db-rate', [[C1+'99','1차'],[C2,'2차']]);
+  if (charts['chart-s03db-rate']) charts['chart-s03db-rate'].destroy();
+  charts['chart-s03db-rate'] = new Chart(document.getElementById('chart-s03db-rate'), {
+    type: 'bar',
+    data: { labels: rateLabels, datasets: [
+      { label:'1차', data: rateData1, backgroundColor: C1+'99', borderRadius: 3 },
+      { label:'2차', data: rateData2, backgroundColor: C2,      borderRadius: 3 },
+    ]},
+    options: { ...BASE,
+      scales: { ...BASE.scales, y: { ...BASE.scales.y, max: 110,
+        ticks: { ...BASE.scales.y.ticks, callback: v => v + '%' } } },
+      plugins: { ...BASE.plugins, tooltip: { ...BASE.plugins.tooltip,
+        callbacks: { label: c => ` ${c.dataset.label}: ${c.parsed.y}%` } } }
+    }
+  });
+
+  // ── 상세 테이블
+  mkTable('tbl-s03db',
+    ['지표', '1차 (3/6~4/25)', '2차 (4/27~5/30)', '증감'],
+    null,
+    [
+      ['총 DB',           s.total[0]+'건',           s.total[1]+'건',           diff(s.total[0], s.total[1])],
+      ['신규 DB',         s.newDb[0]+'건',            s.newDb[1]+'건',            diff(s.newDb[0], s.newDb[1])],
+      ['통화연결 소계',   s.connTotal[0]+'건',        s.connTotal[1]+'건',        diff(s.connTotal[0], s.connTotal[1])],
+      ['예약',            s.book[0]+'건 (DB '+s.bookRateDb[0]+'%)', s.book[1]+'건 (DB '+s.bookRateDb[1]+'%)', diff(s.book[0], s.book[1])],
+      ['재연락 부재',     s.recontact[0]+'건',        s.recontact[1]+'건',        diff(s.recontact[0], s.recontact[1])],
+      ['보류',            s.hold[0]+'건',             s.hold[1]+'건',             diff(s.hold[0], s.hold[1])],
+      ['예약거부',        s.refuse[0]+'건',           s.refuse[1]+'건',           diff(s.refuse[0], s.refuse[1])],
+      ['신규 부재',       s.newAbsent[0]+'건',        s.newAbsent[1]+'건',        diff(s.newAbsent[0], s.newAbsent[1])],
+      ['결번',            s.deadNum[0]+'건',          s.deadNum[1]+'건',          diff(s.deadNum[0], s.deadNum[1])],
+      ['내원예약',        s.visitBook[0]+'건',        s.visitBook[1]+'건',        diff(s.visitBook[0], s.visitBook[1])],
+      ['취소',            s.cancel[0]+'건 ('+s.cancelRate[0]+'%)', s.cancel[1]+'건 ('+s.cancelRate[1]+'%)', diff(s.cancel[0], s.cancel[1])],
+      ['내원',            s.visit[0]+'건 ('+s.visitRate[0]+'%)',   s.visit[1]+'건 ('+s.visitRate[1]+'%)',   diff(s.visit[0], s.visit[1])],
+      ['체결',            s.contract[0]+'건',         s.contract[1]+'건',         diff(s.contract[0], s.contract[1])],
+      ['체결액',          fmtWon(s.contractAmt[0]),   fmtWon(s.contractAmt[1]),   diff(s.contract[0], s.contract[1])],
+    ]
+  );
+
+  renderAnalysis('ana-s03db', s.analysis);
 }
 
 /* 초기화 */
