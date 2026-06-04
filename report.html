@@ -175,7 +175,7 @@
   </div>
 
   <!-- 섹션 01 -->
-  <div class="section-panel active" id="section-01">
+  <div class="section-panel" id="section-01">
     <div class="section-header">
       <div class="section-tag">Section 01</div>
       <div class="section-title">진료과목별 문의·예약</div>
@@ -263,8 +263,17 @@
     <div class="analysis-box" id="ana-box-s02"><p id="ana-s02"></p></div>
   </div>
 
-  <!-- 섹션 00 -->
-  <div class="section-panel" id="section-00">
+  <!-- 섹션 03 — DB 현황 (데이터 추가 예정) -->
+  <div class="section-panel" id="section-03">
+    <div class="section-header">
+      <div class="section-tag">Section 03</div>
+      <div class="section-title">DB 현황</div>
+      <div class="section-subtitle">작성 예정 — 데이터 전달 후 추가</div>
+    </div>
+  </div>
+
+  <!-- 섹션 00 — 전체 종합 현황 -->
+  <div class="section-panel active" id="section-00">
     <div class="section-header">
       <div class="section-tag">Section 00</div>
       <div class="section-title">전체 종합 현황</div>
@@ -305,10 +314,10 @@
     <div class="analysis-box" id="ana-box-s00"><p id="ana-s00"></p></div>
   </div>
 
-  <!-- 섹션 03 -->
-  <div class="section-panel" id="section-03">
+  <!-- 섹션 04 — 내원 현황 -->
+  <div class="section-panel" id="section-04">
     <div class="section-header">
-      <div class="section-tag">Section 03</div>
+      <div class="section-tag">Section 04</div>
       <div class="section-title">내원 현황</div>
       <div class="section-subtitle" id="s03-subtitle"></div>
     </div>
@@ -341,9 +350,9 @@
   </div>
 
   <!-- 섹션 04 -->
-  <div class="section-panel" id="section-04">
+  <div class="section-panel" id="section-05">
     <div class="section-header">
-      <div class="section-tag">Section 04</div>
+      <div class="section-tag">Section 05</div>
       <div class="section-title">성사 현황</div>
       <div class="section-subtitle" id="s04-subtitle"></div>
     </div>
@@ -371,9 +380,9 @@
   </div>
 
   <!-- 섹션 05 -->
-  <div class="section-panel" id="section-05">
+  <div class="section-panel" id="section-06">
     <div class="section-header">
-      <div class="section-tag">Section 05</div>
+      <div class="section-tag">Section 06</div>
       <div class="section-title">원장님 성사율</div>
       <div class="section-subtitle" id="s05-subtitle"></div>
     </div>
@@ -397,11 +406,11 @@
   </div>
 
   <!-- ══════════════════════════
-       섹션 06 — 직원별 성사율
+       섹션 07 — 직원별 성사율
   ══════════════════════════════ -->
-  <div class="section-panel" id="section-06">
+  <div class="section-panel" id="section-07">
     <div class="section-header">
-      <div class="section-tag">Section 06</div>
+      <div class="section-tag">Section 07</div>
       <div class="section-title">직원별 성사율</div>
       <div class="section-subtitle" id="s06-subtitle"></div>
     </div>
@@ -457,9 +466,9 @@
   <!-- ══════════════════════════
        섹션 07 — 유입경로 분석
   ══════════════════════════════ -->
-  <div class="section-panel" id="section-07">
+  <div class="section-panel" id="section-08">
     <div class="section-header">
-      <div class="section-tag">Section 07</div>
+      <div class="section-tag">Section 08</div>
       <div class="section-title">유입경로 분석</div>
       <div class="section-subtitle" id="s07-subtitle"></div>
     </div>
@@ -536,9 +545,9 @@
   <!-- ══════════════════════════
        섹션 08 — 매출 현황
   ══════════════════════════════ -->
-  <div class="section-panel" id="section-08">
+  <div class="section-panel" id="section-09">
     <div class="section-header">
-      <div class="section-tag">Section 08</div>
+      <div class="section-tag">Section 09</div>
       <div class="section-title">매출 현황</div>
       <div class="section-subtitle" id="s08-subtitle"></div>
     </div>
@@ -574,9 +583,9 @@
   <!-- ══════════════════════════
        섹션 09 — 종합 리뷰 & 과제
   ══════════════════════════════ -->
-  <div class="section-panel" id="section-09">
+  <div class="section-panel" id="section-10">
     <div class="section-header">
-      <div class="section-tag">Section 09</div>
+      <div class="section-tag">Section 10</div>
       <div class="section-title">종합 리뷰 &amp; 과제</div>
       <div class="section-subtitle" id="s09-subtitle"></div>
     </div>
@@ -946,10 +955,11 @@ function buildCatChannelData(s, month) {
 
 const NAV_SECTIONS = [
   {id:'00',label:'종합 현황'},{id:'01',label:'진료과목별 문의·예약'},
-  {id:'02',label:'채널별 문의·예약'},{id:'03',label:'내원 현황'},
-  {id:'04',label:'성사 현황'},{id:'05',label:'원장님 성사율'},
-  {id:'06',label:'직원별 성사율'},{id:'07',label:'유입경로 분석'},
-  {id:'08',label:'매출 현황'},{id:'09',label:'종합 리뷰'},
+  {id:'02',label:'채널별 문의·예약'},{id:'03',label:'DB 현황'},
+  {id:'04',label:'내원 현황'},{id:'05',label:'성사 현황'},
+  {id:'06',label:'원장님 성사율'},{id:'07',label:'직원별 성사율'},
+  {id:'08',label:'유입경로 분석'},{id:'09',label:'매출 현황'},
+  {id:'10',label:'종합 리뷰'},
 ];
 
 let isEditor = false;
@@ -2185,7 +2195,7 @@ function renderSection00(r) {
 
 /* 초기화 */
 checkAuth();
-buildNav('01');
+buildNav('00');
 buildSelector();
 setupTitleEdit();
 renderReport(ALL_REPORTS[0]);
