@@ -696,28 +696,27 @@ const ALL_REPORTS = [
     period: ['3/6~4/25','4/27~5/30'],
     condition: ['병원 전화 단독','병원 전화 + 업무용 핸드폰'],
     total:        [172, 141],
-    newDb:        [103, 114],   // 신규DB - 결번 (순신규)
-    // 통화연결
-    book:         [24,  24],    // 예약
-    recontact:    [85,  49],    // 신규+재연락 부재
-    hold:         [14,   9],    // 보류
-    refuse:       [49,  59],    // 예약거부
-    unfit:        [ 0,   0],    // 부적합
-    connTotal:    [87,  92],    // 연결소계
-    // 통화실패
-    newAbsent:    [41,  36],    // 신규부재
-    deadNum:      [24,  14],    // 결번(차감제외)
-    // 전환
-    visitBook:    [23,  18],    // 내원예약
-    cancel:       [15,   8],    // 취소
-    visit:        [ 8,   9],    // 내원
-    contract:     [ 3,   2],    // 체결
+    newDb:        [103, 114],
+    dbPurchased:  [100, 200],         // 구매 DB 수
+    dbUnitPrice:  44000,              // 개당 단가 (부가세포함)
+    dbCost:       [4400000, 8800000], // 투입 비용
+    book:         [24,  24],
+    recontact:    [85,  49],
+    hold:         [14,   9],
+    refuse:       [49,  59],
+    unfit:        [ 0,   0],
+    connTotal:    [87,  92],
+    newAbsent:    [41,  36],
+    deadNum:      [24,  14],
+    visitBook:    [23,  18],
+    cancel:       [15,   8],
+    visit:        [ 8,   9],
+    contract:     [ 3,   2],
     contractAmt:  [14800000, 7200000],
-    // 비율
-    bookRateDb:   [23,  21],    // 총콜대비 예약% (디비대비)
-    bookRateConn: [28,  26],    // 연결대비 예약%
-    cancelRate:   [65,  44],    // 예약대비 취소%
-    visitRate:    [35,  50],    // 예약대비 내원%
+    bookRateDb:   [23,  21],
+    bookRateConn: [28,  26],
+    cancelRate:   [65,  44],
+    visitRate:    [35,  50],
     contractRateVisit: [38, 22],
     contractRateDb:    [ 3,  2],
     analysis: '<b>1차(172건) vs 2차(141건)</b> — 순신규 DB 비중 60%→81%로 증가, 보다 정제된 리스트로 운영.\n예약 건수는 두 차수 모두 24건으로 동일하나 2차에서 핸드폰 병행으로 통화연결 소계가 87→92건으로 소폭 증가.\n<b>신규+재연락 부재가 85→49건으로 크게 감소</b> — 핸드폰 병행 후 연락 가능성이 높아진 효과로 해석.\n<b>내원율 35%→50%로 상승</b>했으나 실제 내원은 8→9건으로 1건 증가 — 예약 건수(23→18건) 자체가 줄면서 비율이 오른 것으로, 절대 내원 수 확대는 숙제로 남음.\n<b>취소율 65%→44%로 개선</b> — 예약 후 이탈이 줄어든 점은 긍정적.\n체결은 3→2건으로 1건 감소, 체결액도 1,480만→720만원으로 감소했으나 <b>고객별 시술 금액 차이에 따른 편차</b>로 건당 단가 변동 가능성 있음 — 체결 건수 자체를 늘리는 방향으로 상담 역량 집중 필요.\n<b>결번 24→14건 감소</b>는 DB 리스트 품질 개선 신호로 긍정적.',
@@ -2309,27 +2308,87 @@ function renderSection03db(r) {
       </div>
     </div>`;
   }
+  function kpiDbItemRev(label, v1, v2) {
+    const d = v2 - v1, cls = d > 0 ? 'up' : d < 0 ? 'down' : 'flat';
+    const arrow = d > 0 ? `▲ ${fmtWon(d)}` : d < 0 ? `▼ ${fmtWon(Math.abs(d))}` : '— 0';
+    return `<div class="kpi-item">
+      <div class="kpi-item-label">${label}</div>
+      <div class="kpi-row">
+        <div class="kpi-month"><span class="kpi-month-label">1차</span><span class="kpi-month-val">${fmtWon(v1)}</span></div>
+        <span class="kpi-arrow">→</span>
+        <div class="kpi-month"><span class="kpi-month-label">2차</span><span class="kpi-month-val">${fmtWon(v2)}</span></div>
+        <span class="kpi-diff ${cls}">${arrow}</span>
+      </div>
+    </div>`;
+  }
   document.getElementById('s03db-kpi').innerHTML =
     kpiDbItem('총 DB', s.total[0], s.total[1], '') +
+    kpiDbItem('순신규 DB', s.newDb[0], s.newDb[1], '') +
     kpiDbItem('예약', s.book[0], s.book[1], '') +
     kpiDbItem('내원', s.visit[0], s.visit[1], '') +
     kpiDbItem('체결', s.contract[0], s.contract[1], '') +
     kpiDbItem('취소율', s.cancelRate[0], s.cancelRate[1], '%') +
-    kpiDbItem('내원율', s.visitRate[0], s.visitRate[1], '%');
+    kpiDbItem('내원율', s.visitRate[0], s.visitRate[1], '%') +
+    kpiDbItemRev('DB 투입비용', s.dbCost[0], s.dbCost[1]) +
+    kpiDbItemRev('체결액', s.contractAmt[0], s.contractAmt[1]);
+
+  // ── ROI 요약 배너
+  const roi1 = Math.round((s.contractAmt[0] - s.dbCost[0]) / s.dbCost[0] * 100);
+  const roi2 = Math.round((s.contractAmt[1] - s.dbCost[1]) / s.dbCost[1] * 100);
+  const totalCost     = s.dbCost[0] + s.dbCost[1];
+  const totalContract = s.contractAmt[0] + s.contractAmt[1];
+  const roiTotal      = Math.round((totalContract - totalCost) / totalCost * 100);
+
+  const roiBanner = document.createElement('div');
+  roiBanner.style.cssText = 'display:grid;grid-template-columns:1fr 1fr 1fr;gap:12px;margin-bottom:28px;';
+  roiBanner.innerHTML = [
+    { label:'1차 DB ROI', cost: s.dbCost[0], contract: s.contractAmt[0], roi: roi1, color: C1 },
+    { label:'2차 DB ROI', cost: s.dbCost[1], contract: s.contractAmt[1], roi: roi2, color: C2 },
+    { label:'합계 ROI',   cost: totalCost,    contract: totalContract,    roi: roiTotal, color: '#6A1B9A' },
+  ].map(item => {
+    const roiCls = item.roi >= 0 ? '#C62828' : '#1565C0';
+    const roiBg  = item.roi >= 0 ? '#FFF3F3' : '#EFF6FF';
+    return `<div style="background:#fff;border:2px solid ${item.color}33;border-top:4px solid ${item.color};border-radius:12px;padding:16px 18px;box-shadow:0 1px 4px rgba(0,0,0,.05);">
+      <div style="font-size:12px;font-weight:700;color:${item.color};margin-bottom:10px;letter-spacing:.03em;">${item.label}</div>
+      <div style="display:flex;justify-content:space-between;font-size:12px;color:#888;margin-bottom:5px;">
+        <span>DB 비용</span><span style="font-weight:700;color:#1a1a1a;">${fmtWon(item.cost)}</span>
+      </div>
+      <div style="display:flex;justify-content:space-between;font-size:12px;color:#888;margin-bottom:10px;">
+        <span>체결액</span><span style="font-weight:700;color:#1a1a1a;">${fmtWon(item.contract)}</span>
+      </div>
+      <div style="background:${roiBg};border-radius:8px;padding:8px 12px;text-align:center;">
+        <span style="font-size:11px;color:#888;">투자 대비 수익</span>
+        <div style="font-size:22px;font-weight:900;color:${roiCls};">${item.roi >= 0 ? '+' : ''}${item.roi}%</div>
+      </div>
+    </div>`;
+  }).join('');
+
+  document.getElementById('s03db-kpi').after(
+    Object.assign(document.createElement('div'), {
+      className: 's02-section-label',
+      textContent: 'DB 투자 대비 수익 (ROI)'
+    }),
+    roiBanner
+  );
 
   // ── 1차/2차 상세 카드
   const colors = [C1, C2];
   document.getElementById('s03db-detail-cards').innerHTML = [0, 1].map(i => {
+    const roiVal = Math.round((s.contractAmt[i] - s.dbCost[i]) / s.dbCost[i] * 100);
     const rows = [
-      { label:'총 DB',         val: s.total[i]+'건',        sub: `신규 ${s.newDb[i]}건` },
-      { label:'통화연결 소계', val: s.connTotal[i]+'건',    sub: `총콜 대비 연결률` },
-      { label:'예약',          val: s.book[i]+'건',         sub: `DB대비 ${s.bookRateDb[i]}% / 연결대비 ${s.bookRateConn[i]}%` },
-      { label:'신규+재연락 부재', val: s.recontact[i]+'건',    sub: `보류 ${s.hold[i]}건` },
-      { label:'신규 부재',     val: s.newAbsent[i]+'건',    sub: `결번 ${s.deadNum[i]}건` },
-      { label:'내원예약',      val: s.visitBook[i]+'건',    sub: `취소 ${s.cancel[i]}건 (${s.cancelRate[i]}%)` },
-      { label:'내원',          val: s.visit[i]+'건',        sub: `예약대비 ${s.visitRate[i]}%` },
-      { label:'체결',          val: s.contract[i]+'건',     sub: `내원대비 ${s.contractRateVisit[i]}% / DB대비 ${s.contractRateDb[i]}%` },
-      { label:'체결액',        val: fmtWon(s.contractAmt[i]), sub: '' },
+      { label:'총 DB (신규+재연락)', val: s.total[i]+'건',        sub: `순신규 ${s.newDb[i]}건` },
+      { label:'구매 DB',            val: s.dbPurchased[i]+'개',   sub: `개당 44,000원 (부가세포함)` },
+      { label:'DB 투입 비용',       val: fmtWon(s.dbCost[i]),     sub: '' },
+      { label:'통화연결 소계',      val: s.connTotal[i]+'건',     sub: `총콜 대비 연결률` },
+      { label:'예약',               val: s.book[i]+'건',          sub: `DB대비 ${s.bookRateDb[i]}% / 연결대비 ${s.bookRateConn[i]}%` },
+      { label:'신규+재연락 부재',   val: s.recontact[i]+'건',     sub: `보류 ${s.hold[i]}건` },
+      { label:'신규 부재',          val: s.newAbsent[i]+'건',     sub: `결번 ${s.deadNum[i]}건` },
+      { label:'내원예약',           val: s.visitBook[i]+'건',     sub: `취소 ${s.cancel[i]}건 (${s.cancelRate[i]}%)` },
+      { label:'내원',               val: s.visit[i]+'건',         sub: `예약대비 ${s.visitRate[i]}%` },
+      { label:'체결',               val: s.contract[i]+'건',      sub: `내원대비 ${s.contractRateVisit[i]}% / DB대비 ${s.contractRateDb[i]}%` },
+      { label:'체결액',             val: fmtWon(s.contractAmt[i]), sub: '' },
+      { label:'ROI (투입 대비 체결)', val: (roiVal >= 0 ? '+' : '') + roiVal + '%',
+        sub: `비용 ${fmtWon(s.dbCost[i])} → 체결 ${fmtWon(s.contractAmt[i])}`, roi: roiVal },
     ];
     return `<div class="cat-channel-card" style="border-top:3px solid ${colors[i]};">
       <div class="ccc-title" style="font-size:15px;margin-bottom:16px;">
@@ -2337,14 +2396,18 @@ function renderSection03db(r) {
         <span style="font-size:13px;color:#888;">${s.period[i]}</span>
         <span class="ccc-badge" style="font-size:11px;">${s.condition[i]}</span>
       </div>
-      ${rows.map(row => `
-        <div style="display:flex;justify-content:space-between;align-items:center;padding:9px 0;border-bottom:1px solid #f0f0f0;">
-          <span style="font-size:14px;color:#555;font-weight:500;">${row.label}</span>
+      ${rows.map(row => {
+        const isRoi = row.roi !== undefined;
+        const roiColor = isRoi ? (row.roi >= 0 ? '#C62828' : '#1565C0') : '#1a1a1a';
+        const rowBg = isRoi ? (row.roi >= 0 ? 'background:#FFF8F8;' : 'background:#F0F7FF;') : '';
+        return `<div style="display:flex;justify-content:space-between;align-items:center;padding:9px 0;border-bottom:1px solid #f0f0f0;${rowBg}${isRoi?'border-radius:6px;padding:10px 8px;margin-top:4px;':''}">
+          <span style="font-size:14px;color:#555;font-weight:${isRoi?'700':'500'};">${row.label}</span>
           <div style="text-align:right;">
-            <span style="font-size:18px;font-weight:800;color:#1a1a1a;">${row.val}</span>
+            <span style="font-size:${isRoi?'22':'18'}px;font-weight:800;color:${roiColor};">${row.val}</span>
             ${row.sub ? `<div style="font-size:11px;color:#aaa;margin-top:1px;">${row.sub}</div>` : ''}
           </div>
-        </div>`).join('')}
+        </div>`;
+      }).join('')}
     </div>`;
   }).join('');
 
