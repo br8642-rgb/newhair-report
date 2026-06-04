@@ -298,11 +298,11 @@
     <div class="s02-charts-grid">
       <div class="card">
         <div class="card-title">1차 DB 전환 흐름 <span style="font-size:11px;color:#6b6b6b;font-weight:400;">(3/6~4/25)</span></div>
-        <div class="chart-wrap" style="height:200px"><canvas id="chart-s03db-funnel1"></canvas></div>
+        <div class="chart-wrap" style="height:250px"><canvas id="chart-s03db-funnel1"></canvas></div>
       </div>
       <div class="card">
         <div class="card-title">2차 DB 전환 흐름 <span style="font-size:11px;color:#6b6b6b;font-weight:400;">(4/27~5/30)</span></div>
-        <div class="chart-wrap" style="height:200px"><canvas id="chart-s03db-funnel2"></canvas></div>
+        <div class="chart-wrap" style="height:250px"><canvas id="chart-s03db-funnel2"></canvas></div>
       </div>
     </div>
 
@@ -312,12 +312,12 @@
       <div class="card">
         <div class="card-title">통화 결과 비교 <span style="font-size:11px;color:#6b6b6b;font-weight:400;">(건수)</span></div>
         <div class="ch-legend-row" id="lg-s03db-call"></div>
-        <div class="chart-wrap" style="height:220px"><canvas id="chart-s03db-call"></canvas></div>
+        <div class="chart-wrap" style="height:260px"><canvas id="chart-s03db-call"></canvas></div>
       </div>
       <div class="card">
         <div class="card-title">주요 전환율 비교 <span style="font-size:11px;color:#6b6b6b;font-weight:400;">(%)</span></div>
         <div class="ch-legend-row" id="lg-s03db-rate"></div>
-        <div class="chart-wrap" style="height:220px"><canvas id="chart-s03db-rate"></canvas></div>
+        <div class="chart-wrap" style="height:260px"><canvas id="chart-s03db-rate"></canvas></div>
       </div>
     </div>
 
@@ -720,7 +720,7 @@ const ALL_REPORTS = [
     visitRate:    [35,  50],    // 예약대비 내원%
     contractRateVisit: [38, 22],
     contractRateDb:    [ 3,  2],
-    analysis: '<b>1차(172건) vs 2차(141건)</b> — 순신규 DB 비중 60%→81%로 증가, 보다 정제된 리스트로 운영.\n<b>예약 건수는 두 차수 모두 24건으로 동일</b>하나 2차에서 핸드폰 병행으로 통화연결 소계가 87→92건으로 소폭 증가.\n<b>신규+재연락 부재가 85→49건으로 크게 감소</b> — 핸드폰 병행 후 연락 가능성이 높아진 효과로 해석.\n<b>취소율 65%→44%로 개선, 내원율 35%→50%로 상승</b> — 예약 품질과 방문 전환 모두 개선.\n다만 <b>체결 3→2건, 체결액 1,480만→720만원으로 감소</b> — 내원 증가 대비 체결 전환이 미흡, 상담 질 점검 필요.\n<b>결번 24→14건 감소</b>는 DB 리스트 품질 개선 신호로 긍정적.',
+    analysis: '<b>1차(172건) vs 2차(141건)</b> — 순신규 DB 비중 60%→81%로 증가, 보다 정제된 리스트로 운영.\n예약 건수는 두 차수 모두 24건으로 동일하나 2차에서 핸드폰 병행으로 통화연결 소계가 87→92건으로 소폭 증가.\n<b>신규+재연락 부재가 85→49건으로 크게 감소</b> — 핸드폰 병행 후 연락 가능성이 높아진 효과로 해석.\n<b>내원율 35%→50%로 상승</b>했으나 실제 내원은 8→9건으로 1건 증가 — 예약 건수(23→18건) 자체가 줄면서 비율이 오른 것으로, 절대 내원 수 확대는 숙제로 남음.\n<b>취소율 65%→44%로 개선</b> — 예약 후 이탈이 줄어든 점은 긍정적.\n체결은 3→2건으로 1건 감소, 체결액도 1,480만→720만원으로 감소했으나 <b>고객별 시술 금액 차이에 따른 편차</b>로 건당 단가 변동 가능성 있음 — 체결 건수 자체를 늘리는 방향으로 상담 역량 집중 필요.\n<b>결번 24→14건 감소</b>는 DB 리스트 품질 개선 신호로 긍정적.',
   },
   section01: {
     cats: ['검사','모발이식','탈모치료','SMP','헤어라인','처방전'],
@@ -2332,17 +2332,17 @@ function renderSection03db(r) {
       { label:'체결액',        val: fmtWon(s.contractAmt[i]), sub: '' },
     ];
     return `<div class="cat-channel-card" style="border-top:3px solid ${colors[i]};">
-      <div class="ccc-title">
-        <span style="background:${colors[i]};color:#fff;font-size:11px;font-weight:700;padding:2px 8px;border-radius:10px;">${i+1}차 DB</span>
-        <span style="font-size:12px;color:#888;">${s.period[i]}</span>
-        <span class="ccc-badge">${s.condition[i]}</span>
+      <div class="ccc-title" style="font-size:15px;margin-bottom:16px;">
+        <span style="background:${colors[i]};color:#fff;font-size:12px;font-weight:700;padding:3px 10px;border-radius:10px;">${i+1}차 DB</span>
+        <span style="font-size:13px;color:#888;">${s.period[i]}</span>
+        <span class="ccc-badge" style="font-size:11px;">${s.condition[i]}</span>
       </div>
       ${rows.map(row => `
-        <div style="display:flex;justify-content:space-between;align-items:center;padding:6px 0;border-bottom:1px solid #f5f5f5;">
-          <span style="font-size:12px;color:#6b6b6b;">${row.label}</span>
+        <div style="display:flex;justify-content:space-between;align-items:center;padding:9px 0;border-bottom:1px solid #f0f0f0;">
+          <span style="font-size:14px;color:#555;font-weight:500;">${row.label}</span>
           <div style="text-align:right;">
-            <span style="font-size:13px;font-weight:700;color:#1a1a1a;">${row.val}</span>
-            ${row.sub ? `<div style="font-size:10px;color:#aaa;">${row.sub}</div>` : ''}
+            <span style="font-size:18px;font-weight:800;color:#1a1a1a;">${row.val}</span>
+            ${row.sub ? `<div style="font-size:11px;color:#aaa;margin-top:1px;">${row.sub}</div>` : ''}
           </div>
         </div>`).join('')}
     </div>`;
@@ -2366,10 +2366,10 @@ function renderSection03db(r) {
       options: {
         indexAxis: 'y', responsive: true, maintainAspectRatio: false,
         plugins: { legend: { display: false },
-          tooltip: { callbacks: { label: c => ` ${c.parsed.x}건` } } },
+          tooltip: { bodyFont:{size:14,family:'Pretendard'}, callbacks: { label: c => ` ${c.parsed.x}건` } } },
         scales: {
-          x: { grid: { color: '#F1F3F5' }, ticks: { font: { size: 12, family: 'Pretendard' }, color: '#3d3d3d' } },
-          y: { grid: { display: false }, ticks: { font: { size: 12, family: 'Pretendard' }, color: '#3d3d3d' } }
+          x: { grid: { color: '#F1F3F5' }, ticks: { font: { size: 13, family: 'Pretendard' }, color: '#3d3d3d' } },
+          y: { grid: { display: false }, ticks: { font: { size: 14, family: 'Pretendard', weight:'600' }, color: '#1a1a1a' } }
         }
       }
     });
@@ -2382,8 +2382,21 @@ function renderSection03db(r) {
   const callData1  = [s.book[0], s.recontact[0], s.hold[0], s.refuse[0], s.newAbsent[0], s.deadNum[0]];
   const callData2  = [s.book[1], s.recontact[1], s.hold[1], s.refuse[1], s.newAbsent[1], s.deadNum[1]];
   chLegend('lg-s03db-call', [[C1+'99','1차'],[C2,'2차']]);
-  mkChart('chart-s03db-call', callLabels,
-    [mkDS('1차', callData1, C1+'99'), mkDS('2차', callData2, C2)]);
+  if(charts['chart-s03db-call']) charts['chart-s03db-call'].destroy();
+  charts['chart-s03db-call'] = new Chart(document.getElementById('chart-s03db-call'), {
+    type:'bar',
+    data:{ labels: callLabels, datasets:[
+      mkDS('1차', callData1, C1+'99'),
+      mkDS('2차', callData2, C2),
+    ]},
+    options:{ ...BASE,
+      scales:{
+        x:{ grid:{display:false}, ticks:{font:{size:13,family:'Pretendard'},color:'#1a1a1a'} },
+        y:{ grid:{color:'#F1F3F5'}, ticks:{font:{size:13,family:'Pretendard'},color:'#3d3d3d'} }
+      },
+      plugins:{ ...BASE.plugins, tooltip:{...BASE.plugins.tooltip, callbacks:{label:c=>` ${c.dataset.label}: ${c.parsed.y}건`}} }
+    }
+  });
 
   // ── 전환율 비교
   const rateLabels = ['DB→예약율','연결→예약율','취소율','내원율','내원→체결율','DB→체결율'];
@@ -2398,8 +2411,11 @@ function renderSection03db(r) {
       { label:'2차', data: rateData2, backgroundColor: C2,      borderRadius: 3 },
     ]},
     options: { ...BASE,
-      scales: { ...BASE.scales, y: { ...BASE.scales.y, max: 110,
-        ticks: { ...BASE.scales.y.ticks, callback: v => v + '%' } } },
+      scales: {
+        x:{ grid:{display:false}, ticks:{font:{size:13,family:'Pretendard'},color:'#1a1a1a'} },
+        y:{ grid:{color:'#F1F3F5'}, max:110,
+          ticks:{font:{size:13,family:'Pretendard'},color:'#3d3d3d',callback:v=>v+'%'} }
+      },
       plugins: { ...BASE.plugins, tooltip: { ...BASE.plugins.tooltip,
         callbacks: { label: c => ` ${c.dataset.label}: ${c.parsed.y}%` } } }
     }
