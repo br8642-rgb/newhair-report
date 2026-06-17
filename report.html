@@ -2842,8 +2842,11 @@ function renderWeeklyReport(r) {
   const m  = r.meta;
   const wp = r.weeklyPhone;
   const ps = [wp.p1, wp.p2, wp.p3];
-  const PL = wp.periodLabels || m.periodLabels; // ['5월 상반기','5월 하반기','6월 상반기']
-  const PD = wp.periods     || m.periods;       // ['5/11~5/20','5/21~5/30','6/1~6/15']
+  const PL = wp.periodLabels || m.periodLabels;
+  const PD = wp.periods     || m.periods;
+  const VL = wp.visitLabels;
+  const VD = wp.visitPeriods;
+  const vs = [wp.v1, wp.v2, wp.v3];
 
   // ── W00 종합현황
   document.getElementById('sw00-subtitle').textContent =
@@ -3187,9 +3190,6 @@ function renderWeeklyReport(r) {
   renderAnalysis('ana-sw02', wp.chAnalysis);
 
   // ── W03 내원 현황
-  const VL = wp.visitLabels;
-  const VD = wp.visitPeriods;
-  const vs = [wp.v1, wp.v2, wp.v3];
 
   document.getElementById('sw03-subtitle').textContent =
     VL.join(' / ') + ' · 예약 흐름 및 과목별 내원 현황';
