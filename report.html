@@ -809,15 +809,6 @@
       <div class="kpi-label">기간별 핵심 지표</div>
       <div class="kpi-compare" id="sw03-kpi"></div>
     </div>
-    <!-- 예약 흐름 -->
-    <div class="s02-section-label">예약 → 내원 흐름</div>
-    <div style="display:grid;grid-template-columns:repeat(3,1fr);gap:14px;margin-bottom:28px;" id="sw03-funnels"></div>
-    <!-- 당일취소·부도 -->
-    <div class="card" style="margin-bottom:28px;">
-      <div class="card-title">당일취소 · 부도 비교 <span style="font-size:11px;color:#6b6b6b;font-weight:400;">(3기간)</span></div>
-      <div class="ch-legend-row" id="lg-sw03-noshow"></div>
-      <div class="chart-wrap" style="height:180px"><canvas id="chart-sw03-noshow"></canvas></div>
-    </div>
     <!-- 과목별 내원 -->
     <div class="s02-section-label">과목별 내원 현황</div>
     <div class="card">
@@ -3066,7 +3057,7 @@ function renderWeeklyReport(r) {
 
   // 채널 KPI — 행 레이아웃 (줄바꿈 없음)
   const kpiWrap = document.getElementById('sw02-kpi');
-  kpiWrap.style.cssText = 'display:grid;grid-template-columns:repeat(4,1fr);gap:14px;margin-bottom:28px;';
+  kpiWrap.style.cssText = 'display:grid;grid-template-columns:repeat(2,1fr);gap:16px;margin-bottom:28px;';
   kpiWrap.innerHTML = chKpiData.map(ch => {
     const getVal = (t, ri) => ri===0 ? t.inq : ri===1 ? t.book : t.rate;
     const rows = [
@@ -3201,7 +3192,9 @@ function renderWeeklyReport(r) {
     VL.join(' / ') + ' · 예약 흐름 및 과목별 내원 현황';
 
   // KPI
-  document.getElementById('sw03-kpi').innerHTML = vs.map((v,i) => {
+  const sw03kpiWrap = document.getElementById('sw03-kpi');
+  sw03kpiWrap.style.cssText = 'display:grid;grid-template-columns:repeat(3,1fr);gap:16px;';
+  sw03kpiWrap.innerHTML = vs.map((v,i) => {
     const prev = i > 0 ? vs[i-1] : null;
     const dV = prev ? v.visit - prev.visit : 0;
     const dR = prev ? v.visit_rate - prev.visit_rate : 0;
@@ -3226,49 +3219,6 @@ function renderWeeklyReport(r) {
       ${row('부도', v.noshow+'건')}
     </div>`;
   }).join('');
-
-  // 예약 흐름 카드 3개
-  document.getElementById('sw03-funnels').innerHTML = vs.map((v,i) => {
-    const flowItems = [
-      {label:'총 예약', val:v.total_book, pct:null},
-      {label:'내원전 취소', val:v.cancel_before, pct:v.cancel_rate+'%', isNeg:true},
-      {label:'잔여 예약', val:v.remain, pct:null},
-      {label:'내원', val:v.visit, pct:v.visit_rate+'%'},
-    ];
-    return `<div class="cat-channel-card" style="border-top:3px solid ${WC[i]};">
-      <div class="ccc-title" style="font-size:20px;font-weight:800;color:${WC[i]};">${VL[i]}</div>
-      <div style="font-size:13px;color:#888;font-weight:600;margin-bottom:10px;">${VD[i]}</div>
-      ${flowItems.map(f=>`
-        <div style="display:flex;justify-content:space-between;align-items:center;padding:7px 0;border-bottom:1px solid #f5f5f5;">
-          <span style="font-size:13px;color:#555;">${f.label}</span>
-          <div style="text-align:right;">
-            <span style="font-size:17px;font-weight:800;color:${f.isNeg?'#1565C0':'#1a1a1a'};">${f.val}건</span>
-            ${f.pct?`<span style="font-size:11px;color:#aaa;margin-left:4px;">(${f.pct})</span>`:''}
-          </div>
-        </div>`).join('')}
-      <div style="margin-top:10px;padding-top:8px;border-top:2px solid #f0f0f0;">
-        <div style="display:flex;justify-content:space-between;font-size:12px;color:#888;margin-bottom:3px;">
-          <span>당일취소</span><span style="font-weight:700;color:#616161;">${v.same_day}건</span>
-        </div>
-        <div style="display:flex;justify-content:space-between;font-size:12px;color:#888;">
-          <span>부도</span><span style="font-weight:700;color:#616161;">${v.noshow}건</span>
-        </div>
-      </div>
-    </div>`;
-  }).join('');
-
-  // 당일취소·부도 그래프
-  chLegend('lg-sw03-noshow', [['#BDBDBD','당일취소'],['#616161','부도']]);
-  if(charts['chart-sw03-noshow']) charts['chart-sw03-noshow'].destroy();
-  charts['chart-sw03-noshow'] = new Chart(document.getElementById('chart-sw03-noshow'),{
-    type:'bar',
-    data:{ labels: VL, datasets:[
-      { label:'당일취소', data:vs.map(v=>v.same_day), backgroundColor:'#BDBDBD', borderRadius:3 },
-      { label:'부도',     data:vs.map(v=>v.noshow),   backgroundColor:'#616161', borderRadius:3 },
-    ]},
-    options:{...BASE, plugins:{...BASE.plugins,
-      tooltip:{...BASE.plugins.tooltip, callbacks:{label:c=>` ${c.dataset.label}: ${c.parsed.y}건`}}}}
-  });
 
   // 과목별 내원 표
   (function(){
