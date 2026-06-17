@@ -3018,29 +3018,80 @@ function renderWeeklyReport(r) {
   document.getElementById('sw02-subtitle').textContent =
     PL.join(' / ') + ' · 플친 · 네이버 · 게시판 · 왓츠앱';
 
-  // 채널 KPI
+  // 채널 KPI — 월간 스타일 카드 (3기간 비교)
   const chKpiData = [
     { label:'플친',   color:'#F9A825', emoji:'💬',
       totals: [wp.kakao.p1.total, wp.kakao.p2.total, wp.kakao.p3.total] },
-    { label:'네이버', color:'#2E7D32', emoji:'🟢',
+    { label:'네이버', color:'#2E7D32', emoji:'<span style="display:inline-flex;align-items:center;justify-content:center;width:22px;height:22px;background:#03C75A;border-radius:4px;font-size:13px;font-weight:900;color:#fff;font-family:sans-serif;line-height:1;flex-shrink:0;">N</span>',
       totals: [wp.naver.p1.total, wp.naver.p2.total, wp.naver.p3.total] },
     { label:'게시판', color:'#00838F', emoji:'📋',
       totals: [wp.board.p1.total, wp.board.p2.total, wp.board.p3.total] },
     { label:'왓츠앱', color:'#43A047', emoji:'🌍',
       totals: [wp.whatsapp.p1.total, wp.whatsapp.p2.total, wp.whatsapp.p3.total] },
   ];
-  document.getElementById('sw02-kpi').innerHTML = chKpiData.map(ch => `
-    <div class="kpi-item">
-      <div class="kpi-item-label" style="font-size:14px;font-weight:800;color:${ch.color};">${ch.emoji} ${ch.label}</div>
-      <div style="display:flex;gap:12px;margin-top:6px;flex-wrap:wrap;align-items:center;">
-        ${ch.totals.map((t,i) => `
-          <div style="text-align:center;">
-            <div style="font-size:10px;color:${WC[i]};font-weight:700;">${PL[i]}</div>
-            <div style="font-size:18px;font-weight:800;">${t.inq}</div>
-            <div style="font-size:10px;color:#aaa;">${t.rate}%</div>
-          </div>`).join('<span style="color:#ddd;padding:0 4px;">→</span>')}
+
+  // 카드별 div — 4열 그리드로 월간 스타일
+  const kpiWrap = document.getElementById('sw02-kpi');
+  kpiWrap.style.cssText = 'display:grid;grid-template-columns:repeat(4,1fr);gap:14px;margin-bottom:28px;';
+  kpiWrap.innerHTML = chKpiData.map(ch => {
+    const rows = ['문의','예약','예약률'];
+    const vals = rows.map((label,ri) => {
+      const getVal = (t,ri) => ri===0?t.inq : ri===1?t.book : t.rate;
+      const v = ch.totals.map((t,i)=>getVal(t,ri));
+      const d1 = v[1]-v[0], d2 = v[2]-v[1];
+      const suffix = ri===2?'%':'';
+      function diffBadge(d) {
+        if(d===0) return `<span class="ck-diff flat">— 0</span>`;
+        const cls = d>0?'up':'down';
+        return `<span class="ck-diff ${cls}">${d>0?'▲':'▼'} ${Math.abs(d)}${suffix&&d!==0?'p':''}</span>`;
+      }
+      return `
+        <div class="ck-row" style="margin-bottom:6px;">
+          <span style="font-size:13px;color:#6b6b6b;">${label}</span>
+        </div>
+        <div style="display:flex;align-items:center;gap:6px;margin-bottom:10px;flex-wrap:wrap;">
+          <span style="font-size:22px;font-weight:800;color:#1a1a1a;">${v[0]}${suffix}</span>
+          <span style="color:#ccc;font-size:14px;">→</span>
+          <span style="font-size:22px;font-weight:800;color:#1a1a1a;">${v[1]}${suffix}</span>
+          ${diffBadge(d1)}
+          <span style="color:#ccc;font-size:14px;">→</span>
+          <span style="font-size:22px;font-weight:800;color:${WC[2]};">${v[2]}${suffix}</span>
+          ${diffBadge(d2)}
+        </div>`;
+    }).join('<hr class="ck-divider">');
+
+    return `<div class="ch-kpi-card">
+      <div class="ck-name" style="font-size:17px;margin-bottom:14px;">
+        <span class="ck-emoji">${ch.emoji}</span> ${ch.label}
       </div>
-    </div>`).join('');
+      ${rows.map((label,ri) => {
+        const getVal = (t) => ri===0?t.inq : ri===1?t.book : t.rate;
+        const v = ch.totals.map(t=>getVal(t));
+        const d1=v[1]-v[0], d2=v[2]-v[1];
+        const suffix=ri===2?'%':'';
+        const pSuffix=ri===2?'p':'';
+        function badge(d){
+          if(d===0) return `<span class="ck-diff flat">— 0</span>`;
+          return `<span class="ck-diff ${d>0?'up':'down'}">${d>0?'▲':'▼'} ${Math.abs(d)}${suffix}${pSuffix&&suffix?'p':''}</span>`;
+        }
+        return `
+          <div class="ck-row"><span>${label}</span></div>
+          <div style="display:flex;align-items:center;gap:8px;margin-bottom:12px;flex-wrap:wrap;">
+            <span style="font-size:20px;font-weight:800;">${v[0]}${suffix}</span>
+            <span style="color:#ddd;">→</span>
+            <span style="font-size:20px;font-weight:800;">${v[1]}${suffix}</span>
+            ${badge(d1)}
+            <span style="color:#ddd;">→</span>
+            <span style="font-size:20px;font-weight:800;color:${WC[2]};">${v[2]}${suffix}</span>
+            ${badge(d2)}
+          </div>
+          <hr class="ck-divider">`;
+      }).join('')}
+      <div style="display:flex;gap:6px;margin-top:6px;flex-wrap:wrap;">
+        ${PL.map((l,i)=>`<span style="font-size:10px;padding:2px 7px;border-radius:10px;background:${WC[i]}22;color:${WC[i]};font-weight:700;">${l}</span>`).join('')}
+      </div>
+    </div>`;
+  }).join('');
 
   // 채널 테이블 공통 렌더
   function renderChWeeklyTable(tblId, chData, extraCol) {
