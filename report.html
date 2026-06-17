@@ -660,10 +660,12 @@
       <div class="card" id="s09-wins-card">
         <div class="card-title" style="color:#1B5E20;">✅ 이달의 성과</div>
         <div id="s09-wins"></div>
+        <button id="s09-wins-add" style="display:none;margin-top:10px;font-size:12px;color:#2E7D32;background:#F0FDF4;border:1px dashed #2E7D32;border-radius:6px;padding:5px 12px;cursor:pointer;width:100%;font-family:Pretendard,sans-serif;">+ 항목 추가</button>
       </div>
       <div class="card" id="s09-tasks-card">
         <div class="card-title" style="color:#B71C1C;font-size:17px;">🔺 개선 과제</div>
         <div id="s09-tasks"></div>
+        <button id="s09-tasks-add" style="display:none;margin-top:10px;font-size:12px;color:#C62828;background:#FFF5F5;border:1px dashed #C62828;border-radius:6px;padding:5px 12px;cursor:pointer;width:100%;font-family:Pretendard,sans-serif;">+ 항목 추가</button>
       </div>
     </div>
 
@@ -855,6 +857,85 @@
 
 <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.4.1/chart.umd.js"></script>
 <script>
+
+/* ════════════════════════════════════
+   편집 캐시 + Sheets 연동 저장/불러오기
+════════════════════════════════════ */
+
+// Apps Script 웹앱 URL — 배포 후 여기에 붙여넣기
+const SHEET_SCRIPT_URL = 'https://script.google.com/macros/s/https://script.google.com/macros/s/AKfycbxX8cTmpcmxjQ6QeCe9KLgA_UeP-Ip1cF6X436-Nsa_-BuFS_QsN3gyh8JgJTWXvhD5/exec/exec';
+
+const editCache = {};  // { 'reportId:field': ['항목1 html', ...] }
+
+// ── 메모리 캐시 읽기
+function cacheRead(reportId, field) {
+  return editCache[reportId + ':' + field] || null;
+}
+
+// ── DOM에서 읽어 메모리 캐시에 쓰기
+function cacheWriteFromDOM(containerId, reportId, field) {
+  const container = document.getElementById(containerId);
+  if (!container) return;
+  const items = Array.from(container.querySelectorAll('[data-item-text]'))
+    .map(el => el.innerHTML);
+  if (items.length > 0) {
+    editCache[reportId + ':' + field] = items;
+    // Sheets에 비동기 저장 (실패해도 조용히 처리)
+    saveToSheets(reportId, field, items);
+  }
+}
+
+// ── Sheets에 저장 (POST, 디바운스 500ms)
+const _saveTimers = {};
+function saveToSheets(reportId, field, items) {
+  if (!SHEET_SCRIPT_URL || SHEET_SCRIPT_URL.includes('여기에')) return;
+  const key = reportId + ':' + field;
+  clearTimeout(_saveTimers[key]);
+  _saveTimers[key] = setTimeout(async () => {
+    try {
+      const payload = { action: 'save', reportId, field, items };
+      const res = await fetch(SHEET_SCRIPT_URL, {
+        method: 'POST',
+        headers: { 'Content-Type': 'text/plain' },
+        body: JSON.stringify(payload),
+      });
+      const json = await res.json();
+      if (json.ok) showSaveToast('✔ 저장 완료');
+      else showSaveToast('저장 오류: ' + (json.error || ''), true);
+    } catch (e) {
+      showSaveToast('저장 실패 (네트워크)', true);
+    }
+  }, 500);
+}
+
+// ── Sheets에서 모든 필드 불러오기 (페이지 로드 시 1회 호출)
+async function loadAllFromSheets() {
+  if (!SHEET_SCRIPT_URL || SHEET_SCRIPT_URL.includes('여기에')) return;
+  try {
+    const res = await fetch(SHEET_SCRIPT_URL + '?action=loadAll');
+    if (!res.ok) return;
+    const data = await res.json();
+    // { 'reportId:field': ['html1','html2',...], ... }
+    Object.assign(editCache, data);
+  } catch (e) { /* 네트워크 오류 무시 */ }
+}
+
+// ── 저장 상태 토스트 표시
+function showSaveToast(msg, isError) {
+  let toast = document.getElementById('nh-save-toast');
+  if (!toast) {
+    toast = document.createElement('div');
+    toast.id = 'nh-save-toast';
+    toast.style.cssText = 'position:fixed;bottom:24px;right:24px;z-index:99999;padding:10px 18px;border-radius:8px;font-size:13px;font-family:Pretendard,sans-serif;font-weight:600;box-shadow:0 4px 16px rgba(0,0,0,.18);transition:opacity .3s;pointer-events:none;';
+    document.body.appendChild(toast);
+  }
+  toast.style.background = isError ? '#C62828' : '#1B5E20';
+  toast.style.color = '#fff';
+  toast.textContent = msg;
+  toast.style.opacity = '1';
+  clearTimeout(toast._t);
+  toast._t = setTimeout(() => { toast.style.opacity = '0'; }, 2500);
+}
 
 /* ════════════════════════════════════
    데이터
@@ -2441,18 +2522,10 @@ function renderSection09(r) {
     </div>`).join('');
 
   // ── 성과 리스트
-  document.getElementById('s09-wins').innerHTML = s09.wins.map(w =>
-    `<div style="display:flex;align-items:flex-start;gap:8px;padding:7px 0;border-bottom:1px solid #f0f0f0;font-size:13px;line-height:1.6;">
-      <span style="color:#2E7D32;font-size:14px;flex-shrink:0;margin-top:1px;">✔</span>
-      <span>${w}</span>
-    </div>`).join('');
+  renderEditableList('s09-wins', 's09-wins-add', s09.wins, '✔', '#2E7D32', isEditor, r.meta.title + '_monthly', 's09-wins');
 
   // ── 과제 리스트
-  document.getElementById('s09-tasks').innerHTML = s09.tasks.map(t =>
-    `<div style="display:flex;align-items:flex-start;gap:8px;padding:7px 0;border-bottom:1px solid #f0f0f0;font-size:13px;line-height:1.6;">
-      <span style="color:#C62828;font-size:14px;flex-shrink:0;margin-top:1px;">▲</span>
-      <span>${t}</span>
-    </div>`).join('');
+  renderEditableList('s09-tasks', 's09-tasks-add', s09.tasks, '▲', '#C62828', isEditor, r.meta.title + '_monthly', 's09-tasks');
 
   // ── 다음달 포커스 카드
   document.getElementById('s09-focus').innerHTML = `
@@ -3314,8 +3387,8 @@ function renderWeeklyReport(r) {
     </div>`;
   }).join('');
 
-  renderEditableList('sw04-wins', 'sw04-wins-add', wp.wins, '✔', '#2E7D32', isEditor);
-  renderEditableList('sw04-tasks', 'sw04-tasks-add', wp.tasks, '▲', '#C62828', isEditor);
+  renderEditableList('sw04-wins', 'sw04-wins-add', wp.wins, '✔', '#2E7D32', isEditor, r.meta.title + '_weekly', 'sw04-wins');
+  renderEditableList('sw04-tasks', 'sw04-tasks-add', wp.tasks, '▲', '#C62828', isEditor, r.meta.title + '_weekly', 'sw04-tasks');
 
   const noteEl4 = document.getElementById('sw04-period-note');
   if (noteEl4) noteEl4.textContent = wp.periodNote || m.periodNote || '';
@@ -3328,12 +3401,22 @@ function renderWeeklyReport(r) {
 /* ═══════════════════════════════
    주간 성과·과제 편집 기능
 ═══════════════════════════════ */
-function renderEditableList(containerId, addBtnId, items, icon, iconColor, isEditor) {
+function renderEditableList(containerId, addBtnId, items, icon, iconColor, isEditor, reportId, field) {
   const container = document.getElementById(containerId);
   const addBtn    = document.getElementById(addBtnId);
   if (!container) return;
 
+  // 캐시된 편집 내용 우선 사용
+  if (reportId && field) {
+    const cached = cacheRead(reportId, field);
+    if (cached) items = cached;
+  }
+
   if (isEditor && addBtn) addBtn.style.display = 'block';
+
+  function saveToCache() {
+    if (reportId && field) cacheWriteFromDOM(containerId, reportId, field);
+  }
 
   function makeItem(html) {
     const div = document.createElement('div');
@@ -3344,8 +3427,9 @@ function renderEditableList(containerId, addBtnId, items, icon, iconColor, isEdi
     ic.textContent = icon;
     ic.style.cssText = `color:${iconColor};flex-shrink:0;font-size:16px;margin-top:2px;`;
 
-    // 텍스트 (편집자: contenteditable, 뷰어: 읽기전용)
+    // 텍스트
     const txt = document.createElement('div');
+    txt.setAttribute('data-item-text', '1');
     txt.innerHTML = html;
     txt.style.cssText = 'font-size:15px;line-height:1.7;flex:1;';
 
@@ -3359,7 +3443,7 @@ function renderEditableList(containerId, addBtnId, items, icon, iconColor, isEdi
       del.style.cssText = 'position:absolute;right:0;top:8px;background:none;border:none;color:#ccc;font-size:18px;cursor:pointer;line-height:1;padding:0 4px;';
       del.onmouseover = () => del.style.color = '#C62828';
       del.onmouseout  = () => del.style.color = '#ccc';
-      del.onclick = () => div.remove();
+      del.onclick = () => { div.remove(); saveToCache(); };
       div.appendChild(del);
 
       // 클릭 시 편집
@@ -3398,6 +3482,7 @@ function renderEditableList(containerId, addBtnId, items, icon, iconColor, isEdi
             document.removeEventListener('mouseup', showToolbar);
             toolbar.remove();
             txt.removeEventListener('blur', handler);
+            saveToCache();  // ← 편집 완료 시 캐시 저장
             // 재클릭 허용
             txt.addEventListener('click', () => {
               txt.contentEditable = 'true'; txt.focus();
@@ -3421,7 +3506,7 @@ function renderEditableList(containerId, addBtnId, items, icon, iconColor, isEdi
       const el = makeItem('새 항목을 입력하세요');
       container.appendChild(el);
       // 바로 편집 모드
-      const txt = el.querySelector('div');
+      const txt = el.querySelector('[data-item-text]');
       txt.contentEditable = 'true';
       txt.style.outline = 'none';
       txt.focus();
@@ -3435,10 +3520,13 @@ function renderEditableList(containerId, addBtnId, items, icon, iconColor, isEdi
 }
 
 /* 초기화 */
-checkAuth();
-buildSelector();
-setupTitleEdit();
-renderReport(ALL_REPORTS[0]);
+(async function initApp() {
+  checkAuth();
+  await loadAllFromSheets();
+  buildSelector();
+  setupTitleEdit();
+  renderReport(ALL_REPORTS[0]);
+})();
 </script>
 </body>
 </html>
