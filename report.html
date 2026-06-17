@@ -776,7 +776,8 @@ const ALL_REPORTS = [
     label: '2026년 5~6월 상반기 현황 (주간)',
     period: '2026.05.11 — 2026.06.15',
     periods: ['5/11~5/20','5/21~5/30','6/1~6/15'],
-    periodNote: '※ 6/1~6/15는 6/8~6/11(4일) 휴진 포함',
+    periodLabels: ['5월 전반기','5월 후반기','6월 전반기'],
+    periodNote: '※ 6월 전반기(6/1~6/15)는 6/8~6/11(4일) 휴진 포함',
   },
   weeklyPhone: {
     cats: ['이식','헤어','SMP','치료','검사','처방전','기타'],
@@ -2693,50 +2694,52 @@ function renderWeeklyReport(r) {
   const m  = r.meta;
   const wp = r.weeklyPhone;
   const ps = [wp.p1, wp.p2, wp.p3];
+  const PL = wp.periodLabels || m.periodLabels; // ['5월 전반기','5월 후반기','6월 전반기']
+  const PD = wp.periods     || m.periods;       // ['5/11~5/20','5/21~5/30','6/1~6/15']
 
   // ── W00 종합현황
   document.getElementById('sw00-subtitle').textContent =
-    m.periods.join(' / ') + ' · 전화 신규문의 현황';
+    PL.join(' / ') + ' · 전화 신규문의 현황';
 
   // KPI — 기간별 총 문의/예약/예약률/구환
   document.getElementById('sw00-kpi').innerHTML = ps.map((p,i) => {
-    const isLast = i === ps.length - 1;
-    const prev   = i > 0 ? ps[i-1] : null;
-    const dInq   = prev ? p.total.inq  - prev.total.inq  : 0;
-    const dRate  = prev ? p.total.rate - prev.total.rate : 0;
+    const prev  = i > 0 ? ps[i-1] : null;
+    const dInq  = prev ? p.total.inq  - prev.total.inq  : 0;
+    const dRate = prev ? p.total.rate - prev.total.rate : 0;
     function dSpan(d, suffix='') {
       if(!prev) return '';
       const cls = d>0?'up':d<0?'down':'flat';
       const arrow = d>0?`▲ ${Math.abs(d)}`:d<0?`▼ ${Math.abs(d)}`:'— 0';
-      return `<span class="kpi-diff ${cls}" style="font-size:11px;">${arrow}${suffix&&d!==0?suffix:''}</span>`;
+      return `<span class="kpi-diff ${cls}" style="font-size:12px;">${arrow}${suffix&&d!==0?suffix:''}</span>`;
     }
     return `<div class="kpi-item">
-      <div class="kpi-item-label" style="font-size:13px;font-weight:700;color:#1565C0;">${m.periods[i]}</div>
-      <div style="display:flex;gap:16px;align-items:flex-end;flex-wrap:wrap;margin-top:6px;">
+      <div class="kpi-item-label" style="font-size:15px;font-weight:800;color:${WC[i]};">${PL[i]}</div>
+      <div style="font-size:11px;color:#aaa;margin-bottom:6px;">${PD[i]}</div>
+      <div style="display:flex;gap:16px;align-items:flex-end;flex-wrap:wrap;">
         <div><div style="font-size:11px;color:#aaa;">문의</div>
-          <div style="font-size:22px;font-weight:800;">${p.total.inq} ${dSpan(dInq)}</div></div>
+          <div style="font-size:24px;font-weight:800;">${p.total.inq} ${dSpan(dInq)}</div></div>
         <div><div style="font-size:11px;color:#aaa;">예약</div>
-          <div style="font-size:22px;font-weight:800;">${p.total.book}</div></div>
+          <div style="font-size:24px;font-weight:800;">${p.total.book}</div></div>
         <div><div style="font-size:11px;color:#aaa;">예약률</div>
-          <div style="font-size:22px;font-weight:800;">${p.total.rate}% ${dSpan(dRate,'%p')}</div></div>
+          <div style="font-size:24px;font-weight:800;">${p.total.rate}% ${dSpan(dRate,'%p')}</div></div>
         <div><div style="font-size:11px;color:#aaa;">구환</div>
-          <div style="font-size:22px;font-weight:800;">${p.total.oldPt.toLocaleString()}</div></div>
+          <div style="font-size:24px;font-weight:800;">${p.total.oldPt.toLocaleString()}</div></div>
       </div>
     </div>`;
   }).join('');
 
   // 과목별 문의 추이 그래프
-  chLegend('lg-sw00-inq', WC.map((c,i)=>([c, m.periods[i]])));
+  chLegend('lg-sw00-inq', WC.map((c,i)=>([c, PL[i]])));
   mkChart('chart-sw00-inq', wp.cats,
-    ps.map((p,i) => mkDS(m.periods[i], p.inq, WC[i])));
+    ps.map((p,i) => mkDS(PL[i], p.inq, WC[i])));
 
   // 예약률 추이
-  chLegend('lg-sw00-rate', WC.map((c,i)=>([c, m.periods[i]])));
+  chLegend('lg-sw00-rate', WC.map((c,i)=>([c, PL[i]])));
   if(charts['chart-sw00-rate']) charts['chart-sw00-rate'].destroy();
   charts['chart-sw00-rate'] = new Chart(document.getElementById('chart-sw00-rate'), {
     type:'bar',
     data:{ labels: wp.cats, datasets: ps.map((p,i)=>({
-      label: m.periods[i], data: p.rate, backgroundColor: WC[i], borderRadius:3
+      label: PL[i], data: p.rate, backgroundColor: WC[i], borderRadius:3
     }))},
     options:{ ...BASE,
       scales:{...BASE.scales, y:{...BASE.scales.y, max:110,
@@ -2750,12 +2753,13 @@ function renderWeeklyReport(r) {
 
   // ── W01 전화현황
   document.getElementById('sw01-subtitle').textContent =
-    m.periods.join(' / ') + ' · 과목별 문의·예약 현황';
+    PL.join(' / ') + ' · 과목별 문의·예약 현황';
 
-  // KPI 3기간 총합
+  // KPI 3기간
   document.getElementById('sw01-kpi').innerHTML = ps.map((p,i) => `
     <div class="kpi-item">
-      <div class="kpi-item-label" style="color:${WC[i]};font-weight:700;">${m.periods[i]}</div>
+      <div class="kpi-item-label" style="color:${WC[i]};font-weight:800;font-size:15px;">${PL[i]}</div>
+      <div style="font-size:11px;color:#aaa;margin-bottom:4px;">${PD[i]}</div>
       <div class="kpi-row">
         <div class="kpi-month"><span class="kpi-month-label">문의</span><span class="kpi-month-val">${p.total.inq}</span></div>
         <div class="kpi-month"><span class="kpi-month-label">예약</span><span class="kpi-month-val">${p.total.book}</span></div>
@@ -2763,41 +2767,90 @@ function renderWeeklyReport(r) {
       </div>
     </div>`).join('');
 
-  // 상세 테이블 (접힘)
-  const tblHeaders = ['과목',
-    `${m.periods[0]} 문의`, `${m.periods[0]} 예약`, `${m.periods[0]} 예약률`,
-    `${m.periods[1]} 문의`, `${m.periods[1]} 예약`, `${m.periods[1]} 예약률`,
-    `${m.periods[2]} 문의`, `${m.periods[2]} 예약`, `${m.periods[2]} 예약률`,
-  ];
-  const tblTotal = ['합계',
-    wp.p1.total.inq, wp.p1.total.book, wp.p1.total.rate+'%',
-    wp.p2.total.inq, wp.p2.total.book, wp.p2.total.rate+'%',
-    wp.p3.total.inq, wp.p3.total.book, wp.p3.total.rate+'%',
-  ];
-  const tblRows = wp.cats.map((cat,ci) => [
-    cat,
-    wp.p1.inq[ci], wp.p1.book[ci], wp.p1.rate[ci]+'%',
-    wp.p2.inq[ci], wp.p2.book[ci], wp.p2.rate[ci]+'%',
-    wp.p3.inq[ci], wp.p3.book[ci], wp.p3.rate[ci]+'%',
-  ]);
-  mkTable('tbl-sw01', tblHeaders, tblTotal, tblRows);
+  // 상세 테이블 — 기간별 배경색 구분을 위해 직접 렌더
+  (function() {
+    const tbl = document.getElementById('tbl-sw01');
+    if (!tbl) return;
+    // 기간별 배경색
+    const BG = [
+      ['#EFF6FF','#EFF6FF','#DBEAFE'], // 5월 전반기: 연파랑 계열
+      ['#F0F9F0','#F0F9F0','#DCFCE7'], // 5월 후반기: 연초록 계열
+      ['#FFF1F2','#FFF1F2','#FFE4E6'], // 6월 전반기: 연빨강 계열
+    ];
+    tbl.innerHTML = '';
+    const thead = tbl.createTHead();
+    // 1행: 기간 그룹 헤더
+    const gr = thead.insertRow();
+    [['과목',1,''],
+     [PL[0],3,BG[0][2]], [PL[1],3,BG[1][2]], [PL[2],3,BG[2][2]]
+    ].forEach(([txt,span,bg]) => {
+      const th = document.createElement('th');
+      th.colSpan = span; th.textContent = txt;
+      if(bg) th.style.cssText = `background:${bg};text-align:center;font-size:13px;`;
+      gr.appendChild(th);
+    });
+    // 2행: 날짜 + 문의/예약/예약률
+    const dr = thead.insertRow();
+    const subHeaders = [
+      ['',         ''],
+      [PD[0],'문의'],[null,'예약'],[null,'예약률'],
+      [PD[1],'문의'],[null,'예약'],[null,'예약률'],
+      [PD[2],'문의'],[null,'예약'],[null,'예약률'],
+    ];
+    subHeaders.forEach(([date, label], ci) => {
+      const th = document.createElement('th');
+      const bgIdx = ci === 0 ? -1 : Math.floor((ci-1)/3);
+      if(bgIdx >= 0) th.style.background = BG[bgIdx][ci%3===1?0:ci%3===2?1:2];
+      th.innerHTML = date
+        ? `<div style="font-size:10px;color:#888;font-weight:400;">${date}</div><div>${label}</div>`
+        : label;
+      if(ci > 0 && ci % 3 === 1) th.style.borderLeft = '2px solid #cbd5e1';
+      dr.appendChild(th);
+    });
+
+    const tbody = tbl.createTBody();
+    // 합계행
+    const tot = tbody.insertRow(); tot.className = 'total-row';
+    [['합계',false],
+     [wp.p1.total.inq,0],[wp.p1.total.book,0],[wp.p1.total.rate+'%',0],
+     [wp.p2.total.inq,1],[wp.p2.total.book,1],[wp.p2.total.rate+'%',1],
+     [wp.p3.total.inq,2],[wp.p3.total.book,2],[wp.p3.total.rate+'%',2],
+    ].forEach(([val,gi], ci) => {
+      const td = tot.insertCell(); td.innerHTML = val;
+      if(gi !== false) td.style.background = BG[gi][1];
+      if(ci > 0 && (ci-1) % 3 === 0) td.style.borderLeft = '2px solid #cbd5e1';
+      if(ci === 0) td.style.textAlign = 'left';
+    });
+    // 과목행
+    wp.cats.forEach((cat, ci2) => {
+      const tr = tbody.insertRow();
+      [
+        [cat,false],
+        [wp.p1.inq[ci2],0],[wp.p1.book[ci2],0],[wp.p1.rate[ci2]+'%',0],
+        [wp.p2.inq[ci2],1],[wp.p2.book[ci2],1],[wp.p2.rate[ci2]+'%',1],
+        [wp.p3.inq[ci2],2],[wp.p3.book[ci2],2],[wp.p3.rate[ci2]+'%',2],
+      ].forEach(([val,gi], ci) => {
+        const td = tr.insertCell(); td.innerHTML = val;
+        if(gi !== false) td.style.background = BG[gi][0];
+        if(ci > 0 && (ci-1) % 3 === 0) td.style.borderLeft = '2px solid #cbd5e1';
+        if(ci === 0) td.style.textAlign = 'left';
+      });
+    });
+  })();
 
   // 과목별 문의 비교
-  chLegend('lg-sw01-inq', WC.map((c,i)=>([c, m.periods[i]])));
+  chLegend('lg-sw01-inq', WC.map((c,i)=>([c, PL[i]])));
   mkChart('chart-sw01-inq', wp.cats,
-    ps.map((p,i) => mkDS(m.periods[i], p.inq, WC[i])));
+    ps.map((p,i) => mkDS(PL[i], p.inq, WC[i])));
 
   // 과목별 예약률 비교
-  chLegend('lg-sw01-rate', WC.map((c,i)=>([c, m.periods[i]])));
+  chLegend('lg-sw01-rate', WC.map((c,i)=>([c, PL[i]])));
   if(charts['chart-sw01-rate']) charts['chart-sw01-rate'].destroy();
   charts['chart-sw01-rate'] = new Chart(document.getElementById('chart-sw01-rate'), {
     type:'bar',
-    data:{ labels: wp.cats.filter((_,ci) =>
-        ps.some(p => p.rate[ci] > 0)),
+    data:{ labels: wp.cats,
       datasets: ps.map((p,i)=>({
-        label: m.periods[i],
-        data: wp.cats.map((_,ci) => p.rate[ci]).filter((_,ci) =>
-          ps.some(p2 => p2.rate[ci] > 0)),
+        label: PL[i], data: p.rate,
         backgroundColor: WC[i], borderRadius:3
       }))
     },
@@ -2813,12 +2866,13 @@ function renderWeeklyReport(r) {
 
   // ── W02 종합리뷰
   document.getElementById('sw02-subtitle').textContent =
-    m.periods.join(' / ') + ' · 성과 및 개선 과제';
+    PL.join(' / ') + ' · 성과 및 개선 과제';
 
   // 기간별 총평 카드
   document.getElementById('sw02-summary').innerHTML = ps.map((p,i) => `
     <div class="cat-channel-card" style="border-top:3px solid ${WC[i]};">
-      <div class="ccc-title" style="font-size:14px;font-weight:800;color:${WC[i]};">${m.periods[i]}</div>
+      <div class="ccc-title" style="font-size:15px;font-weight:800;color:${WC[i]};">${PL[i]}</div>
+      <div style="font-size:11px;color:#aaa;margin-bottom:10px;">${PD[i]}</div>
       ${[
         {label:'문의',  val: p.total.inq+'건'},
         {label:'예약',  val: p.total.book+'건'},
@@ -2845,10 +2899,10 @@ function renderWeeklyReport(r) {
 
   // 기간 비고
   const noteEl = document.getElementById('sw02-period-note');
-  if (noteEl) noteEl.textContent = m.periodNote || '';
+  if (noteEl) noteEl.textContent = wp.periodNote || m.periodNote || '';
 
   renderAnalysis('ana-sw02',
-    `3기간 전화 신규문의 추이: <b>163→139→146건</b>.\n5월 하반기 일시 하락 후 6월 상반기 반등, <b>예약률은 93%→88%→95%로 6월 최고치</b>.\n구환 수 6월 1,155건으로 급증 — 재방문 수요 확대가 뚜렷한 긍정 신호.\n<b>SMP·이식 5월 하반기 예약률 하락</b>은 집중 점검 과제로 유지.`
+    `3기간 전화 신규문의 추이: <b>163→139→146건</b>.\n5월 후반기 일시 하락 후 6월 전반기 반등, <b>예약률은 93%→88%→95%로 6월 전반기 최고치</b>.\n구환 수 6월 전반기 1,155건으로 급증 — 재방문 수요 확대가 뚜렷한 긍정 신호.\n<b>SMP·이식 5월 후반기 예약률 하락</b>은 집중 점검 과제로 유지.`
   );
 }
 
