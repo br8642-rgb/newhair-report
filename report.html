@@ -3064,65 +3064,47 @@ function renderWeeklyReport(r) {
       totals: [wp.whatsapp.p1.total, wp.whatsapp.p2.total, wp.whatsapp.p3.total] },
   ];
 
-  // 카드별 div — 4열 그리드로 월간 스타일
+  // 채널 KPI — 행 레이아웃 (줄바꿈 없음)
   const kpiWrap = document.getElementById('sw02-kpi');
   kpiWrap.style.cssText = 'display:grid;grid-template-columns:repeat(4,1fr);gap:14px;margin-bottom:28px;';
   kpiWrap.innerHTML = chKpiData.map(ch => {
-    const rows = ['문의','예약','예약률'];
-    const vals = rows.map((label,ri) => {
-      const getVal = (t,ri) => ri===0?t.inq : ri===1?t.book : t.rate;
-      const v = ch.totals.map((t,i)=>getVal(t,ri));
-      const d1 = v[1]-v[0], d2 = v[2]-v[1];
-      const suffix = ri===2?'%':'';
-      function diffBadge(d) {
-        if(d===0) return `<span class="ck-diff flat">— 0</span>`;
-        const cls = d>0?'up':'down';
-        return `<span class="ck-diff ${cls}">${d>0?'▲':'▼'} ${Math.abs(d)}${suffix&&d!==0?'p':''}</span>`;
-      }
+    const getVal = (t, ri) => ri===0 ? t.inq : ri===1 ? t.book : t.rate;
+    const rows = [
+      {label:'문의', ri:0, suffix:''},
+      {label:'예약', ri:1, suffix:''},
+      {label:'예약률', ri:2, suffix:'%'},
+    ];
+    function badge(d, suffix) {
+      if(d===0) return `<span class="ck-diff flat" style="font-size:11px;">— 0</span>`;
+      const p = suffix==='%'?'p':'';
+      return `<span class="ck-diff ${d>0?'up':'down'}" style="font-size:11px;">${d>0?'▲':'▼'} ${Math.abs(d)}${suffix}${p}</span>`;
+    }
+    const rowsHtml = rows.map(({label, ri, suffix}) => {
+      const vals = ch.totals.map(t => getVal(t, ri));
+      const d1 = vals[1]-vals[0], d2 = vals[2]-vals[1];
       return `
-        <div class="ck-row" style="margin-bottom:6px;">
-          <span style="font-size:13px;color:#6b6b6b;">${label}</span>
+        <div style="margin-bottom:14px;">
+          <div style="font-size:12px;color:#aaa;margin-bottom:4px;">${label}</div>
+          <div style="display:flex;align-items:center;gap:6px;white-space:nowrap;">
+            <span style="font-size:18px;font-weight:800;color:#555;">${vals[0]}${suffix}</span>
+            <span style="color:#ddd;font-size:12px;">→</span>
+            <span style="font-size:18px;font-weight:800;color:#555;">${vals[1]}${suffix}</span>
+            ${badge(d1,suffix)}
+            <span style="color:#ddd;font-size:12px;">→</span>
+            <span style="font-size:20px;font-weight:800;color:${WC[2]};">${vals[2]}${suffix}</span>
+            ${badge(d2,suffix)}
+          </div>
         </div>
-        <div style="display:flex;align-items:center;gap:6px;margin-bottom:10px;flex-wrap:wrap;">
-          <span style="font-size:22px;font-weight:800;color:#1a1a1a;">${v[0]}${suffix}</span>
-          <span style="color:#ccc;font-size:14px;">→</span>
-          <span style="font-size:22px;font-weight:800;color:#1a1a1a;">${v[1]}${suffix}</span>
-          ${diffBadge(d1)}
-          <span style="color:#ccc;font-size:14px;">→</span>
-          <span style="font-size:22px;font-weight:800;color:${WC[2]};">${v[2]}${suffix}</span>
-          ${diffBadge(d2)}
-        </div>`;
-    }).join('<hr class="ck-divider">');
+        <hr class="ck-divider">`;
+    }).join('');
 
     return `<div class="ch-kpi-card">
-      <div class="ck-name" style="font-size:17px;margin-bottom:14px;">
+      <div class="ck-name" style="font-size:16px;margin-bottom:14px;">
         <span class="ck-emoji">${ch.emoji}</span> ${ch.label}
       </div>
-      ${rows.map((label,ri) => {
-        const getVal = (t) => ri===0?t.inq : ri===1?t.book : t.rate;
-        const v = ch.totals.map(t=>getVal(t));
-        const d1=v[1]-v[0], d2=v[2]-v[1];
-        const suffix=ri===2?'%':'';
-        const pSuffix=ri===2?'p':'';
-        function badge(d){
-          if(d===0) return `<span class="ck-diff flat">— 0</span>`;
-          return `<span class="ck-diff ${d>0?'up':'down'}">${d>0?'▲':'▼'} ${Math.abs(d)}${suffix}${pSuffix&&suffix?'p':''}</span>`;
-        }
-        return `
-          <div class="ck-row"><span>${label}</span></div>
-          <div style="display:flex;align-items:center;gap:8px;margin-bottom:12px;flex-wrap:wrap;">
-            <span style="font-size:20px;font-weight:800;">${v[0]}${suffix}</span>
-            <span style="color:#ddd;">→</span>
-            <span style="font-size:20px;font-weight:800;">${v[1]}${suffix}</span>
-            ${badge(d1)}
-            <span style="color:#ddd;">→</span>
-            <span style="font-size:20px;font-weight:800;color:${WC[2]};">${v[2]}${suffix}</span>
-            ${badge(d2)}
-          </div>
-          <hr class="ck-divider">`;
-      }).join('')}
-      <div style="display:flex;gap:6px;margin-top:6px;flex-wrap:wrap;">
-        ${PL.map((l,i)=>`<span style="font-size:12px;padding:3px 9px;border-radius:10px;background:${WC[i]}22;color:${WC[i]};font-weight:700;">${l}</span>`).join('')}
+      ${rowsHtml}
+      <div style="display:flex;gap:5px;margin-top:8px;flex-wrap:wrap;">
+        ${PL.map((l,i)=>`<span style="font-size:11px;padding:2px 7px;border-radius:8px;background:${WC[i]}22;color:${WC[i]};font-weight:700;">${l}</span>`).join('')}
       </div>
     </div>`;
   }).join('');
@@ -3222,21 +3204,26 @@ function renderWeeklyReport(r) {
   document.getElementById('sw03-kpi').innerHTML = vs.map((v,i) => {
     const prev = i > 0 ? vs[i-1] : null;
     const dV = prev ? v.visit - prev.visit : 0;
+    const dR = prev ? v.visit_rate - prev.visit_rate : 0;
     function dS(d,s='') {
       if(!prev) return '';
       const cls=d>0?'up':d<0?'down':'flat';
-      return `<span class="kpi-diff ${cls}" style="font-size:11px;">${d>0?'▲':'▼'} ${Math.abs(d)}${s&&d!==0?s:''}</span>`;
+      return `<span class="kpi-diff ${cls}" style="font-size:12px;">${d>0?'▲':'▼'} ${Math.abs(d)}${s&&d!==0?s:''}</span>`;
     }
-    return `<div class="kpi-item">
-      <div class="kpi-item-label" style="font-size:20px;font-weight:800;color:${WC[i]};">${VL[i]}</div>
-      <div style="font-size:15px;color:#888;font-weight:600;margin-bottom:8px;">${VD[i]}</div>
-      <div style="display:flex;gap:14px;flex-wrap:wrap;">
-        <div><div style="font-size:13px;color:#888;font-weight:500;">총예약</div><div style="font-size:26px;font-weight:800;">${v.total_book}</div></div>
-        <div><div style="font-size:13px;color:#888;font-weight:500;">내원</div><div style="font-size:26px;font-weight:800;">${v.visit} ${dS(dV)}</div></div>
-        <div><div style="font-size:13px;color:#888;font-weight:500;">내원율</div><div style="font-size:26px;font-weight:800;">${v.visit_rate}%</div></div>
-        <div><div style="font-size:13px;color:#888;font-weight:500;">당일취소</div><div style="font-size:26px;font-weight:800;">${v.same_day}</div></div>
-        <div><div style="font-size:13px;color:#888;font-weight:500;">부도</div><div style="font-size:26px;font-weight:800;">${v.noshow}</div></div>
-      </div>
+    function row(label, val, badge='') {
+      return `<div style="display:flex;justify-content:space-between;align-items:center;padding:6px 0;border-bottom:1px solid #f0f0f0;">
+        <span style="font-size:13px;color:#888;white-space:nowrap;">${label}</span>
+        <span style="font-size:20px;font-weight:800;white-space:nowrap;">${val}${badge?' '+badge:''}</span>
+      </div>`;
+    }
+    return `<div class="kpi-item" style="border:1px solid #e8eaed;border-radius:12px;padding:16px;box-shadow:0 1px 4px rgba(0,0,0,.05);">
+      <div style="font-size:20px;font-weight:800;color:${WC[i]};margin-bottom:3px;">${VL[i]}</div>
+      <div style="font-size:14px;color:#888;font-weight:600;margin-bottom:12px;">${VD[i]}</div>
+      ${row('총 예약', v.total_book+'건')}
+      ${row('내원', v.visit+'건', dS(dV))}
+      ${row('내원율', v.visit_rate+'%', dS(dR,'%p'))}
+      ${row('당일취소', v.same_day+'건')}
+      ${row('부도', v.noshow+'건')}
     </div>`;
   }).join('');
 
