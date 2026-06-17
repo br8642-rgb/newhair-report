@@ -904,7 +904,6 @@ const ALL_REPORTS = [
       '전화 검사 예약률 3기간 연속 95% 이상 안정 유지',
       '네이버 6월 상반기 예약률 100% 달성',
       '게시판 문의 30→27→37건으로 6월 상반기 최고치 회복',
-      '구환 수 985→980→1,155건으로 6월 급증 — 재방문 수요 확대',
       '왓츠앱 문의 12→15→20건 지속 증가 — 해외 이식 수요 성장세',
     ],
     tasks: [
@@ -949,7 +948,6 @@ const ALL_REPORTS = [
       '6월 상반기 전화 예약률 95% — 3기간 중 최고치',
       '네이버 6월 상반기 예약률 100% 달성',
       '게시판 문의 37건으로 6월 상반기 최고치 회복',
-      '구환 수 1,155건 급증 — 재방문 수요 확대',
       '왓츠앱 문의 12→15→20건 지속 성장',
     ],
     tasks: [
@@ -2849,31 +2847,39 @@ function renderWeeklyReport(r) {
 
   // ── W00 종합현황
   document.getElementById('sw00-subtitle').textContent =
-    PL.join(' / ') + ' · 전화 신규문의 현황';
+    PL.join(' / ') + ' · 전화·채널·내원 통합 현황';
 
-  // KPI — 기간별 총 문의/예약/예약률/구환
+  // KPI — 기간별 통합 (전화+채널+내원 핵심 수치)
   document.getElementById('sw00-kpi').innerHTML = ps.map((p,i) => {
+    const v = vs[i];
     const prev  = i > 0 ? ps[i-1] : null;
-    const dInq  = prev ? p.total.inq  - prev.total.inq  : 0;
-    const dRate = prev ? p.total.rate - prev.total.rate : 0;
+    const prevV = i > 0 ? vs[i-1]  : null;
+    const dInq  = prev  ? p.total.inq  - prev.total.inq  : 0;
+    const dRate = prev  ? p.total.rate - prev.total.rate : 0;
+    const dVis  = prevV ? v.visit - prevV.visit : 0;
+    const pKey  = 'p'+(i+1);
+    const onlineInq = wp.kakao[pKey].total.inq + wp.naver[pKey].total.inq +
+                      wp.board[pKey].total.inq + wp.whatsapp[pKey].total.inq;
     function dSpan(d, suffix='') {
-      if(!prev) return '';
-      const cls = d>0?'up':d<0?'down':'flat';
-      const arrow = d>0?`▲ ${Math.abs(d)}`:d<0?`▼ ${Math.abs(d)}`:'— 0';
-      return `<span class="kpi-diff ${cls}" style="font-size:12px;">${arrow}${suffix&&d!==0?suffix:''}</span>`;
+      if(!prev && !prevV) return '';
+      if(d===0) return `<span class="kpi-diff flat" style="font-size:12px;">— 0</span>`;
+      const cls = d>0?'up':'down';
+      return `<span class="kpi-diff ${cls}" style="font-size:12px;">${d>0?'▲':'▼'} ${Math.abs(d)}${suffix}</span>`;
     }
     return `<div class="kpi-item">
       <div class="kpi-item-label" style="font-size:15px;font-weight:800;color:${WC[i]};">${PL[i]}</div>
-      <div style="font-size:13px;color:#888;font-weight:600;margin-bottom:6px;">${PD[i]}</div>
-      <div style="display:flex;gap:16px;align-items:flex-end;flex-wrap:wrap;">
-        <div><div style="font-size:11px;color:#aaa;">문의</div>
-          <div style="font-size:24px;font-weight:800;">${p.total.inq} ${dSpan(dInq)}</div></div>
-        <div><div style="font-size:11px;color:#aaa;">예약</div>
-          <div style="font-size:24px;font-weight:800;">${p.total.book}</div></div>
-        <div><div style="font-size:11px;color:#aaa;">예약률</div>
-          <div style="font-size:24px;font-weight:800;">${p.total.rate}% ${dSpan(dRate,'%p')}</div></div>
-        <div><div style="font-size:11px;color:#aaa;">구환</div>
-          <div style="font-size:24px;font-weight:800;">${p.total.oldPt.toLocaleString()}</div></div>
+      <div style="font-size:13px;color:#888;font-weight:600;margin-bottom:8px;">${PD[i]}</div>
+      <div style="display:flex;gap:14px;flex-wrap:wrap;align-items:flex-end;">
+        <div><div style="font-size:11px;color:#aaa;">전화 문의</div>
+          <div style="font-size:22px;font-weight:800;">${p.total.inq} ${dSpan(dInq)}</div></div>
+        <div><div style="font-size:11px;color:#aaa;">전화 예약률</div>
+          <div style="font-size:22px;font-weight:800;">${p.total.rate}% ${dSpan(dRate,'%p')}</div></div>
+        <div><div style="font-size:11px;color:#aaa;">온라인 채널 문의</div>
+          <div style="font-size:22px;font-weight:800;">${onlineInq}</div></div>
+        <div><div style="font-size:11px;color:#aaa;">내원</div>
+          <div style="font-size:22px;font-weight:800;">${v.visit} ${dSpan(dVis)}</div></div>
+        <div><div style="font-size:11px;color:#aaa;">내원율</div>
+          <div style="font-size:22px;font-weight:800;">${v.visit_rate}%</div></div>
       </div>
     </div>`;
   }).join('');
@@ -2899,7 +2905,8 @@ function renderWeeklyReport(r) {
     }
   });
 
-  renderAnalysis('ana-sw00', wp.analysis);
+  renderAnalysis('ana-sw00',
+    `<b>전화 문의 163→139→146건</b>, 내원 <b>170→142→155건</b> — 5월 하반기 저점 후 6월 상반기 회복세.\n온라인 채널(플친·네이버·게시판·왓츠앱) 합산 문의도 동일한 흐름으로 6월 상반기 최고치.\n<b>5월 하반기 당일취소 16건·부도 12건 급증</b>이 내원 감소의 핵심 원인 — 6월에는 당일취소 7건으로 개선.\n<b>네이버 예약률 6월 상반기 100%</b>, 왓츠앱 문의 지속 증가 등 채널 전반 긍정적 흐름.`);
 
   // ── W01 전화현황
   document.getElementById('sw01-subtitle').textContent =
@@ -3185,7 +3192,7 @@ function renderWeeklyReport(r) {
   const vs = [wp.v1, wp.v2, wp.v3];
 
   document.getElementById('sw03-subtitle').textContent =
-    VD.join(' / ') + ' · 예약 흐름 및 과목별 내원 현황';
+    VL.join(' / ') + ' · 예약 흐름 및 과목별 내원 현황';
 
   // KPI
   document.getElementById('sw03-kpi').innerHTML = vs.map((v,i) => {
@@ -3297,41 +3304,53 @@ function renderWeeklyReport(r) {
 
   renderAnalysis('ana-sw03', wp.visitAnalysis);
 
+
   // ── W04 종합 리뷰
   document.getElementById('sw04-subtitle').textContent =
-    VL.join(' / ') + ' · 성과 및 개선 과제';
+    PL.join(' / ') + ' · 전화·채널·내원 통합 현황 요약';
 
-  document.getElementById('sw04-summary').innerHTML = vs.map((v,i) => `
-    <div class="cat-channel-card" style="border-top:3px solid ${WC[i]};">
-      <div class="ccc-title" style="font-size:15px;font-weight:800;color:${WC[i]};">${VL[i]}</div>
-      <div style="font-size:13px;color:#888;font-weight:600;margin-bottom:10px;">${VD[i]}</div>
-      ${[
-        {label:'총 예약',    val: v.total_book+'건'},
-        {label:'내원',       val: v.visit+'건 ('+v.visit_rate+'%)'},
-        {label:'당일취소',   val: v.same_day+'건'},
-        {label:'부도',       val: v.noshow+'건'},
-      ].map(row=>`
-        <div style="display:flex;justify-content:space-between;padding:6px 0;border-bottom:1px solid #f5f5f5;font-size:13px;">
-          <span style="color:#888;">${row.label}</span>
-          <span style="font-weight:700;">${row.val}</span>
+  // 기간별 통합 총평 카드 (전화 + 내원 핵심 수치)
+  const psSummary = ps; // 전화 기준 3기간
+  document.getElementById('sw04-summary').innerHTML = psSummary.map((p,i) => {
+    const v = vs[i]; // 내원 기간 (같은 인덱스)
+    const rows = [
+      { label:'전화 문의',  val: p.total.inq+'건',   sub: '예약률 '+p.total.rate+'%' },
+      { label:'플친·네이버·게시판·왓츠앱',
+        val: (wp.kakao['p'+(i+1)].total.inq + wp.naver['p'+(i+1)].total.inq +
+              wp.board['p'+(i+1)].total.inq + wp.whatsapp['p'+(i+1)].total.inq)+'건',
+        sub: '온라인 채널 합산' },
+      { label:'내원',       val: v.visit+'건',        sub: '내원율 '+v.visit_rate+'%' },
+      { label:'당일취소·부도', val: v.same_day+'·'+v.noshow+'건', sub: '', isNeg: true },
+    ];
+    return `<div class="cat-channel-card" style="border-top:3px solid ${WC[i]};">
+      <div style="font-size:17px;font-weight:800;color:${WC[i]};margin-bottom:4px;">${PL[i]}</div>
+      <div style="font-size:13px;color:#888;font-weight:600;margin-bottom:14px;">${PD[i]}</div>
+      ${rows.map(row=>`
+        <div style="display:flex;justify-content:space-between;align-items:center;padding:8px 0;border-bottom:1px solid #f5f5f5;">
+          <span style="font-size:13px;color:#888;">${row.label}</span>
+          <div style="text-align:right;">
+            <span style="font-size:16px;font-weight:800;color:${row.isNeg?'#616161':'#1a1a1a'};">${row.val}</span>
+            ${row.sub?`<div style="font-size:11px;color:#aaa;">${row.sub}</div>`:''}
+          </div>
         </div>`).join('')}
-    </div>`).join('');
+    </div>`;
+  }).join('');
 
   document.getElementById('sw04-wins').innerHTML = wp.wins.map(w =>
-    `<div style="display:flex;gap:8px;padding:7px 0;border-bottom:1px solid #f0f0f0;font-size:13px;line-height:1.6;">
-      <span style="color:#2E7D32;flex-shrink:0;">✔</span><span>${w}</span>
+    `<div style="display:flex;gap:8px;padding:8px 0;border-bottom:1px solid #f0f0f0;font-size:14px;line-height:1.7;">
+      <span style="color:#2E7D32;flex-shrink:0;font-size:15px;">✔</span><span>${w}</span>
     </div>`).join('');
 
   document.getElementById('sw04-tasks').innerHTML = wp.tasks.map(t =>
-    `<div style="display:flex;gap:8px;padding:7px 0;border-bottom:1px solid #f0f0f0;font-size:13px;line-height:1.6;">
-      <span style="color:#C62828;flex-shrink:0;">▲</span><span>${t}</span>
+    `<div style="display:flex;gap:8px;padding:8px 0;border-bottom:1px solid #f0f0f0;font-size:14px;line-height:1.7;">
+      <span style="color:#C62828;flex-shrink:0;font-size:15px;">▲</span><span>${t}</span>
     </div>`).join('');
 
   const noteEl4 = document.getElementById('sw04-period-note');
   if (noteEl4) noteEl4.textContent = wp.periodNote || m.periodNote || '';
 
   renderAnalysis('ana-sw04',
-    `전화 신규문의 <b>163→139→146건</b>, 내원 <b>170→142→155건</b>으로 5월 하반기 저점 후 6월 상반기 회복.\n채널 전반 6월 상반기 회복세 — 네이버 예약률 100%, 게시판 문의 최고치, 왓츠앱 지속 성장.\n<b>5월 하반기 당일취소·부도 급증</b>과 <b>플친·왓츠앱 이식 예약률 하락</b>이 핵심 관리 과제.`
+    `<b>전화 문의 163→139→146건</b>, 채널 합산 온라인 문의도 5월 하반기 저점 후 6월 상반기 회복세.\n<b>내원 170→142→155건</b>으로 5월 하반기 급감 후 회복 — 당일취소·부도 급증이 주요 원인.\n<b>네이버 예약률 6월 상반기 100% 달성</b>, 게시판·왓츠앱 문의 최고치 — 채널 전반 긍정적.\n5월 하반기 당일취소 16건·부도 12건 급증과 SMP·이식·왓츠앱 예약률 하락이 핵심 개선 과제.`
   );
 }
 
