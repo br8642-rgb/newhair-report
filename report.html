@@ -333,7 +333,7 @@
   </div>
 
   <!-- 섹션 00 — 전체 종합 현황 -->
-  <div class="section-panel active" id="section-00">
+  <div class="section-panel" id="section-00">
     <div class="section-header">
       <div class="section-tag">Section 00</div>
       <div class="section-title">전체 종합 현황</div>
@@ -674,6 +674,91 @@
     <!-- 종합 분석 텍스트 -->
     <div class="analysis-box" id="ana-box-s09"><p id="ana-s09"></p></div>
   </div>
+
+  <!-- ══════════════════════════════════
+       주간 보고서 섹션 패널
+  ════════════════════════════════════ -->
+
+  <!-- W00 종합 현황 -->
+  <div class="section-panel" id="section-w00">
+    <div class="section-header">
+      <div class="section-tag">Section 00</div>
+      <div class="section-title">종합 현황</div>
+      <div class="section-subtitle" id="sw00-subtitle"></div>
+    </div>
+    <div class="kpi-table-wrap">
+      <div class="kpi-label">기간별 핵심 지표</div>
+      <div class="kpi-compare" id="sw00-kpi"></div>
+    </div>
+    <div class="s02-section-label">기간별 문의·예약 추이</div>
+    <div class="card" style="margin-bottom:16px;">
+      <div class="card-title">과목별 문의 추이 <span style="font-size:11px;color:#6b6b6b;font-weight:400;">(3기간 비교)</span></div>
+      <div class="ch-legend-row" id="lg-sw00-inq"></div>
+      <div class="chart-wrap" style="height:240px"><canvas id="chart-sw00-inq"></canvas></div>
+    </div>
+    <div class="card" style="margin-bottom:28px;">
+      <div class="card-title">예약률 추이 <span style="font-size:11px;color:#6b6b6b;font-weight:400;">(3기간 비교, %)</span></div>
+      <div class="ch-legend-row" id="lg-sw00-rate"></div>
+      <div class="chart-wrap" style="height:200px"><canvas id="chart-sw00-rate"></canvas></div>
+    </div>
+    <div class="analysis-box" id="ana-box-sw00"><p id="ana-sw00"></p></div>
+  </div>
+
+  <!-- W01 전화 현황 -->
+  <div class="section-panel" id="section-w01">
+    <div class="section-header">
+      <div class="section-tag">Section 01</div>
+      <div class="section-title">전화 현황</div>
+      <div class="section-subtitle" id="sw01-subtitle"></div>
+    </div>
+    <div class="kpi-table-wrap">
+      <div class="kpi-label">기간별 핵심 지표</div>
+      <div class="kpi-compare" id="sw01-kpi"></div>
+    </div>
+    <div class="s02-section-label">과목별 상세</div>
+    <div class="card">
+      <div class="card-title">과목별 문의·예약 상세</div>
+      <button class="table-toggle-btn" onclick="toggleTable(this)"><span class="toggle-arrow">▼</span> 표 펼치기</button>
+      <div class="table-collapsible"><div style="overflow-x:auto"><table class="data-table" id="tbl-sw01"></table></div></div>
+    </div>
+    <div class="card" style="margin-top:16px;margin-bottom:16px;">
+      <div class="card-title">과목별 문의 비교 <span style="font-size:11px;color:#6b6b6b;font-weight:400;">(3기간)</span></div>
+      <div class="ch-legend-row" id="lg-sw01-inq"></div>
+      <div class="chart-wrap" style="height:250px"><canvas id="chart-sw01-inq"></canvas></div>
+    </div>
+    <div class="card" style="margin-bottom:28px;">
+      <div class="card-title">과목별 예약률 비교 <span style="font-size:11px;color:#6b6b6b;font-weight:400;">(3기간, %)</span></div>
+      <div class="ch-legend-row" id="lg-sw01-rate"></div>
+      <div class="chart-wrap" style="height:230px"><canvas id="chart-sw01-rate"></canvas></div>
+    </div>
+    <div class="analysis-box" id="ana-box-sw01"><p id="ana-sw01"></p></div>
+  </div>
+
+  <!-- W02 종합 리뷰 -->
+  <div class="section-panel" id="section-w02">
+    <div class="section-header">
+      <div class="section-tag">Section 02</div>
+      <div class="section-title">종합 리뷰</div>
+      <div class="section-subtitle" id="sw02-subtitle"></div>
+    </div>
+    <div class="s02-section-label">기간별 총평</div>
+    <div id="sw02-summary" style="display:grid;grid-template-columns:repeat(3,1fr);gap:14px;margin-bottom:28px;"></div>
+    <div style="display:grid;grid-template-columns:1fr 1fr;gap:16px;margin-bottom:28px;">
+      <div class="card">
+        <div class="card-title" style="color:#1B5E20;">✅ 이기간의 성과</div>
+        <div id="sw02-wins"></div>
+      </div>
+      <div class="card">
+        <div class="card-title" style="color:#B71C1C;">🔺 개선 과제</div>
+        <div id="sw02-tasks"></div>
+      </div>
+    </div>
+    <div class="analysis-box" id="ana-box-sw02">
+      <div id="sw02-period-note" style="font-size:12px;color:#888;margin-bottom:8px;"></div>
+      <p id="ana-sw02"></p>
+    </div>
+  </div>
+
 </div>
 
 <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.4.1/chart.umd.js"></script>
@@ -683,6 +768,51 @@
    데이터
 ════════════════════════════════════ */
 const ALL_REPORTS = [
+/* ── 주간 보고서 ── */
+{
+  meta: {
+    title: '뉴헤어 유입·내원 현황 결산',
+    type: 'weekly',
+    label: '2026년 5~6월 상반기 현황 (주간)',
+    period: '2026.05.11 — 2026.06.15',
+    periods: ['5/11~5/20','5/21~5/30','6/1~6/15'],
+    periodNote: '※ 6/1~6/15는 6/8~6/11(4일) 휴진 포함',
+  },
+  weeklyPhone: {
+    cats: ['이식','헤어','SMP','치료','검사','처방전','기타'],
+    p1: { // 5/11~5/20
+      inq:  [40, 6, 8,13,85,10, 1],
+      book: [36, 6, 7,12,81,10, 0],
+      rate: [90,100,88,92,95,100, 0],
+      total: { inq:163, book:152, rate:93, oldPt:985 },
+    },
+    p2: { // 5/21~5/30
+      inq:  [34, 8, 5,18,67, 7, 0],
+      book: [26, 7, 2,15,65, 7, 0],
+      rate: [76,88,40,83,97,100, 0],
+      total: { inq:139, book:122, rate:88, oldPt:980 },
+    },
+    p3: { // 6/1~6/15 (휴진 포함)
+      inq:  [39, 9,10,11,64,12, 1],
+      book: [35, 9, 8,10,63,12, 1],
+      rate: [90,100,80,91,98,100,100],
+      total: { inq:146, book:138, rate:95, oldPt:1155 },
+    },
+    analysis: '<b>전화 신규문의 163→139→146건</b> 흐름으로 5월 하반기 소폭 하락 후 6월 상반기 회복세.\n<b>예약률 93%→88%→95%</b>로 5월 하반기 일시 하락 후 6월 상반기 최고치 달성.\n<b>SMP 예약률이 5/21~5/30 기간 40%로 급락</b>(문의 5건 중 예약 2건) — 원인 파악 필요.\n<b>이식 예약률 90%→76%→90%</b>로 5월 하반기 하락이 두드러지며 6월에 회복.\n검사는 3기간 모두 95%↑ 안정적 유지.\n6/1~6/15는 4일 휴진 포함 기간임을 감안하면 <b>실질 영업일 대비 문의 밀도는 가장 높은 구간</b>.',
+    wins: [
+      '6월 상반기 전체 예약률 95% — 3기간 중 최고치',
+      '검사 예약률 3기간 연속 95% 이상 안정 유지',
+      '이식·헤어·처방전 6월 예약률 100% 또는 90% 회복',
+      '구환 수 985→980→1,155건으로 6월 급증 — 재방문 수요 확대',
+    ],
+    tasks: [
+      'SMP 5/21~5/30 예약률 40% 급락 — 상담 흐름 및 응대 점검',
+      '이식 5/21~5/30 예약률 76%로 하락 — 해당 기간 특이사항 확인',
+      '5월 하반기 전반적 예약률 하락(88%) — 주간별 원인 분석 필요',
+    ],
+  },
+},
+/* ── 월간 보고서 ── */
 {
   meta: {
     title: '뉴헤어 유입·내원 현황 결산',
@@ -1047,14 +1177,21 @@ function buildCatChannelData(s, month) {
   }));
 }
 
-const NAV_SECTIONS = [
-  {id:'00',label:'종합 현황'},{id:'01',label:'진료과목별 문의·예약'},
-  {id:'02',label:'채널별 문의·예약'},{id:'03',label:'DB 현황'},
-  {id:'04',label:'내원 현황'},{id:'05',label:'성사 현황'},
-  {id:'06',label:'원장님 성사율'},{id:'07',label:'직원별 성사율'},
-  {id:'08',label:'유입경로 분석'},{id:'09',label:'매출 현황'},
-  {id:'10',label:'종합 리뷰'},
-];
+const NAV_SECTIONS = {
+  monthly: [
+    {id:'00',label:'종합 현황'},{id:'01',label:'진료과목별 문의·예약'},
+    {id:'02',label:'채널별 문의·예약'},{id:'03',label:'DB 현황'},
+    {id:'04',label:'내원 현황'},{id:'05',label:'성사 현황'},
+    {id:'06',label:'원장님 성사율'},{id:'07',label:'직원별 성사율'},
+    {id:'08',label:'유입경로 분석'},{id:'09',label:'매출 현황'},
+    {id:'10',label:'종합 리뷰'},
+  ],
+  weekly: [
+    {id:'w00',label:'종합 현황'},
+    {id:'w01',label:'전화 현황'},
+    {id:'w02',label:'종합 리뷰'},
+  ],
+};
 
 let isEditor = false;
 let currentReport = null;
@@ -1072,12 +1209,13 @@ function checkAuth() {
   document.body.style.display = '';
 }
 
-function buildNav(activeId) {
+function buildNav(activeId, type) {
   const nav = document.getElementById('top-nav');
+  const sections = NAV_SECTIONS[type] || NAV_SECTIONS.monthly;
   nav.innerHTML = `<img src="assets/logo.png" class="nav-logo" alt="뉴헤어"><div class="nav-divider"></div>`;
-  NAV_SECTIONS.forEach(s => {
+  sections.forEach(s => {
     const a = document.createElement('a');
-    a.href='#'; a.textContent=s.id+' '+s.label; a.dataset.sid=s.id;
+    a.href='#'; a.textContent=s.id.replace('w','')+' '+s.label; a.dataset.sid=s.id;
     if(s.id===activeId) a.classList.add('active');
     a.addEventListener('click', e => { e.preventDefault(); switchSection(s.id); });
     nav.appendChild(a);
@@ -1085,16 +1223,21 @@ function buildNav(activeId) {
 }
 
 function switchSection(id) {
-  document.querySelectorAll('.section-panel').forEach(p=>p.classList.remove('active'));
-  const p=document.getElementById('section-'+id); if(p) p.classList.add('active');
-  document.querySelectorAll('#top-nav a[data-sid]').forEach(a=>a.classList.toggle('active',a.dataset.sid===id));
-  window.scrollTo({top:0,behavior:'smooth'});
+  document.querySelectorAll('.section-panel').forEach(p => p.classList.remove('active'));
+  const p = document.getElementById('section-' + id);
+  if (p) p.classList.add('active');
+  document.querySelectorAll('#top-nav a[data-sid]').forEach(a => a.classList.toggle('active', a.dataset.sid === id));
+  window.scrollTo({top:0, behavior:'smooth'});
 }
 
 function buildSelector() {
-  const sel=document.getElementById('report-select');
-  ALL_REPORTS.forEach((r,i)=>{ const o=document.createElement('option'); o.value=i; o.textContent=r.meta.label; sel.appendChild(o); });
-  sel.addEventListener('change',()=>renderReport(ALL_REPORTS[+sel.value]));
+  const sel = document.getElementById('report-select');
+  ALL_REPORTS.forEach((r,i) => {
+    const o = document.createElement('option');
+    o.value = i; o.textContent = r.meta.label;
+    sel.appendChild(o);
+  });
+  sel.addEventListener('change', () => renderReport(ALL_REPORTS[+sel.value]));
 }
 
 const C = { aprInq:'#90CAF9', aprBook:'#EF9A9A', mayInq:'#1565C0', mayBook:'#C62828' };
@@ -1327,9 +1470,28 @@ function switchS02Month(month) {
 ═══════════════════════════════ */
 function renderReport(r) {
   currentReport = r;
+  document.getElementById('dh-period').textContent = r.meta.period;
+  document.getElementById('dh-type').textContent = r.meta.type === 'monthly' ? '월간' : '주간';
+
+  if (r.meta.type === 'weekly') {
+    buildNav('w00', 'weekly');
+    // 월간 섹션 모두 숨기고 주간 섹션만 표시
+    document.querySelectorAll('.section-panel').forEach(p => p.classList.remove('active'));
+    const fw = document.getElementById('section-w00');
+    if (fw) fw.classList.add('active');
+    renderWeeklyReport(r);
+    return;
+  }
+
+  buildNav('00', 'monthly');
+  // 주간 섹션 숨기기
+  document.querySelectorAll('.section-panel[id^="section-w"]').forEach(p => p.classList.remove('active'));
+  // 월간 첫 섹션 활성화
+  document.querySelectorAll('.section-panel').forEach(p => p.classList.remove('active'));
+  const fm = document.getElementById('section-00');
+  if (fm) fm.classList.add('active');
+
   const s=r.section01;
-  document.getElementById('dh-period').textContent=r.meta.period;
-  document.getElementById('dh-type').textContent=r.meta.type==='monthly'?'월간':'주간';
   document.getElementById('s01-subtitle').textContent=r.meta.compare+' · 전화 / 네이버 / 플친 / 게시판 / 왓츠앱 · 엑셀 데이터 기준';
   const tt=s.total;
   const inqDiff=tt.total_may.inq-tt.total_apr.inq, bookDiff=tt.total_may.book-tt.total_apr.book, rateDiff=tt.total_may.rate-tt.total_apr.rate;
@@ -2522,9 +2684,176 @@ function renderSection03db(r) {
   renderAnalysis('ana-s03db', s.analysis);
 }
 
+/* ═══════════════════════════════
+   주간 보고서 렌더링
+═══════════════════════════════ */
+const WC = ['#90CAF9','#1565C0','#C62828']; // 1기간=연파랑, 2기간=진파랑, 3기간=빨강
+
+function renderWeeklyReport(r) {
+  const m  = r.meta;
+  const wp = r.weeklyPhone;
+  const ps = [wp.p1, wp.p2, wp.p3];
+
+  // ── W00 종합현황
+  document.getElementById('sw00-subtitle').textContent =
+    m.periods.join(' / ') + ' · 전화 신규문의 현황';
+
+  // KPI — 기간별 총 문의/예약/예약률/구환
+  document.getElementById('sw00-kpi').innerHTML = ps.map((p,i) => {
+    const isLast = i === ps.length - 1;
+    const prev   = i > 0 ? ps[i-1] : null;
+    const dInq   = prev ? p.total.inq  - prev.total.inq  : 0;
+    const dRate  = prev ? p.total.rate - prev.total.rate : 0;
+    function dSpan(d, suffix='') {
+      if(!prev) return '';
+      const cls = d>0?'up':d<0?'down':'flat';
+      const arrow = d>0?`▲ ${Math.abs(d)}`:d<0?`▼ ${Math.abs(d)}`:'— 0';
+      return `<span class="kpi-diff ${cls}" style="font-size:11px;">${arrow}${suffix&&d!==0?suffix:''}</span>`;
+    }
+    return `<div class="kpi-item">
+      <div class="kpi-item-label" style="font-size:13px;font-weight:700;color:#1565C0;">${m.periods[i]}</div>
+      <div style="display:flex;gap:16px;align-items:flex-end;flex-wrap:wrap;margin-top:6px;">
+        <div><div style="font-size:11px;color:#aaa;">문의</div>
+          <div style="font-size:22px;font-weight:800;">${p.total.inq} ${dSpan(dInq)}</div></div>
+        <div><div style="font-size:11px;color:#aaa;">예약</div>
+          <div style="font-size:22px;font-weight:800;">${p.total.book}</div></div>
+        <div><div style="font-size:11px;color:#aaa;">예약률</div>
+          <div style="font-size:22px;font-weight:800;">${p.total.rate}% ${dSpan(dRate,'%p')}</div></div>
+        <div><div style="font-size:11px;color:#aaa;">구환</div>
+          <div style="font-size:22px;font-weight:800;">${p.total.oldPt.toLocaleString()}</div></div>
+      </div>
+    </div>`;
+  }).join('');
+
+  // 과목별 문의 추이 그래프
+  chLegend('lg-sw00-inq', WC.map((c,i)=>([c, m.periods[i]])));
+  mkChart('chart-sw00-inq', wp.cats,
+    ps.map((p,i) => mkDS(m.periods[i], p.inq, WC[i])));
+
+  // 예약률 추이
+  chLegend('lg-sw00-rate', WC.map((c,i)=>([c, m.periods[i]])));
+  if(charts['chart-sw00-rate']) charts['chart-sw00-rate'].destroy();
+  charts['chart-sw00-rate'] = new Chart(document.getElementById('chart-sw00-rate'), {
+    type:'bar',
+    data:{ labels: wp.cats, datasets: ps.map((p,i)=>({
+      label: m.periods[i], data: p.rate, backgroundColor: WC[i], borderRadius:3
+    }))},
+    options:{ ...BASE,
+      scales:{...BASE.scales, y:{...BASE.scales.y, max:110,
+        ticks:{...BASE.scales.y.ticks, callback:v=>v+'%'}}},
+      plugins:{...BASE.plugins, tooltip:{...BASE.plugins.tooltip,
+        callbacks:{label:c=>` ${c.dataset.label}: ${c.parsed.y}%`}}}
+    }
+  });
+
+  renderAnalysis('ana-sw00', wp.analysis);
+
+  // ── W01 전화현황
+  document.getElementById('sw01-subtitle').textContent =
+    m.periods.join(' / ') + ' · 과목별 문의·예약 현황';
+
+  // KPI 3기간 총합
+  document.getElementById('sw01-kpi').innerHTML = ps.map((p,i) => `
+    <div class="kpi-item">
+      <div class="kpi-item-label" style="color:${WC[i]};font-weight:700;">${m.periods[i]}</div>
+      <div class="kpi-row">
+        <div class="kpi-month"><span class="kpi-month-label">문의</span><span class="kpi-month-val">${p.total.inq}</span></div>
+        <div class="kpi-month"><span class="kpi-month-label">예약</span><span class="kpi-month-val">${p.total.book}</span></div>
+        <div class="kpi-month"><span class="kpi-month-label">예약률</span><span class="kpi-month-val">${p.total.rate}%</span></div>
+      </div>
+    </div>`).join('');
+
+  // 상세 테이블 (접힘)
+  const tblHeaders = ['과목',
+    `${m.periods[0]} 문의`, `${m.periods[0]} 예약`, `${m.periods[0]} 예약률`,
+    `${m.periods[1]} 문의`, `${m.periods[1]} 예약`, `${m.periods[1]} 예약률`,
+    `${m.periods[2]} 문의`, `${m.periods[2]} 예약`, `${m.periods[2]} 예약률`,
+  ];
+  const tblTotal = ['합계',
+    wp.p1.total.inq, wp.p1.total.book, wp.p1.total.rate+'%',
+    wp.p2.total.inq, wp.p2.total.book, wp.p2.total.rate+'%',
+    wp.p3.total.inq, wp.p3.total.book, wp.p3.total.rate+'%',
+  ];
+  const tblRows = wp.cats.map((cat,ci) => [
+    cat,
+    wp.p1.inq[ci], wp.p1.book[ci], wp.p1.rate[ci]+'%',
+    wp.p2.inq[ci], wp.p2.book[ci], wp.p2.rate[ci]+'%',
+    wp.p3.inq[ci], wp.p3.book[ci], wp.p3.rate[ci]+'%',
+  ]);
+  mkTable('tbl-sw01', tblHeaders, tblTotal, tblRows);
+
+  // 과목별 문의 비교
+  chLegend('lg-sw01-inq', WC.map((c,i)=>([c, m.periods[i]])));
+  mkChart('chart-sw01-inq', wp.cats,
+    ps.map((p,i) => mkDS(m.periods[i], p.inq, WC[i])));
+
+  // 과목별 예약률 비교
+  chLegend('lg-sw01-rate', WC.map((c,i)=>([c, m.periods[i]])));
+  if(charts['chart-sw01-rate']) charts['chart-sw01-rate'].destroy();
+  charts['chart-sw01-rate'] = new Chart(document.getElementById('chart-sw01-rate'), {
+    type:'bar',
+    data:{ labels: wp.cats.filter((_,ci) =>
+        ps.some(p => p.rate[ci] > 0)),
+      datasets: ps.map((p,i)=>({
+        label: m.periods[i],
+        data: wp.cats.map((_,ci) => p.rate[ci]).filter((_,ci) =>
+          ps.some(p2 => p2.rate[ci] > 0)),
+        backgroundColor: WC[i], borderRadius:3
+      }))
+    },
+    options:{ ...BASE,
+      scales:{...BASE.scales, y:{...BASE.scales.y, max:110,
+        ticks:{...BASE.scales.y.ticks, callback:v=>v+'%'}}},
+      plugins:{...BASE.plugins, tooltip:{...BASE.plugins.tooltip,
+        callbacks:{label:c=>` ${c.dataset.label}: ${c.parsed.y}%`}}}
+    }
+  });
+
+  renderAnalysis('ana-sw01', wp.analysis);
+
+  // ── W02 종합리뷰
+  document.getElementById('sw02-subtitle').textContent =
+    m.periods.join(' / ') + ' · 성과 및 개선 과제';
+
+  // 기간별 총평 카드
+  document.getElementById('sw02-summary').innerHTML = ps.map((p,i) => `
+    <div class="cat-channel-card" style="border-top:3px solid ${WC[i]};">
+      <div class="ccc-title" style="font-size:14px;font-weight:800;color:${WC[i]};">${m.periods[i]}</div>
+      ${[
+        {label:'문의',  val: p.total.inq+'건'},
+        {label:'예약',  val: p.total.book+'건'},
+        {label:'예약률',val: p.total.rate+'%'},
+        {label:'구환',  val: p.total.oldPt.toLocaleString()+'건'},
+      ].map(row=>`
+        <div style="display:flex;justify-content:space-between;padding:6px 0;border-bottom:1px solid #f5f5f5;font-size:13px;">
+          <span style="color:#888;">${row.label}</span>
+          <span style="font-weight:700;">${row.val}</span>
+        </div>`).join('')}
+    </div>`).join('');
+
+  // 성과
+  document.getElementById('sw02-wins').innerHTML = wp.wins.map(w =>
+    `<div style="display:flex;gap:8px;padding:7px 0;border-bottom:1px solid #f0f0f0;font-size:13px;line-height:1.6;">
+      <span style="color:#2E7D32;flex-shrink:0;">✔</span><span>${w}</span>
+    </div>`).join('');
+
+  // 과제
+  document.getElementById('sw02-tasks').innerHTML = wp.tasks.map(t =>
+    `<div style="display:flex;gap:8px;padding:7px 0;border-bottom:1px solid #f0f0f0;font-size:13px;line-height:1.6;">
+      <span style="color:#C62828;flex-shrink:0;">▲</span><span>${t}</span>
+    </div>`).join('');
+
+  // 기간 비고
+  const noteEl = document.getElementById('sw02-period-note');
+  if (noteEl) noteEl.textContent = m.periodNote || '';
+
+  renderAnalysis('ana-sw02',
+    `3기간 전화 신규문의 추이: <b>163→139→146건</b>.\n5월 하반기 일시 하락 후 6월 상반기 반등, <b>예약률은 93%→88%→95%로 6월 최고치</b>.\n구환 수 6월 1,155건으로 급증 — 재방문 수요 확대가 뚜렷한 긍정 신호.\n<b>SMP·이식 5월 하반기 예약률 하락</b>은 집중 점검 과제로 유지.`
+  );
+}
+
 /* 초기화 */
 checkAuth();
-buildNav('00');
 buildSelector();
 setupTitleEdit();
 renderReport(ALL_REPORTS[0]);
