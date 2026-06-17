@@ -2889,22 +2889,22 @@ function renderWeeklyReport(r) {
 
     function row(label, val, bdg) {
       return `<div style="display:flex;justify-content:space-between;align-items:center;padding:6px 0;border-bottom:1px solid #f5f5f5;">
-        <span style="font-size:12px;color:#888;">${label}</span>
-        <span style="font-size:17px;font-weight:800;color:#1a1a1a;">${val}${bdg?' '+bdg:''}</span>
+        <span style="font-size:14px;color:#666;">${label}</span>
+        <span style="font-size:22px;font-weight:800;color:#1a1a1a;">${val}${bdg?' '+bdg:''}</span>
       </div>`;
     }
 
     return `<div class="kpi-item" style="border:1px solid #e8eaed;border-radius:12px;padding:18px;box-shadow:0 1px 4px rgba(0,0,0,.05);">
-      <div style="font-size:16px;font-weight:800;color:${WC[i]};margin-bottom:3px;">${PL[i]}</div>
-      <div style="font-size:12px;color:#aaa;font-weight:600;margin-bottom:14px;">${PD[i]}</div>
+      <div style="font-size:20px;font-weight:800;color:${WC[i]};margin-bottom:4px;">${PL[i]}</div>
+      <div style="font-size:14px;color:#888;font-weight:600;margin-bottom:16px;">${PD[i]}</div>
 
-      <div style="font-size:10px;font-weight:700;letter-spacing:.06em;color:#1565C0;margin-bottom:7px;">📞 신규 문의·예약 <span style="font-size:9px;color:#bbb;font-weight:400;">(전화+플친+왓츠앱)</span></div>
+      <div style="font-size:13px;font-weight:700;color:#1565C0;margin-bottom:8px;">📞 신규 문의·예약 <span style="font-size:11px;color:#bbb;font-weight:400;">(전화+플친+왓츠앱)</span></div>
       ${row('신규 문의', a.inq+'건', dInq!==null ? badge(dInq) : '')}
       ${row('예약', a.book+'건', dBook!==null ? badge(dBook) : '')}
       ${row('예약률', a.rate+'%', dRate!==null ? badge(dRate,'%p') : '')}
       ${row('해외 포함', a.overseas+'건')}
 
-      <div style="font-size:10px;font-weight:700;letter-spacing:.06em;color:#C62828;margin:12px 0 7px;">🏥 내원</div>
+      <div style="font-size:13px;font-weight:700;color:#C62828;margin:14px 0 8px;">🏥 내원</div>
       ${row('내원', v.visit+'건', dVis!==null ? badge(dVis) : '')}
       ${row('내원율', v.visit_rate+'%')}
       ${row('당일취소·부도', v.same_day+'·'+v.noshow+'건')}
