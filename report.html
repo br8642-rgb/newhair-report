@@ -662,7 +662,7 @@
         <div id="s09-wins"></div>
       </div>
       <div class="card" id="s09-tasks-card">
-        <div class="card-title" style="color:#B71C1C;">🔺 개선 과제</div>
+        <div class="card-title" style="color:#B71C1C;font-size:17px;">🔺 개선 과제</div>
         <div id="s09-tasks"></div>
       </div>
     </div>
@@ -844,7 +844,7 @@
     <div id="sw04-summary" style="display:grid;grid-template-columns:repeat(3,1fr);gap:14px;margin-bottom:28px;"></div>
     <div style="display:grid;grid-template-columns:1fr 1fr;gap:16px;margin-bottom:28px;">
       <div class="card">
-        <div class="card-title" style="color:#1B5E20;">✅ 이기간의 성과</div>
+        <div class="card-title" style="color:#1B5E20;font-size:17px;">✅ 이기간의 성과</div>
         <div id="sw04-wins"></div>
       </div>
       <div class="card">
@@ -3228,14 +3228,14 @@ function renderWeeklyReport(r) {
       return `<span class="kpi-diff ${cls}" style="font-size:11px;">${d>0?'▲':'▼'} ${Math.abs(d)}${s&&d!==0?s:''}</span>`;
     }
     return `<div class="kpi-item">
-      <div class="kpi-item-label" style="font-size:15px;font-weight:800;color:${WC[i]};">${VL[i]}</div>
-      <div style="font-size:13px;color:#888;font-weight:600;margin-bottom:6px;">${VD[i]}</div>
+      <div class="kpi-item-label" style="font-size:20px;font-weight:800;color:${WC[i]};">${VL[i]}</div>
+      <div style="font-size:15px;color:#888;font-weight:600;margin-bottom:8px;">${VD[i]}</div>
       <div style="display:flex;gap:14px;flex-wrap:wrap;">
-        <div><div style="font-size:11px;color:#aaa;">총예약</div><div style="font-size:20px;font-weight:800;">${v.total_book}</div></div>
-        <div><div style="font-size:11px;color:#aaa;">내원</div><div style="font-size:20px;font-weight:800;">${v.visit} ${dS(dV)}</div></div>
-        <div><div style="font-size:11px;color:#aaa;">내원율</div><div style="font-size:20px;font-weight:800;">${v.visit_rate}%</div></div>
-        <div><div style="font-size:11px;color:#aaa;">당일취소</div><div style="font-size:20px;font-weight:800;">${v.same_day}</div></div>
-        <div><div style="font-size:11px;color:#aaa;">부도</div><div style="font-size:20px;font-weight:800;">${v.noshow}</div></div>
+        <div><div style="font-size:13px;color:#888;font-weight:500;">총예약</div><div style="font-size:26px;font-weight:800;">${v.total_book}</div></div>
+        <div><div style="font-size:13px;color:#888;font-weight:500;">내원</div><div style="font-size:26px;font-weight:800;">${v.visit} ${dS(dV)}</div></div>
+        <div><div style="font-size:13px;color:#888;font-weight:500;">내원율</div><div style="font-size:26px;font-weight:800;">${v.visit_rate}%</div></div>
+        <div><div style="font-size:13px;color:#888;font-weight:500;">당일취소</div><div style="font-size:26px;font-weight:800;">${v.same_day}</div></div>
+        <div><div style="font-size:13px;color:#888;font-weight:500;">부도</div><div style="font-size:26px;font-weight:800;">${v.noshow}</div></div>
       </div>
     </div>`;
   }).join('');
@@ -3249,7 +3249,7 @@ function renderWeeklyReport(r) {
       {label:'내원', val:v.visit, pct:v.visit_rate+'%'},
     ];
     return `<div class="cat-channel-card" style="border-top:3px solid ${WC[i]};">
-      <div class="ccc-title" style="font-size:15px;font-weight:800;color:${WC[i]};">${VL[i]}</div>
+      <div class="ccc-title" style="font-size:20px;font-weight:800;color:${WC[i]};">${VL[i]}</div>
       <div style="font-size:13px;color:#888;font-weight:600;margin-bottom:10px;">${VD[i]}</div>
       ${flowItems.map(f=>`
         <div style="display:flex;justify-content:space-between;align-items:center;padding:7px 0;border-bottom:1px solid #f5f5f5;">
@@ -3344,13 +3344,13 @@ function renderWeeklyReport(r) {
       { label:'당일취소·부도', val: v.same_day+'·'+v.noshow+'건', sub:'', isNeg:true },
     ];
     return `<div class="cat-channel-card" style="border-top:3px solid ${WC[i]};">
-      <div style="font-size:17px;font-weight:800;color:${WC[i]};margin-bottom:4px;">${PL[i]}</div>
-      <div style="font-size:13px;color:#888;font-weight:600;margin-bottom:14px;">${PD[i]}</div>
+      <div style="font-size:21px;font-weight:800;color:${WC[i]};margin-bottom:4px;">${PL[i]}</div>
+      <div style="font-size:15px;color:#888;font-weight:600;margin-bottom:14px;">${PD[i]}</div>
       ${rows.map(row=>`
         <div style="display:flex;justify-content:space-between;align-items:center;padding:8px 0;border-bottom:1px solid #f5f5f5;">
-          <span style="font-size:13px;color:#888;">${row.label}</span>
+          <span style="font-size:15px;color:#555;">${row.label}</span>
           <div style="text-align:right;">
-            <span style="font-size:16px;font-weight:800;color:${row.isNeg?'#616161':'#1a1a1a'};">${row.val}</span>
+            <span style="font-size:22px;font-weight:800;color:${row.isNeg?'#616161':'#1a1a1a'};">${row.val}</span>
             ${row.sub?`<div style="font-size:11px;color:#aaa;">${row.sub}</div>`:''}
           </div>
         </div>`).join('')}
@@ -3358,13 +3358,13 @@ function renderWeeklyReport(r) {
   }).join('');
 
   document.getElementById('sw04-wins').innerHTML = wp.wins.map(w =>
-    `<div style="display:flex;gap:8px;padding:8px 0;border-bottom:1px solid #f0f0f0;font-size:14px;line-height:1.7;">
-      <span style="color:#2E7D32;flex-shrink:0;font-size:15px;">✔</span><span>${w}</span>
+    `<div style="display:flex;gap:10px;padding:10px 0;border-bottom:1px solid #f0f0f0;font-size:15px;line-height:1.7;">
+      <span style="color:#2E7D32;flex-shrink:0;font-size:17px;">✔</span><span>${w}</span>
     </div>`).join('');
 
   document.getElementById('sw04-tasks').innerHTML = wp.tasks.map(t =>
-    `<div style="display:flex;gap:8px;padding:8px 0;border-bottom:1px solid #f0f0f0;font-size:14px;line-height:1.7;">
-      <span style="color:#C62828;flex-shrink:0;font-size:15px;">▲</span><span>${t}</span>
+    `<div style="display:flex;gap:10px;padding:10px 0;border-bottom:1px solid #f0f0f0;font-size:15px;line-height:1.7;">
+      <span style="color:#C62828;flex-shrink:0;font-size:17px;">▲</span><span>${t}</span>
     </div>`).join('');
 
   const noteEl4 = document.getElementById('sw04-period-note');
