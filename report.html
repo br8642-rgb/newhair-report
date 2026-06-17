@@ -1534,8 +1534,19 @@ function editAnalysis(box, p) {
 
 function setupTitleEdit() {
   const title = document.getElementById('dh-title');
-  if(!isEditor) { title.querySelector('.edit-hint').remove(); return; }
-  title.addEventListener('click', ()=>{
+  // edit-hint 없으면 다시 추가
+  if (!title.querySelector('.edit-hint')) {
+    title.insertAdjacentHTML('beforeend', '<span class="edit-hint">✎ 클릭하여 수정</span>');
+  }
+  if (!isEditor) {
+    const hint = title.querySelector('.edit-hint');
+    if (hint) hint.remove();
+    return;
+  }
+  // 중복 이벤트 방지 — 이미 등록됐으면 스킵
+  if (title.dataset.editSetup) return;
+  title.dataset.editSetup = '1';
+  title.addEventListener('click', () => {
     const cur = title.childNodes[0].textContent.trim();
     const input = document.createElement('input');
     input.type='text'; input.value=cur;
@@ -1633,6 +1644,7 @@ function renderReport(r) {
   currentReport = r;
   document.getElementById('dh-period').textContent = r.meta.period;
   document.getElementById('dh-type').textContent = r.meta.type === 'monthly' ? '월간' : '주간';
+  setupTitleEdit();
 
   if (r.meta.type === 'weekly') {
     buildNav('w00', 'weekly');
