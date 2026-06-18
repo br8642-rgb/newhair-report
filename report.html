@@ -859,20 +859,20 @@
 <script>
 
 /* ════════════════════════════════════
-   편집 캐시 + Sheets 연동 저장/불러오기
+   편집 캐시 + Sheets 연동 (JSONP GET / form POST)
 ════════════════════════════════════ */
 
-// Apps Script 웹앱 URL — 배포 후 여기에 붙여넣기
-const SHEET_SCRIPT_URL = 'https://script.google.com/macros/s/https://script.google.com/macros/s/AKfycbxX8cTmpcmxjQ6QeCe9KLgA_UeP-Ip1cF6X436-Nsa_-BuFS_QsN3gyh8JgJTWXvhD5/exec/exec';
+// ★ Apps Script 배포 URL — 배포 후 여기에 붙여넣기
+const SHEET_SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbxX8cTmpcmxjQ6QeCe9KLgA_UeP-Ip1cF6X436-Nsa_-BuFS_QsN3gyh8JgJTWXvhD5/exec';
 
-const editCache = {};  // { 'reportId:field': ['항목1 html', ...] }
+const editCache = {};  // { 'reportId:field': ['html', ...] }
 
 // ── 메모리 캐시 읽기
 function cacheRead(reportId, field) {
   return editCache[reportId + ':' + field] || null;
 }
 
-// ── DOM에서 읽어 메모리 캐시에 쓰기
+// ── DOM → 메모리 캐시 + Sheets 저장
 function cacheWriteFromDOM(containerId, reportId, field) {
   const container = document.getElementById(containerId);
   if (!container) return;
@@ -880,47 +880,81 @@ function cacheWriteFromDOM(containerId, reportId, field) {
     .map(el => el.innerHTML);
   if (items.length > 0) {
     editCache[reportId + ':' + field] = items;
-    // Sheets에 비동기 저장 (실패해도 조용히 처리)
     saveToSheets(reportId, field, items);
   }
 }
 
-// ── Sheets에 저장 (POST, 디바운스 500ms)
+// ── Sheets 저장: hidden form POST (CORS 우회)
 const _saveTimers = {};
 function saveToSheets(reportId, field, items) {
-  if (!SHEET_SCRIPT_URL || SHEET_SCRIPT_URL.includes('여기에')) return;
+  if (!SHEET_SCRIPT_URL || SHEET_SCRIPT_URL === 'YOUR_SCRIPT_URL_HERE') return;
   const key = reportId + ':' + field;
   clearTimeout(_saveTimers[key]);
-  _saveTimers[key] = setTimeout(async () => {
+  _saveTimers[key] = setTimeout(() => {
     try {
-      const payload = { action: 'save', reportId, field, items };
-      const res = await fetch(SHEET_SCRIPT_URL, {
-        method: 'POST',
-        headers: { 'Content-Type': 'text/plain' },
-        body: JSON.stringify(payload),
-      });
-      const json = await res.json();
-      if (json.ok) showSaveToast('✔ 저장 완료');
-      else showSaveToast('저장 오류: ' + (json.error || ''), true);
-    } catch (e) {
-      showSaveToast('저장 실패 (네트워크)', true);
+      const form = document.createElement('form');
+      form.method = 'POST';
+      form.action = SHEET_SCRIPT_URL;
+      form.target = '_nh_save_frame';  // 숨김 iframe으로 전송
+      form.style.display = 'none';
+
+      const inp = document.createElement('input');
+      inp.type = 'hidden';
+      inp.name = 'payload';
+      inp.value = JSON.stringify({ action:'save', reportId, field, items });
+      form.appendChild(inp);
+
+      // 숨김 iframe (없으면 생성)
+      let iframe = document.getElementById('_nh_save_frame');
+      if (!iframe) {
+        iframe = document.createElement('iframe');
+        iframe.name = '_nh_save_frame';
+        iframe.id   = '_nh_save_frame';
+        iframe.style.display = 'none';
+        document.body.appendChild(iframe);
+      }
+
+      document.body.appendChild(form);
+      form.submit();
+      setTimeout(() => form.remove(), 3000);
+      showSaveToast('✔ 저장 완료');
+    } catch(e) {
+      showSaveToast('저장 실패', true);
     }
   }, 500);
 }
 
-// ── Sheets에서 모든 필드 불러오기 (페이지 로드 시 1회 호출)
-async function loadAllFromSheets() {
-  if (!SHEET_SCRIPT_URL || SHEET_SCRIPT_URL.includes('여기에')) return;
-  try {
-    const res = await fetch(SHEET_SCRIPT_URL + '?action=loadAll');
-    if (!res.ok) return;
-    const data = await res.json();
-    // { 'reportId:field': ['html1','html2',...], ... }
-    Object.assign(editCache, data);
-  } catch (e) { /* 네트워크 오류 무시 */ }
+// ── Sheets 불러오기: JSONP (CORS 우회)
+function loadAllFromSheets() {
+  return new Promise(resolve => {
+    if (!SHEET_SCRIPT_URL || SHEET_SCRIPT_URL === 'YOUR_SCRIPT_URL_HERE') {
+      resolve(); return;
+    }
+    const cbName = '_nhSheetsCb_' + Date.now();
+    const timeout = setTimeout(() => {
+      delete window[cbName];
+      if (script.parentNode) script.parentNode.removeChild(script);
+      resolve();  // 타임아웃 시 그냥 진행
+    }, 5000);
+
+    window[cbName] = function(data) {
+      clearTimeout(timeout);
+      if (script.parentNode) script.parentNode.removeChild(script);
+      delete window[cbName];
+      if (data && typeof data === 'object') {
+        Object.assign(editCache, data);
+      }
+      resolve();
+    };
+
+    const script = document.createElement('script');
+    script.src = SHEET_SCRIPT_URL + '?action=loadAll&callback=' + cbName;
+    script.onerror = () => { clearTimeout(timeout); delete window[cbName]; resolve(); };
+    document.head.appendChild(script);
+  });
 }
 
-// ── 저장 상태 토스트 표시
+// ── 토스트
 function showSaveToast(msg, isError) {
   let toast = document.getElementById('nh-save-toast');
   if (!toast) {
@@ -3520,7 +3554,7 @@ function renderEditableList(containerId, addBtnId, items, icon, iconColor, isEdi
 }
 
 /* 초기화 */
-(async function initApp() {
+(async function() {
   checkAuth();
   await loadAllFromSheets();
   buildSelector();
