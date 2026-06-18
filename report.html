@@ -1591,7 +1591,9 @@ function mkTable(id, headers, totalRow, rows) {
 function renderAnalysis(id, text) {
   const p = document.getElementById(id);
   if(!p) return;
-  p.innerHTML = text.replace(/\n/g,'<br>');
+  // Sheets에 저장된 분석 텍스트가 있으면 우선 적용
+  const cached = cacheRead('analysis', id);
+  p.innerHTML = cached ? cached[0] : text.replace(/\n/g,'<br>');
   if(isEditor) {
     const box = p.closest('.analysis-box');
     box.classList.add('editable');
@@ -1638,6 +1640,12 @@ function editAnalysis(box, p) {
       const newP = document.createElement('p');
       newP.id = p.id; newP.innerHTML = editor.innerHTML;
       editor.replaceWith(newP);
+      // 분석 텍스트 Sheets 저장
+      if (newP.id) {
+        const analysisText = newP.innerHTML;
+        saveToSheets('analysis', newP.id, [analysisText]);
+        showSaveToast('✔ 저장 완료');
+      }
       if(isEditor) {
         newP.closest('.analysis-box').addEventListener('click', function handler() {
           this.removeEventListener('click', handler); editAnalysis(this, newP);
@@ -3477,7 +3485,7 @@ function renderEditableList(containerId, addBtnId, items, icon, iconColor, isEdi
       del.style.cssText = 'position:absolute;right:0;top:8px;background:none;border:none;color:#ccc;font-size:18px;cursor:pointer;line-height:1;padding:0 4px;';
       del.onmouseover = () => del.style.color = '#C62828';
       del.onmouseout  = () => del.style.color = '#ccc';
-      del.onclick = () => { div.remove(); saveToCache(); };
+      del.onclick = () => { div.remove(); saveToCache(); showSaveToast('✔ 저장 완료'); };
       div.appendChild(del);
 
       // 클릭 시 편집
@@ -3549,6 +3557,14 @@ function renderEditableList(containerId, addBtnId, items, icon, iconColor, isEdi
       range.selectNodeContents(txt);
       window.getSelection().removeAllRanges();
       window.getSelection().addRange(range);
+      // 입력 완료(blur) 시 저장
+      txt.addEventListener('blur', function onAddBlur() {
+        txt.removeEventListener('blur', onAddBlur);
+        setTimeout(() => {
+          txt.contentEditable = 'false';
+          saveToCache();
+        }, 150);
+      });
     });
   }
 }
