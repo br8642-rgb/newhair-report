@@ -3045,10 +3045,12 @@ function renderWeeklyReport(r) {
       ${row('예약률', a.rate+'%', dRate!==null ? badge(dRate,'%p') : '')}
       ${row('해외 포함', a.overseas+'건')}
 
-      <div style="font-size:13px;font-weight:700;color:#C62828;margin:14px 0 8px;">🏥 내원</div>
-      ${row('내원', v.visit+'건', dVis!==null ? badge(dVis) : '')}
-      ${row('내원율', v.visit_rate+'%')}
-      ${row('당일취소·부도', v.same_day+'·'+v.noshow+'건')}
+      <div style="background:rgba(103,58,183,0.05);border-radius:8px;padding:10px 12px;margin-top:14px;">
+        <div style="font-size:13px;font-weight:700;color:#6A1B9A;margin-bottom:8px;">🏥 내원</div>
+        ${row('내원', v.visit+'건', dVis!==null ? badge(dVis) : '')}
+        ${row('내원율', v.visit_rate+'%')}
+        ${row('당일취소·부도', v.same_day+'·'+v.noshow+'건')}
+      </div>
     </div>`;
   }).join('');
 
