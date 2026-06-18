@@ -884,43 +884,22 @@ function cacheWriteFromDOM(containerId, reportId, field) {
   }
 }
 
-// ── Sheets 저장: hidden form POST (CORS 우회)
+// ── Sheets 저장: fetch no-cors (저장 요청, 응답 확인 불가)
 const _saveTimers = {};
 function saveToSheets(reportId, field, items) {
   if (!SHEET_SCRIPT_URL || SHEET_SCRIPT_URL === 'YOUR_SCRIPT_URL_HERE') return;
   const key = reportId + ':' + field;
   clearTimeout(_saveTimers[key]);
   _saveTimers[key] = setTimeout(() => {
-    try {
-      const form = document.createElement('form');
-      form.method = 'POST';
-      form.action = SHEET_SCRIPT_URL;
-      form.target = '_nh_save_frame';  // 숨김 iframe으로 전송
-      form.style.display = 'none';
-
-      const inp = document.createElement('input');
-      inp.type = 'hidden';
-      inp.name = 'payload';
-      inp.value = JSON.stringify({ action:'save', reportId, field, items });
-      form.appendChild(inp);
-
-      // 숨김 iframe (없으면 생성)
-      let iframe = document.getElementById('_nh_save_frame');
-      if (!iframe) {
-        iframe = document.createElement('iframe');
-        iframe.name = '_nh_save_frame';
-        iframe.id   = '_nh_save_frame';
-        iframe.style.display = 'none';
-        document.body.appendChild(iframe);
-      }
-
-      document.body.appendChild(form);
-      form.submit();
-      setTimeout(() => form.remove(), 3000);
-      showSaveToast('✔ 저장 완료');
-    } catch(e) {
-      showSaveToast('저장 실패', true);
-    }
+    const body = 'payload=' + encodeURIComponent(JSON.stringify({ action:'save', reportId, field, items }));
+    fetch(SHEET_SCRIPT_URL, {
+      method: 'POST',
+      mode: 'no-cors',
+      headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
+      body: body,
+    })
+    .then(() => showSaveToast('✔ 저장 완료'))
+    .catch(() => showSaveToast('저장 실패 (네트워크)', true));
   }, 500);
 }
 
