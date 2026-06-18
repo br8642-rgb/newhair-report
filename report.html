@@ -3554,12 +3554,26 @@ function renderEditableList(containerId, addBtnId, items, icon, iconColor, isEdi
 }
 
 /* 초기화 */
-(async function() {
+(function() {
   checkAuth();
-  await loadAllFromSheets();
   buildSelector();
   setupTitleEdit();
   renderReport(ALL_REPORTS[0]);
+
+  // 화면 먼저 뜨고 백그라운드에서 Sheets 로드 → 성과·과제만 갱신
+  loadAllFromSheets().then(() => {
+    const sel = document.getElementById('report-select');
+    const r   = ALL_REPORTS[+sel.value || 0];
+    if (r.meta.type === 'weekly') {
+      const wp = r.weeklyPhone;
+      renderEditableList('sw04-wins',  'sw04-wins-add',  wp.wins,  '✔', '#2E7D32', isEditor, r.meta.title + '_weekly',  'sw04-wins');
+      renderEditableList('sw04-tasks', 'sw04-tasks-add', wp.tasks, '▲', '#C62828', isEditor, r.meta.title + '_weekly',  'sw04-tasks');
+    } else {
+      const s09 = r.section09;
+      renderEditableList('s09-wins',  's09-wins-add',  s09.wins,  '✔', '#2E7D32', isEditor, r.meta.title + '_monthly', 's09-wins');
+      renderEditableList('s09-tasks', 's09-tasks-add', s09.tasks, '▲', '#C62828', isEditor, r.meta.title + '_monthly', 's09-tasks');
+    }
+  });
 })();
 </script>
 </body>
