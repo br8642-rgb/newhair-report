@@ -1516,10 +1516,46 @@ const BASE = {
   }
 };
 const charts={};
-function mkChart(id,labels,datasets,maxY){
+// ── 3구간 배경 플러그인 (오래될수록 진한 회색, 최신일수록 연함)
+// datasetsPerPeriod: 한 구간당 데이터셋 수 (문의+예약=2)
+// periods: 구간 수 (기본 3)
+function makePeriodBgPlugin(datasetsPerPeriod, periods) {
+  const alphas = [0.08, 0.04, 0.01]; // 1기간→2기간→3기간 순으로 연해짐
+  return {
+    id: 'periodBg',
+    beforeDraw(chart) {
+      const { ctx, chartArea: { left, right, top, bottom }, scales: { x } } = chart;
+      if (!x) return;
+      const labelCount = x.ticks.length; // 과목 수
+      const barW = (right - left) / labelCount; // 과목 하나 너비
+      const sectionW = barW / periods; // 구간 하나 너비
+
+      ctx.save();
+      for (let li = 0; li < labelCount; li++) {
+        for (let pi = 0; pi < periods; pi++) {
+          const xStart = left + li * barW + pi * sectionW;
+          ctx.fillStyle = `rgba(0,0,0,${alphas[pi]})`;
+          ctx.fillRect(xStart, top, sectionW, bottom - top);
+        }
+      }
+      ctx.restore();
+    }
+  };
+}
+
+// mkChart — usePerodBg=true 이면 3구간 배경 적용
+function mkChart(id, labels, datasets, maxY, usePeriodBg) {
   if(charts[id]) charts[id].destroy();
-  const opts=maxY?{...BASE,scales:{...BASE.scales,y:{...BASE.scales.y,max:maxY}}}:BASE;
-  charts[id]=new Chart(document.getElementById(id),{type:'bar',data:{labels,datasets},options:opts});
+  const opts = maxY
+    ? {...BASE, scales:{...BASE.scales, y:{...BASE.scales.y, max:maxY}}}
+    : BASE;
+  const plugins = usePeriodBg ? [makePeriodBgPlugin(2, 3)] : [];
+  charts[id] = new Chart(document.getElementById(id), {
+    type: 'bar',
+    data: { labels, datasets },
+    options: opts,
+    plugins,
+  });
 }
 function mkDS(label,data,color){return{label,data,backgroundColor:color,borderRadius:3};}
 
@@ -3020,7 +3056,7 @@ function renderWeeklyReport(r) {
     mkDS(PL[1]+' 예약', ps[1].book, WCB[1]),
     mkDS(PL[2]+' 문의', ps[2].inq,  WC[2]),
     mkDS(PL[2]+' 예약', ps[2].book, WCB[2]),
-  ]);
+  ], null, true);
 
   // 예약률 추이
   chLegend('lg-sw00-rate', WC.map((c,i)=>([c, PL[i]])));
@@ -3139,7 +3175,7 @@ function renderWeeklyReport(r) {
     mkDS(PL[1]+' 예약', ps[1].book, WCB[1]),
     mkDS(PL[2]+' 문의', ps[2].inq,  WC[2]),
     mkDS(PL[2]+' 예약', ps[2].book, WCB[2]),
-  ]);
+  ], null, true);
 
   // 과목별 예약률 비교
   chLegend('lg-sw01-rate', WC.map((c,i)=>([c, PL[i]])));
@@ -3300,7 +3336,7 @@ function renderWeeklyReport(r) {
     mkDS(PL[1]+' 예약', wp.kakao.p2.book, WCB[1]),
     mkDS(PL[2]+' 문의', wp.kakao.p3.inq,  WC[2]),
     mkDS(PL[2]+' 예약', wp.kakao.p3.book, WCB[2]),
-  ]);
+  ], null, true);
 
   renderChWeeklyTable('tbl-sw02-naver', wp.naver, '부재');
   chLegend('lg-sw02-naver', [[WC[0],PL[0]+' 문의'],[WCB[0],PL[0]+' 예약'],[WC[1],PL[1]+' 문의'],[WCB[1],PL[1]+' 예약'],[WC[2],PL[2]+' 문의'],[WCB[2],PL[2]+' 예약']]);
@@ -3311,7 +3347,7 @@ function renderWeeklyReport(r) {
     mkDS(PL[1]+' 예약', wp.naver.p2.book, WCB[1]),
     mkDS(PL[2]+' 문의', wp.naver.p3.inq,  WC[2]),
     mkDS(PL[2]+' 예약', wp.naver.p3.book, WCB[2]),
-  ]);
+  ], null, true);
 
   renderChWeeklyTable('tbl-sw02-board', wp.board, '부재');
   chLegend('lg-sw02-board', [[WC[0],PL[0]+' 문의'],[WCB[0],PL[0]+' 예약'],[WC[1],PL[1]+' 문의'],[WCB[1],PL[1]+' 예약'],[WC[2],PL[2]+' 문의'],[WCB[2],PL[2]+' 예약']]);
@@ -3322,7 +3358,7 @@ function renderWeeklyReport(r) {
     mkDS(PL[1]+' 예약', wp.board.p2.book, WCB[1]),
     mkDS(PL[2]+' 문의', wp.board.p3.inq,  WC[2]),
     mkDS(PL[2]+' 예약', wp.board.p3.book, WCB[2]),
-  ]);
+  ], null, true);
 
   renderChWeeklyTable('tbl-sw02-wa', wp.whatsapp, '수술');
   chLegend('lg-sw02-wa', [[WC[0],PL[0]+' 문의'],[WCB[0],PL[0]+' 예약'],[WC[1],PL[1]+' 문의'],[WCB[1],PL[1]+' 예약'],[WC[2],PL[2]+' 문의'],[WCB[2],PL[2]+' 예약']]);
@@ -3333,7 +3369,7 @@ function renderWeeklyReport(r) {
     mkDS(PL[1]+' 예약', wp.whatsapp.p2.book, WCB[1]),
     mkDS(PL[2]+' 문의', wp.whatsapp.p3.inq,  WC[2]),
     mkDS(PL[2]+' 예약', wp.whatsapp.p3.book, WCB[2]),
-  ]);
+  ], null, true);
 
   renderAnalysis('ana-sw02', wp.chAnalysis);
 
