@@ -967,23 +967,23 @@ const ALL_REPORTS = [
   },
   weeklyPhone: {
     cats: ['이식','헤어','SMP','치료','검사','처방전','기타'],
-    p1: { // 5/11~5/20
-      inq:  [40, 6, 8,13,85,10, 1],
-      book: [36, 6, 7,12,81,10, 0],
-      rate: [90,100,88,92,95,100, 0],
-      total: { inq:163, book:152, rate:93, oldPt:985 },
+    p1: { // 5/11~5/20 (전화+플친+왓츠앱 합산)
+      inq:  [65, 8,11,20,88,12, 1],
+      book: [46, 7,10,15,83,11, 0],
+      rate: [71,88,91,75,94,92, 0],
+      total: { inq:205, book:172, rate:84, oldPt:985 },
     },
-    p2: { // 5/21~5/30
-      inq:  [34, 8, 5,18,67, 7, 0],
-      book: [26, 7, 2,15,65, 7, 0],
-      rate: [76,88,40,83,97,100, 0],
-      total: { inq:139, book:122, rate:88, oldPt:980 },
+    p2: { // 5/21~5/30 (전화+플친+왓츠앱 합산)
+      inq:  [57,11, 8,25,75, 9, 0],
+      book: [35, 7, 3,19,71, 7, 0],
+      rate: [61,64,38,76,95,78, 0],
+      total: { inq:185, book:142, rate:77, oldPt:980 },
     },
-    p3: { // 6/1~6/15 (휴진 포함)
-      inq:  [39, 9,10,11,64,12, 1],
-      book: [35, 9, 8,10,63,12, 1],
-      rate: [90,100,80,91,98,100,100],
-      total: { inq:146, book:138, rate:95, oldPt:1155 },
+    p3: { // 6/1~6/15 (전화+플친+왓츠앱 합산, 휴진 포함)
+      inq:  [70,15,15,18,69,13, 1],
+      book: [46,11,12,12,67,13, 1],
+      rate: [66,73,80,67,97,100,100],
+      total: { inq:201, book:162, rate:81, oldPt:1155 },
     },
     analysis: '<b>전화 신규문의 163→139→146건</b> 흐름으로 5월 하반기 소폭 하락 후 6월 상반기 회복세.\n<b>예약률 93%→88%→95%</b>로 5월 하반기 일시 하락 후 6월 상반기 최고치 달성.\n<b>SMP 예약률이 5/21~5/30 기간 40%로 급락</b>(문의 5건 중 예약 2건) — 원인 파악 필요.\n<b>이식 예약률 90%→76%→90%</b>로 5월 하반기 하락이 두드러지며 6월에 회복.\n검사는 3기간 모두 95%↑ 안정적 유지.\n6/1~6/15는 4일 휴진 포함 기간임을 감안하면 <b>실질 영업일 대비 문의 밀도는 가장 높은 구간</b>.',
     wins: [
@@ -2954,7 +2954,8 @@ function renderSection03db(r) {
 /* ═══════════════════════════════
    주간 보고서 렌더링
 ═══════════════════════════════ */
-const WC = ['#90CAF9','#1565C0','#C62828']; // 1기간=연파랑, 2기간=진파랑, 3기간=빨강
+const WC  = ['#90CAF9','#1565C0','#C62828']; // 문의: 연파/진파/빨강
+const WCB = ['#C8E6C9','#388E3C','#FF8A65']; // 예약: 연초/진초/주황
 
 function renderWeeklyReport(r) {
   const m  = r.meta;
@@ -3011,9 +3012,15 @@ function renderWeeklyReport(r) {
   }).join('');
 
   // 과목별 문의 추이 그래프
-  chLegend('lg-sw00-inq', WC.map((c,i)=>([c, PL[i]])));
-  mkChart('chart-sw00-inq', wp.cats,
-    ps.map((p,i) => mkDS(PL[i], p.inq, WC[i])));
+  chLegend('lg-sw00-inq', [[WC[0],PL[0]+' 문의'],[WCB[0],PL[0]+' 예약'],[WC[1],PL[1]+' 문의'],[WCB[1],PL[1]+' 예약'],[WC[2],PL[2]+' 문의'],[WCB[2],PL[2]+' 예약']]);
+  mkChart('chart-sw00-inq', wp.cats, [
+    mkDS(PL[0]+' 문의', ps[0].inq,  WC[0]),
+    mkDS(PL[0]+' 예약', ps[0].book, WCB[0]),
+    mkDS(PL[1]+' 문의', ps[1].inq,  WC[1]),
+    mkDS(PL[1]+' 예약', ps[1].book, WCB[1]),
+    mkDS(PL[2]+' 문의', ps[2].inq,  WC[2]),
+    mkDS(PL[2]+' 예약', ps[2].book, WCB[2]),
+  ]);
 
   // 예약률 추이
   chLegend('lg-sw00-rate', WC.map((c,i)=>([c, PL[i]])));
@@ -3124,9 +3131,15 @@ function renderWeeklyReport(r) {
   })();
 
   // 과목별 문의 비교
-  chLegend('lg-sw01-inq', WC.map((c,i)=>([c, PL[i]])));
-  mkChart('chart-sw01-inq', wp.cats,
-    ps.map((p,i) => mkDS(PL[i], p.inq, WC[i])));
+  chLegend('lg-sw01-inq', [[WC[0],PL[0]+' 문의'],[WCB[0],PL[0]+' 예약'],[WC[1],PL[1]+' 문의'],[WCB[1],PL[1]+' 예약'],[WC[2],PL[2]+' 문의'],[WCB[2],PL[2]+' 예약']]);
+  mkChart('chart-sw01-inq', wp.cats, [
+    mkDS(PL[0]+' 문의', ps[0].inq,  WC[0]),
+    mkDS(PL[0]+' 예약', ps[0].book, WCB[0]),
+    mkDS(PL[1]+' 문의', ps[1].inq,  WC[1]),
+    mkDS(PL[1]+' 예약', ps[1].book, WCB[1]),
+    mkDS(PL[2]+' 문의', ps[2].inq,  WC[2]),
+    mkDS(PL[2]+' 예약', ps[2].book, WCB[2]),
+  ]);
 
   // 과목별 예약률 비교
   chLegend('lg-sw01-rate', WC.map((c,i)=>([c, PL[i]])));
@@ -3279,24 +3292,48 @@ function renderWeeklyReport(r) {
   }
 
   renderChWeeklyTable('tbl-sw02-kakao', wp.kakao, '해외');
-  chLegend('lg-sw02-kakao', WC.map((c,i)=>([c,PL[i]])));
-  mkChart('chart-sw02-kakao', wp.cats,
-    [wp.kakao.p1,wp.kakao.p2,wp.kakao.p3].map((p,i)=>mkDS(PL[i],p.inq,WC[i])));
+  chLegend('lg-sw02-kakao', [[WC[0],PL[0]+' 문의'],[WCB[0],PL[0]+' 예약'],[WC[1],PL[1]+' 문의'],[WCB[1],PL[1]+' 예약'],[WC[2],PL[2]+' 문의'],[WCB[2],PL[2]+' 예약']]);
+  mkChart('chart-sw02-kakao', wp.cats, [
+    mkDS(PL[0]+' 문의', wp.kakao.p1.inq,  WC[0]),
+    mkDS(PL[0]+' 예약', wp.kakao.p1.book, WCB[0]),
+    mkDS(PL[1]+' 문의', wp.kakao.p2.inq,  WC[1]),
+    mkDS(PL[1]+' 예약', wp.kakao.p2.book, WCB[1]),
+    mkDS(PL[2]+' 문의', wp.kakao.p3.inq,  WC[2]),
+    mkDS(PL[2]+' 예약', wp.kakao.p3.book, WCB[2]),
+  ]);
 
   renderChWeeklyTable('tbl-sw02-naver', wp.naver, '부재');
-  chLegend('lg-sw02-naver', WC.map((c,i)=>([c,PL[i]])));
-  mkChart('chart-sw02-naver', wp.cats,
-    [wp.naver.p1,wp.naver.p2,wp.naver.p3].map((p,i)=>mkDS(PL[i],p.inq,WC[i])));
+  chLegend('lg-sw02-naver', [[WC[0],PL[0]+' 문의'],[WCB[0],PL[0]+' 예약'],[WC[1],PL[1]+' 문의'],[WCB[1],PL[1]+' 예약'],[WC[2],PL[2]+' 문의'],[WCB[2],PL[2]+' 예약']]);
+  mkChart('chart-sw02-naver', wp.cats, [
+    mkDS(PL[0]+' 문의', wp.naver.p1.inq,  WC[0]),
+    mkDS(PL[0]+' 예약', wp.naver.p1.book, WCB[0]),
+    mkDS(PL[1]+' 문의', wp.naver.p2.inq,  WC[1]),
+    mkDS(PL[1]+' 예약', wp.naver.p2.book, WCB[1]),
+    mkDS(PL[2]+' 문의', wp.naver.p3.inq,  WC[2]),
+    mkDS(PL[2]+' 예약', wp.naver.p3.book, WCB[2]),
+  ]);
 
   renderChWeeklyTable('tbl-sw02-board', wp.board, '부재');
-  chLegend('lg-sw02-board', WC.map((c,i)=>([c,PL[i]])));
-  mkChart('chart-sw02-board', wp.cats,
-    [wp.board.p1,wp.board.p2,wp.board.p3].map((p,i)=>mkDS(PL[i],p.inq,WC[i])));
+  chLegend('lg-sw02-board', [[WC[0],PL[0]+' 문의'],[WCB[0],PL[0]+' 예약'],[WC[1],PL[1]+' 문의'],[WCB[1],PL[1]+' 예약'],[WC[2],PL[2]+' 문의'],[WCB[2],PL[2]+' 예약']]);
+  mkChart('chart-sw02-board', wp.cats, [
+    mkDS(PL[0]+' 문의', wp.board.p1.inq,  WC[0]),
+    mkDS(PL[0]+' 예약', wp.board.p1.book, WCB[0]),
+    mkDS(PL[1]+' 문의', wp.board.p2.inq,  WC[1]),
+    mkDS(PL[1]+' 예약', wp.board.p2.book, WCB[1]),
+    mkDS(PL[2]+' 문의', wp.board.p3.inq,  WC[2]),
+    mkDS(PL[2]+' 예약', wp.board.p3.book, WCB[2]),
+  ]);
 
   renderChWeeklyTable('tbl-sw02-wa', wp.whatsapp, '수술');
-  chLegend('lg-sw02-wa', WC.map((c,i)=>([c,PL[i]])));
-  mkChart('chart-sw02-wa', wp.cats,
-    [wp.whatsapp.p1,wp.whatsapp.p2,wp.whatsapp.p3].map((p,i)=>mkDS(PL[i],p.inq,WC[i])));
+  chLegend('lg-sw02-wa', [[WC[0],PL[0]+' 문의'],[WCB[0],PL[0]+' 예약'],[WC[1],PL[1]+' 문의'],[WCB[1],PL[1]+' 예약'],[WC[2],PL[2]+' 문의'],[WCB[2],PL[2]+' 예약']]);
+  mkChart('chart-sw02-wa', wp.cats, [
+    mkDS(PL[0]+' 문의', wp.whatsapp.p1.inq,  WC[0]),
+    mkDS(PL[0]+' 예약', wp.whatsapp.p1.book, WCB[0]),
+    mkDS(PL[1]+' 문의', wp.whatsapp.p2.inq,  WC[1]),
+    mkDS(PL[1]+' 예약', wp.whatsapp.p2.book, WCB[1]),
+    mkDS(PL[2]+' 문의', wp.whatsapp.p3.inq,  WC[2]),
+    mkDS(PL[2]+' 예약', wp.whatsapp.p3.book, WCB[2]),
+  ]);
 
   renderAnalysis('ana-sw02', wp.chAnalysis);
 
