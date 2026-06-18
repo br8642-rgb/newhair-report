@@ -694,7 +694,7 @@
     </div>
     <div class="s02-section-label">기간별 문의·예약 추이</div>
     <div class="card" style="margin-bottom:16px;">
-      <div class="card-title">과목별 문의 추이 <span style="font-size:11px;color:#6b6b6b;font-weight:400;">(3기간 비교)</span></div>
+      <div class="card-title">과목별 문의·예약 추이 <span style="font-size:11px;color:#6b6b6b;font-weight:400;">(3기간 비교)</span></div>
       <div class="ch-legend-row" id="lg-sw00-inq"></div>
       <div class="chart-wrap" style="height:240px"><canvas id="chart-sw00-inq"></canvas></div>
     </div>
@@ -724,7 +724,7 @@
       <div class="table-collapsible"><div style="overflow-x:auto"><table class="data-table" id="tbl-sw01"></table></div></div>
     </div>
     <div class="card" style="margin-top:16px;margin-bottom:16px;">
-      <div class="card-title">과목별 문의 비교 <span style="font-size:11px;color:#6b6b6b;font-weight:400;">(3기간)</span></div>
+      <div class="card-title">과목별 문의·예약 비교 <span style="font-size:11px;color:#6b6b6b;font-weight:400;">(3기간)</span></div>
       <div class="ch-legend-row" id="lg-sw01-inq"></div>
       <div class="chart-wrap" style="height:250px"><canvas id="chart-sw01-inq"></canvas></div>
     </div>
@@ -756,7 +756,7 @@
       <div class="table-collapsible"><div style="overflow-x:auto"><table class="data-table" id="tbl-sw02-kakao"></table></div></div>
     </div>
     <div class="card" style="margin-top:16px;margin-bottom:28px;">
-      <div class="card-title">플친 문의 추이</div>
+      <div class="card-title">플친 문의·예약 추이</div>
       <div class="ch-legend-row" id="lg-sw02-kakao"></div>
       <div class="chart-wrap" style="height:220px"><canvas id="chart-sw02-kakao"></canvas></div>
     </div>
@@ -768,7 +768,7 @@
       <div class="table-collapsible"><div style="overflow-x:auto"><table class="data-table" id="tbl-sw02-naver"></table></div></div>
     </div>
     <div class="card" style="margin-top:16px;margin-bottom:28px;">
-      <div class="card-title">네이버 문의 추이</div>
+      <div class="card-title">네이버 문의·예약 추이</div>
       <div class="ch-legend-row" id="lg-sw02-naver"></div>
       <div class="chart-wrap" style="height:220px"><canvas id="chart-sw02-naver"></canvas></div>
     </div>
@@ -780,7 +780,7 @@
       <div class="table-collapsible"><div style="overflow-x:auto"><table class="data-table" id="tbl-sw02-board"></table></div></div>
     </div>
     <div class="card" style="margin-top:16px;margin-bottom:28px;">
-      <div class="card-title">게시판 문의 추이</div>
+      <div class="card-title">게시판 문의·예약 추이</div>
       <div class="ch-legend-row" id="lg-sw02-board"></div>
       <div class="chart-wrap" style="height:220px"><canvas id="chart-sw02-board"></canvas></div>
     </div>
@@ -792,7 +792,7 @@
       <div class="table-collapsible"><div style="overflow-x:auto"><table class="data-table" id="tbl-sw02-wa"></table></div></div>
     </div>
     <div class="card" style="margin-top:16px;margin-bottom:28px;">
-      <div class="card-title">왓츠앱 문의 추이</div>
+      <div class="card-title">왓츠앱 문의·예약 추이</div>
       <div class="ch-legend-row" id="lg-sw02-wa"></div>
       <div class="chart-wrap" style="height:220px"><canvas id="chart-sw02-wa"></canvas></div>
     </div>
@@ -818,10 +818,15 @@
       <button class="table-toggle-btn" onclick="toggleTable(this)"><span class="toggle-arrow">▼</span> 표 펼치기</button>
       <div class="table-collapsible"><div style="overflow-x:auto"><table class="data-table" id="tbl-sw03-cats"></table></div></div>
     </div>
-    <div class="card" style="margin-top:16px;margin-bottom:28px;">
+    <div class="card" style="margin-top:16px;margin-bottom:16px;">
       <div class="card-title">과목별 내원 비교 <span style="font-size:11px;color:#6b6b6b;font-weight:400;">(3기간)</span></div>
       <div class="ch-legend-row" id="lg-sw03-cats"></div>
       <div class="chart-wrap" style="height:240px"><canvas id="chart-sw03-cats"></canvas></div>
+    </div>
+    <div class="card" style="margin-top:0;margin-bottom:28px;">
+      <div class="card-title">당일취소 · 부도 비교 <span style="font-size:11px;color:#6b6b6b;font-weight:400;">(3기간)</span></div>
+      <div class="ch-legend-row" id="lg-sw03-noshow"></div>
+      <div class="chart-wrap" style="height:180px"><canvas id="chart-sw03-noshow"></canvas></div>
     </div>
     <div class="analysis-box" id="ana-box-sw03"><p id="ana-sw03"></p></div>
   </div>
@@ -3449,6 +3454,13 @@ function renderWeeklyReport(r) {
   chLegend('lg-sw03-cats', WC.map((c,i)=>([c,VL[i]])));
   mkChart('chart-sw03-cats', wp.visitCats,
     vs.map((v,i)=>mkDS(VL[i],v.by_cat,WC[i])));
+
+  // 당일취소·부도 그래프 (3기간) — X축=기간, 데이터셋=당일취소/부도
+  chLegend('lg-sw03-noshow', [['#EF9A9A','당일취소'],['#B71C1C','부도']]);
+  mkChart('chart-sw03-noshow', PL, [
+    mkDS('당일취소', vs.map(v=>v.same_day), '#EF9A9A'),
+    mkDS('부도',     vs.map(v=>v.noshow),   '#B71C1C'),
+  ]);
 
   renderAnalysis('ana-sw03', wp.visitAnalysis);
 
