@@ -978,63 +978,58 @@ const ALL_REPORTS = [
     contractRateVisit: [], contractRateDb: [],
     analysis: '데이터 준비 중',
   },
+  // 섹션01: 과목별 합산 문의·예약
   section01: {
-    cats: ['검사','모발이식','탈모치료','SMP','헤어라인','처방전'],
+    cats: ['모발이식','헤어라인','SMP','탈모치료','검사','처방전'],
+    apr: { inq:[172,26,30,64,238,24], book:[116,21,20,50,227,22], rate:[67,81,67,78,95,92], overseas:61 },
+    may: { inq:[169,21,22,52,179,27], book:[107,12,18,37,174,27], rate:[63,57,82,71,97,100], overseas:59 },
+    total_apr: { inq:554, book:456, rate:82 },
+    total_may: { inq:470, book:375, rate:80 },
+    analysis: {
+      apr: '전체 합산 문의 554건, 예약 456건, 예약률 82%.\n<b>검사 238건(43%)</b>으로 최다, 모발이식 172건(31%)이 2위.\n해외 문의 61건 — 플친·왓츠앱 통해 유입.',
+      may: '전체 문의 554→470건으로 <b>−15.2% 감소</b> — 하절기 검사 수요 감소 주요 원인.\n예약률 82%→80%로 소폭 하락.\n<b>검사 238→179건 감소</b>가 전체 감소 견인, 이식 172→169건 안정적.\nSMP 예약률 67%→82%로 개선, 처방전 92%→100% 달성.',
+    },
+  },
+  // 섹션02: 채널별 상세
+  section02: {
+    cats: ['모발이식','헤어라인','SMP','탈모치료','검사','처방전'],
     phone: {
-      apr: { inq:[222,101,44,21,21,21], book:[214,86,40,16,20,21], rate:[96,85,91,76,95,100] },
-      may: { inq:[159,95,38,15,12,26], book:[157,79,33,12,11,26], rate:[99,83,87,80,92,100] },
+      apr: { inq:[101,21,22,44,222,21], book:[86,20,16,40,214,21], rate:[85,95,73,91,96,100] },
+      may: { inq:[95,12,15,38,159,26], book:[79,11,12,33,157,26], rate:[83,92,80,87,99,100] },
       total_apr: { inq:431, book:397, rate:92 },
       total_may: { inq:346, book:319, rate:92 },
     },
     naver: {
-      cats: ['검사','모발이식','탈모치료','처방전','SMP','헤어라인'],
-      apr: { inq:[118,15,4,3,4,5], book:[116,15,4,3,4,5], absent:[5,0,1,0,0,0], rate:[98,100,100,100,100,100] },
-      may: { inq:[97,14,4,2,3,3], book:[95,13,4,2,3,3], absent:[3,2,0,0,0,0], rate:[98,93,100,100,100,100] },
+      apr: { inq:[15,5,4,4,118,3], book:[15,5,4,4,116,3], absent:[0,0,0,1,5,0], rate:[100,100,100,100,98,100] },
+      may: { inq:[14,3,3,4,97,2], book:[13,3,3,4,95,2], absent:[2,0,0,0,3,0], rate:[93,100,100,100,98,100] },
       total_apr: { inq:150, absent:6, book:147, rate:98 },
       total_may: { inq:123, absent:5, book:120, rate:98 },
     },
     kakao: {
-      cats: ['모발이식','탈모치료','검사','SMP','헤어라인','처방전'],
-      apr: { inq:[47,11,13,9,3,3], book:[19,7,10,4,1,1], rate:[40,64,77,44,33,33], overseas:[17,3,0,1,2,0] },
-      may: { inq:[44,11,18,7,5,1], book:[19,4,15,6,1,1], rate:[43,36,83,86,20,100], overseas:[15,4,0,1,2,0] },
+      apr: { inq:[47,3,9,11,13,3], book:[19,1,4,7,10,1], rate:[40,33,44,64,77,33], overseas:[17,2,1,3,0,0] },
+      may: { inq:[44,5,7,11,18,1], book:[19,1,6,4,15,1], rate:[43,20,86,36,83,100], overseas:[15,2,1,4,0,0] },
       total_apr: { inq:86, book:42, rate:49, overseas:23 },
       total_may: { inq:86, book:46, rate:53, overseas:22 },
     },
     board: {
-      cats: ['검사','모발이식','탈모치료','SMP','처방전','헤어라인'],
-      apr: { inq:[34,32,13,5,2,2], book:[32,26,13,4,0,2], absent:[6,3,6,3,0,0], rate:[94,81,100,80,0,100] },
-      may: { inq:[19,30,12,4,0,0], book:[19,24,11,3,0,0], absent:[3,2,3,1,1,1], rate:[100,80,92,75,0,0] },
+      apr: { inq:[32,2,5,13,35,2], book:[26,2,4,13,32,0], absent:[3,0,3,6,6,0], rate:[81,100,80,100,91,0] },
+      may: { inq:[30,0,4,12,19,0], book:[24,0,3,11,19,0], absent:[2,1,1,3,3,1], rate:[80,0,75,92,100,0] },
       total_apr: { inq:88, absent:18, book:77, rate:88 },
       total_may: { inq:65, absent:11, book:57, rate:88 },
     },
     whatsapp: {
-      cats: ['모발이식','탈모치료','헤어라인','검사','처방전'],
-      apr: { inq:[24,9,2,3,0], book:[11,3,0,3,0], rate:[46,33,0,100,0], surgery:[1,0,0,0,0] },
-      may: { inq:[30,3,4,2,0], book:[9,0,0,2,0], rate:[30,0,0,100,0], surgery:[1,0,0,0,0] },
+      apr: { inq:[24,2,0,9,3,0], book:[11,0,0,3,3,0], rate:[46,0,0,33,100,0], surgery:[1,0,0,0,0,0] },
+      may: { inq:[30,4,0,3,2,0], book:[9,0,0,0,2,0], rate:[30,0,0,0,100,0], surgery:[1,0,0,0,0,0] },
       total_apr: { inq:38, book:17, rate:45 },
       total_may: { inq:39, book:11, rate:28 },
     },
-    total: {
-      cats: ['모발이식','검사','탈모치료','SMP','헤어라인','처방전'],
-      apr: { inq:[172,238,64,30,26,24], book:[116,227,50,20,21,22], rate:[67,95,78,67,81,92], overseas:[40,7,11,1,4,0] },
-      may: { inq:[169,179,52,22,21,27], book:[107,174,37,18,12,27], rate:[63,97,71,82,57,100], overseas:[38,5,11,1,4,0] },
-      total_apr: { inq:554, book:456, rate:82, overseas:61 },
-      total_may: { inq:470, book:375, rate:80, overseas:59 },
-    },
-    phone_yoy: { cats:[], apr25:{inq:[]}, may25:{inq:[]} },
-    naver_yoy: { cats:[], apr25:{inq:[]}, may25:{inq:[]} },
-    total_yoy: { cats:[], apr25:{inq:[]}, may25:{inq:[]} },
     analysis: {
-      phone:    '전화 문의 431→346건으로 <b>−19.7% 감소</b>, 예약률 92% 동일 유지.\n<b>검사 222→159건으로 급감</b>이 주요 원인 — 하절기 탈모 검사 수요 감소.\n이식·헤어라인·SMP 등 수술 과목은 소폭 감소 수준으로 안정적.',
-      naver:    '네이버 문의 150→123건으로 <b>−18.0% 감소</b>했으나 예약률 98% 유지.\n<b>검사 118→97건 감소</b>가 주요 원인, 이식 15→14건으로 거의 동일.\n부재 건수 6→5건으로 안정적 응대 유지.',
-      kakao:    '플친 문의 86건 동일, 예약률 49%→53%로 소폭 개선.\n<b>SMP 44%→86%로 급등</b> — 6월 플친 SMP 예약 전환 개선.\n이식 40%→43%로 소폭 개선, 치료 64%→36%로 하락 주목.\n해외 문의 23→22건으로 유사 수준 유지.',
-      board:    '게시판 문의 88→65건으로 <b>−26.1% 감소</b>, 예약률 88% 동일 유지.\n부재 18→11건으로 감소 — 온라인 응대 개선 효과.\n<b>헤어라인 2→0건, 처방전 2→0건</b>으로 일부 과목 유입 없음.',
-      whatsapp: '왓츠앱 문의 38→39건으로 유사 수준 유지, <b>예약률 45%→28%로 하락</b>.\n<b>이식 문의 24→30건 증가</b>했으나 예약 11→9건으로 감소 — 해외 내원 전환 어려움 지속.\n치료·헤어라인 예약 0건으로 해외 채널 특성 반영.',
-      total:    '전체 문의 554→470건으로 <b>−15.2% 감소</b> — 하절기 검사 수요 감소 주요 원인.\n예약률 82%→80%로 소폭 하락, 해외 문의 61→59건으로 유사 수준.\n<b>검사 238→179건 감소</b>가 전체 감소 견인, 이식 172→169건으로 안정적.\nSMP 예약률 67%→82%로 개선, 처방전 92%→100% 달성.',
+      phone:    '전화 문의 431→346건으로 <b>−19.7% 감소</b>, 예약률 92% 동일 유지.\n<b>검사 222→159건 급감</b>이 주요 원인 — 하절기 탈모 검사 수요 감소.',
+      naver:    '네이버 문의 150→123건으로 감소했으나 예약률 98% 유지.\n<b>검사 118→97건 감소</b>가 주요 원인, 부재 6→5건으로 안정적.',
+      kakao:    '플친 문의 86건 동일, 예약률 49%→53% 개선.\n<b>SMP 44%→86% 급등</b>, 이식 40%→43% 소폭 개선.\n해외 문의 23→22건 유사 수준.',
+      board:    '게시판 문의 88→65건 감소, 예약률 88% 동일 유지.\n부재 18→11건 감소 — 온라인 응대 개선 효과.',
+      whatsapp: '왓츠앱 문의 38→39건 유사, <b>예약률 45%→28% 하락</b>.\n이식 문의 24→30건 증가했으나 예약 전환 어려움 지속.',
     },
-  },
-  section02: {
-    analysis: '5월 대비 전체 문의 −15.2% 감소 — 하절기 검사 수요 감소가 핵심 원인.\n<b>전화(431→346건) · 네이버(150→123건) · 게시판(88→65건)</b> 모두 감소, 왓츠앱(38→39건)만 유일하게 유지.\n예약률은 전화 92% 동일, 네이버 98% 유지로 응대 품질은 안정적.\n<b>플친 예약률 49%→53% 개선</b>, 왓츠앱은 45%→28%로 하락 — 해외 내원 전환 과제 지속.',
   },
   section03: {
     apr: {
@@ -1292,75 +1287,59 @@ const ALL_REPORTS = [
     contractRateDb:    [ 3,  2],
     analysis: '<b>1차(172건) vs 2차(141건)</b> — 총 DB는 줄었으나 순신규 건수는 103→114건으로 증가, DB 리스트 품질이 개선되는 흐름.\n예약 건수는 두 차수 모두 24건으로 동일하나 2차에서 핸드폰 병행으로 통화연결 소계가 87→92건으로 소폭 증가.\n<b>신규+재연락 부재가 85→49건으로 크게 감소</b> — 핸드폰 병행 후 연락 가능성이 높아진 효과로 해석.\n<b>내원율 35%→50%로 상승</b>했으나 실제 내원은 8→9건으로 1건 증가 — 예약 건수(23→18건) 자체가 줄면서 비율이 오른 것으로, 절대 내원 수 확대는 숙제로 남음.\n<b>취소율 65%→44%로 개선</b> — 예약 후 이탈이 줄어든 점은 긍정적.\n체결은 3→2건으로 1건 감소, 체결액도 1,480만→720만원으로 감소했으나 <b>고객별 시술 금액 차이에 따른 편차</b>로 건당 단가 변동 가능성 있음 — 체결 건수 자체를 늘리는 방향으로 상담 역량 집중 필요.\n<b>1차 ROI +236%로 투자 대비 높은 수익</b>을 기록했으나 2차는 −18%로 적자 — DB 활용 효율화 및 상담 전환율 개선이 핵심 과제.',
   },
+  // 섹션01: 과목별 합산 문의·예약 (전화+플친+왓츠앱)
+  // cats 순서: 모발이식, 헤어라인, SMP, 탈모치료, 검사, 처방전
   section01: {
-    cats: ['검사','모발이식','탈모치료','SMP','헤어라인','처방전'],
+    cats: ['모발이식','헤어라인','SMP','탈모치료','검사','처방전'],
+    apr: { inq:[157,32,35,74,249,26], book:[105,21,22,53,235,26], rate:[67,66,63,72,94,100], overseas:72 },
+    may: { inq:[174,26,30,64,238,24], book:[116,21,20,50,227,22], rate:[67,81,67,78,95,92], overseas:61 },
+    total_apr: { inq:573, book:462, rate:81 },
+    total_may: { inq:554, book:456, rate:82 },
+    analysis: {
+      apr: '전체 합산 문의 573건, 예약 462건, 예약률 81%.\n<b>검사 249건(43%)</b>으로 최다, 모발이식 157건(27%)이 2위.\n해외 문의 72건 — 플친·왓츠앱 통해 유입.',
+      may: '전체 합산 문의 554건으로 소폭 감소, 예약률 81%→82%로 개선.\n<b>모발이식 157→174건(+10.8%) 증가</b> — 플친·게시판·왓츠앱 다채널 동시 성장.\n검사 249→238건 감소했으나 예약률 94%→95%로 안정적.\n해외 문의 72→61건 감소.',
+    },
+  },
+  // 섹션02: 채널별 상세 (전화/네이버/플친/게시판/왓츠앱)
+  section02: {
+    cats: ['모발이식','헤어라인','SMP','탈모치료','검사','처방전'],
     phone: {
-      apr: { inq:[229,105,45,24,18,23], book:[222,86,40,17,14,23], rate:[97,82,89,71,78,100] },
-      may: { inq:[222,101,45,22,21,22], book:[214,86,40,16,20,21], rate:[96,85,89,73,95,95] },
-      total_apr: { inq:445, book:403, rate:91 },
+      apr: { inq:[105,18,24,45,228,23], book:[86,14,17,40,222,23], rate:[82,78,71,89,97,100] },
+      may: { inq:[101,21,22,45,222,22], book:[86,20,16,40,214,21], rate:[85,95,73,89,96,95] },
+      total_apr: { inq:444, book:403, rate:91 },
       total_may: { inq:434, book:397, rate:91 },
     },
     naver: {
-      cats: ['검사','모발이식','탈모치료','처방전','SMP','헤어라인'],
-      apr: { inq:[119,19,6,4,3,2], book:[119,16,6,4,3,1], absent:[5,1,0,0,0,0], rate:[100,84,100,100,100,50] },
-      may: { inq:[118,15,4,3,4,5], book:[116,15,4,3,4,5], absent:[5,0,1,0,0,0], rate:[98,100,100,100,100,100] },
+      apr: { inq:[19,2,3,6,119,4], book:[16,1,3,6,119,4], absent:[1,0,0,0,5,0], rate:[84,50,100,100,100,100] },
+      may: { inq:[15,5,4,4,118,3], book:[15,5,4,4,116,3], absent:[0,0,0,1,5,0], rate:[100,100,100,100,98,100] },
       total_apr: { inq:156, absent:6, book:150, rate:96 },
       total_may: { inq:150, absent:6, book:147, rate:98 },
     },
     kakao: {
-      cats: ['모발이식','탈모치료','검사','SMP','헤어라인','처방전'],
-      apr: { inq:[36,16,20,11,10,2], book:[14,6,13,5,7,2], rate:[39,38,65,45,70,100], overseas:[20,7,0,4,6,0] },
-      may: { inq:[48,11,13,9,3,3], book:[19,7,10,4,1,1], rate:[40,64,77,44,33,33], overseas:[18,3,0,1,2,0] },
+      apr: { inq:[36,10,11,16,20,2], book:[14,7,5,6,13,2], rate:[39,70,45,38,65,100], overseas:[20,6,4,7,0,0] },
+      may: { inq:[48,3,9,11,13,3], book:[19,1,4,7,10,1], rate:[40,33,44,64,77,33], overseas:[18,2,1,3,0,0] },
       total_apr: { inq:95, book:47, rate:49, overseas:37 },
       total_may: { inq:87, book:42, rate:48, overseas:24 },
     },
     board: {
-      cats: ['검사','모발이식','탈모치료','SMP','처방전','헤어라인'],
-      apr: { inq:[34,21,16,10,3,3], book:[33,16,13,6,2,3], absent:[4,3,2,1,0,0], rate:[97,76,81,60,67,100] },
-      may: { inq:[35,32,13,5,2,2], book:[32,26,13,4,0,2], absent:[6,3,6,3,0,0], rate:[91,81,100,80,0,100] },
+      apr: { inq:[21,3,10,16,34,3], book:[16,3,6,13,33,2], absent:[3,0,1,2,4,0], rate:[76,100,60,81,97,67] },
+      may: { inq:[32,2,5,13,35,2], book:[26,2,4,13,32,0], absent:[3,0,3,6,6,0], rate:[81,100,80,100,91,0] },
       total_apr: { inq:87, absent:10, book:73, rate:84 },
       total_may: { inq:89, absent:18, book:77, rate:87 },
     },
     whatsapp: {
-      cats: ['모발이식','탈모치료','헤어라인','검사','처방전'],
-      apr: { inq:[16,13,4,1,1], book:[5,7,0,0,1], rate:[31,54,0,0,100], surgery:[4,0,0,0,0] },
-      may: { inq:[25,9,2,3,0], book:[11,3,0,3,0], rate:[44,33,0,100,0], surgery:[1,0,0,0,0] },
+      apr: { inq:[16,4,0,13,1,1], book:[5,0,0,7,0,1], rate:[31,0,0,54,0,100], surgery:[4,0,0,0,0,0] },
+      may: { inq:[25,2,0,9,3,0], book:[11,0,0,3,3,0], rate:[44,0,0,33,100,0], surgery:[1,0,0,0,0,0] },
       total_apr: { inq:35, book:13, rate:37 },
       total_may: { inq:39, book:17, rate:44 },
     },
-    total: {
-      cats: ['모발이식','검사','탈모치료','SMP','헤어라인','처방전'],
-      apr: { inq:[158,250,74,35,32,26], book:[105,235,53,22,21,26], rate:[66,94,72,63,66,100], overseas:[37,3,20,4,10,0] },
-      may: { inq:[174,238,64,30,26,26], book:[116,227,50,20,21,22], rate:[67,95,78,67,81,85], overseas:[42,7,11,1,4,0] },
-      total_apr: { inq:576, book:463, rate:80, overseas:74 },
-      total_may: { inq:559, book:456, rate:82, overseas:65 },
-    },
-    phone_yoy: {
-      cats: ['검사','모발이식','탈모치료','SMP','헤어라인','처방전'],
-      apr25: { inq:[130,99,58,12,23,38] },
-      may25: { inq:[712,100,54,16,22,46], note:'방송 출연으로 인한 예약 폭증' },
-    },
-    naver_yoy: {
-      cats: ['검사','모발이식','탈모치료','처방전','SMP','헤어라인'],
-      apr25: { inq:[72,24,7,12,6,6] },
-      may25: { inq:[397,16,54,10,8,5], note:'방송 출연으로 인한 예약 폭증' },
-    },
-    total_yoy: {
-      cats: ['모발이식','검사','탈모치료','SMP','헤어라인','처방전'],
-      apr25: { inq:[112,136,47,17,32,58] },
-      may25: { inq:[121,744,179,19,49,26], note:'방송 출연으로 인한 예약 폭증' },
-    },
     analysis: {
-      phone:    '전화 문의 445→434건으로 <b>소폭 감소(−2.5%)</b>했으나 예약률 91% 유지.\n<b>헤어라인 18→21건 유일 증가</b>, 예약률도 78%→95%로 크게 개선.\n검사·모발이식은 전화 채널 핵심 과목으로 절대적 비중 유지.',
-      naver:    '네이버 예약률 96%→98%로 <b>전 채널 최상위 수준</b>.\n검사 문의 119→118건으로 거의 동일하게 유지.\n<b>헤어라인 2→5건, SMP 3→4건</b>으로 소과목 성장세 눈에 띔.\n부재 건수 두 달 모두 6건으로 동일 — 응대 품질 안정적.',
-      kakao:    '전체 문의 95→87건으로 감소했으나 <b>모발이식 36→48건(+33%) 급증</b> — 플친 채널 핵심 과목으로 부상.\n예약률 49%→48%로 타 채널 대비 낮은 편.\n<b>해외 문의 37→24건 감소</b>, 헤어라인 10→3건 급감 주목 필요.',
-      board:    '<b>유일하게 총 문의가 87→89건으로 증가한 채널.</b>\n<b>모발이식 21→32건(+52%) 급증</b>하며 성장 견인.\n다만 부재 건수 10→18건 증가 — <b>5월 응대 누락 점검 필요.</b>\n처방전 예약률 0% 이슈 확인 요망.',
-      whatsapp: '<b>왓츠앱 문의 35→39건으로 유일하게 성장한 해외 채널.</b>\n<b>모발이식 16→25건(+56%) 급증</b>하며 해외 이식 수요 확대 뚜렷.\n4월 이식수술 확정 4건 → 5월 1건 감소는 리드타임 고려 시 정상 범위.\n<b>헤어라인 예약률 0% 지속</b> — 해외 환자 헤어라인 결정 장벽 분석 필요.',
-      total:    '전체 문의 576→559건으로 <b>−3.0% 소폭 감소</b>했으나 예약률 80%→82%로 개선.\n<b>모발이식만 유일하게 158→174건(+10.1%) 증가</b> — 플친·게시판·왓츠앱 등 다채널 동시 성장.\n검사 250→238건 감소했지만 예약률 94%→95%로 안정적.\n<b>해외 문의 74→65건 감소 중 왓츠앱은 증가세</b> — 채널별 해외 전략 차별화 검토 필요.',
+      phone:    '전화 문의 444→434건으로 소폭 감소, 예약률 91% 유지.\n<b>헤어라인 18→21건 증가</b>, 예약률 78%→95%로 크게 개선.\n검사·모발이식은 전화 채널 핵심 과목으로 안정적.',
+      naver:    '네이버 예약률 96%→98%로 <b>전 채널 최상위 수준</b>.\n검사 119→118건으로 거의 동일, 부재 6건으로 안정적 응대 유지.',
+      kakao:    '전체 문의 95→87건 감소, <b>모발이식 36→48건(+33%) 급증</b>.\n<b>해외 문의 37→24건 감소</b>, 헤어라인 10→3건 급감 주목.\n예약률 49%→48%로 타 채널 대비 낮은 편.',
+      board:    '<b>유일하게 87→89건으로 증가한 채널.</b> 모발이식 21→32건(+52%) 급증.\n부재 10→18건 증가 — 5월 응대 누락 점검 필요.',
+      whatsapp: '왓츠앱 문의 35→39건 증가. <b>모발이식 16→25건(+56%) 급증</b>.\n해외 이식 채널로 성장 중, 헤어라인 예약률 0% 지속.',
     },
-  },
-  section02: {
-    analysis: '문의 채널 1위는 <b>전화(434~445건)</b>로 압도적 비중. 네이버(150~156건)·게시판(87~89건)이 2·3위로 온라인 문의의 주요 경로.\n<b>플친(87~95건)은 해외·이식 특화 채널</b>로 예약률이 낮은 대신 해외 환자 유입 기능 수행.\n왓츠앱은 소량이지만 <b>5월 39건으로 유일하게 증가</b>, 해외 이식 잠재 수요 채널로 성장 중.\n과목별로는 <b>검사·모발이식이 전 채널에서 상위 2개 과목</b>을 차지하며 채널 불문 핵심 과목임을 확인.',
   },
   section03: {
     apr: {
@@ -1891,51 +1870,83 @@ function setupTitleEdit() {
    섹션 02 렌더링
 ═══════════════════════════════ */
 function renderSection02(r) {
-  const s = r.section01;
-  document.getElementById('s02-subtitle').textContent = r.meta.compare + ' · 채널별 문의·예약 현황 및 과목 분포';
-  const kpiGrid = document.getElementById('s02-kpi');
-  kpiGrid.innerHTML = '';
-  CH_META.forEach(ch => {
-    const t = getChTotals(s, ch.key);
-    const inqD = t.may_inq - t.apr_inq, bookD = t.may_book - t.apr_book, rateD = t.may_rate - t.apr_rate;
-    function cls(d){ return d>0?'up':d<0?'down':'flat'; }
-    function arrow(d){ return d>0?`▲ ${d}`:d<0?`▼ ${Math.abs(d)}`:'— 0'; }
-    kpiGrid.innerHTML += `
-      <div class="ch-kpi-card">
-        <div class="ck-name"><span class="ck-emoji" style="line-height:1;">${ch.emoji}</span>${ch.label}</div>
-        <div class="ck-row"><span>문의</span><div style="display:flex;align-items:center;gap:6px;"><div class="ck-vals"><span>${t.apr_inq}</span><span class="arrow">→</span><span>${t.may_inq}</span></div><span class="ck-diff ${cls(inqD)}">${arrow(inqD)}</span></div></div>
-        <hr class="ck-divider">
-        <div class="ck-row"><span>예약</span><div style="display:flex;align-items:center;gap:6px;"><div class="ck-vals"><span>${t.apr_book}</span><span class="arrow">→</span><span>${t.may_book}</span></div><span class="ck-diff ${cls(bookD)}">${arrow(bookD)}</span></div></div>
-        <hr class="ck-divider">
-        <div class="ck-row"><span>예약률</span><div style="display:flex;align-items:center;gap:6px;"><div class="ck-vals"><span>${t.apr_rate}%</span><span class="arrow">→</span><span>${t.may_rate}%</span></div><span class="ck-diff ${cls(rateD)}">${arrow(rateD)}${rateD!==0?'%p':''}</span></div></div>
-      </div>`;
-  });
-  const chLabels = CH_META.map(c=>c.label);
-  const aprInqData  = CH_META.map(c=>getChTotals(s,c.key).apr_inq);
-  const mayInqData  = CH_META.map(c=>getChTotals(s,c.key).may_inq);
-  const aprBookData = CH_META.map(c=>getChTotals(s,c.key).apr_book);
-  const mayBookData = CH_META.map(c=>getChTotals(s,c.key).may_book);
-  const aprRateData = CH_META.map(c=>getChTotals(s,c.key).apr_rate);
-  const mayRateData = CH_META.map(c=>getChTotals(s,c.key).may_rate);
+  const s = r.section02;
+  const [lblA, lblM] = r.meta.compare.replace('2026년 ','').split(' vs ');
+  document.getElementById('s02-subtitle').textContent = r.meta.compare + ' · 채널별 문의·예약 상세 현황';
+  const cats = s.cats;
+
+  function renderChannel(chKey, chLabel, tblId, lgId, chartId, anaId, extraCols) {
+    const ch = s[chKey];
+    if (!ch) return;
+    const headers = ['과목', lblA+' 문의', lblA+' 예약', lblA+' 예약률', lblM+' 문의', lblM+' 예약', lblM+' 예약률', '증감'];
+    const totalRow = ['합계', ch.total_apr.inq, ch.total_apr.book, ch.total_apr.rate+'%',
+                      ch.total_may.inq, ch.total_may.book, ch.total_may.rate+'%',
+                      diff(ch.total_apr.inq, ch.total_may.inq)];
+    const rows = cats.map((c,i) => [c, ch.apr.inq[i], ch.apr.book[i], ch.apr.rate[i]+'%',
+                                       ch.may.inq[i], ch.may.book[i], ch.may.rate[i]+'%',
+                                       diff(ch.apr.inq[i], ch.may.inq[i])]);
+    mkTable(tblId, headers, totalRow, rows);
+    legend(lgId, [[C.aprInq,lblA+' 문의'],[C.aprBook,lblA+' 예약'],[C.mayInq,lblM+' 문의'],[C.mayBook,lblM+' 예약']]);
+    mkChart(chartId, cats, [
+      mkDS(lblA+' 문의', ch.apr.inq,  C.aprInq),
+      mkDS(lblA+' 예약', ch.apr.book, C.aprBook),
+      mkDS(lblM+' 문의', ch.may.inq,  C.mayInq),
+      mkDS(lblM+' 예약', ch.may.book, C.mayBook),
+    ], 280);
+    renderAnalysis(anaId, ch.analysis ? (ch.analysis[r.meta.compare.includes('6월') ? 'may' : 'may'] || '') : '');
+  }
+
+  renderChannel('phone',    '전화',   'tbl-phone',    'lg-phone',    'chart-phone',    'ana-phone');
+  renderChannel('naver',    '네이버', 'tbl-naver',    'lg-naver',    'chart-naver',    'ana-naver');
+  renderChannel('kakao',    '플친',   'tbl-kakao',    'lg-kakao',    'chart-kakao',    'ana-kakao');
+  renderChannel('board',    '게시판', 'tbl-board',    'lg-board',    'chart-board',    'ana-board');
+  renderChannel('whatsapp', '왓츠앱', 'tbl-whatsapp', 'lg-wa',       'chart-wa',       'ana-whatsapp');
+
+  // 채널 간 비교 차트
+  const CH_LABELS = ['전화','네이버','플친','게시판','왓츠앱'];
+  const CH_KEYS   = ['phone','naver','kakao','board','whatsapp'];
+  const aprInq  = CH_KEYS.map(k => s[k] ? s[k].total_apr.inq  : 0);
+  const mayInq  = CH_KEYS.map(k => s[k] ? s[k].total_may.inq  : 0);
+  const aprBook = CH_KEYS.map(k => s[k] ? s[k].total_apr.book : 0);
+  const mayBook = CH_KEYS.map(k => s[k] ? s[k].total_may.book : 0);
+  const aprRate = CH_KEYS.map(k => s[k] ? s[k].total_apr.rate : 0);
+  const mayRate = CH_KEYS.map(k => s[k] ? s[k].total_may.rate : 0);
+
   chLegend('lg-s02-inq',  [[C.aprInq,lblA+' 문의'],[C.mayInq,lblM+' 문의']]);
-  mkChart('chart-s02-inq', chLabels, [mkDS(lblA+' 문의',aprInqData,C.aprInq), mkDS(lblM+' 문의',mayInqData,C.mayInq)]);
+  mkChart('chart-s02-inq',  CH_LABELS, [mkDS(lblA+' 문의',aprInq,C.aprInq), mkDS(lblM+' 문의',mayInq,C.mayInq)]);
   chLegend('lg-s02-book', [[C.aprBook,lblA+' 예약'],[C.mayBook,lblM+' 예약']]);
-  mkChart('chart-s02-book', chLabels, [mkDS(lblA+' 예약',aprBookData,C.aprBook), mkDS(lblM+' 예약',mayBookData,C.mayBook)]);
+  mkChart('chart-s02-book', CH_LABELS, [mkDS(lblA+' 예약',aprBook,C.aprBook), mkDS(lblM+' 예약',mayBook,C.mayBook)]);
   if(charts['chart-s02-rate']) charts['chart-s02-rate'].destroy();
   chLegend('lg-s02-rate', [['#90CAF9',lblA+' 예약률'],['#1565C0',lblM+' 예약률']]);
   charts['chart-s02-rate'] = new Chart(document.getElementById('chart-s02-rate'), {
-    type:'bar', data:{ labels:chLabels, datasets:[
-      {label:lblA+' 예약률',data:aprRateData,backgroundColor:'#90CAF9',borderRadius:3},
-      {label:lblM+' 예약률',data:mayRateData,backgroundColor:'#1565C0',borderRadius:3},
+    type:'bar', data:{ labels:CH_LABELS, datasets:[
+      {label:lblA+' 예약률',data:aprRate,backgroundColor:'#90CAF9',borderRadius:3},
+      {label:lblM+' 예약률',data:mayRate,backgroundColor:'#1565C0',borderRadius:3},
     ]},
     options:{...BASE, scales:{...BASE.scales,y:{...BASE.scales.y,max:105,ticks:{...BASE.scales.y.ticks,callback:v=>v+'%'}}},
       plugins:{...BASE.plugins,tooltip:{...BASE.plugins.tooltip,callbacks:{label:c=>' '+c.dataset.label+': '+c.parsed.y+'%'}}}}
   });
-  renderCatChannelGrid(s, s02ActiveMonth);
-  // 탭 레이블 동적
-  const t2a=document.getElementById('s02-tab-apr'); const t2m=document.getElementById('s02-tab-may');
-  if(t2a) t2a.textContent=lblA; if(t2m) t2m.textContent=lblM;
-  renderAnalysis('ana-s02', r.section02.analysis);
+
+  // KPI 카드
+  const kpiGrid = document.getElementById('s02-kpi');
+  if (kpiGrid) {
+    kpiGrid.innerHTML = '';
+    CH_KEYS.forEach((k,ki) => {
+      const ch = s[k]; if(!ch) return;
+      const inqD=ch.total_may.inq-ch.total_apr.inq, bookD=ch.total_may.book-ch.total_apr.book, rateD=ch.total_may.rate-ch.total_apr.rate;
+      const cls=d=>d>0?'up':d<0?'down':'flat', arrow=d=>d>0?`▲ ${d}`:d<0?`▼ ${Math.abs(d)}`:'— 0';
+      const emojis=['📞','🅽','💬','📋','🌐'];
+      kpiGrid.innerHTML+=`<div class="ch-kpi-card"><div class="ck-name">${emojis[ki]} ${CH_LABELS[ki]}</div>
+        <div class="ck-row"><span>문의</span><div style="display:flex;align-items:center;gap:6px;"><div class="ck-vals"><span>${ch.total_apr.inq}</span><span class="arrow">→</span><span>${ch.total_may.inq}</span></div><span class="ck-diff ${cls(inqD)}">${arrow(inqD)}</span></div></div>
+        <hr class="ck-divider">
+        <div class="ck-row"><span>예약</span><div style="display:flex;align-items:center;gap:6px;"><div class="ck-vals"><span>${ch.total_apr.book}</span><span class="arrow">→</span><span>${ch.total_may.book}</span></div><span class="ck-diff ${cls(bookD)}">${arrow(bookD)}</span></div></div>
+        <hr class="ck-divider">
+        <div class="ck-row"><span>예약률</span><div style="display:flex;align-items:center;gap:6px;"><div class="ck-vals"><span>${ch.total_apr.rate}%</span><span class="arrow">→</span><span>${ch.total_may.rate}%</span></div><span class="ck-diff ${cls(rateD)}">${arrow(rateD)}${rateD!==0?'%p':''}</span></div></div>
+      </div>`;
+    });
+  }
+
+  renderAnalysis('ana-s02', r.section02.analysis ? (typeof r.section02.analysis === 'string' ? r.section02.analysis : '') : '');
 }
 
 function renderCatChannelGrid(s, month) {
@@ -2000,84 +2011,48 @@ function renderReport(r) {
   // 비교 기간 레이블 동적으로
   const [lblA, lblM] = r.meta.compare.replace('2026년 ','').split(' vs ');
   _aprLabel = lblA;
-  const s=r.section01;
-  document.getElementById('s01-subtitle').textContent=r.meta.compare+' · 전화 / 네이버 / 플친 / 게시판 / 왓츠앱 · 엑셀 데이터 기준';
-  // 카드 제목 동적 설정
-  ['phone','naver','kakao','board','wa'].forEach(ch => {
-    const el = document.getElementById('s01-'+ch+'-title');
-    if (el) el.textContent = `${lblA} vs ${lblM} 비교 그래프`;
-  });
+
+  // ── 섹션 01: 과목별 합산 문의·예약
+  const s01 = r.section01;
+  document.getElementById('s01-subtitle').textContent = r.meta.compare + ' · 진료과목별 합산 문의·예약 (전화+플친+왓츠앱)';
+  const s01cats = s01.cats;
+  const s01inqDiff  = s01.total_may.inq  - s01.total_apr.inq;
+  const s01bookDiff = s01.total_may.book - s01.total_apr.book;
+  const s01rateDiff = s01.total_may.rate - s01.total_apr.rate;
+  document.getElementById('s01-kpi').innerHTML = `
+    <div class="kpi-item"><div class="kpi-item-label">총 문의</div><div class="kpi-row"><div class="kpi-month"><span class="kpi-month-label">${lblA}</span><span class="kpi-month-val">${s01.total_apr.inq}</span></div><span class="kpi-arrow">→</span><div class="kpi-month"><span class="kpi-month-label">${lblM}</span><span class="kpi-month-val">${s01.total_may.inq}</span></div><span class="kpi-diff ${s01inqDiff>0?'up':s01inqDiff<0?'down':'flat'}">${s01inqDiff>0?'▲':'▼'} ${Math.abs(s01inqDiff)}</span></div></div>
+    <div class="kpi-item"><div class="kpi-item-label">총 예약</div><div class="kpi-row"><div class="kpi-month"><span class="kpi-month-label">${lblA}</span><span class="kpi-month-val">${s01.total_apr.book}</span></div><span class="kpi-arrow">→</span><div class="kpi-month"><span class="kpi-month-label">${lblM}</span><span class="kpi-month-val">${s01.total_may.book}</span></div><span class="kpi-diff ${s01bookDiff>0?'up':s01bookDiff<0?'down':'flat'}">${s01bookDiff>0?'▲':'▼'} ${Math.abs(s01bookDiff)}</span></div></div>
+    <div class="kpi-item"><div class="kpi-item-label">예약률</div><div class="kpi-row"><div class="kpi-month"><span class="kpi-month-label">${lblA}</span><span class="kpi-month-val">${s01.total_apr.rate}%</span></div><span class="kpi-arrow">→</span><div class="kpi-month"><span class="kpi-month-label">${lblM}</span><span class="kpi-month-val">${s01.total_may.rate}%</span></div><span class="kpi-diff ${s01rateDiff>0?'up':s01rateDiff<0?'down':'flat'}">${s01rateDiff>0?'▲':'▼'} ${Math.abs(s01rateDiff)}%p</span></div></div>`;
+
+  // 과목별 표
+  mkTable('tbl-phone',
+    ['과목', lblA+' 문의', lblA+' 예약', lblA+' 예약률', lblM+' 문의', lblM+' 예약', lblM+' 예약률', '증감'],
+    ['합계', s01.total_apr.inq, s01.total_apr.book, s01.total_apr.rate+'%', s01.total_may.inq, s01.total_may.book, s01.total_may.rate+'%', diff(s01.total_apr.inq, s01.total_may.inq)],
+    s01cats.map((c,i) => [c, s01.apr.inq[i], s01.apr.book[i], s01.apr.rate[i]+'%', s01.may.inq[i], s01.may.book[i], s01.may.rate[i]+'%', diff(s01.apr.inq[i], s01.may.inq[i])]));
+
+  // 과목별 차트
+  legend('lg-phone', [[C.aprInq,lblA+' 문의'],[C.aprBook,lblA+' 예약'],[C.mayInq,lblM+' 문의'],[C.mayBook,lblM+' 예약']]);
+  mkChart('chart-phone', s01cats, [
+    mkDS(lblA+' 문의', s01.apr.inq,  C.aprInq),
+    mkDS(lblA+' 예약', s01.apr.book, C.aprBook),
+    mkDS(lblM+' 문의', s01.may.inq,  C.mayInq),
+    mkDS(lblM+' 예약', s01.may.book, C.mayBook),
+  ], 300);
+
+  // 카드 제목
+  const s01pt = document.getElementById('s01-phone-title');
+  if (s01pt) s01pt.textContent = `${lblA} vs ${lblM} 비교 그래프`;
+
+  // 분석 (당월 기준)
+  renderAnalysis('ana-total', s01.analysis ? s01.analysis.may || s01.analysis.apr || '' : '');
+
+  // 섹션 03~08 타이틀 동적 설정
   const s02rt = document.getElementById('s02-rate-title');
   if (s02rt) s02rt.textContent = `(${lblA} vs ${lblM})`;
   const s03nt = document.getElementById('s03-noshow-title');
   if (s03nt) s03nt.textContent = `(${lblA} vs ${lblM})`;
   const s04rt2 = document.getElementById('s04-rate-title');
   if (s04rt2) s04rt2.textContent = `(${lblA} vs ${lblM}, %)`;
-  const tt=s.total;
-  const inqDiff=tt.total_may.inq-tt.total_apr.inq, bookDiff=tt.total_may.book-tt.total_apr.book, rateDiff=tt.total_may.rate-tt.total_apr.rate;
-  document.getElementById('s01-kpi').innerHTML=`
-    <div class="kpi-item"><div class="kpi-item-label">총 문의</div><div class="kpi-row"><div class="kpi-month"><span class="kpi-month-label">${lblA}</span><span class="kpi-month-val">${tt.total_apr.inq}</span></div><span class="kpi-arrow">→</span><div class="kpi-month"><span class="kpi-month-label">${lblM}</span><span class="kpi-month-val">${tt.total_may.inq}</span></div><span class="kpi-diff ${inqDiff>0?'up':inqDiff<0?'down':'flat'}">${inqDiff>0?'▲':'▼'} ${Math.abs(inqDiff)}</span></div></div>
-    <div class="kpi-item"><div class="kpi-item-label">총 예약</div><div class="kpi-row"><div class="kpi-month"><span class="kpi-month-label">${lblA}</span><span class="kpi-month-val">${tt.total_apr.book}</span></div><span class="kpi-arrow">→</span><div class="kpi-month"><span class="kpi-month-label">${lblM}</span><span class="kpi-month-val">${tt.total_may.book}</span></div><span class="kpi-diff ${bookDiff>0?'up':bookDiff<0?'down':'flat'}">${bookDiff>0?'▲':'▼'} ${Math.abs(bookDiff)}</span></div></div>
-    <div class="kpi-item"><div class="kpi-item-label">예약률</div><div class="kpi-row"><div class="kpi-month"><span class="kpi-month-label">${lblA}</span><span class="kpi-month-val">${tt.total_apr.rate}%</span></div><span class="kpi-arrow">→</span><div class="kpi-month"><span class="kpi-month-label">${lblM}</span><span class="kpi-month-val">${tt.total_may.rate}%</span></div><span class="kpi-diff ${rateDiff>0?'up':rateDiff<0?'down':'flat'}">${rateDiff>0?'▲':'▼'} ${Math.abs(rateDiff)}%p</span></div></div>`;
-  const ph=s.phone, pc=s.cats;
-  mkTable('tbl-phone',['구분',lblA+' 문의',lblA+' 예약',lblA+' 예약률',lblM+' 문의',lblM+' 예약',lblM+' 예약률','증감'],
-    ['합계',ph.total_apr.inq,ph.total_apr.book,ph.total_apr.rate+'%',ph.total_may.inq,ph.total_may.book,ph.total_may.rate+'%',diff(ph.total_apr.inq,ph.total_may.inq)],
-    pc.map((c,i)=>[c,ph.apr.inq[i],ph.apr.book[i],ph.apr.rate[i]+'%',ph.may.inq[i],ph.may.book[i],ph.may.rate[i]+'%',diff(ph.apr.inq[i],ph.may.inq[i])]));
-  legend('lg-phone',[[C.aprInq,lblA+' 문의'],[C.aprBook,lblA+' 예약'],[C.mayInq,lblM+' 문의'],[C.mayBook,lblM+' 예약']]);
-  mkChart('chart-phone',pc,[mkDS(lblA+' 문의',ph.apr.inq,C.aprInq),mkDS(lblA+' 예약',ph.apr.book,C.aprBook),mkDS(lblM+' 문의',ph.may.inq,C.mayInq),mkDS(lblM+' 예약',ph.may.book,C.mayBook)],280);
-  const py=s.phone_yoy;
-  legend('lg-phone-yoy',[[C.aprInq,'25년 4월'],[C.mayInq,'25년 5월'],[C.aprBook,'26년 4월'],[C.mayBook,'26년 5월']]);
-  mkChart('chart-phone-yoy',py.cats,[mkDS('25년 4월',py.apr25.inq,C.aprInq),mkDS('25년 5월',py.may25.inq,C.mayInq),mkDS('26년 4월',ph.apr.inq,C.aprBook),mkDS('26년 5월',ph.may.inq,C.mayBook)]);
-  if(py.may25.note) document.getElementById('note-phone-yoy').textContent='* '+py.may25.note;
-  renderAnalysis('ana-phone', s.analysis.phone);
-  const nv=s.naver, nc=nv.cats;
-  mkTable('tbl-naver',['구분',lblA+' 문의',lblA+' 예약',lblA+' 부재',lblA+' 예약률',lblM+' 문의',lblM+' 예약',lblM+' 부재',lblM+' 예약률','증감'],
-    ['합계',nv.total_apr.inq,nv.total_apr.book,nv.total_apr.absent,nv.total_apr.rate+'%',nv.total_may.inq,nv.total_may.book,nv.total_may.absent,nv.total_may.rate+'%',diff(nv.total_apr.inq,nv.total_may.inq)],
-    nc.map((c,i)=>[c,nv.apr.inq[i],nv.apr.book[i],nv.apr.absent[i]||'—',nv.apr.rate[i]+'%',nv.may.inq[i],nv.may.book[i],nv.may.absent[i]||'—',nv.may.rate[i]+'%',diff(nv.apr.inq[i],nv.may.inq[i])]));
-  legend('lg-naver',[[C.aprInq,lblA+' 문의'],[C.aprBook,lblA+' 예약'],[C.mayInq,lblM+' 문의'],[C.mayBook,lblM+' 예약']]);
-  mkChart('chart-naver',nc,[mkDS('4월 문의',nv.apr.inq,C.aprInq),mkDS('4월 예약',nv.apr.book,C.aprBook),mkDS('5월 문의',nv.may.inq,C.mayInq),mkDS('5월 예약',nv.may.book,C.mayBook)]);
-  const ny=s.naver_yoy;
-  legend('lg-naver-yoy',[[C.aprInq,'25년 4월'],[C.mayInq,'25년 5월'],[C.aprBook,'26년 4월'],[C.mayBook,'26년 5월']]);
-  mkChart('chart-naver-yoy',ny.cats,[mkDS('25년 4월',ny.apr25.inq,C.aprInq),mkDS('25년 5월',ny.may25.inq,C.mayInq),mkDS('26년 4월',nv.apr.inq,C.aprBook),mkDS('26년 5월',nv.may.inq,C.mayBook)]);
-  if(ny.may25.note) document.getElementById('note-naver-yoy').textContent='* '+ny.may25.note;
-  renderAnalysis('ana-naver', s.analysis.naver);
-  const kk=s.kakao, kc=kk.cats;
-  mkTable('tbl-kakao',['구분',lblA+' 문의',lblA+' 예약',lblA+' 해외',lblM+' 문의',lblM+' 예약',lblM+' 해외','증감'],
-    ['합계',kk.total_apr.inq,kk.total_apr.book,kk.total_apr.overseas,kk.total_may.inq,kk.total_may.book,kk.total_may.overseas,diff(kk.total_apr.inq,kk.total_may.inq)],
-    kc.map((c,i)=>[c,kk.apr.inq[i],kk.apr.book[i],kk.apr.overseas[i]||'—',kk.may.inq[i],kk.may.book[i],kk.may.overseas[i]||'—',diff(kk.apr.inq[i],kk.may.inq[i])]));
-  legend('lg-kakao',[[C.aprInq,lblA+' 문의'],[C.aprBook,lblA+' 예약'],[C.mayInq,lblM+' 문의'],[C.mayBook,lblM+' 예약']]);
-  mkChart('chart-kakao',kc,[mkDS('4월 문의',kk.apr.inq,C.aprInq),mkDS('4월 예약',kk.apr.book,C.aprBook),mkDS('5월 문의',kk.may.inq,C.mayInq),mkDS('5월 예약',kk.may.book,C.mayBook)]);
-  const osL=kc.filter((_,i)=>kk.apr.overseas[i]>0||kk.may.overseas[i]>0);
-  const osA=kk.apr.overseas.filter((v,i)=>kk.apr.overseas[i]>0||kk.may.overseas[i]>0);
-  const osM=kk.may.overseas.filter((v,i)=>kk.apr.overseas[i]>0||kk.may.overseas[i]>0);
-  legend('lg-kakao-os',[[C.aprInq,lblA+' 해외'],[C.mayInq,lblM+' 해외']]);
-  mkChart('chart-kakao-os',osL,[mkDS(lblA+' 해외',osA,C.aprInq),mkDS(lblM+' 해외',osM,C.mayInq)]);
-  renderAnalysis('ana-kakao', s.analysis.kakao);
-  const bd=s.board, bc=bd.cats;
-  mkTable('tbl-board',['구분',lblA+' 문의',lblA+' 부재',lblA+' 예약',lblA+' 예약률',lblM+' 문의',lblM+' 부재',lblM+' 예약',lblM+' 예약률','증감'],
-    ['합계',bd.total_apr.inq,bd.total_apr.absent,bd.total_apr.book,bd.total_apr.rate+'%',bd.total_may.inq,bd.total_may.absent,bd.total_may.book,bd.total_may.rate+'%',diff(bd.total_apr.inq,bd.total_may.inq)],
-    bc.map((c,i)=>[c,bd.apr.inq[i],bd.apr.absent[i]||'—',bd.apr.book[i],bd.apr.rate[i]+'%',bd.may.inq[i],bd.may.absent[i]||'—',bd.may.book[i],bd.may.rate[i]+'%',diff(bd.apr.inq[i],bd.may.inq[i])]));
-  legend('lg-board',[[C.aprInq,lblA+' 문의'],[C.aprBook,lblA+' 예약'],[C.mayInq,lblM+' 문의'],[C.mayBook,lblM+' 예약']]);
-  mkChart('chart-board',bc,[mkDS('4월 문의',bd.apr.inq,C.aprInq),mkDS('4월 예약',bd.apr.book,C.aprBook),mkDS('5월 문의',bd.may.inq,C.mayInq),mkDS('5월 예약',bd.may.book,C.mayBook)]);
-  renderAnalysis('ana-board', s.analysis.board);
-  const wa=s.whatsapp, wc=wa.cats;
-  mkTable('tbl-whatsapp',['구분',lblA+' 문의',lblA+' 예약',lblA+' 이식수술',lblM+' 문의',lblM+' 예약',lblM+' 이식수술','증감'],
-    ['합계',wa.total_apr.inq,wa.total_apr.book,'—',wa.total_may.inq,wa.total_may.book,'—',diff(wa.total_apr.inq,wa.total_may.inq)],
-    wc.map((c,i)=>[c,wa.apr.inq[i],wa.apr.book[i],wa.apr.surgery[i]||'—',wa.may.inq[i],wa.may.book[i],wa.may.surgery[i]||'—',diff(wa.apr.inq[i],wa.may.inq[i])]));
-  legend('lg-wa',[[C.aprInq,lblA+' 문의'],[C.aprBook,lblA+' 예약'],[C.mayInq,lblM+' 문의'],[C.mayBook,lblM+' 예약']]);
-  mkChart('chart-wa',wc,[mkDS('4월 문의',wa.apr.inq,C.aprInq),mkDS('4월 예약',wa.apr.book,C.aprBook),mkDS('5월 문의',wa.may.inq,C.mayInq),mkDS('5월 예약',wa.may.book,C.mayBook)]);
-  renderAnalysis('ana-whatsapp', s.analysis.whatsapp);
-  const tc=tt.cats;
-  mkTable('tbl-total',['구분',lblA+' 문의',lblA+' 예약',lblA+' 해외',lblM+' 문의',lblM+' 예약',lblM+' 해외','증감'],
-    ['합계',tt.total_apr.inq,tt.total_apr.book,tt.total_apr.overseas,tt.total_may.inq,tt.total_may.book,tt.total_may.overseas,diff(tt.total_apr.inq,tt.total_may.inq)],
-    tc.map((c,i)=>[c,tt.apr.inq[i],tt.apr.book[i],tt.apr.overseas[i]||'—',tt.may.inq[i],tt.may.book[i],tt.may.overseas[i]||'—',diff(tt.apr.inq[i],tt.may.inq[i])]));
-  legend('lg-total',[[C.aprInq,lblA+' 문의'],[C.aprBook,lblA+' 예약'],[C.mayInq,lblM+' 문의'],[C.mayBook,lblM+' 예약']]);
-  mkChart('chart-total',tc,[mkDS('4월 문의',tt.apr.inq,C.aprInq),mkDS('4월 예약',tt.apr.book,C.aprBook),mkDS('5월 문의',tt.may.inq,C.mayInq),mkDS('5월 예약',tt.may.book,C.mayBook)],300);
-  const ty=s.total_yoy;
-  legend('lg-total-yoy',[[C.aprInq,'25년 4월'],[C.mayInq,'25년 5월'],[C.aprBook,'26년 4월'],[C.mayBook,'26년 5월']]);
-  mkChart('chart-total-yoy',ty.cats,[mkDS('25년 4월',ty.apr25.inq,C.aprInq),mkDS('25년 5월',ty.may25.inq,C.mayInq),mkDS('26년 4월',tt.apr.inq,C.aprBook),mkDS('26년 5월',tt.may.inq,C.mayBook)]);
-  if(ty.may25.note) document.getElementById('note-total-yoy').textContent='* '+ty.may25.note;
-  renderAnalysis('ana-total', s.analysis.total);
 
   renderSection02(r);
   renderSection03db(r);
