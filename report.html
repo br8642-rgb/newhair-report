@@ -250,23 +250,55 @@
       <div class="kpi-label">채널별 핵심 지표</div>
       <div id="s02-kpi" class="ch-kpi-grid"></div>
     </div>
-    <div class="s02-section-label">채널 간 비교</div>
-    <div class="s02-charts-grid">
+    <div class="s02-section-label" data-channel="s02-full">채널 간 비교</div>
+    <div class="s02-charts-grid" data-channel="s02-full">
       <div class="card"><div class="card-title">채널별 문의 비교</div><div class="ch-legend-row" id="lg-s02-inq"></div><div class="chart-wrap" style="height:220px"><canvas id="chart-s02-inq"></canvas></div></div>
       <div class="card"><div class="card-title">채널별 예약 비교</div><div class="ch-legend-row" id="lg-s02-book"></div><div class="chart-wrap" style="height:220px"><canvas id="chart-s02-book"></canvas></div></div>
     </div>
-    <div class="card" style="margin-bottom:28px;">
+    <div class="card" style="margin-bottom:28px;" data-channel="s02-full">
       <div class="card-title">채널별 예약률 비교 <span style="font-size:11px;color:#6b6b6b;font-weight:400;">(4월 vs 5월)</span></div>
       <div class="ch-legend-row" id="lg-s02-rate"></div>
       <div class="chart-wrap" style="height:200px"><canvas id="chart-s02-rate"></canvas></div>
     </div>
-    <div class="s02-section-label">진료과목별 채널 분포</div>
-    <div class="s02-month-tabs">
+    <div class="s02-section-label" data-channel="s02-full">진료과목별 채널 분포</div>
+    <div class="s02-month-tabs" data-channel="s02-full">
       <button class="s02-month-tab active" data-month="apr" onclick="switchS02Month('apr')">4월</button>
       <button class="s02-month-tab" data-month="may" onclick="switchS02Month('may')">5월</button>
     </div>
-    <div class="cat-channel-grid" id="s02-cat-grid"></div>
-    <div class="analysis-box" id="ana-box-s02"><p id="ana-s02"></p></div>
+    <div class="cat-channel-grid" id="s02-cat-grid" data-channel="s02-full"></div>
+    <div class="analysis-box" id="ana-box-s02" data-channel="s02-full"><p id="ana-s02"></p></div>
+
+    <!-- 채널별 상세 (플친 → 네이버 → 게시판 → 왓츠앱) : 데이터가 있는 채널만 표시 -->
+    <div class="section-divider" data-channel="s02-kakao" style="display:none;"></div>
+    <div class="channel-section" data-channel="s02-kakao" style="display:none;">
+      <div class="channel-header"><div class="channel-name">플친</div><span class="badge badge-kakao">카카오채널</span></div>
+      <div class="card"><div class="card-title">문의·예약 상세 현황 <span style="font-size:11px;color:#6b6b6b;font-weight:400;">(해외 포함)</span></div><button class="table-toggle-btn" onclick="toggleTable(this)"><span class="toggle-arrow">▼</span> 표 펼치기</button><div class="table-collapsible"><div style="overflow-x:auto"><table class="data-table" id="tbl-s02-kakao"></table></div></div></div>
+      <div class="card"><div class="card-title">5월 vs 6월 비교 그래프</div><div class="chart-legend" id="lg-s02-kakao"></div><div class="chart-wrap" style="height:250px"><canvas id="chart-s02-kakao"></canvas></div></div>
+    </div>
+
+    <div class="section-divider" data-channel="s02-naver" style="display:none;"></div>
+    <div class="channel-section" data-channel="s02-naver" style="display:none;">
+      <div class="channel-header"><div class="channel-name">네이버</div><span class="badge badge-naver">신규 문의</span></div>
+      <div class="card"><div class="card-title">문의·예약 상세 현황</div><button class="table-toggle-btn" onclick="toggleTable(this)"><span class="toggle-arrow">▼</span> 표 펼치기</button><div class="table-collapsible"><div style="overflow-x:auto"><table class="data-table" id="tbl-s02-naver"></table></div></div></div>
+      <div class="card"><div class="card-title">5월 vs 6월 비교 그래프</div><div class="chart-legend" id="lg-s02-naver"></div><div class="chart-wrap" style="height:230px"><canvas id="chart-s02-naver"></canvas></div></div>
+    </div>
+
+    <div class="section-divider" data-channel="s02-board" style="display:none;"></div>
+    <div class="channel-section" data-channel="s02-board" style="display:none;">
+      <div class="channel-header"><div class="channel-name">게시판</div><span class="badge badge-board">온라인</span></div>
+      <div class="card"><div class="card-title">문의·예약 상세 현황</div><button class="table-toggle-btn" onclick="toggleTable(this)"><span class="toggle-arrow">▼</span> 표 펼치기</button><div class="table-collapsible"><div style="overflow-x:auto"><table class="data-table" id="tbl-s02-board"></table></div></div></div>
+      <div class="card"><div class="card-title">5월 vs 6월 비교 그래프</div><div class="chart-legend" id="lg-s02-board"></div><div class="chart-wrap" style="height:230px"><canvas id="chart-s02-board"></canvas></div></div>
+    </div>
+
+    <div class="section-divider" data-channel="s02-whatsapp" style="display:none;"></div>
+    <div class="channel-section" data-channel="s02-whatsapp" style="display:none;">
+      <div class="channel-header"><div class="channel-name">왓츠앱</div><span class="badge badge-whatsapp">해외 채널</span></div>
+      <div class="card"><div class="card-title">문의·예약 상세 현황 <span style="font-size:11px;color:#6b6b6b;font-weight:400;">(이식 수술 확정 포함)</span></div><button class="table-toggle-btn" onclick="toggleTable(this)"><span class="toggle-arrow">▼</span> 표 펼치기</button><div class="table-collapsible"><div style="overflow-x:auto"><table class="data-table" id="tbl-s02-whatsapp"></table></div></div></div>
+      <div class="card"><div class="card-title">5월 vs 6월 비교 그래프</div><div class="chart-legend" id="lg-s02-whatsapp"></div><div class="chart-wrap" style="height:210px"><canvas id="chart-s02-whatsapp"></canvas></div></div>
+    </div>
+
+    <div class="section-divider" data-channel="s02-summary" style="display:none;"></div>
+    <div class="analysis-box" id="ana-box-s02-summary" data-channel="s02-summary" style="display:none;"><p id="ana-s02-summary"></p></div>
   </div>
 
   <!-- 섹션 03 — DB 현황 -->
@@ -996,6 +1028,37 @@ const ALL_REPORTS = [
       phone: '전화 신규문의 431→346건으로 <b>19.7% 감소</b>했으나 예약률은 92%로 동일하게 유지.\n<b>검사 예약률 96%→99%로 개선</b>되며 전화 채널 핵심 과목의 상담 품질은 오히려 향상.\n<b>헤어 21→12건(−43%)으로 최대 폭 감소</b>, SMP는 21→15건 줄었으나 예약률은 76%→80%로 개선.\n이식은 101→95건으로 소폭 감소, 예약률도 85%→83%로 함께 하락 — 상담 흐름 점검 필요.',
     },
   },
+  section02: {
+    kakao: {
+      cats: ['이식','헤어','SMP','치료','검사','처방전'],
+      may: { inq:[47,3,9,11,13,3], book:[19,1,4,7,10,1], rate:[40,33,44,64,77,33], overseas:[17,2,1,3,0,0] },
+      jun: { inq:[44,5,7,11,18,1], book:[19,1,6,4,15,1], rate:[43,20,86,36,83,100], overseas:[15,2,1,4,0,0] },
+      total_may: { inq:86, book:42, rate:49, overseas:23 },
+      total_jun: { inq:86, book:46, rate:53, overseas:22 },
+    },
+    naver: {
+      cats: ['이식','헤어','SMP','치료','검사','처방전'],
+      may: { inq:[15,5,4,4,118,3], absent:[0,0,0,1,5,0], book:[15,5,4,4,116,3], rate:[100,100,100,100,98,100] },
+      jun: { inq:[14,3,3,4,97,2], absent:[2,0,0,0,3,0], book:[13,3,3,4,95,2], rate:[93,100,100,100,98,100] },
+      total_may: { inq:150, absent:6, book:147, rate:98 },
+      total_jun: { inq:123, absent:5, book:120, rate:98 },
+    },
+    board: {
+      cats: ['이식','헤어','SMP','치료','검사','처방전'],
+      may: { inq:[32,2,5,13,34,2], absent:[3,0,3,6,6,0], book:[26,2,4,13,32,0], rate:[81,100,80,100,94,0] },
+      jun: { inq:[30,0,4,12,19,0], absent:[2,1,1,3,3,1], book:[24,0,3,11,19,0], rate:[80,'—',75,92,100,'—'] },
+      total_may: { inq:88, absent:18, book:77, rate:88 },
+      total_jun: { inq:65, absent:11, book:57, rate:88 },
+    },
+    whatsapp: {
+      cats: ['이식','헤어','SMP','치료','검사','처방전'],
+      may: { inq:[24,2,0,9,3,0], book:[11,0,0,3,3,0], rate:[46,0,'—',33,100,'—'], surgery:[1,0,0,0,0,0] },
+      jun: { inq:[30,4,0,3,2,0], book:[9,0,0,0,2,0], rate:[30,0,'—',0,100,'—'], surgery:[1,0,0,0,0,0] },
+      total_may: { inq:38, book:17, rate:45, surgery:1 },
+      total_jun: { inq:39, book:11, rate:28, surgery:1 },
+    },
+    analysis: '5개 채널 중 <b>플친과 왓츠앱만 문의가 늘거나 유지</b>(플친 86→86건, 왓츠앱 38→39건)됐고, 전화·네이버·게시판은 모두 감소.\n<b>게시판이 88→65건(−26.1%)으로 감소폭이 가장 크지만 예약률은 88%로 동일하게 유지</b>돼 상담 품질 자체는 안정적.\n<b>플친 예약률 49%→53%(+4%p)로 5개 채널 중 유일하게 개선</b> — 문의는 그대로인데 전환이 좋아진 케이스.\n<b>왓츠앱 예약률 45%→28%(−17%p)로 낙폭이 가장 커서</b> 문의는 늘었지만 예약 전환이 크게 떨어짐 — 상담 흐름 점검이 시급.\n네이버는 두 달 모두 예약률 98%를 유지하며 5개 채널 중 가장 안정적인 채널로 확인됨.',
+  },
 },
 /* ── 주간 보고서 ── */
 {
@@ -1497,7 +1560,7 @@ function availableMonthlySections(r) {
   const has = (cond, id, label) => { if (cond) list.push({id, label}); };
   has(r.section01 && r.section01.total, '00', '종합 현황');
   has(r.section01 && r.section01.phone, '01', (r.section01 && r.section01.sectionName) || '진료과목별 문의·예약');
-  has(r.section01 && r.section01.naver, '02', '채널별 문의·예약');
+  has((r.section01 && r.section01.naver) || !!r.section02, '02', '채널별 문의·예약');
   has(!!r.section03db, '03', 'DB 현황');
   has(!!r.section03,   '04', '내원 현황');
   has(!!r.section04,   '05', '성사 현황');
@@ -1589,6 +1652,11 @@ function diff(a,b){
   if(d>0) return `<span class="up">▲ ${d}</span>`;
   if(d<0) return `<span class="down">▼ ${Math.abs(d)}</span>`;
   return `<span class="flat">— 0</span>`;
+}
+
+// 예약률 표기 — 문의 0건 등으로 '—'가 저장된 값은 그대로, 숫자는 %를 붙임
+function pct(v){
+  return (v === '—' || v === null || v === undefined) ? '—' : v + '%';
 }
 
 const COL_CLASS = {
@@ -1727,7 +1795,109 @@ function setupTitleEdit() {
 /* ═══════════════════════════════
    섹션 02 렌더링
 ═══════════════════════════════ */
+/* ═══════════════════════════════
+   섹션 02 렌더링 — 신규(6월): 데이터 있는 채널만 표시
+═══════════════════════════════ */
+function renderSection02Partial(r) {
+  const s01 = r.section01, s02 = r.section02;
+  document.getElementById('s02-subtitle').textContent = r.meta.compare + ' · 채널별 문의·예약 현황';
+
+  // 5월 보고서 전용(채널 간 비교 차트 / 진료과목별 분포) 블록은 숨김
+  document.querySelectorAll('[data-channel="s02-full"]').forEach(el => { el.style.display = 'none'; });
+
+  // ── 채널별 핵심 지표 (전화 → 플친 → 네이버 → 게시판 → 왓츠앱), 데이터 있는 채널만
+  const CH2_META = [
+    { key:'phone',    label:'전화',   emoji:'📞', data: s01.phone },
+    { key:'kakao',    label:'플친',   emoji:'💬', data: s02.kakao },
+    { key:'naver',    label:'네이버', emoji:'<span style="display:inline-flex;align-items:center;justify-content:center;width:22px;height:22px;background:#03C75A;border-radius:4px;font-size:13px;font-weight:900;color:#fff;font-family:sans-serif;line-height:1;flex-shrink:0;">N</span>', data: s02.naver },
+    { key:'board',    label:'게시판', emoji:'📋', data: s02.board },
+    { key:'whatsapp', label:'왓츠앱', emoji:'🌍', data: s02.whatsapp },
+  ];
+  const kpiGrid = document.getElementById('s02-kpi');
+  kpiGrid.innerHTML = '';
+  function cls(d){ return d>0?'up':d<0?'down':'flat'; }
+  function arrow(d){ return d>0?`▲ ${d}`:d<0?`▼ ${Math.abs(d)}`:'— 0'; }
+  CH2_META.forEach(ch => {
+    if (!ch.data) return;
+    const tp = ch.data.total_may, tc = ch.data.total_jun;
+    const inqD = tc.inq - tp.inq, bookD = tc.book - tp.book, rateD = tc.rate - tp.rate;
+    kpiGrid.innerHTML += `
+      <div class="ch-kpi-card">
+        <div class="ck-name"><span class="ck-emoji" style="line-height:1;">${ch.emoji}</span>${ch.label}</div>
+        <div class="ck-row"><span>문의</span><div style="display:flex;align-items:center;gap:6px;"><div class="ck-vals"><span>${tp.inq}</span><span class="arrow">→</span><span>${tc.inq}</span></div><span class="ck-diff ${cls(inqD)}">${arrow(inqD)}</span></div></div>
+        <hr class="ck-divider">
+        <div class="ck-row"><span>예약</span><div style="display:flex;align-items:center;gap:6px;"><div class="ck-vals"><span>${tp.book}</span><span class="arrow">→</span><span>${tc.book}</span></div><span class="ck-diff ${cls(bookD)}">${arrow(bookD)}</span></div></div>
+        <hr class="ck-divider">
+        <div class="ck-row"><span>예약률</span><div style="display:flex;align-items:center;gap:6px;"><div class="ck-vals"><span>${tp.rate}%</span><span class="arrow">→</span><span>${tc.rate}%</span></div><span class="ck-diff ${cls(rateD)}">${arrow(rateD)}${rateD!==0?'%p':''}</span></div></div>
+      </div>`;
+  });
+
+  // ── 채널별 상세 (플친 → 네이버 → 게시판 → 왓츠앱), 데이터 있는 채널만 표시
+  toggleS02Channel('kakao',    !!s02.kakao);
+  toggleS02Channel('naver',    !!s02.naver);
+  toggleS02Channel('board',    !!s02.board);
+  toggleS02Channel('whatsapp', !!s02.whatsapp);
+
+  if (s02.kakao)    renderS02Kakao(s02.kakao);
+  if (s02.naver)    renderS02Naver(s02.naver);
+  if (s02.board)    renderS02Board(s02.board);
+  if (s02.whatsapp) renderS02Whatsapp(s02.whatsapp);
+
+  // ── 종합 분석 (5개 채널 비교)
+  const summaryDivider = document.querySelector('[data-channel="s02-summary"].section-divider');
+  const summaryBox = document.getElementById('ana-box-s02-summary');
+  if (s02.analysis) {
+    if (summaryDivider) summaryDivider.style.display = '';
+    if (summaryBox) summaryBox.style.display = '';
+    renderAnalysis('ana-s02-summary', s02.analysis, r);
+  } else {
+    if (summaryDivider) summaryDivider.style.display = 'none';
+    if (summaryBox) summaryBox.style.display = 'none';
+  }
+}
+
+function toggleS02Channel(key, show) {
+  document.querySelectorAll('[data-channel="s02-'+key+'"]').forEach(el => { el.style.display = show ? '' : 'none'; });
+}
+
+function renderS02Kakao(kk) {
+  const kc = kk.cats;
+  mkTable('tbl-s02-kakao',['구분','5월 문의','5월 예약','5월 예약률','5월 해외','6월 문의','6월 예약','6월 예약률','6월 해외','증감'],
+    ['합계',kk.total_may.inq,kk.total_may.book,pct(kk.total_may.rate),kk.total_may.overseas,kk.total_jun.inq,kk.total_jun.book,pct(kk.total_jun.rate),kk.total_jun.overseas,diff(kk.total_may.inq,kk.total_jun.inq)],
+    kc.map((c,i)=>[c,kk.may.inq[i],kk.may.book[i],pct(kk.may.rate[i]),kk.may.overseas[i]||'—',kk.jun.inq[i],kk.jun.book[i],pct(kk.jun.rate[i]),kk.jun.overseas[i]||'—',diff(kk.may.inq[i],kk.jun.inq[i])]));
+  legend('lg-s02-kakao',[[C.aprInq,'5월 문의'],[C.aprBook,'5월 예약'],[C.mayInq,'6월 문의'],[C.mayBook,'6월 예약']]);
+  mkChart('chart-s02-kakao',kc,[mkDS('5월 문의',kk.may.inq,C.aprInq),mkDS('5월 예약',kk.may.book,C.aprBook),mkDS('6월 문의',kk.jun.inq,C.mayInq),mkDS('6월 예약',kk.jun.book,C.mayBook)]);
+}
+
+function renderS02Naver(nv) {
+  const nc = nv.cats;
+  mkTable('tbl-s02-naver',['구분','5월 문의','5월 부재','5월 예약','5월 예약률','6월 문의','6월 부재','6월 예약','6월 예약률','증감'],
+    ['합계',nv.total_may.inq,nv.total_may.absent,nv.total_may.book,pct(nv.total_may.rate),nv.total_jun.inq,nv.total_jun.absent,nv.total_jun.book,pct(nv.total_jun.rate),diff(nv.total_may.inq,nv.total_jun.inq)],
+    nc.map((c,i)=>[c,nv.may.inq[i],nv.may.absent[i]||'—',nv.may.book[i],pct(nv.may.rate[i]),nv.jun.inq[i],nv.jun.absent[i]||'—',nv.jun.book[i],pct(nv.jun.rate[i]),diff(nv.may.inq[i],nv.jun.inq[i])]));
+  legend('lg-s02-naver',[[C.aprInq,'5월 문의'],[C.aprBook,'5월 예약'],[C.mayInq,'6월 문의'],[C.mayBook,'6월 예약']]);
+  mkChart('chart-s02-naver',nc,[mkDS('5월 문의',nv.may.inq,C.aprInq),mkDS('5월 예약',nv.may.book,C.aprBook),mkDS('6월 문의',nv.jun.inq,C.mayInq),mkDS('6월 예약',nv.jun.book,C.mayBook)]);
+}
+
+function renderS02Board(bd) {
+  const bc = bd.cats;
+  mkTable('tbl-s02-board',['구분','5월 문의','5월 부재','5월 예약','5월 예약률','6월 문의','6월 부재','6월 예약','6월 예약률','증감'],
+    ['합계',bd.total_may.inq,bd.total_may.absent,bd.total_may.book,pct(bd.total_may.rate),bd.total_jun.inq,bd.total_jun.absent,bd.total_jun.book,pct(bd.total_jun.rate),diff(bd.total_may.inq,bd.total_jun.inq)],
+    bc.map((c,i)=>[c,bd.may.inq[i],bd.may.absent[i]||'—',bd.may.book[i],pct(bd.may.rate[i]),bd.jun.inq[i],bd.jun.absent[i]||'—',bd.jun.book[i],pct(bd.jun.rate[i]),diff(bd.may.inq[i],bd.jun.inq[i])]));
+  legend('lg-s02-board',[[C.aprInq,'5월 문의'],[C.aprBook,'5월 예약'],[C.mayInq,'6월 문의'],[C.mayBook,'6월 예약']]);
+  mkChart('chart-s02-board',bc,[mkDS('5월 문의',bd.may.inq,C.aprInq),mkDS('5월 예약',bd.may.book,C.aprBook),mkDS('6월 문의',bd.jun.inq,C.mayInq),mkDS('6월 예약',bd.jun.book,C.mayBook)]);
+}
+
+function renderS02Whatsapp(wa) {
+  const wc = wa.cats;
+  mkTable('tbl-s02-whatsapp',['구분','5월 문의','5월 예약','5월 예약률','5월 이식수술','6월 문의','6월 예약','6월 예약률','6월 이식수술','증감'],
+    ['합계',wa.total_may.inq,wa.total_may.book,pct(wa.total_may.rate),wa.total_may.surgery||'—',wa.total_jun.inq,wa.total_jun.book,pct(wa.total_jun.rate),wa.total_jun.surgery||'—',diff(wa.total_may.inq,wa.total_jun.inq)],
+    wc.map((c,i)=>[c,wa.may.inq[i],wa.may.book[i],pct(wa.may.rate[i]),wa.may.surgery[i]||'—',wa.jun.inq[i],wa.jun.book[i],pct(wa.jun.rate[i]),wa.jun.surgery[i]||'—',diff(wa.may.inq[i],wa.jun.inq[i])]));
+  legend('lg-s02-whatsapp',[[C.aprInq,'5월 문의'],[C.aprBook,'5월 예약'],[C.mayInq,'6월 문의'],[C.mayBook,'6월 예약']]);
+  mkChart('chart-s02-whatsapp',wc,[mkDS('5월 문의',wa.may.inq,C.aprInq),mkDS('5월 예약',wa.may.book,C.aprBook),mkDS('6월 문의',wa.jun.inq,C.mayInq),mkDS('6월 예약',wa.jun.book,C.mayBook)]);
+}
+
 function renderSection02(r) {
+  if (r.section02) { renderSection02Partial(r); return; }
   const s = r.section01;
   document.getElementById('s02-subtitle').textContent = r.meta.compare + ' · 채널별 문의·예약 현황 및 과목 분포';
   const kpiGrid = document.getElementById('s02-kpi');
@@ -1884,6 +2054,7 @@ function renderReport(r) {
         + (ptDiff<0 ? `으로 ${Math.abs(ptDiff).toLocaleString()}건 감소` : ptDiff>0 ? `으로 ${ptDiff.toLocaleString()}건 증가` : '으로 동일') + `</b>`;
     }
     renderAnalysis('ana-phone', phoneAnalysis, r);
+    if (r.section02) { try { renderSection02(r); } catch(e) { console.warn('section02 렌더링 보류:', e); } }
     switchSection('01');
     return;
   }
