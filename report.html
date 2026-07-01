@@ -256,8 +256,8 @@
     </div>
     <div class="s02-section-label">진료과목별 채널 분포</div>
     <div class="s02-month-tabs">
-      <button class="s02-month-tab active" data-month="apr" onclick="switchS02Month('apr')">4월</button>
-      <button class="s02-month-tab" data-month="may" onclick="switchS02Month('may')">5월</button>
+      <button class="s02-month-tab active" data-month="apr" onclick="switchS02Month('apr')" id="s02-tab-apr">4월</button>
+      <button class="s02-month-tab" data-month="may" onclick="switchS02Month('may')" id="s02-tab-may">5월</button>
     </div>
     <div class="cat-channel-grid" id="s02-cat-grid"></div>
     <div class="analysis-box" id="ana-box-s02"><p id="ana-s02"></p></div>
@@ -1754,14 +1754,18 @@ function diff(a,b){
   return `<span class="flat">— 0</span>`;
 }
 
-const COL_CLASS = {
-  '4월 문의':'col-apr-inq', '4월 예약':'col-apr-book', '4월 예약률':'col-rate',
-  '4월 부재':'col-rate', '4월 해외':'col-rate', '4월 이식수술':'col-rate',
-  '4월 내원':'col-apr-inq', '4월 체결':'col-apr-book', '4월 체결률':'col-rate',
-  '5월 문의':'col-may-inq', '5월 예약':'col-may-book', '5월 예약률':'col-rate',
-  '5월 부재':'col-rate', '5월 해외':'col-rate', '5월 이식수술':'col-rate',
-  '5월 내원':'col-may-inq', '5월 체결':'col-may-book', '5월 체결률':'col-rate',
-};
+// 테이블 컬럼 색상 — 헤더 키워드로 판단
+function getColClass(h) {
+  if (!h) return '';
+  if (/ 문의$/.test(h)) return _isAprCol(h) ? 'col-apr-inq'  : 'col-may-inq';
+  if (/ 예약$/.test(h)) return _isAprCol(h) ? 'col-apr-book' : 'col-may-book';
+  if (/ 내원$/.test(h)) return _isAprCol(h) ? 'col-apr-inq'  : 'col-may-inq';
+  if (/ 체결$/.test(h)) return _isAprCol(h) ? 'col-apr-book' : 'col-may-book';
+  if (/예약률|체결률|부재|해외|이식수술/.test(h)) return 'col-rate';
+  return '';
+}
+let _aprLabel = '';
+function _isAprCol(h) { return _aprLabel && h.startsWith(_aprLabel); }
 
 function mkTable(id, headers, totalRow, rows) {
   const tbl = document.getElementById(id); if (!tbl) return;
@@ -1770,7 +1774,7 @@ function mkTable(id, headers, totalRow, rows) {
   headers.forEach(h => {
     const th = document.createElement('th');
     th.textContent = h;
-    if (COL_CLASS[h]) th.classList.add(COL_CLASS[h]);
+    if (getColClass(h)) th.classList.add(getColClass(h));
     if (h.startsWith('5월')) th.classList.add('sep');
     hr.appendChild(th);
   });
@@ -1783,7 +1787,7 @@ function mkTable(id, headers, totalRow, rows) {
       td.innerHTML = v;
       if (i === 0) td.style.textAlign = 'left';
       const h = headers[i];
-      if (COL_CLASS[h]) td.classList.add(COL_CLASS[h]);
+      if (getColClass(h)) td.classList.add(getColClass(h));
       if (h && h.startsWith('5월')) td.classList.add('sep');
     });
   };
@@ -1913,21 +1917,24 @@ function renderSection02(r) {
   const mayBookData = CH_META.map(c=>getChTotals(s,c.key).may_book);
   const aprRateData = CH_META.map(c=>getChTotals(s,c.key).apr_rate);
   const mayRateData = CH_META.map(c=>getChTotals(s,c.key).may_rate);
-  chLegend('lg-s02-inq',  [[C.aprInq,'4월 문의'],[C.mayInq,'5월 문의']]);
-  mkChart('chart-s02-inq', chLabels, [mkDS('4월 문의',aprInqData,C.aprInq), mkDS('5월 문의',mayInqData,C.mayInq)]);
-  chLegend('lg-s02-book', [[C.aprBook,'4월 예약'],[C.mayBook,'5월 예약']]);
-  mkChart('chart-s02-book', chLabels, [mkDS('4월 예약',aprBookData,C.aprBook), mkDS('5월 예약',mayBookData,C.mayBook)]);
+  chLegend('lg-s02-inq',  [[C.aprInq,lblA+' 문의'],[C.mayInq,lblM+' 문의']]);
+  mkChart('chart-s02-inq', chLabels, [mkDS(lblA+' 문의',aprInqData,C.aprInq), mkDS(lblM+' 문의',mayInqData,C.mayInq)]);
+  chLegend('lg-s02-book', [[C.aprBook,lblA+' 예약'],[C.mayBook,lblM+' 예약']]);
+  mkChart('chart-s02-book', chLabels, [mkDS(lblA+' 예약',aprBookData,C.aprBook), mkDS(lblM+' 예약',mayBookData,C.mayBook)]);
   if(charts['chart-s02-rate']) charts['chart-s02-rate'].destroy();
-  chLegend('lg-s02-rate', [['#90CAF9','4월 예약률'],['#1565C0','5월 예약률']]);
+  chLegend('lg-s02-rate', [['#90CAF9',lblA+' 예약률'],['#1565C0',lblM+' 예약률']]);
   charts['chart-s02-rate'] = new Chart(document.getElementById('chart-s02-rate'), {
     type:'bar', data:{ labels:chLabels, datasets:[
-      {label:'4월 예약률',data:aprRateData,backgroundColor:'#90CAF9',borderRadius:3},
-      {label:'5월 예약률',data:mayRateData,backgroundColor:'#1565C0',borderRadius:3},
+      {label:lblA+' 예약률',data:aprRateData,backgroundColor:'#90CAF9',borderRadius:3},
+      {label:lblM+' 예약률',data:mayRateData,backgroundColor:'#1565C0',borderRadius:3},
     ]},
     options:{...BASE, scales:{...BASE.scales,y:{...BASE.scales.y,max:105,ticks:{...BASE.scales.y.ticks,callback:v=>v+'%'}}},
       plugins:{...BASE.plugins,tooltip:{...BASE.plugins.tooltip,callbacks:{label:c=>' '+c.dataset.label+': '+c.parsed.y+'%'}}}}
   });
   renderCatChannelGrid(s, s02ActiveMonth);
+  // 탭 레이블 동적
+  const t2a=document.getElementById('s02-tab-apr'); const t2m=document.getElementById('s02-tab-may');
+  if(t2a) t2a.textContent=lblA; if(t2m) t2m.textContent=lblM;
   renderAnalysis('ana-s02', r.section02.analysis);
 }
 
@@ -1992,7 +1999,7 @@ function renderReport(r) {
 
   // 비교 기간 레이블 동적으로
   const [lblA, lblM] = r.meta.compare.replace('2026년 ','').split(' vs ');
-
+  _aprLabel = lblA;
   const s=r.section01;
   document.getElementById('s01-subtitle').textContent=r.meta.compare+' · 전화 / 네이버 / 플친 / 게시판 / 왓츠앱 · 엑셀 데이터 기준';
   // 카드 제목 동적 설정
@@ -2043,8 +2050,8 @@ function renderReport(r) {
   const osL=kc.filter((_,i)=>kk.apr.overseas[i]>0||kk.may.overseas[i]>0);
   const osA=kk.apr.overseas.filter((v,i)=>kk.apr.overseas[i]>0||kk.may.overseas[i]>0);
   const osM=kk.may.overseas.filter((v,i)=>kk.apr.overseas[i]>0||kk.may.overseas[i]>0);
-  legend('lg-kakao-os',[[C.aprInq,'4월 해외'],[C.mayInq,'5월 해외']]);
-  mkChart('chart-kakao-os',osL,[mkDS('4월 해외',osA,C.aprInq),mkDS('5월 해외',osM,C.mayInq)]);
+  legend('lg-kakao-os',[[C.aprInq,lblA+' 해외'],[C.mayInq,lblM+' 해외']]);
+  mkChart('chart-kakao-os',osL,[mkDS(lblA+' 해외',osA,C.aprInq),mkDS(lblM+' 해외',osM,C.mayInq)]);
   renderAnalysis('ana-kakao', s.analysis.kakao);
   const bd=s.board, bc=bd.cats;
   mkTable('tbl-board',['구분',lblA+' 문의',lblA+' 부재',lblA+' 예약',lblA+' 예약률',lblM+' 문의',lblM+' 부재',lblM+' 예약',lblM+' 예약률','증감'],
@@ -2061,10 +2068,10 @@ function renderReport(r) {
   mkChart('chart-wa',wc,[mkDS('4월 문의',wa.apr.inq,C.aprInq),mkDS('4월 예약',wa.apr.book,C.aprBook),mkDS('5월 문의',wa.may.inq,C.mayInq),mkDS('5월 예약',wa.may.book,C.mayBook)]);
   renderAnalysis('ana-whatsapp', s.analysis.whatsapp);
   const tc=tt.cats;
-  mkTable('tbl-total',['구분','4월 문의','4월 예약','4월 해외','5월 문의','5월 예약','5월 해외','증감'],
+  mkTable('tbl-total',['구분',lblA+' 문의',lblA+' 예약',lblA+' 해외',lblM+' 문의',lblM+' 예약',lblM+' 해외','증감'],
     ['합계',tt.total_apr.inq,tt.total_apr.book,tt.total_apr.overseas,tt.total_may.inq,tt.total_may.book,tt.total_may.overseas,diff(tt.total_apr.inq,tt.total_may.inq)],
     tc.map((c,i)=>[c,tt.apr.inq[i],tt.apr.book[i],tt.apr.overseas[i]||'—',tt.may.inq[i],tt.may.book[i],tt.may.overseas[i]||'—',diff(tt.apr.inq[i],tt.may.inq[i])]));
-  legend('lg-total',[[C.aprInq,'4월 문의'],[C.aprBook,'4월 예약'],[C.mayInq,'5월 문의'],[C.mayBook,'5월 예약']]);
+  legend('lg-total',[[C.aprInq,lblA+' 문의'],[C.aprBook,lblA+' 예약'],[C.mayInq,lblM+' 문의'],[C.mayBook,lblM+' 예약']]);
   mkChart('chart-total',tc,[mkDS('4월 문의',tt.apr.inq,C.aprInq),mkDS('4월 예약',tt.apr.book,C.aprBook),mkDS('5월 문의',tt.may.inq,C.mayInq),mkDS('5월 예약',tt.may.book,C.mayBook)],300);
   const ty=s.total_yoy;
   legend('lg-total-yoy',[[C.aprInq,'25년 4월'],[C.mayInq,'25년 5월'],[C.aprBook,'26년 4월'],[C.mayBook,'26년 5월']]);
@@ -2309,13 +2316,13 @@ function renderSection06(r) {
   });
 
   // ── 체결률 비교 그래프
-  chLegend('lg-s06-rate', [[C.aprInq,'4월 체결률'],[C.mayInq,'5월 체결률']]);
+  chLegend('lg-s06-rate', [[C.aprInq,lblA+' 체결률'],[C.mayInq,lblM+' 체결률']]);
   if(charts['chart-s06-rate']) charts['chart-s06-rate'].destroy();
   charts['chart-s06-rate'] = new Chart(document.getElementById('chart-s06-rate'), {
     type:'bar',
     data:{ labels: s.staff, datasets:[
-      { label:'4월 체결률', data:s.apr.total.rate, backgroundColor:C.aprInq, borderRadius:3 },
-      { label:'5월 체결률', data:s.may.total.rate, backgroundColor:C.mayInq, borderRadius:3 },
+      { label:lblA+' 체결률', data:s.apr.total.rate, backgroundColor:C.aprInq, borderRadius:3 },
+      { label:lblM+' 체결률', data:s.may.total.rate, backgroundColor:C.mayInq, borderRadius:3 },
     ]},
     options:{
       ...BASE,
@@ -2325,14 +2332,14 @@ function renderSection06(r) {
   });
 
   // ── 내원·체결 비교 그래프
-  chLegend('lg-s06-visit',    [[C.aprInq,'4월 내원'],  [C.mayInq,'5월 내원']]);
-  chLegend('lg-s06-contract', [[C.aprBook,'4월 체결'], [C.mayBook,'5월 체결']]);
-  mkChart('chart-s06-visit',    s.staff, [mkDS('4월 내원',   s.apr.total.visit,    C.aprInq),  mkDS('5월 내원',   s.may.total.visit,    C.mayInq)]);
-  mkChart('chart-s06-contract', s.staff, [mkDS('4월 체결',   s.apr.total.contract, C.aprBook), mkDS('5월 체결',   s.may.total.contract, C.mayBook)]);
+  chLegend('lg-s06-visit',    [[C.aprInq,lblA+' 내원'],  [C.mayInq,lblM+' 내원']]);
+  chLegend('lg-s06-contract', [[C.aprBook,lblA+' 체결'], [C.mayBook,lblM+' 체결']]);
+  mkChart('chart-s06-visit',    s.staff, [mkDS(lblA+' 내원',   s.apr.total.visit,    C.aprInq),  mkDS(lblM+' 내원',   s.may.total.visit,    C.mayInq)]);
+  mkChart('chart-s06-contract', s.staff, [mkDS(lblA+' 체결',   s.apr.total.contract, C.aprBook), mkDS(lblM+' 체결',   s.may.total.contract, C.mayBook)]);
 
   // ── 통합 테이블
   mkTable('tbl-s06',
-    ['직원','4월 내원','4월 체결','4월 체결률','5월 내원','5월 체결','5월 체결률','증감'],
+    ['직원',lblA+' 내원',lblA+' 체결',lblA+' 체결률',lblM+' 내원',lblM+' 체결',lblM+' 체결률','증감'],
     ['합계',
       s.apr.total.visit.reduce((a,b)=>a+b,0),
       s.apr.total.contract.reduce((a,b)=>a+b,0),
@@ -2813,7 +2820,7 @@ function renderSection09(r) {
   const _apr = s1.total_apr || {}, _may = s1.total_may || {};
   const summaries = [
     {
-      month: '4월 (전월)', color: '#EFF6FF', border: '#BFDBFE',
+      month: lblA+' (전월)', color: '#EFF6FF', border: '#BFDBFE',
       items: [
         { label:'총 문의',     val: (_apr.inq||'—') + '건' },
         { label:'총 예약',     val: (_apr.book||'—') + '건 (예약률 ' + (_apr.rate||'—') + '%)' },
@@ -2823,7 +2830,7 @@ function renderSection09(r) {
       ]
     },
     {
-      month: '5월 (당월)', color: '#EFF6FF', border: '#1565C0',
+      month: lblM+' (당월)', color: '#EFF6FF', border: '#1565C0',
       items: [
         { label:'총 문의',     val: (_may.inq||'—') + '건' },
         { label:'총 예약',     val: (_may.book||'—') + '건 (예약률 ' + (_may.rate||'—') + '%)' },
@@ -2964,14 +2971,14 @@ function renderSection00(r) {
       ]},
     { tag:'06', title:'원장님 성사율', color:'#E65100',
       items:[
-        { label:'4월 1위', val: drBest('apr') },
-        { label:'5월 1위', val: drBest('may') },
+        { label:lblA+' 1위', val: drBest('apr') },
+        { label:lblM+' 1위', val: drBest('may') },
         { label:'체결 최다', val:'박주성 원장님' },
       ]},
     { tag:'07', title:'직원별 성사율', color:'#6A1B9A',
       items:[
-        { label:'4월 1위', val: staffBest('apr') },
-        { label:'5월 1위', val: staffBest('may') },
+        { label:lblA+' 1위', val: staffBest('apr') },
+        { label:lblM+' 1위', val: staffBest('may') },
         { label:'최고 상승', val:'신유지 +16%p' },
       ]},
     { tag:'09', title:'매출 현황', color:'#00838F',
