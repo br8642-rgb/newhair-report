@@ -16,12 +16,18 @@
 .data-table td.col-may-inq { background: #DBEAFE; }
 .data-table th.col-may-book,
 .data-table td.col-may-book { background: #FFE4E4; }
+.data-table th.col-jun-inq,
+.data-table td.col-jun-inq { background: #BFDBFE; }
+.data-table th.col-jun-book,
+.data-table td.col-jun-book { background: #FFCDD2; }
 .data-table th.col-rate,
 .data-table td.col-rate { background: #F8F9FA; color: #555; }
 .data-table tr.total-row td.col-apr-inq { background: #DBEAFE; }
 .data-table tr.total-row td.col-apr-book { background: #FFE4E4; }
 .data-table tr.total-row td.col-may-inq  { background: #BFDBFE; }
 .data-table tr.total-row td.col-may-book { background: #FECACA; }
+.data-table tr.total-row td.col-jun-inq  { background: #93C5FD; }
+.data-table tr.total-row td.col-jun-book { background: #FCA5A5; }
 .data-table tr.total-row td.col-rate     { background: #F0F0F0; }
 
 /* ── 표 접기/펼치기 ── */
@@ -1592,6 +1598,9 @@ const COL_CLASS = {
   '5월 문의':'col-may-inq', '5월 예약':'col-may-book', '5월 예약률':'col-rate',
   '5월 부재':'col-rate', '5월 해외':'col-rate', '5월 이식수술':'col-rate',
   '5월 내원':'col-may-inq', '5월 체결':'col-may-book', '5월 체결률':'col-rate',
+  '6월 문의':'col-jun-inq', '6월 예약':'col-jun-book', '6월 예약률':'col-rate',
+  '6월 부재':'col-rate', '6월 해외':'col-rate', '6월 이식수술':'col-rate',
+  '6월 내원':'col-jun-inq', '6월 체결':'col-jun-book', '6월 체결률':'col-rate',
 };
 
 function mkTable(id, headers, totalRow, rows) {
@@ -1602,7 +1611,7 @@ function mkTable(id, headers, totalRow, rows) {
     const th = document.createElement('th');
     th.textContent = h;
     if (COL_CLASS[h]) th.classList.add(COL_CLASS[h]);
-    if (h.startsWith('5월')) th.classList.add('sep');
+    if (h.startsWith('5월') || h.startsWith('6월')) th.classList.add('sep');
     hr.appendChild(th);
   });
   const tbody = tbl.createTBody();
@@ -1832,7 +1841,7 @@ function renderReport(r) {
   if (s.kakao) availableChannels.push('플친');
   if (s.board) availableChannels.push('게시판');
   if (s.whatsapp) availableChannels.push('왓츠앱');
-  document.getElementById('s01-subtitle').textContent = r.meta.compare + ' · ' + availableChannels.join(' / ') + ' · 엑셀 데이터 기준';
+  document.getElementById('s01-subtitle').textContent = r.meta.compare + ' · ' + availableChannels.join(' / ');
 
   // 데이터 없는 채널 블록(네이버/플친/게시판/왓츠앱/전체합산)은 화면에서 완전히 숨김
   ['naver','kakao','board','whatsapp','total'].forEach(key => {
@@ -1849,7 +1858,7 @@ function renderReport(r) {
     ];
     document.getElementById('s01-kpi').innerHTML = periods.map(p => `
       <div class="kpi-item">
-        <div class="kpi-item-label" style="color:${p.color};font-weight:800;font-size:15px;">${p.label}</div>
+        <div class="kpi-item-label" style="color:${p.color};font-weight:800;font-size:22px;">${p.label}</div>
         <div style="font-size:13px;color:#888;font-weight:600;margin-bottom:4px;">${p.date}</div>
         <div class="kpi-row">
           <div class="kpi-month"><span class="kpi-month-label">문의</span><span class="kpi-month-val">${p.d.inq}</span></div>
