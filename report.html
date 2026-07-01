@@ -1073,6 +1073,7 @@ const ALL_REPORTS = [
     label: '2026년 5월 (월간)',
     period: '2026.04 — 2026.05',
     compare: '2026년 4월 vs 5월',
+    prevLabel: '4월', currLabel: '5월', prevKey: 'apr', currKey: 'may',
   },
   section03db: {
     rounds: ['1차 DB','2차 DB'],
@@ -1149,8 +1150,8 @@ const ALL_REPORTS = [
     },
     phone_yoy: {
       cats: ['검사','모발이식','탈모치료','SMP','헤어라인','처방전'],
-      apr25: { inq:[130,99,58,12,23,38] },
-      may25: { inq:[712,100,54,16,22,46], note:'방송 출연으로 인한 예약 폭증' },
+      prevYear: { inq:[130,99,58,12,23,38] },
+      currYear: { inq:[712,100,54,16,22,46], note:'방송 출연으로 인한 예약 폭증' },
     },
     naver_yoy: {
       cats: ['검사','모발이식','탈모치료','처방전','SMP','헤어라인'],
@@ -1389,6 +1390,29 @@ const ALL_REPORTS = [
     analysis: '<b>신유지 62%→78%로 전 직원 중 최고 상승폭</b>, 모발이식·탈모치료·헤어라인 전 과목 개선.\n<b>손예진 56%→67%로 2위</b>, 탈모치료 79%→83% 안정적 유지하며 체결 건수도 최다(23→34건).\n<b>최무근 SMP 전담 80%→77%</b>로 소폭 하락했으나 SMP 과목 내 최고 체결률 유지.\n<b>김승희 60%→25%로 급락</b> — 5월 모발이식 0% 전환 집중 점검 필요.\n조영은 53%→66%로 개선, 헤어라인 SMP 체결 시작하며 과목 다양화 눈에 띔.',
   },
 },
+/* ── 월간 보고서 (6월) ── */
+{
+  meta: {
+    title: '뉴헤어 유입·내원 현황',
+    type: 'monthly',
+    label: '2026년 6월 (월간)',
+    period: '2026.05 — 2026.06',
+    compare: '2026년 5월 vs 6월',
+    prevLabel: '5월', currLabel: '6월', prevKey: 'may', currKey: 'jun',
+  },
+  section01: {
+    cats: ['이식','헤어','SMP','치료','검사','처방전','기타'],
+    phone: {
+      may: { inq:[101,21,21,44,222,21,1], book:[86,20,16,40,214,21,0], rate:[85,95,76,91,96,100,0] },
+      jun: { inq:[95,12,15,38,159,26,1],  book:[79,11,12,33,157,26,1], rate:[83,92,80,87,99,100,100] },
+      total_may: { inq:431, book:397, rate:92, existingPt:2785 },
+      total_jun: { inq:346, book:319, rate:92, existingPt:2493 },
+    },
+    analysis: {
+      phone: '전화 신규문의 431→346건으로 <b>19.7% 감소</b>했으나 예약률은 92%로 동일하게 유지.\n<b>검사 예약률 96%→99%로 개선</b>되며 전화 채널 핵심 과목의 상담 품질은 오히려 향상.\n<b>헤어 21→12건(−43%)으로 최대 폭 감소</b>, SMP는 21→15건 줄었으나 예약률은 76%→80%로 개선.\n이식은 101→95건으로 소폭 감소, 예약률도 85%→83%로 함께 하락 — 상담 흐름 점검 필요.',
+    },
+  },
+},
 ];
 
 /* ════════════════════════════════════
@@ -1496,6 +1520,7 @@ function buildSelector() {
 }
 
 const C = { aprInq:'#90CAF9', aprBook:'#EF9A9A', mayInq:'#1565C0', mayBook:'#C62828' };
+C.prevInq = C.aprInq; C.prevBook = C.aprBook; C.currInq = C.mayInq; C.currBook = C.mayBook;
 
 function legend(id, items) {
   const el=document.getElementById(id); if(!el) return;
@@ -1767,83 +1792,116 @@ function renderReport(r) {
   if (fm) fm.classList.add('active');
 
   const s=r.section01;
+  const m=r.meta, pk=m.prevKey, ck=m.currKey, pl=m.prevLabel, cl=m.currLabel;
   document.getElementById('s01-subtitle').textContent=r.meta.compare+' · 전화 / 네이버 / 플친 / 게시판 / 왓츠앱 · 엑셀 데이터 기준';
   const tt=s.total;
-  const inqDiff=tt.total_may.inq-tt.total_apr.inq, bookDiff=tt.total_may.book-tt.total_apr.book, rateDiff=tt.total_may.rate-tt.total_apr.rate;
-  document.getElementById('s01-kpi').innerHTML=`
-    <div class="kpi-item"><div class="kpi-item-label">총 문의</div><div class="kpi-row"><div class="kpi-month"><span class="kpi-month-label">4월</span><span class="kpi-month-val">${tt.total_apr.inq}</span></div><span class="kpi-arrow">→</span><div class="kpi-month"><span class="kpi-month-label">5월</span><span class="kpi-month-val">${tt.total_may.inq}</span></div><span class="kpi-diff ${inqDiff>0?'up':inqDiff<0?'down':'flat'}">${inqDiff>0?'▲':'▼'} ${Math.abs(inqDiff)}</span></div></div>
-    <div class="kpi-item"><div class="kpi-item-label">총 예약</div><div class="kpi-row"><div class="kpi-month"><span class="kpi-month-label">4월</span><span class="kpi-month-val">${tt.total_apr.book}</span></div><span class="kpi-arrow">→</span><div class="kpi-month"><span class="kpi-month-label">5월</span><span class="kpi-month-val">${tt.total_may.book}</span></div><span class="kpi-diff ${bookDiff>0?'up':bookDiff<0?'down':'flat'}">${bookDiff>0?'▲':'▼'} ${Math.abs(bookDiff)}</span></div></div>
-    <div class="kpi-item"><div class="kpi-item-label">예약률</div><div class="kpi-row"><div class="kpi-month"><span class="kpi-month-label">4월</span><span class="kpi-month-val">${tt.total_apr.rate}%</span></div><span class="kpi-arrow">→</span><div class="kpi-month"><span class="kpi-month-label">5월</span><span class="kpi-month-val">${tt.total_may.rate}%</span></div><span class="kpi-diff ${rateDiff>0?'up':rateDiff<0?'down':'flat'}">${rateDiff>0?'▲':'▼'} ${Math.abs(rateDiff)}%p</span></div></div>`;
-  const ph=s.phone, pc=s.cats;
-  mkTable('tbl-phone',['구분','4월 문의','4월 예약','4월 예약률','5월 문의','5월 예약','5월 예약률','증감'],
-    ['합계',ph.total_apr.inq,ph.total_apr.book,ph.total_apr.rate+'%',ph.total_may.inq,ph.total_may.book,ph.total_may.rate+'%',diff(ph.total_apr.inq,ph.total_may.inq)],
-    pc.map((c,i)=>[c,ph.apr.inq[i],ph.apr.book[i],ph.apr.rate[i]+'%',ph.may.inq[i],ph.may.book[i],ph.may.rate[i]+'%',diff(ph.apr.inq[i],ph.may.inq[i])]));
-  legend('lg-phone',[[C.aprInq,'4월 문의'],[C.aprBook,'4월 예약'],[C.mayInq,'5월 문의'],[C.mayBook,'5월 예약']]);
-  mkChart('chart-phone',pc,[mkDS('4월 문의',ph.apr.inq,C.aprInq),mkDS('4월 예약',ph.apr.book,C.aprBook),mkDS('5월 문의',ph.may.inq,C.mayInq),mkDS('5월 예약',ph.may.book,C.mayBook)],280);
-  const py=s.phone_yoy;
-  legend('lg-phone-yoy',[[C.aprInq,'25년 4월'],[C.mayInq,'25년 5월'],[C.aprBook,'26년 4월'],[C.mayBook,'26년 5월']]);
-  mkChart('chart-phone-yoy',py.cats,[mkDS('25년 4월',py.apr25.inq,C.aprInq),mkDS('25년 5월',py.may25.inq,C.mayInq),mkDS('26년 4월',ph.apr.inq,C.aprBook),mkDS('26년 5월',ph.may.inq,C.mayBook)]);
-  if(py.may25.note) document.getElementById('note-phone-yoy').textContent='* '+py.may25.note;
-  renderAnalysis('ana-phone', s.analysis.phone);
-  const nv=s.naver, nc=nv.cats;
-  mkTable('tbl-naver',['구분','4월 문의','4월 예약','4월 부재','4월 예약률','5월 문의','5월 예약','5월 부재','5월 예약률','증감'],
-    ['합계',nv.total_apr.inq,nv.total_apr.book,nv.total_apr.absent,nv.total_apr.rate+'%',nv.total_may.inq,nv.total_may.book,nv.total_may.absent,nv.total_may.rate+'%',diff(nv.total_apr.inq,nv.total_may.inq)],
-    nc.map((c,i)=>[c,nv.apr.inq[i],nv.apr.book[i],nv.apr.absent[i]||'—',nv.apr.rate[i]+'%',nv.may.inq[i],nv.may.book[i],nv.may.absent[i]||'—',nv.may.rate[i]+'%',diff(nv.apr.inq[i],nv.may.inq[i])]));
-  legend('lg-naver',[[C.aprInq,'4월 문의'],[C.aprBook,'4월 예약'],[C.mayInq,'5월 문의'],[C.mayBook,'5월 예약']]);
-  mkChart('chart-naver',nc,[mkDS('4월 문의',nv.apr.inq,C.aprInq),mkDS('4월 예약',nv.apr.book,C.aprBook),mkDS('5월 문의',nv.may.inq,C.mayInq),mkDS('5월 예약',nv.may.book,C.mayBook)]);
-  const ny=s.naver_yoy;
-  legend('lg-naver-yoy',[[C.aprInq,'25년 4월'],[C.mayInq,'25년 5월'],[C.aprBook,'26년 4월'],[C.mayBook,'26년 5월']]);
-  mkChart('chart-naver-yoy',ny.cats,[mkDS('25년 4월',ny.apr25.inq,C.aprInq),mkDS('25년 5월',ny.may25.inq,C.mayInq),mkDS('26년 4월',nv.apr.inq,C.aprBook),mkDS('26년 5월',nv.may.inq,C.mayBook)]);
-  if(ny.may25.note) document.getElementById('note-naver-yoy').textContent='* '+ny.may25.note;
-  renderAnalysis('ana-naver', s.analysis.naver);
-  const kk=s.kakao, kc=kk.cats;
-  mkTable('tbl-kakao',['구분','4월 문의','4월 예약','4월 해외','5월 문의','5월 예약','5월 해외','증감'],
-    ['합계',kk.total_apr.inq,kk.total_apr.book,kk.total_apr.overseas,kk.total_may.inq,kk.total_may.book,kk.total_may.overseas,diff(kk.total_apr.inq,kk.total_may.inq)],
-    kc.map((c,i)=>[c,kk.apr.inq[i],kk.apr.book[i],kk.apr.overseas[i]||'—',kk.may.inq[i],kk.may.book[i],kk.may.overseas[i]||'—',diff(kk.apr.inq[i],kk.may.inq[i])]));
-  legend('lg-kakao',[[C.aprInq,'4월 문의'],[C.aprBook,'4월 예약'],[C.mayInq,'5월 문의'],[C.mayBook,'5월 예약']]);
-  mkChart('chart-kakao',kc,[mkDS('4월 문의',kk.apr.inq,C.aprInq),mkDS('4월 예약',kk.apr.book,C.aprBook),mkDS('5월 문의',kk.may.inq,C.mayInq),mkDS('5월 예약',kk.may.book,C.mayBook)]);
-  const osL=kc.filter((_,i)=>kk.apr.overseas[i]>0||kk.may.overseas[i]>0);
-  const osA=kk.apr.overseas.filter((v,i)=>kk.apr.overseas[i]>0||kk.may.overseas[i]>0);
-  const osM=kk.may.overseas.filter((v,i)=>kk.apr.overseas[i]>0||kk.may.overseas[i]>0);
-  legend('lg-kakao-os',[[C.aprInq,'4월 해외'],[C.mayInq,'5월 해외']]);
-  mkChart('chart-kakao-os',osL,[mkDS('4월 해외',osA,C.aprInq),mkDS('5월 해외',osM,C.mayInq)]);
-  renderAnalysis('ana-kakao', s.analysis.kakao);
-  const bd=s.board, bc=bd.cats;
-  mkTable('tbl-board',['구분','4월 문의','4월 부재','4월 예약','4월 예약률','5월 문의','5월 부재','5월 예약','5월 예약률','증감'],
-    ['합계',bd.total_apr.inq,bd.total_apr.absent,bd.total_apr.book,bd.total_apr.rate+'%',bd.total_may.inq,bd.total_may.absent,bd.total_may.book,bd.total_may.rate+'%',diff(bd.total_apr.inq,bd.total_may.inq)],
-    bc.map((c,i)=>[c,bd.apr.inq[i],bd.apr.absent[i]||'—',bd.apr.book[i],bd.apr.rate[i]+'%',bd.may.inq[i],bd.may.absent[i]||'—',bd.may.book[i],bd.may.rate[i]+'%',diff(bd.apr.inq[i],bd.may.inq[i])]));
-  legend('lg-board',[[C.aprInq,'4월 문의'],[C.aprBook,'4월 예약'],[C.mayInq,'5월 문의'],[C.mayBook,'5월 예약']]);
-  mkChart('chart-board',bc,[mkDS('4월 문의',bd.apr.inq,C.aprInq),mkDS('4월 예약',bd.apr.book,C.aprBook),mkDS('5월 문의',bd.may.inq,C.mayInq),mkDS('5월 예약',bd.may.book,C.mayBook)]);
-  renderAnalysis('ana-board', s.analysis.board);
-  const wa=s.whatsapp, wc=wa.cats;
-  mkTable('tbl-whatsapp',['구분','4월 문의','4월 예약','4월 이식수술','5월 문의','5월 예약','5월 이식수술','증감'],
-    ['합계',wa.total_apr.inq,wa.total_apr.book,'—',wa.total_may.inq,wa.total_may.book,'—',diff(wa.total_apr.inq,wa.total_may.inq)],
-    wc.map((c,i)=>[c,wa.apr.inq[i],wa.apr.book[i],wa.apr.surgery[i]||'—',wa.may.inq[i],wa.may.book[i],wa.may.surgery[i]||'—',diff(wa.apr.inq[i],wa.may.inq[i])]));
-  legend('lg-wa',[[C.aprInq,'4월 문의'],[C.aprBook,'4월 예약'],[C.mayInq,'5월 문의'],[C.mayBook,'5월 예약']]);
-  mkChart('chart-wa',wc,[mkDS('4월 문의',wa.apr.inq,C.aprInq),mkDS('4월 예약',wa.apr.book,C.aprBook),mkDS('5월 문의',wa.may.inq,C.mayInq),mkDS('5월 예약',wa.may.book,C.mayBook)]);
-  renderAnalysis('ana-whatsapp', s.analysis.whatsapp);
-  const tc=tt.cats;
-  mkTable('tbl-total',['구분','4월 문의','4월 예약','4월 해외','5월 문의','5월 예약','5월 해외','증감'],
-    ['합계',tt.total_apr.inq,tt.total_apr.book,tt.total_apr.overseas,tt.total_may.inq,tt.total_may.book,tt.total_may.overseas,diff(tt.total_apr.inq,tt.total_may.inq)],
-    tc.map((c,i)=>[c,tt.apr.inq[i],tt.apr.book[i],tt.apr.overseas[i]||'—',tt.may.inq[i],tt.may.book[i],tt.may.overseas[i]||'—',diff(tt.apr.inq[i],tt.may.inq[i])]));
-  legend('lg-total',[[C.aprInq,'4월 문의'],[C.aprBook,'4월 예약'],[C.mayInq,'5월 문의'],[C.mayBook,'5월 예약']]);
-  mkChart('chart-total',tc,[mkDS('4월 문의',tt.apr.inq,C.aprInq),mkDS('4월 예약',tt.apr.book,C.aprBook),mkDS('5월 문의',tt.may.inq,C.mayInq),mkDS('5월 예약',tt.may.book,C.mayBook)],300);
-  const ty=s.total_yoy;
-  legend('lg-total-yoy',[[C.aprInq,'25년 4월'],[C.mayInq,'25년 5월'],[C.aprBook,'26년 4월'],[C.mayBook,'26년 5월']]);
-  mkChart('chart-total-yoy',ty.cats,[mkDS('25년 4월',ty.apr25.inq,C.aprInq),mkDS('25년 5월',ty.may25.inq,C.mayInq),mkDS('26년 4월',tt.apr.inq,C.aprBook),mkDS('26년 5월',tt.may.inq,C.mayBook)]);
-  if(ty.may25.note) document.getElementById('note-total-yoy').textContent='* '+ty.may25.note;
-  renderAnalysis('ana-total', s.analysis.total);
+  try {
+    const tp=tt['total_'+pk], tcM=tt['total_'+ck];
+    const inqDiff=tcM.inq-tp.inq, bookDiff=tcM.book-tp.book, rateDiff=tcM.rate-tp.rate;
+    document.getElementById('s01-kpi').innerHTML=`
+      <div class="kpi-item"><div class="kpi-item-label">총 문의</div><div class="kpi-row"><div class="kpi-month"><span class="kpi-month-label">${pl}</span><span class="kpi-month-val">${tp.inq}</span></div><span class="kpi-arrow">→</span><div class="kpi-month"><span class="kpi-month-label">${cl}</span><span class="kpi-month-val">${tcM.inq}</span></div><span class="kpi-diff ${inqDiff>0?'up':inqDiff<0?'down':'flat'}">${inqDiff>0?'▲':'▼'} ${Math.abs(inqDiff)}</span></div></div>
+      <div class="kpi-item"><div class="kpi-item-label">총 예약</div><div class="kpi-row"><div class="kpi-month"><span class="kpi-month-label">${pl}</span><span class="kpi-month-val">${tp.book}</span></div><span class="kpi-arrow">→</span><div class="kpi-month"><span class="kpi-month-label">${cl}</span><span class="kpi-month-val">${tcM.book}</span></div><span class="kpi-diff ${bookDiff>0?'up':bookDiff<0?'down':'flat'}">${bookDiff>0?'▲':'▼'} ${Math.abs(bookDiff)}</span></div></div>
+      <div class="kpi-item"><div class="kpi-item-label">예약률</div><div class="kpi-row"><div class="kpi-month"><span class="kpi-month-label">${pl}</span><span class="kpi-month-val">${tp.rate}%</span></div><span class="kpi-arrow">→</span><div class="kpi-month"><span class="kpi-month-label">${cl}</span><span class="kpi-month-val">${tcM.rate}%</span></div><span class="kpi-diff ${rateDiff>0?'up':rateDiff<0?'down':'flat'}">${rateDiff>0?'▲':'▼'} ${Math.abs(rateDiff)}%p</span></div></div>`;
+  } catch(e) {
+    document.getElementById('s01-kpi').innerHTML = '<p style="font-size:13px;color:#999;padding:8px 0;">※ 전체 채널 데이터 입력 완료 후 표시됩니다.</p>';
+  }
+  try {
+    const ph=s.phone, pc=s.cats;
+    const phP=ph[pk], phC=ph[ck], phTP=ph['total_'+pk], phTC=ph['total_'+ck];
+    mkTable('tbl-phone',['구분',pl+' 문의',pl+' 예약',pl+' 예약률',cl+' 문의',cl+' 예약',cl+' 예약률','증감'],
+      ['합계',phTP.inq,phTP.book,phTP.rate+'%',phTC.inq,phTC.book,phTC.rate+'%',diff(phTP.inq,phTC.inq)],
+      pc.map((c,i)=>[c,phP.inq[i],phP.book[i],phP.rate[i]+'%',phC.inq[i],phC.book[i],phC.rate[i]+'%',diff(phP.inq[i],phC.inq[i])]));
+    legend('lg-phone',[[C.prevInq,pl+' 문의'],[C.prevBook,pl+' 예약'],[C.currInq,cl+' 문의'],[C.currBook,cl+' 예약']]);
+    const phoneChartTitle=document.querySelector('#chart-phone').closest('.card').querySelector('.card-title');
+    if(phoneChartTitle) phoneChartTitle.textContent=pl+' vs '+cl+' 비교 그래프';
+    mkChart('chart-phone',pc,[mkDS(pl+' 문의',phP.inq,C.prevInq),mkDS(pl+' 예약',phP.book,C.prevBook),mkDS(cl+' 문의',phC.inq,C.currInq),mkDS(cl+' 예약',phC.book,C.currBook)],280);
+    if (s.phone_yoy) {
+      const py=s.phone_yoy;
+      legend('lg-phone-yoy',[[C.prevInq,'25년 '+pl],[C.currInq,'25년 '+cl],[C.prevBook,'26년 '+pl],[C.currBook,'26년 '+cl]]);
+      mkChart('chart-phone-yoy',py.cats,[mkDS('25년 '+pl,py.prevYear.inq,C.prevInq),mkDS('25년 '+cl,py.currYear.inq,C.currInq),mkDS('26년 '+pl,phP.inq,C.prevBook),mkDS('26년 '+cl,phC.inq,C.currBook)]);
+      document.getElementById('note-phone-yoy').textContent = py.currYear.note ? '* '+py.currYear.note : '';
+    } else {
+      if(charts['chart-phone-yoy']){ charts['chart-phone-yoy'].destroy(); delete charts['chart-phone-yoy']; }
+      const lg=document.getElementById('lg-phone-yoy'); if(lg) lg.innerHTML='';
+      const nt=document.getElementById('note-phone-yoy'); if(nt) nt.textContent='';
+    }
+    let phoneAnalysis = s.analysis.phone;
+    if (phTP.existingPt !== undefined && phTC.existingPt !== undefined) {
+      const ptDiff = phTC.existingPt - phTP.existingPt;
+      phoneAnalysis += `\n<b>구환(기존 환자) 문의 ${phTP.existingPt.toLocaleString()}→${phTC.existingPt.toLocaleString()}건`
+        + (ptDiff<0 ? `으로 ${Math.abs(ptDiff).toLocaleString()}건 감소` : ptDiff>0 ? `으로 ${ptDiff.toLocaleString()}건 증가` : '으로 동일') + `</b>`;
+    }
+    renderAnalysis('ana-phone', phoneAnalysis);
+  } catch(e) { console.warn('section01 전화 렌더링 보류:', e); }
+  try {
+    const nv=s.naver, nc=nv.cats;
+    mkTable('tbl-naver',['구분','4월 문의','4월 예약','4월 부재','4월 예약률','5월 문의','5월 예약','5월 부재','5월 예약률','증감'],
+      ['합계',nv.total_apr.inq,nv.total_apr.book,nv.total_apr.absent,nv.total_apr.rate+'%',nv.total_may.inq,nv.total_may.book,nv.total_may.absent,nv.total_may.rate+'%',diff(nv.total_apr.inq,nv.total_may.inq)],
+      nc.map((c,i)=>[c,nv.apr.inq[i],nv.apr.book[i],nv.apr.absent[i]||'—',nv.apr.rate[i]+'%',nv.may.inq[i],nv.may.book[i],nv.may.absent[i]||'—',nv.may.rate[i]+'%',diff(nv.apr.inq[i],nv.may.inq[i])]));
+    legend('lg-naver',[[C.aprInq,'4월 문의'],[C.aprBook,'4월 예약'],[C.mayInq,'5월 문의'],[C.mayBook,'5월 예약']]);
+    mkChart('chart-naver',nc,[mkDS('4월 문의',nv.apr.inq,C.aprInq),mkDS('4월 예약',nv.apr.book,C.aprBook),mkDS('5월 문의',nv.may.inq,C.mayInq),mkDS('5월 예약',nv.may.book,C.mayBook)]);
+    const ny=s.naver_yoy;
+    legend('lg-naver-yoy',[[C.aprInq,'25년 4월'],[C.mayInq,'25년 5월'],[C.aprBook,'26년 4월'],[C.mayBook,'26년 5월']]);
+    mkChart('chart-naver-yoy',ny.cats,[mkDS('25년 4월',ny.apr25.inq,C.aprInq),mkDS('25년 5월',ny.may25.inq,C.mayInq),mkDS('26년 4월',nv.apr.inq,C.aprBook),mkDS('26년 5월',nv.may.inq,C.mayBook)]);
+    if(ny.may25.note) document.getElementById('note-naver-yoy').textContent='* '+ny.may25.note;
+    renderAnalysis('ana-naver', s.analysis.naver);
+  } catch(e) { console.warn('section01 네이버 렌더링 보류:', e); }
+  try {
+    const kk=s.kakao, kc=kk.cats;
+    mkTable('tbl-kakao',['구분','4월 문의','4월 예약','4월 해외','5월 문의','5월 예약','5월 해외','증감'],
+      ['합계',kk.total_apr.inq,kk.total_apr.book,kk.total_apr.overseas,kk.total_may.inq,kk.total_may.book,kk.total_may.overseas,diff(kk.total_apr.inq,kk.total_may.inq)],
+      kc.map((c,i)=>[c,kk.apr.inq[i],kk.apr.book[i],kk.apr.overseas[i]||'—',kk.may.inq[i],kk.may.book[i],kk.may.overseas[i]||'—',diff(kk.apr.inq[i],kk.may.inq[i])]));
+    legend('lg-kakao',[[C.aprInq,'4월 문의'],[C.aprBook,'4월 예약'],[C.mayInq,'5월 문의'],[C.mayBook,'5월 예약']]);
+    mkChart('chart-kakao',kc,[mkDS('4월 문의',kk.apr.inq,C.aprInq),mkDS('4월 예약',kk.apr.book,C.aprBook),mkDS('5월 문의',kk.may.inq,C.mayInq),mkDS('5월 예약',kk.may.book,C.mayBook)]);
+    const osL=kc.filter((_,i)=>kk.apr.overseas[i]>0||kk.may.overseas[i]>0);
+    const osA=kk.apr.overseas.filter((v,i)=>kk.apr.overseas[i]>0||kk.may.overseas[i]>0);
+    const osM=kk.may.overseas.filter((v,i)=>kk.apr.overseas[i]>0||kk.may.overseas[i]>0);
+    legend('lg-kakao-os',[[C.aprInq,'4월 해외'],[C.mayInq,'5월 해외']]);
+    mkChart('chart-kakao-os',osL,[mkDS('4월 해외',osA,C.aprInq),mkDS('5월 해외',osM,C.mayInq)]);
+    renderAnalysis('ana-kakao', s.analysis.kakao);
+  } catch(e) { console.warn('section01 플친 렌더링 보류:', e); }
+  try {
+    const bd=s.board, bc=bd.cats;
+    mkTable('tbl-board',['구분','4월 문의','4월 부재','4월 예약','4월 예약률','5월 문의','5월 부재','5월 예약','5월 예약률','증감'],
+      ['합계',bd.total_apr.inq,bd.total_apr.absent,bd.total_apr.book,bd.total_apr.rate+'%',bd.total_may.inq,bd.total_may.absent,bd.total_may.book,bd.total_may.rate+'%',diff(bd.total_apr.inq,bd.total_may.inq)],
+      bc.map((c,i)=>[c,bd.apr.inq[i],bd.apr.absent[i]||'—',bd.apr.book[i],bd.apr.rate[i]+'%',bd.may.inq[i],bd.may.absent[i]||'—',bd.may.book[i],bd.may.rate[i]+'%',diff(bd.apr.inq[i],bd.may.inq[i])]));
+    legend('lg-board',[[C.aprInq,'4월 문의'],[C.aprBook,'4월 예약'],[C.mayInq,'5월 문의'],[C.mayBook,'5월 예약']]);
+    mkChart('chart-board',bc,[mkDS('4월 문의',bd.apr.inq,C.aprInq),mkDS('4월 예약',bd.apr.book,C.aprBook),mkDS('5월 문의',bd.may.inq,C.mayInq),mkDS('5월 예약',bd.may.book,C.mayBook)]);
+    renderAnalysis('ana-board', s.analysis.board);
+  } catch(e) { console.warn('section01 게시판 렌더링 보류:', e); }
+  try {
+    const wa=s.whatsapp, wc=wa.cats;
+    mkTable('tbl-whatsapp',['구분','4월 문의','4월 예약','4월 이식수술','5월 문의','5월 예약','5월 이식수술','증감'],
+      ['합계',wa.total_apr.inq,wa.total_apr.book,'—',wa.total_may.inq,wa.total_may.book,'—',diff(wa.total_apr.inq,wa.total_may.inq)],
+      wc.map((c,i)=>[c,wa.apr.inq[i],wa.apr.book[i],wa.apr.surgery[i]||'—',wa.may.inq[i],wa.may.book[i],wa.may.surgery[i]||'—',diff(wa.apr.inq[i],wa.may.inq[i])]));
+    legend('lg-wa',[[C.aprInq,'4월 문의'],[C.aprBook,'4월 예약'],[C.mayInq,'5월 문의'],[C.mayBook,'5월 예약']]);
+    mkChart('chart-wa',wc,[mkDS('4월 문의',wa.apr.inq,C.aprInq),mkDS('4월 예약',wa.apr.book,C.aprBook),mkDS('5월 문의',wa.may.inq,C.mayInq),mkDS('5월 예약',wa.may.book,C.mayBook)]);
+    renderAnalysis('ana-whatsapp', s.analysis.whatsapp);
+  } catch(e) { console.warn('section01 왓츠앱 렌더링 보류:', e); }
+  try {
+    const tc=tt.cats;
+    mkTable('tbl-total',['구분','4월 문의','4월 예약','4월 해외','5월 문의','5월 예약','5월 해외','증감'],
+      ['합계',tt.total_apr.inq,tt.total_apr.book,tt.total_apr.overseas,tt.total_may.inq,tt.total_may.book,tt.total_may.overseas,diff(tt.total_apr.inq,tt.total_may.inq)],
+      tc.map((c,i)=>[c,tt.apr.inq[i],tt.apr.book[i],tt.apr.overseas[i]||'—',tt.may.inq[i],tt.may.book[i],tt.may.overseas[i]||'—',diff(tt.apr.inq[i],tt.may.inq[i])]));
+    legend('lg-total',[[C.aprInq,'4월 문의'],[C.aprBook,'4월 예약'],[C.mayInq,'5월 문의'],[C.mayBook,'5월 예약']]);
+    mkChart('chart-total',tc,[mkDS('4월 문의',tt.apr.inq,C.aprInq),mkDS('4월 예약',tt.apr.book,C.aprBook),mkDS('5월 문의',tt.may.inq,C.mayInq),mkDS('5월 예약',tt.may.book,C.mayBook)],300);
+    const ty=s.total_yoy;
+    legend('lg-total-yoy',[[C.aprInq,'25년 4월'],[C.mayInq,'25년 5월'],[C.aprBook,'26년 4월'],[C.mayBook,'26년 5월']]);
+    mkChart('chart-total-yoy',ty.cats,[mkDS('25년 4월',ty.apr25.inq,C.aprInq),mkDS('25년 5월',ty.may25.inq,C.mayInq),mkDS('26년 4월',tt.apr.inq,C.aprBook),mkDS('26년 5월',tt.may.inq,C.mayBook)]);
+    if(ty.may25.note) document.getElementById('note-total-yoy').textContent='* '+ty.may25.note;
+    renderAnalysis('ana-total', s.analysis.total);
+  } catch(e) { console.warn('section01 전체합산 렌더링 보류:', e); }
 
-  renderSection02(r);
-  renderSection03db(r);
-  renderSection03(r);
-  renderSection04(r);
-  renderSection05(r);
-  renderSection06(r);
-  renderSection07(r);
-  renderSection08(r);
-  renderSection09(r);
-  renderSection00(r);
+  try { renderSection02(r); } catch(e) { console.warn('section02 렌더링 보류:', e); }
+  try { renderSection03db(r); } catch(e) { console.warn('section03db 렌더링 보류:', e); }
+  try { renderSection03(r); } catch(e) { console.warn('section03 렌더링 보류:', e); }
+  try { renderSection04(r); } catch(e) { console.warn('section04 렌더링 보류:', e); }
+  try { renderSection05(r); } catch(e) { console.warn('section05 렌더링 보류:', e); }
+  try { renderSection06(r); } catch(e) { console.warn('section06 렌더링 보류:', e); }
+  try { renderSection07(r); } catch(e) { console.warn('section07 렌더링 보류:', e); }
+  try { renderSection08(r); } catch(e) { console.warn('section08 렌더링 보류:', e); }
+  try { renderSection09(r); } catch(e) { console.warn('section09 렌더링 보류:', e); }
+  try { renderSection00(r); } catch(e) { console.warn('section00 렌더링 보류:', e); }
 }
 
 /* ═══════════════════════════════
