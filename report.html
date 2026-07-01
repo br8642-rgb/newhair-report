@@ -315,8 +315,12 @@
       <div class="section-subtitle" id="sv03-subtitle"></div>
     </div>
     <div class="kpi-table-wrap">
-      <div class="kpi-label">기간별 핵심 지표</div>
-      <div class="kpi-compare v03-kpi" id="sv03-kpi"></div>
+      <div class="kpi-label">핵심 흐름 지표</div>
+      <div class="kpi-compare v03-kpi" id="sv03-kpi-flow"></div>
+    </div>
+    <div class="kpi-table-wrap">
+      <div class="kpi-label">취소 · 부도 현황</div>
+      <div class="kpi-compare v03-kpi" id="sv03-kpi-cancel"></div>
     </div>
     <div class="s02-section-label">예약 흐름</div>
     <div class="s02-charts-grid">
@@ -2316,12 +2320,13 @@ function renderSectionVisit(r) {
     const d = junVal - mayVal, cls = d>0?'up':d<0?'down':'flat', arrow = d>0?`▲ ${Math.abs(d)}`:d<0?`▼ ${Math.abs(d)}`:'— 0';
     return `<div class="kpi-item"><div class="kpi-item-label">${label}</div><div class="kpi-row"><div class="kpi-month"><span class="kpi-month-label">5월</span><span class="kpi-month-val">${mayVal}${suffix}</span></div><span class="kpi-arrow">→</span><div class="kpi-month"><span class="kpi-month-label">6월</span><span class="kpi-month-val">${junVal}${suffix}</span></div><span class="kpi-diff ${cls}">${arrow}${suffix&&d!==0?suffix:''}</span></div></div>`;
   }
-  document.getElementById('sv03-kpi').innerHTML =
+  document.getElementById('sv03-kpi-flow').innerHTML =
     kpiItem('총 예약',       a.total_book, m.total_book, '건') +
-    kpiItem('취소(내원전)',  a.cancel_pre, m.cancel_pre, '건') +
     kpiItem('내원',          a.visit,      m.visit,      '건') +
     kpiItem('내원율',        a.visit_rate, m.visit_rate, '%') +
-    kpiItem('최종내원율',    a.final_visit_rate, m.final_visit_rate, '%') +
+    kpiItem('최종내원율',    a.final_visit_rate, m.final_visit_rate, '%');
+  document.getElementById('sv03-kpi-cancel').innerHTML =
+    kpiItem('취소(내원전)',  a.cancel_pre, m.cancel_pre, '건') +
     kpiItem('당일취소',      a.same_day_cancel, m.same_day_cancel, '건') +
     kpiItem('부도',          a.noshow,     m.noshow,     '건');
 
