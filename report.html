@@ -403,7 +403,7 @@
       <div class="section-subtitle" id="sst06-subtitle"></div>
     </div>
     <div class="kpi-table-wrap">
-      <div class="kpi-label">직원별 핵심 지표</div>
+      <div class="kpi-label">직원별 핵심 지표 <span style="font-size:11px;color:#999;font-weight:400;">(배지 숫자는 5월→6월 체결률 개선폭 순위)</span></div>
       <div id="sst06-kpi" class="ch-kpi-grid" style="grid-template-columns:repeat(3,1fr);"></div>
     </div>
     <div class="s02-section-label">전체 체결률 비교</div>
@@ -2614,8 +2614,12 @@ function renderSectionStaff(r) {
 
   const kpiGrid = document.getElementById('sst06-kpi');
   kpiGrid.innerHTML = '';
-  const ranked = s.staff.map((name, i) => ({ name, i, rate: s.may.total.rate[i] === '—' ? -1 : s.may.total.rate[i] }))
-                        .sort((a, b) => b.rate - a.rate);
+  // 순위 기준: 5월→6월 체결률 개선폭(%p) — 값이 없는 경우(문의 0건 등)는 최하위로 처리
+  const ranked = s.staff.map((name, i) => {
+    const mayR = s.may.total.rate[i], junR = s.jun.total.rate[i];
+    const improve = (typeof mayR === 'number' && typeof junR === 'number') ? junR - mayR : -999;
+    return { name, i, improve };
+  }).sort((a, b) => b.improve - a.improve);
   const rankOf = {};
   ranked.forEach((item, ri) => { rankOf[item.i] = ri + 1; });
 
