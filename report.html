@@ -1042,7 +1042,7 @@ const ALL_REPORTS = [
       cats:['모발이식','헤어라인','SMP','탈모치료','검사','기타이식','키오머','흉터재봉합','처방','기타'],
       visit_by_cat:[72,19,28,61,151,1,0,0,32,4],
     },
-    analysis:'데이터 준비 중',
+    analysis:'총 예약 518→434건으로 <b>−16.2% 감소</b>, 내원도 444→368건으로 <b>−17.1% 감소</b>.\n내원전 취소율 2.7%→5.3%로 상승 — 하절기·휴진 영향으로 예약 이탈 증가.\n다만 <b>내원율 88%→90%로 개선</b> — 내원 확정 후 실제 방문 전환은 양호.\n<b>당일취소 31→17건으로 크게 감소</b>, 부도 29→26건으로 소폭 개선 — 예약 확인 프로세스 강화 효과.',
   },
   section04: {
     cats: ['모발이식','헤어라인','SMP','탈모치료','기타이식'],
@@ -2168,16 +2168,30 @@ function renderSection04(r) {
 ═══════════════════════════════ */
 function renderSection03(r) {
   const s=r.section03, a=s.apr, m=s.may;
+  // 비교 기간 레이블 동적으로 (5월 보고서: 4월/5월, 6월 보고서: 5월/6월)
+  const [lblA, lblM] = r.meta.compare.replace('2026년 ','').split(' vs ');
   document.getElementById('s03-subtitle').textContent = r.meta.compare + ' · 예약 흐름 및 과목별 내원 현황';
   function kpiItem(label,aprVal,mayVal,suffix){
     const d=mayVal-aprVal, cls=d>0?'up':d<0?'down':'flat', arrow=d>0?`▲ ${Math.abs(d)}`:d<0?`▼ ${Math.abs(d)}`:'— 0';
-    return `<div class="kpi-item"><div class="kpi-item-label">${label}</div><div class="kpi-row"><div class="kpi-month"><span class="kpi-month-label">4월</span><span class="kpi-month-val">${aprVal}${suffix}</span></div><span class="kpi-arrow">→</span><div class="kpi-month"><span class="kpi-month-label">5월</span><span class="kpi-month-val">${mayVal}${suffix}</span></div><span class="kpi-diff ${cls}">${arrow}${suffix&&d!==0?suffix:''}</span></div></div>`;
+    return `<div class="kpi-item"><div class="kpi-item-label">${label}</div><div class="kpi-row"><div class="kpi-month"><span class="kpi-month-label">${lblA}</span><span class="kpi-month-val">${aprVal}${suffix}</span></div><span class="kpi-arrow">→</span><div class="kpi-month"><span class="kpi-month-label">${lblM}</span><span class="kpi-month-val">${mayVal}${suffix}</span></div><span class="kpi-diff ${cls}">${arrow}${suffix&&d!==0?suffix:''}</span></div></div>`;
+  }
+  // 내원율·최종내원율 나란히 한 칸에 표시
+  function kpiDouble(label1,val1,label2,val2,suffix){
+    const d1=val1[1]-val1[0], d2=val2[1]-val2[0];
+    const cls1=d1>0?'up':d1<0?'down':'flat', cls2=d2>0?'up':d2<0?'down':'flat';
+    const arr1=d1>0?`▲${Math.abs(d1)}`:d1<0?`▼${Math.abs(d1)}`:'—';
+    const arr2=d2>0?`▲${Math.abs(d2)}`:d2<0?`▼${Math.abs(d2)}`:'—';
+    return `<div class="kpi-item" style="grid-column:span 2;">
+      <div style="display:flex;gap:24px;">
+        <div style="flex:1"><div class="kpi-item-label">${label1}</div><div class="kpi-row"><div class="kpi-month"><span class="kpi-month-label">${lblA}</span><span class="kpi-month-val">${val1[0]}${suffix}</span></div><span class="kpi-arrow">→</span><div class="kpi-month"><span class="kpi-month-label">${lblM}</span><span class="kpi-month-val">${val1[1]}${suffix}</span></div><span class="kpi-diff ${cls1}">${arr1}${suffix&&d1!==0?suffix:''}</span></div></div>
+        <div style="flex:1;border-left:1px solid #f0f0f0;padding-left:24px;"><div class="kpi-item-label">${label2}</div><div class="kpi-row"><div class="kpi-month"><span class="kpi-month-label">${lblA}</span><span class="kpi-month-val">${val2[0]}${suffix}</span></div><span class="kpi-arrow">→</span><div class="kpi-month"><span class="kpi-month-label">${lblM}</span><span class="kpi-month-val">${val2[1]}${suffix}</span></div><span class="kpi-diff ${cls2}">${arr2}${suffix&&d2!==0?suffix:''}</span></div></div>
+      </div>
+    </div>`;
   }
   document.getElementById('s03-kpi').innerHTML =
     kpiItem('총 예약',   a.total_book,       m.total_book,       '') +
     kpiItem('내원',      a.visit,            m.visit,            '') +
-    kpiItem('내원율',    a.visit_rate,       m.visit_rate,       '%') +
-    kpiItem('최종내원율',a.final_visit_rate, m.final_visit_rate, '%');
+    kpiDouble('내원율', [a.visit_rate, m.visit_rate], '최종내원율', [a.final_visit_rate, m.final_visit_rate], '%');
   const funnelMax = Math.ceil(Math.max(a.total_book,m.total_book)*1.1/10)*10;
   function mkFunnel(id,d){
     if(charts[id]) charts[id].destroy();
@@ -2190,12 +2204,12 @@ function renderSection03(r) {
   }
   mkFunnel('chart-s03-funnel-apr',a);
   mkFunnel('chart-s03-funnel-may',m);
-  legend('lg-s03-noshow',[['#BDBDBD','4월'],['#616161','5월']]);
-  mkChart('chart-s03-noshow',['당일취소','부도'],[mkDS('4월',[a.same_day_cancel,a.noshow],'#BDBDBD'),mkDS('5월',[m.same_day_cancel,m.noshow],'#616161')]);
+  legend('lg-s03-noshow',[[`#BDBDBD`,lblA],['#616161',lblM]]);
+  mkChart('chart-s03-noshow',['당일취소','부도'],[mkDS(lblA,[a.same_day_cancel,a.noshow],'#BDBDBD'),mkDS(lblM,[m.same_day_cancel,m.noshow],'#616161')]);
   const catPairs=a.cats.map((cat,i)=>({cat,apr:a.visit_by_cat[i],may:m.visit_by_cat[i]})).filter(p=>p.apr>0||p.may>0);
-  mkTable('tbl-s03-cats',['구분','4월 내원','5월 내원','증감'],['합계',a.visit,m.visit,diff(a.visit,m.visit)],catPairs.map(p=>[p.cat,p.apr,p.may,diff(p.apr,p.may)]));
-  legend('lg-s03-cats',[[C.aprInq,'4월 내원'],[C.mayInq,'5월 내원']]);
-  mkChart('chart-s03-cats',catPairs.map(p=>p.cat),[mkDS('4월 내원',catPairs.map(p=>p.apr),C.aprInq),mkDS('5월 내원',catPairs.map(p=>p.may),C.mayInq)]);
+  mkTable('tbl-s03-cats',['구분',lblA+' 내원',lblM+' 내원','증감'],['합계',a.visit,m.visit,diff(a.visit,m.visit)],catPairs.map(p=>[p.cat,p.apr,p.may,diff(p.apr,p.may)]));
+  legend('lg-s03-cats',[[C.aprInq,lblA+' 내원'],[C.mayInq,lblM+' 내원']]);
+  mkChart('chart-s03-cats',catPairs.map(p=>p.cat),[mkDS(lblA+' 내원',catPairs.map(p=>p.apr),C.aprInq),mkDS(lblM+' 내원',catPairs.map(p=>p.may),C.mayInq)]);
   renderAnalysis('ana-s03', s.analysis);
 }
 
