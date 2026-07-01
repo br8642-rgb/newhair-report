@@ -1584,16 +1584,23 @@ function getChTotals(s, key) {
 }
 
 function buildCatChannelData(s, month) {
-  const allCats = ['모발이식','검사','탈모치료','SMP','헤어라인','처방전'];
-  function getVal(ch, cat) { const i=ch.cats.indexOf(cat); return i===-1?0:(ch[month].inq[i]||0); }
-  function getValPhone(s, cat) { const i=s.cats.indexOf(cat); return i===-1?0:(s.phone[month].inq[i]||0); }
+  // s = section02 데이터
+  const allCats = ['모발이식','헤어라인','SMP','탈모치료','검사','처방전'];
+  function getVal(ch, cat) {
+    if (!ch || !ch.cats) {
+      // cats가 없으면 section02.cats 사용
+      const i = (s.cats||allCats).indexOf(cat);
+      return i===-1?0:(ch && ch[month] && ch[month].inq[i])||0;
+    }
+    const i=ch.cats.indexOf(cat); return i===-1?0:(ch[month].inq[i]||0);
+  }
   return allCats.map(cat=>({
     cat,
-    phone:    getValPhone(s,cat),
-    naver:    getVal(s.naver,cat),
-    kakao:    getVal(s.kakao,cat),
-    board:    getVal(s.board,cat),
-    whatsapp: getVal(s.whatsapp,cat),
+    phone:    getVal(s.phone,    cat),
+    naver:    getVal(s.naver,    cat),
+    kakao:    getVal(s.kakao,    cat),
+    board:    getVal(s.board,    cat),
+    whatsapp: getVal(s.whatsapp, cat),
   }));
 }
 
@@ -1952,7 +1959,7 @@ function renderSection02(r) {
 function renderCatChannelGrid(s, month) {
   const grid = document.getElementById('s02-cat-grid');
   grid.innerHTML = '';
-  const data = buildCatChannelData(s, month);
+  const data = buildCatChannelData(s, month); // s = section02
   const catColors = { '모발이식':'#C62828','검사':'#1565C0','탈모치료':'#6A1B9A','SMP':'#E65100','헤어라인':'#00695C','처방전':'#4E342E' };
   data.forEach(({ cat, phone, naver, kakao, board, whatsapp }) => {
     const total = phone + naver + kakao + board + whatsapp;
@@ -1978,7 +1985,7 @@ function renderCatChannelGrid(s, month) {
 function switchS02Month(month) {
   s02ActiveMonth = month;
   document.querySelectorAll('.s02-month-tab').forEach(t => t.classList.toggle('active', t.dataset.month === month));
-  if (currentReport) renderCatChannelGrid(currentReport.section01, month);
+  if (currentReport) renderCatChannelGrid(currentReport.section02, month);
 }
 
 /* ═══════════════════════════════
