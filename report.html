@@ -366,7 +366,7 @@
     <!-- 매출 요약 -->
     <div class="s02-section-label">매출 요약</div>
     <div class="card" style="margin-bottom:28px;">
-      <div class="card-title">과목별 매출 비교 <span style="font-size:11px;color:#6b6b6b;font-weight:400;">(4월 vs 5월)</span></div>
+      <div class="card-title">과목별 매출 비교 <span style="font-size:11px;color:#6b6b6b;font-weight:400;" id="s08-bar-title"></span></div>
       <div class="ch-legend-row" id="lg-s00-rev"></div>
       <div class="chart-wrap" style="height:220px"><canvas id="chart-s00-rev"></canvas></div>
     </div>
@@ -619,15 +619,15 @@
     <div id="s08-cat-cards" style="display:grid;grid-template-columns:repeat(3,1fr);gap:14px;margin-bottom:28px;"></div>
     <div class="s02-charts-grid">
       <div class="card">
-        <div class="card-title">과목별 매출 비교 <span style="font-size:11px;color:#6b6b6b;font-weight:400;">(4월 vs 5월)</span></div>
+        <div class="card-title">과목별 매출 비교 <span style="font-size:11px;color:#6b6b6b;font-weight:400;" id="s08-bar-title"></span></div>
         <div class="ch-legend-row" id="lg-s08-bar"></div>
         <div class="chart-wrap" style="height:250px"><canvas id="chart-s08-bar"></canvas></div>
       </div>
       <div class="card">
         <div class="card-title">매출 비중 <span style="font-size:11px;color:#6b6b6b;font-weight:400;" id="s08-pie-label"></span></div>
         <div class="s02-month-tabs" style="margin-bottom:12px;">
-          <button class="s02-month-tab active" data-month="apr" onclick="switchS08Month('apr')">4월</button>
-          <button class="s02-month-tab" data-month="may" onclick="switchS08Month('may')">5월</button>
+          <button class="s02-month-tab active" data-month="apr" onclick="switchS08Month('apr')" id="s08-tab-apr">4월</button>
+          <button class="s02-month-tab" data-month="may" onclick="switchS08Month('may')" id="s08-tab-may">5월</button>
         </div>
         <div class="chart-wrap" style="height:240px"><canvas id="chart-s08-pie"></canvas></div>
       </div>
@@ -2721,8 +2721,14 @@ function renderSection08(r) {
     }
   });
 
-  // 도넛 레이블 전역 저장
+  // 도넛 레이블 전역 저장 + 탭/제목 동적 처리
   s08LblA = lblA; s08LblM = lblM;
+  const s08bt = document.getElementById('s08-bar-title');
+  if (s08bt) s08bt.textContent = `(${lblA} vs ${lblM})`;
+  const t8a = document.getElementById('s08-tab-apr');
+  const t8m = document.getElementById('s08-tab-may');
+  if (t8a) t8a.textContent = lblA;
+  if (t8m) t8m.textContent = lblM;
   // ── 도넛 초기 렌더
   renderS08Pie(s, s08ActiveMonth);
 
