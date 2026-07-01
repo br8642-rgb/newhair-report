@@ -1130,7 +1130,7 @@ const ALL_REPORTS = [
       revenue: [223611815, 42320000, 45720800, 378005900, 0, 5238000],
       total:    694896515,
     },
-    analysis: '데이터 준비 중',
+    analysis: '총 매출 약 9.59억→6.95억원으로 <b>−27.6% 감소</b> — 하절기 및 휴진 영향.\n<b>HairLap 5.22억→3.78억원(−27.6%) 감소</b>했으나 전체 매출의 54.4%로 비중 유지.\n<b>모발이식 3.30억→2.24억원(−32.1%) 감소</b> — 내원 감소(86→72건) 및 체결 감소(42→38건) 직접 영향.\n헤어라인 0.62억→0.42억원으로 감소, SMP는 0.40억→0.46억원으로 소폭 증가.\n키오머 두 달 모두 매출 없음.',
   },
 },
 /* ── 주간 보고서 ── */
@@ -2628,6 +2628,7 @@ function switchS07CatMonth(month) {
    섹션 08 렌더링 — 매출 현황
 ═══════════════════════════════ */
 let s08ActiveMonth = 'apr';
+let s08LblA = '4월', s08LblM = '5월';
 
 function fmtWon(n) {
   if (n >= 100000000) return (n/100000000).toFixed(2)+'억';
@@ -2679,14 +2680,14 @@ function renderSection08(r) {
           <span class="ck-dot" style="background:${s.catColors[ci]}"></span>
           ${cat}
         </div>
-        <div class="ck-row"><span>4월</span>
+        <div class="ck-row"><span>${lblA}</span>
           <span style="font-size:13px;font-weight:700;color:#1a1a1a;">${fmtWon(av)}</span>
         </div>
         <div class="ck-row" style="margin-bottom:6px;"><span style="color:#bbb;font-size:10px;">비중</span>
           <span style="font-size:11px;color:#888;">${aprShare}%</span>
         </div>
         <hr class="ck-divider">
-        <div class="ck-row"><span>5월</span>
+        <div class="ck-row"><span>${lblM}</span>
           <span style="font-size:13px;font-weight:700;color:#1a1a1a;">${fmtWon(mv)}</span>
         </div>
         <div class="ck-row" style="margin-bottom:6px;"><span style="color:#bbb;font-size:10px;">비중</span>
@@ -2702,13 +2703,13 @@ function renderSection08(r) {
   // ── 막대 비교 (만원 단위)
   const visibleCats = s.cats.filter((_,i) => s.apr.revenue[i]>0 || s.may.revenue[i]>0);
   const visibleIdx  = s.cats.map((_,i)=>i).filter(i => s.apr.revenue[i]>0 || s.may.revenue[i]>0);
-  chLegend('lg-s08-bar', [[C.aprBook,'4월'],[C.mayBook,'5월']]);
+  chLegend('lg-s08-bar', [[C.aprBook,lblA],[C.mayBook,lblM]]);
   if(charts['chart-s08-bar']) charts['chart-s08-bar'].destroy();
   charts['chart-s08-bar'] = new Chart(document.getElementById('chart-s08-bar'), {
     type:'bar',
     data:{ labels: visibleCats, datasets:[
-      { label:'4월', data: visibleIdx.map(i=>Math.round(s.apr.revenue[i]/10000)), backgroundColor:C.aprBook, borderRadius:3 },
-      { label:'5월', data: visibleIdx.map(i=>Math.round(s.may.revenue[i]/10000)), backgroundColor:C.mayBook, borderRadius:3 },
+      { label:lblA, data: visibleIdx.map(i=>Math.round(s.apr.revenue[i]/10000)), backgroundColor:C.aprBook, borderRadius:3 },
+      { label:lblM, data: visibleIdx.map(i=>Math.round(s.may.revenue[i]/10000)), backgroundColor:C.mayBook, borderRadius:3 },
     ]},
     options:{ ...BASE,
       plugins:{ ...BASE.plugins, tooltip:{ ...BASE.plugins.tooltip,
@@ -2720,12 +2721,14 @@ function renderSection08(r) {
     }
   });
 
+  // 도넛 레이블 전역 저장
+  s08LblA = lblA; s08LblM = lblM;
   // ── 도넛 초기 렌더
   renderS08Pie(s, s08ActiveMonth);
 
   // ── 테이블
   mkTable('tbl-s08',
-    ['과목','4월 매출','4월 비중','5월 매출','5월 비중','증감'],
+    ['과목',lblA+' 매출',lblA+' 비중',lblM+' 매출',lblM+' 비중','증감'],
     ['합계', fmtFull(aprTotal), '100%', fmtFull(mayTotal), '100%',
       `<span class="${diff8>=0?'up':'down'}">${diff8>=0?'▲':'▼'} ${fmtWon(Math.abs(diff8))} (${diff8>=0?'+':''}${diffPct}%)</span>`],
     s.cats.map((cat,i) => {
@@ -2741,7 +2744,7 @@ function renderSection08(r) {
 }
 
 function renderS08Pie(s, month) {
-  document.getElementById('s08-pie-label').textContent = month==='apr'?'(4월)':'(5월)';
+  document.getElementById('s08-pie-label').textContent = month==='apr'?`(${s08LblA})`:`(${s08LblM})`;
   const data   = s[month].revenue.filter(v=>v>0);
   const labels = s.cats.filter((_,i)=>s[month].revenue[i]>0);
   const colors = s.catColors.filter((_,i)=>s[month].revenue[i]>0);
