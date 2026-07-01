@@ -439,6 +439,43 @@
     <div class="analysis-box" id="ana-box-st06"><p id="ana-st06"></p></div>
   </div>
 
+  <!-- 섹션 rev08 — 매출 현황 (6월 전용, 5월 보고서의 section-09(내부 property section08)와 별개 패널) -->
+  <div class="section-panel" id="section-rev08">
+    <div class="section-header">
+      <div class="section-tag">Section 08</div>
+      <div class="section-title">매출 현황</div>
+      <div class="section-subtitle" id="srev08-subtitle"></div>
+    </div>
+    <div class="kpi-table-wrap">
+      <div class="kpi-label">핵심 지표 요약</div>
+      <div class="kpi-compare" id="srev08-kpi"></div>
+    </div>
+    <div class="s02-section-label">과목별 매출 현황</div>
+    <div id="srev08-cat-cards" style="display:grid;grid-template-columns:repeat(3,1fr);gap:14px;margin-bottom:28px;"></div>
+    <div class="s02-charts-grid">
+      <div class="card">
+        <div class="card-title">과목별 매출 비교 <span style="font-size:11px;color:#6b6b6b;font-weight:400;">(5월 vs 6월)</span></div>
+        <div class="ch-legend-row" id="lg-rev08-bar"></div>
+        <div class="chart-wrap" style="height:250px"><canvas id="chart-rev08-bar"></canvas></div>
+      </div>
+      <div class="card">
+        <div class="card-title">매출 비중 <span style="font-size:11px;color:#6b6b6b;font-weight:400;" id="srev08-pie-label"></span></div>
+        <div class="s02-month-tabs" style="margin-bottom:12px;">
+          <button class="s02-month-tab active" data-month="may" onclick="switchRev08Month('may')">5월</button>
+          <button class="s02-month-tab" data-month="jun" onclick="switchRev08Month('jun')">6월</button>
+        </div>
+        <div class="chart-wrap" style="height:240px"><canvas id="chart-rev08-pie"></canvas></div>
+      </div>
+    </div>
+    <div class="s02-section-label">과목별 매출 상세</div>
+    <div class="card">
+      <div class="card-title">매출 상세 비교</div>
+      <button class="table-toggle-btn" onclick="toggleTable(this)"><span class="toggle-arrow">▼</span> 표 펼치기</button>
+      <div class="table-collapsible"><div style="overflow-x:auto"><table class="data-table" id="tbl-rev08"></table></div></div>
+    </div>
+    <div class="analysis-box" id="ana-box-rev08"><p id="ana-rev08"></p></div>
+  </div>
+
   <!-- 섹션 03 — DB 현황 -->
   <div class="section-panel" id="section-03">
     <div class="section-header">
@@ -1259,6 +1296,13 @@ const ALL_REPORTS = [
     },
     analysis: '<b>최무근은 5월·6월 모두 체결률 77%로 최고 수준 유지</b> — 탈모치료 단일 담당 구조에서 안정적 성과.\n<b>전소영은 56%→72%(+16%p)로 가장 큰 폭으로 개선</b>, 특히 헤어라인 22%→71%로 급상승.\n신유지(75%→64%)·손예진(67%→62%)·조영은(61%→56%)은 소폭 하락했지만 순위 변동은 크지 않음.\n<b>김승희는 5월 25%(내원 8건) 이후 6월 내원 자체가 0건</b>으로 활동 여부 확인이 필요.',
   },
+  revenueStatus: {
+    cats: ['모발이식','헤어라인','SMP','HairLap','키오머','기타'],
+    catColors: ['#C62828','#1565C0','#6A1B9A','#E65100','#00695C','#4E342E'],
+    may: { revenue: [330117200,61683380,39663000,522073900,0,5863000], total: 959400480 },
+    jun: { revenue: [223611815,42320000,45720800,378005900,0,5238000], total: 694896515 },
+    analysis: '전체 매출 959,400,480원→694,896,515원으로 <b>27.6% 감소</b>.\nHairLap이 522,073,900원→378,005,900원(−27.6%)으로 <b>전체 매출의 절반 이상(약 54%) 비중을 유지한 채 동반 감소</b>.\n<b>모발이식이 330,117,200원→223,611,815원(−32.3%)으로 감소율이 가장 큼</b>, 헤어라인도 61,683,380원→42,320,000원(−31.4%)으로 비슷한 폭으로 줄어듦.\n<b>SMP만 39,663,000원→45,720,800원(+15.3%)으로 유일하게 증가</b> — 앞선 성사현황에서 확인된 SMP 체결률 개선(71%→75%)과 흐름이 일치.\n기타 매출은 5,863,000원→5,238,000원(−10.7%)으로 소폭 감소, 키오머는 두 달 다 매출 0원으로 미운영 상태.',
+  },
 },
 /* ── 주간 보고서 ── */
 {
@@ -1767,6 +1811,8 @@ function availableMonthlySections(r) {
   has(!!r.closingStatus, 'cs04', '성사 현황', '04');
   has(!!r.doctorStatus, 'ds05', '원장님 성사 현황', '05');
   has(!!r.staffStatus, 'st06', '직원별 성사율', '06');
+  // (내일 유입경로 분석 추가 예정 — 이 위치, has(!!r.trafficStatus, 'tr07', '유입경로 분석', '07')로 삽입)
+  has(!!r.revenueStatus, 'rev08', '매출 현황', '08');
   has(!!r.section04,   '05', '성사 현황');
   has(!!r.section05,   '06', '원장님 성사율');
   has(!!r.section06,   '07', '직원별 성사율');
@@ -2270,6 +2316,7 @@ function renderReport(r) {
     if (r.closingStatus) { try { renderSectionClosing(r); } catch(e) { console.warn('성사현황(cs04) 렌더링 보류:', e); } }
     if (r.doctorStatus) { try { renderSectionDoctor(r); } catch(e) { console.warn('원장님 성사현황(ds05) 렌더링 보류:', e); } }
     if (r.staffStatus) { try { renderSectionStaff(r); } catch(e) { console.warn('직원별 성사율(st06) 렌더링 보류:', e); } }
+    if (r.revenueStatus) { try { renderSectionRevenue(r); } catch(e) { console.warn('매출현황(rev08) 렌더링 보류:', e); } }
     switchSection('01');
     return;
   }
@@ -2692,6 +2739,117 @@ function switchSt06Month(month) {
   st06ActiveMonth = month;
   document.querySelectorAll('[onclick^="switchSt06"]').forEach(t => t.classList.toggle('active', t.dataset.month === month));
   if(currentReport) renderSt06Detail(currentReport.staffStatus, month);
+}
+
+/* ═══════════════════════════════
+   섹션 rev08 렌더링 — 매출 현황 (6월 전용)
+═══════════════════════════════ */
+let rev08ActiveMonth = 'may';
+
+function renderSectionRevenue(r) {
+  const s = r.revenueStatus;
+  document.getElementById('srev08-subtitle').textContent = r.meta.compare + ' · 진료과목별 매출 현황';
+
+  const mayTotal = s.may.total, junTotal = s.jun.total;
+  const diff8 = junTotal - mayTotal;
+  const diffPct = ((diff8 / mayTotal) * 100).toFixed(1);
+
+  function kpiItem(label, av, mv) {
+    const d = mv - av, cls = d>0?'up':d<0?'down':'flat';
+    const pctv = ((d/av)*100).toFixed(1);
+    const arrow = d>0?`▲ ${fmtWon(Math.abs(d))}`:d<0?`▼ ${fmtWon(Math.abs(d))}`:'— 0';
+    return `<div class="kpi-item"><div class="kpi-item-label">${label}</div><div class="kpi-row">
+      <div class="kpi-month"><span class="kpi-month-label">5월</span><span class="kpi-month-val">${fmtWon(av)}</span></div>
+      <span class="kpi-arrow">→</span>
+      <div class="kpi-month"><span class="kpi-month-label">6월</span><span class="kpi-month-val">${fmtWon(mv)}</span></div>
+      <span class="kpi-diff ${cls}">${arrow} (${d>=0?'+':''}${pctv}%)</span>
+    </div></div>`;
+  }
+  document.getElementById('srev08-kpi').innerHTML = kpiItem('총 매출', mayTotal, junTotal);
+
+  const cards = document.getElementById('srev08-cat-cards');
+  cards.innerHTML = '';
+  s.cats.forEach((cat, ci) => {
+    const av = s.may.revenue[ci], mv = s.jun.revenue[ci];
+    const d = mv - av;
+    const cls = d>0?'up':d<0?'down':'flat';
+    const arrow = d>0?`▲ ${fmtWon(Math.abs(d))}`:d<0?`▼ ${fmtWon(Math.abs(d))}`:'— 변동없음';
+    const mayShare = av>0 ? ((av/mayTotal)*100).toFixed(1) : '0.0';
+    const junShare = mv>0 ? ((mv/junTotal)*100).toFixed(1) : '0.0';
+    cards.innerHTML += `
+      <div class="ch-kpi-card">
+        <div class="ck-name"><span class="ck-dot" style="background:${s.catColors[ci]}"></span>${cat}</div>
+        <div class="ck-row"><span>5월</span><span style="font-size:13px;font-weight:700;color:#1a1a1a;">${fmtWon(av)}</span></div>
+        <div class="ck-row" style="margin-bottom:6px;"><span style="color:#bbb;font-size:10px;">비중</span><span style="font-size:11px;color:#888;">${mayShare}%</span></div>
+        <hr class="ck-divider">
+        <div class="ck-row"><span>6월</span><span style="font-size:13px;font-weight:700;color:#1a1a1a;">${fmtWon(mv)}</span></div>
+        <div class="ck-row" style="margin-bottom:6px;"><span style="color:#bbb;font-size:10px;">비중</span><span style="font-size:11px;color:#888;">${junShare}%</span></div>
+        <hr class="ck-divider">
+        <div class="ck-row"><span>증감</span><span class="ck-diff ${cls}" style="font-size:11px;">${arrow}</span></div>
+      </div>`;
+  });
+
+  const visibleCats = s.cats.filter((_,i) => s.may.revenue[i]>0 || s.jun.revenue[i]>0);
+  const visibleIdx  = s.cats.map((_,i)=>i).filter(i => s.may.revenue[i]>0 || s.jun.revenue[i]>0);
+  chLegend('lg-rev08-bar', [[C.aprBook,'5월'],[C.mayBook,'6월']]);
+  if(charts['chart-rev08-bar']) charts['chart-rev08-bar'].destroy();
+  charts['chart-rev08-bar'] = new Chart(document.getElementById('chart-rev08-bar'), {
+    type:'bar',
+    data:{ labels: visibleCats, datasets:[
+      { label:'5월', data: visibleIdx.map(i=>Math.round(s.may.revenue[i]/10000)), backgroundColor:C.aprBook, borderRadius:3 },
+      { label:'6월', data: visibleIdx.map(i=>Math.round(s.jun.revenue[i]/10000)), backgroundColor:C.mayBook, borderRadius:3 },
+    ]},
+    options:{ ...BASE,
+      plugins:{ ...BASE.plugins, tooltip:{ ...BASE.plugins.tooltip,
+        callbacks:{ label: c => ` ${c.dataset.label}: ${c.parsed.y.toLocaleString()}만원` } }},
+      scales:{ ...BASE.scales, y:{ ...BASE.scales.y, ticks:{ ...BASE.scales.y.ticks, callback: v => v.toLocaleString()+'만' } } }
+    }
+  });
+
+  renderRev08Pie(s, rev08ActiveMonth);
+
+  mkTable('tbl-rev08',
+    ['과목','5월 매출','5월 비중','6월 매출','6월 비중','증감'],
+    ['합계', fmtFull(mayTotal), '100%', fmtFull(junTotal), '100%',
+      `<span class="${diff8>=0?'up':'down'}">${diff8>=0?'▲':'▼'} ${fmtWon(Math.abs(diff8))} (${diff8>=0?'+':''}${diffPct}%)</span>`],
+    s.cats.map((cat,i) => {
+      const av=s.may.revenue[i], mv=s.jun.revenue[i], d=mv-av;
+      const aShare=av>0?((av/mayTotal)*100).toFixed(1)+'%':'—';
+      const mShare=mv>0?((mv/junTotal)*100).toFixed(1)+'%':'—';
+      const dStr = d===0?'— 0':`<span class="${d>0?'up':'down'}">${d>0?'▲':'▼'} ${fmtWon(Math.abs(d))}</span>`;
+      return [cat, av>0?fmtFull(av):'—', aShare, mv>0?fmtFull(mv):'—', mShare, dStr];
+    })
+  );
+
+  renderAnalysis('ana-rev08', s.analysis, r);
+}
+
+function renderRev08Pie(s, month) {
+  document.getElementById('srev08-pie-label').textContent = month==='may'?'(5월)':'(6월)';
+  const data   = s[month].revenue.filter(v=>v>0);
+  const labels = s.cats.filter((_,i)=>s[month].revenue[i]>0);
+  const colors = s.catColors.filter((_,i)=>s[month].revenue[i]>0);
+  const total  = s[month].total;
+
+  if(charts['chart-rev08-pie']) charts['chart-rev08-pie'].destroy();
+  charts['chart-rev08-pie'] = new Chart(document.getElementById('chart-rev08-pie'), {
+    type:'doughnut',
+    data:{ labels, datasets:[{ data, backgroundColor:colors, borderWidth:2, borderColor:'#fff' }]},
+    options:{
+      responsive:true, maintainAspectRatio:false, cutout:'58%',
+      plugins:{
+        legend:{ display:true, position:'bottom', labels:{ font:{size:11,family:'Pretendard'}, color:'#555', boxWidth:10, padding:8 }},
+        tooltip:{ titleFont:{size:13,family:'Pretendard'}, bodyFont:{size:13,family:'Pretendard'},
+          callbacks:{ label: c => ` ${c.label}: ${fmtWon(c.parsed)} (${((c.parsed/total)*100).toFixed(1)}%)` }}
+      }
+    }
+  });
+}
+
+function switchRev08Month(month) {
+  rev08ActiveMonth = month;
+  document.querySelectorAll('[onclick^="switchRev08Month"]').forEach(t=>t.classList.toggle('active',t.dataset.month===month));
+  if(currentReport) renderRev08Pie(currentReport.revenueStatus, month);
 }
 
 function renderSection03(r) {
