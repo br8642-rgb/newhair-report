@@ -452,14 +452,14 @@
     </div>
     <div class="s02-section-label">원장님 체결률 비교</div>
     <div class="card" style="margin-bottom:16px;">
-      <div class="card-title">전체 체결률 비교 <span style="font-size:11px;color:#6b6b6b;font-weight:400;">(4월 vs 5월, %)</span></div>
+      <div class="card-title">전체 체결률 비교 <span style="font-size:11px;color:#6b6b6b;font-weight:400;" id="s05-rate-title"></span></div>
       <div class="chart-legend" id="lg-s05-rate"></div>
       <div class="chart-wrap" style="height:200px"><canvas id="chart-s05-rate"></canvas></div>
     </div>
     <div class="s02-section-label">원장님 과목 상세</div>
     <div class="s02-month-tabs">
-      <button class="s02-month-tab active" data-month="apr" onclick="switchS05Month('apr')">4월</button>
-      <button class="s02-month-tab" data-month="may" onclick="switchS05Month('may')">5월</button>
+      <button class="s02-month-tab active" data-month="apr" onclick="switchS05Month('apr')" id="s05-tab-apr">4월</button>
+      <button class="s02-month-tab" data-month="may" onclick="switchS05Month('may')" id="s05-tab-may">5월</button>
     </div>
     <div id="s05-detail-grid"></div>
     <div class="analysis-box" id="ana-box-s05"><p id="ana-s05"></p></div>
@@ -484,7 +484,7 @@
     <!-- 체결률 비교 그래프 -->
     <div class="s02-section-label">전체 체결률 비교</div>
     <div class="card" style="margin-bottom:16px;">
-      <div class="card-title">직원별 체결률 비교 <span style="font-size:11px;color:#6b6b6b;font-weight:400;">(4월 vs 5월, %)</span></div>
+      <div class="card-title">직원별 체결률 비교 <span style="font-size:11px;color:#6b6b6b;font-weight:400;" id="s06-rate-title"></span></div>
       <div class="ch-legend-row" id="lg-s06-rate"></div>
       <div class="chart-wrap" style="height:220px"><canvas id="chart-s06-rate"></canvas></div>
     </div>
@@ -514,8 +514,8 @@
     <!-- 직원별 과목 분포 (탭 전환) -->
     <div class="s02-section-label">직원별 과목 성과 상세</div>
     <div class="s02-month-tabs">
-      <button class="s02-month-tab active" data-month="apr" onclick="switchS06Month('apr')">4월</button>
-      <button class="s02-month-tab" data-month="may" onclick="switchS06Month('may')">5월</button>
+      <button class="s02-month-tab active" data-month="apr" onclick="switchS06Month('apr')" id="s06-tab-apr">4월</button>
+      <button class="s02-month-tab" data-month="may" onclick="switchS06Month('may')" id="s06-tab-may">5월</button>
     </div>
     <div class="s06-staff-grid" id="s06-detail-grid"></div>
 
@@ -550,13 +550,13 @@
       <div class="card">
         <div class="card-title">응답수 비중 분포 <span style="font-size:11px;color:#6b6b6b;font-weight:400;" id="s07-donut-label"></span></div>
         <div class="s02-month-tabs" style="margin-bottom:12px;">
-          <button class="s02-month-tab active" data-month="apr" onclick="switchS07Month('apr')">4월</button>
-          <button class="s02-month-tab" data-month="may" onclick="switchS07Month('may')">5월</button>
+          <button class="s02-month-tab active" data-month="apr" onclick="switchS07Month('apr')" id="s07-tab-apr">4월</button>
+          <button class="s02-month-tab" data-month="may" onclick="switchS07Month('may')" id="s07-tab-may">5월</button>
         </div>
         <div class="chart-wrap" style="height:260px"><canvas id="chart-s07-donut"></canvas></div>
       </div>
       <div class="card">
-        <div class="card-title">4월 vs 5월 상위경로 응답수 비교 <span style="font-size:11px;color:#6b6b6b;font-weight:400;">(중복 포함)</span></div>
+        <div class="card-title">상위경로 응답수 비교 <span style="font-size:11px;color:#6b6b6b;font-weight:400;" id="s07-bar-title"></span></div>
         <div class="ch-legend-row" id="lg-s07-bar"></div>
         <div class="chart-wrap" style="height:300px"><canvas id="chart-s07-bar"></canvas></div>
       </div>
@@ -565,7 +565,7 @@
     <!-- 전환율 비교 -->
     <div class="s02-section-label">유입경로별 성사 전환율</div>
     <div class="card" style="margin-bottom:16px;">
-      <div class="card-title">전환율 비교 <span style="font-size:11px;color:#6b6b6b;font-weight:400;">(4월 vs 5월, % — 경로별 상담수 기준, 5건 이상 경로)</span></div>
+      <div class="card-title">전환율 비교 <span style="font-size:11px;color:#6b6b6b;font-weight:400;" id="s07-conv-title"></span></div>
       <div class="ch-legend-row" id="lg-s07-rate"></div>
       <div class="chart-wrap" style="height:260px"><canvas id="chart-s07-rate"></canvas></div>
     </div>
@@ -587,8 +587,8 @@
     <!-- 과목별 경로 분포 -->
     <div class="s02-section-label">진료과목별 주요 유입경로</div>
     <div class="s02-month-tabs">
-      <button class="s02-month-tab active" data-month="apr" onclick="switchS07CatMonth('apr')">4월</button>
-      <button class="s02-month-tab" data-month="may" onclick="switchS07CatMonth('may')">5월</button>
+      <button class="s02-month-tab active" data-month="apr" onclick="switchS07CatMonth('apr')" id="s07cat-tab-apr">4월</button>
+      <button class="s02-month-tab" data-month="may" onclick="switchS07CatMonth('may')" id="s07cat-tab-may">5월</button>
     </div>
     <div class="cat-channel-grid" id="s07-cat-grid" style="grid-template-columns:repeat(3,1fr);"></div>
 
@@ -1075,7 +1075,7 @@ const ALL_REPORTS = [
       contract: [[35,8,2,8,0],[0,0,19,43,0],[3,0,0,0,0],[0,0,0,0,0]],
       rate:     [[59,47,100,80,0],[0,0,73,86,0],[38,0,0,0,0],[0,0,0,0,0]],
     },
-    analysis: '데이터 준비 중',
+    analysis: '전체 체결률 64%→65%로 소폭 개선, 체결 건수 146→118건으로 <b>−19.2% 감소</b> — 내원 자체 감소(229→181건) 영향.\n<b>모발이식 49%→53%로 개선</b>, 헤어라인 35%→42%로 상승 — 두 과목 모두 전환율 개선.\n탈모치료 82%→84%로 안정적 고전환율 유지.\nSMP 71%→75%로 소폭 개선.',
   },
   section06: {
     staff: ['전소영','손예진','신유지','조영은','최무근','김승희'],
@@ -1092,7 +1092,7 @@ const ALL_REPORTS = [
       contract: [[8,5,0,13],[14,1,0,11],[4,1,0,13],[5,0,1,13],[0,0,20,0],[0,0,0,0]],
       rate:     [[67,71,0,76],[56,20,0,92],[36,25,0,100],[36,0,50,81],[0,0,77,0],[0,0,0,0]],
     },
-    analysis: '데이터 준비 중',
+    analysis: '<b>박주성 원장님 체결률 82% 유지</b> — 탈모치료 86% 안정적 고전환율.\n<b>김진오 원장님 47%→60%로 크게 개선</b> — 모발이식 49%→59%, 탈모치료 50%→80%로 전 과목 상승.\n김진욱 원장님 50%→30%로 하락 — 내원 8→10건 증가에도 체결 4→3건으로 감소, 상담 집중 지원 필요.\n조준상 원장님 38%→0% — 내원 8→5건으로 감소, 체결 0건.',
   },
   section07: {
     cats: ['모발이식','헤어라인','SMP','탈모치료','검사','처방'],
@@ -1111,7 +1111,7 @@ const ALL_REPORTS = [
       byCat: [[0,0,0,0,0,0],[0,0,0,0,0,0],[0,0,0,0,0,0],[0,0,0,0,0,0],[0,0,0,0,0,0],[0,0,0,0,0,0],[0,0,0,0,0,0],[0,0,0,0,0,0],[0,0,0,0,0,0],[0,0,0,0,0,0],[0,0,0,0,0,0],[0,0,0,0,0,0],[0,0,0,0,0,0],[0,0,0,0,0,0],[0,0,0,0,0,0],[0,0,0,0,0,0],[0,0,0,0,0,0],[0,0,0,0,0,0],[0,0,0,0,0,0],[0,0,0,0,0,0],[0,0,0,0,0,0],[0,0,0,0,0,0],[0,0,0,0,0,0],[0,0,0,0,0,0],[0,0,0,0,0,0],[0,0,0,0,0,0],[0,0,0,0,0,0]],
       conv: { consult:[0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0], surgery:[0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0], treat:[0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0], total:[0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0], rate:[0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0] },
     },
-    analysis: '데이터 준비 중',
+    analysis: '데이터 준비 중 — 6월 유입경로 데이터 입력 후 업데이트 예정.',
   },
   section09: {
     wins: ['데이터 준비 중'],
@@ -2065,6 +2065,7 @@ function renderReport(r) {
    섹션 05 렌더링
 ═══════════════════════════════ */
 let s05ActiveMonth = 'apr';
+let s05LblA = '4월', s05LblM = '5월'; // 동적 레이블 (renderSection05에서 설정)
 
 function renderSection05(r) {
   const s = r.section05;
@@ -2089,6 +2090,7 @@ function renderSection05(r) {
       </div>`;
   });
   const [lblA05, lblM05] = r.meta.compare.replace('2026년 ','').split(' vs ');
+  s05LblA = lblA05; s05LblM = lblM05; // 전역에 저장
   legend('lg-s05-rate', [[C.aprInq,lblA05+' 체결률'],[C.mayInq,lblM05+' 체결률']]);
   if(charts['chart-s05-rate']) charts['chart-s05-rate'].destroy();
   charts['chart-s05-rate'] = new Chart(document.getElementById('chart-s05-rate'), {
@@ -2099,6 +2101,14 @@ function renderSection05(r) {
     options:{...BASE, scales:{...BASE.scales,y:{...BASE.scales.y,max:105,ticks:{...BASE.scales.y.ticks,callback:v=>v+'%'}}},
       plugins:{...BASE.plugins,tooltip:{...BASE.plugins.tooltip,callbacks:{label:c=>' '+c.dataset.label+': '+c.parsed.y+'%'}}}}
   });
+  // 탭 버튼 레이블 동적으로
+  const tabApr = document.getElementById('s05-tab-apr');
+  const tabMay = document.getElementById('s05-tab-may');
+  if (tabApr) tabApr.textContent = lblA05;
+  if (tabMay) tabMay.textContent = lblM05;
+  // 차트 제목 동적으로
+  const s05rt = document.getElementById('s05-rate-title');
+  if (s05rt) s05rt.textContent = `(${lblA05} vs ${lblM05}, %)`;
   renderS05Detail(s, s05ActiveMonth, drColors);
   renderAnalysis('ana-s05', s.analysis);
 }
@@ -2318,6 +2328,13 @@ function renderSection06(r) {
   );
 
   // ── 직원별 과목 상세 그리드
+  // 카드 제목 + 탭 레이블 동적으로
+  const s06rt = document.getElementById('s06-rate-title');
+  if (s06rt) s06rt.textContent = `(${lblA} vs ${lblM}, %)`;
+  const t6a = document.getElementById('s06-tab-apr');
+  const t6m = document.getElementById('s06-tab-may');
+  if (t6a) t6a.textContent = lblA;
+  if (t6m) t6m.textContent = lblM;
   renderS06Detail(s, s06ActiveMonth);
   renderAnalysis('ana-s06', s.analysis);
 }
@@ -2485,6 +2502,19 @@ function renderSection07(r) {
      mkDS(lblM+' 치료', surgRoutes.map(r=>r.mayT), C.mayInq)]);
 
   // ── 과목별 경로 분포
+  // 카드 제목 + 탭 레이블 동적으로
+  const s07bt = document.getElementById('s07-bar-title');
+  const s07ct = document.getElementById('s07-conv-title');
+  if (s07bt) s07bt.textContent = `(${lblA} vs ${lblM}, 중복 포함)`;
+  if (s07ct) s07ct.textContent = `(${lblA} vs ${lblM}, % — 경로별 상담수 기준, 5건 이상 경로)`;
+  const t7a = document.getElementById('s07-tab-apr');
+  const t7m = document.getElementById('s07-tab-may');
+  const t7ca = document.getElementById('s07cat-tab-apr');
+  const t7cm = document.getElementById('s07cat-tab-may');
+  if (t7a) t7a.textContent = lblA;
+  if (t7m) t7m.textContent = lblM;
+  if (t7ca) t7ca.textContent = lblA;
+  if (t7cm) t7cm.textContent = lblM;
   renderS07CatGrid(s, s07CatMonth);
 
   // ── 전체 테이블
