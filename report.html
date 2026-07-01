@@ -2791,17 +2791,19 @@ function renderSectionRevenue(r) {
 
   const visibleCats = s.cats.filter((_,i) => s.may.revenue[i]>0 || s.jun.revenue[i]>0);
   const visibleIdx  = s.cats.map((_,i)=>i).filter(i => s.may.revenue[i]>0 || s.jun.revenue[i]>0);
-  chLegend('lg-rev08-bar', [[C.aprBook,'5월'],[C.mayBook,'6월']]);
+  const visibleColors = visibleIdx.map(i => s.catColors[i]);
+  const lightColors = visibleColors.map(c => lightenHex(c, 0.55));
+  chLegend('lg-rev08-bar', [['#BDBDBD','5월 (연한색)'], ['#616161','6월 (진한색)']]);
   if(charts['chart-rev08-bar']) charts['chart-rev08-bar'].destroy();
   charts['chart-rev08-bar'] = new Chart(document.getElementById('chart-rev08-bar'), {
     type:'bar',
     data:{ labels: visibleCats, datasets:[
-      { label:'5월', data: visibleIdx.map(i=>Math.round(s.may.revenue[i]/10000)), backgroundColor:C.aprBook, borderRadius:3 },
-      { label:'6월', data: visibleIdx.map(i=>Math.round(s.jun.revenue[i]/10000)), backgroundColor:C.mayBook, borderRadius:3 },
+      { label:'5월', data: visibleIdx.map(i=>Math.round(s.may.revenue[i]/10000)), backgroundColor:lightColors, borderRadius:3 },
+      { label:'6월', data: visibleIdx.map(i=>Math.round(s.jun.revenue[i]/10000)), backgroundColor:visibleColors, borderRadius:3 },
     ]},
     options:{ ...BASE,
       plugins:{ ...BASE.plugins, tooltip:{ ...BASE.plugins.tooltip,
-        callbacks:{ label: c => ` ${c.dataset.label}: ${c.parsed.y.toLocaleString()}만원` } }},
+        callbacks:{ label: c => ` ${c.label} ${c.dataset.label}: ${c.parsed.y.toLocaleString()}만원` } }},
       scales:{ ...BASE.scales, y:{ ...BASE.scales.y, ticks:{ ...BASE.scales.y.ticks, callback: v => v.toLocaleString()+'만' } } }
     }
   });
@@ -3270,6 +3272,13 @@ function fmtWon(n) {
 }
 function fmtFull(n) {
   return n.toLocaleString()+'원';
+}
+// hex 색상을 흰색과 섞어 밝게(연하게) 만드는 헬퍼 — 막대그래프에서 과목색은 유지하되 월 구분은 명암으로 표시
+function lightenHex(hex, amount) {
+  const h = hex.replace('#','');
+  const r = parseInt(h.substring(0,2),16), g = parseInt(h.substring(2,4),16), b = parseInt(h.substring(4,6),16);
+  const mix = v => Math.round(v + (255 - v) * amount);
+  return `rgb(${mix(r)},${mix(g)},${mix(b)})`;
 }
 
 function renderSection08(r) {
