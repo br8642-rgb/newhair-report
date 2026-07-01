@@ -1560,7 +1560,7 @@ function availableMonthlySections(r) {
   const has = (cond, id, label) => { if (cond) list.push({id, label}); };
   has(r.section01 && r.section01.total, '00', '종합 현황');
   has(r.section01 && r.section01.phone, '01', (r.section01 && r.section01.sectionName) || '진료과목별 문의·예약');
-  has((r.section01 && r.section01.naver) || !!r.section02, '02', '채널별 문의·예약');
+  has((r.section01 && r.section01.naver) || !!(r.section02 && r.section02.kakao), '02', '채널별 문의·예약');
   has(!!r.section03db, '03', 'DB 현황');
   has(!!r.section03,   '04', '내원 현황');
   has(!!r.section04,   '05', '성사 현황');
@@ -1897,7 +1897,14 @@ function renderS02Whatsapp(wa) {
 }
 
 function renderSection02(r) {
-  if (r.section02) { renderSection02Partial(r); return; }
+  if (r.section02 && r.section02.kakao) { renderSection02Partial(r); return; }
+  // 이전에 6월(부분) 보고서를 봤을 때 숨겨졌을 수 있는 5월 전용 블록들을 복원
+  document.querySelectorAll('[data-channel="s02-full"]').forEach(el => { el.style.display = ''; });
+  // 6월용으로 추가된 채널 상세 카드/종합분석 블록은 5월 보고서에서는 사용하지 않으므로 숨김
+  ['kakao','naver','board','whatsapp'].forEach(key => {
+    document.querySelectorAll('[data-channel="s02-'+key+'"]').forEach(el => { el.style.display = 'none'; });
+  });
+  document.querySelectorAll('[data-channel="s02-summary"]').forEach(el => { el.style.display = 'none'; });
   const s = r.section01;
   document.getElementById('s02-subtitle').textContent = r.meta.compare + ' · 채널별 문의·예약 현황 및 과목 분포';
   const kpiGrid = document.getElementById('s02-kpi');
