@@ -178,7 +178,7 @@
   <div class="section-panel" id="section-01">
     <div class="section-header">
       <div class="section-tag">Section 01</div>
-      <div class="section-title">진료과목별 문의·예약</div>
+      <div class="section-title" id="s01-title">진료과목별 문의·예약</div>
       <div class="section-subtitle" id="s01-subtitle"></div>
     </div>
     <div class="kpi-table-wrap">
@@ -978,6 +978,7 @@ const ALL_REPORTS = [
     compare: '2026년 5월 vs 6월',
   },
   section01: {
+    sectionName: '전화 현황',
     cats: ['이식','헤어','SMP','치료','검사','처방전','기타'],
     phone: {
       may: { inq:[101,21,21,44,222,21,1], book:[86,20,16,40,214,21,0], rate:[85,95,76,91,96,100,0] },
@@ -1484,6 +1485,24 @@ const NAV_SECTIONS = {
   ],
 };
 
+// 보고서에 실제로 데이터가 채워진 섹션만 골라 네비게이션에 표시
+function availableMonthlySections(r) {
+  const list = [];
+  const has = (cond, id, label) => { if (cond) list.push({id, label}); };
+  has(r.section01 && r.section01.total, '00', '종합 현황');
+  has(r.section01 && r.section01.phone, '01', (r.section01 && r.section01.sectionName) || '진료과목별 문의·예약');
+  has(r.section01 && r.section01.naver, '02', '채널별 문의·예약');
+  has(!!r.section03db, '03', 'DB 현황');
+  has(!!r.section03,   '04', '내원 현황');
+  has(!!r.section04,   '05', '성사 현황');
+  has(!!r.section05,   '06', '원장님 성사율');
+  has(!!r.section06,   '07', '직원별 성사율');
+  has(!!r.section07,   '08', '유입경로 분석');
+  has(!!r.section08,   '09', '매출 현황');
+  has(!!r.section09,   '10', '종합 리뷰');
+  return list;
+}
+
 let isEditor = false;
 let currentReport = null;
 let s02ActiveMonth = 'apr';
@@ -1500,9 +1519,9 @@ function checkAuth() {
   document.body.style.display = '';
 }
 
-function buildNav(activeId, type) {
+function buildNav(activeId, type, sectionsOverride) {
   const nav = document.getElementById('top-nav');
-  const sections = NAV_SECTIONS[type] || NAV_SECTIONS.monthly;
+  const sections = sectionsOverride || NAV_SECTIONS[type] || NAV_SECTIONS.monthly;
   nav.innerHTML = `<img src="assets/logo.png" class="nav-logo" alt="뉴헤어"><div class="nav-divider"></div>`;
   sections.forEach(s => {
     const a = document.createElement('a');
@@ -1795,16 +1814,25 @@ function renderReport(r) {
     return;
   }
 
-  buildNav('00', 'monthly');
+  const monthlySections = availableMonthlySections(r);
+  const firstSectionId = monthlySections[0] ? monthlySections[0].id : '00';
+  buildNav(firstSectionId, 'monthly', monthlySections);
   // 주간 섹션 숨기기
   document.querySelectorAll('.section-panel[id^="section-w"]').forEach(p => p.classList.remove('active'));
-  // 월간 첫 섹션 활성화
+  // 월간 첫 섹션(데이터가 있는 섹션 중 첫번째) 활성화
   document.querySelectorAll('.section-panel').forEach(p => p.classList.remove('active'));
-  const fm = document.getElementById('section-00');
+  const fm = document.getElementById('section-' + firstSectionId);
   if (fm) fm.classList.add('active');
 
   const s=r.section01;
-  document.getElementById('s01-subtitle').textContent=r.meta.compare+' · 전화 / 네이버 / 플친 / 게시판 / 왓츠앱 · 엑셀 데이터 기준';
+  document.getElementById('s01-title').textContent = s.sectionName || '진료과목별 문의·예약';
+  const availableChannels = [];
+  if (s.phone) availableChannels.push('전화');
+  if (s.naver) availableChannels.push('네이버');
+  if (s.kakao) availableChannels.push('플친');
+  if (s.board) availableChannels.push('게시판');
+  if (s.whatsapp) availableChannels.push('왓츠앱');
+  document.getElementById('s01-subtitle').textContent = r.meta.compare + ' · ' + availableChannels.join(' / ') + ' · 엑셀 데이터 기준';
 
   if (!s.naver) {
     // 전화 데이터만 준비된 상태 — 전화 카드만 렌더링, 나머지는 데이터 들어오는 대로 추가
