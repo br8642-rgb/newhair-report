@@ -2219,6 +2219,10 @@ function renderSection07(r) {
   // ── KPI
   const aprTotal = s.apr.total, mayTotal = s.may.total;
   const aprConv = s.apr.conv.total.reduce((a,b)=>a+b,0);
+  if (!s.may || !s.may.total || s.may.total === 0) {
+    document.getElementById('s07-kpi') && (document.getElementById('s07-kpi').innerHTML = '<div style="padding:20px;color:#999;text-align:center;">유입경로 데이터 준비 중</div>');
+    return;
+  }
   const mayConv = s.may.conv.total.reduce((a,b)=>a+b,0);
   const aprRate = Math.round(aprConv / s.apr.conv.consult.reduce((a,b)=>a+b,0) * 100);
   const mayRate = Math.round(mayConv / s.may.conv.consult.reduce((a,b)=>a+b,0) * 100);
@@ -2405,6 +2409,7 @@ let s08ActiveMonth = 'apr';
 
 function fmtWon(n) {
   if (n >= 100000000) return (n/100000000).toFixed(2)+'억';
+  if (!n && n !== 0) return '—';
   if (n >= 10000)     return Math.round(n/10000).toLocaleString()+'만';
   return n.toLocaleString()+'원';
 }
@@ -2550,24 +2555,25 @@ function renderSection09(r) {
 
   // ── 월별 총평 카드 (4월/5월 핵심 수치 자동 집계)
   const s1 = r.section01.total, s3 = r.section03, s4 = r.section04, s8 = r.section08;
+  const _apr = s1.total_apr || {}, _may = s1.total_may || {};
   const summaries = [
     {
-      month: '4월', color: '#EFF6FF', border: '#BFDBFE',
+      month: '4월 (전월)', color: '#EFF6FF', border: '#BFDBFE',
       items: [
-        { label:'총 문의',     val: s1.total_apr.inq + '건' },
-        { label:'총 예약',     val: s1.total_apr.book + '건 (예약률 ' + s1.total_apr.rate + '%)' },
-        { label:'내원',        val: s3.apr.visit + '건' },
-        { label:'성사 체결',   val: s4.apr.total.contract + '건 (체결률 ' + s4.apr.total.rate + '%)' },
+        { label:'총 문의',     val: (_apr.inq||'—') + '건' },
+        { label:'총 예약',     val: (_apr.book||'—') + '건 (예약률 ' + (_apr.rate||'—') + '%)' },
+        { label:'내원',        val: (s3.apr.visit||'—') + '건' },
+        { label:'성사 체결',   val: (s4.apr.total.contract||'—') + '건 (체결률 ' + (s4.apr.total.rate||'—') + '%)' },
         { label:'총 매출',     val: fmtWon(s8.apr.total) },
       ]
     },
     {
-      month: '5월', color: '#EFF6FF', border: '#1565C0',
+      month: '5월 (당월)', color: '#EFF6FF', border: '#1565C0',
       items: [
-        { label:'총 문의',     val: s1.total_may.inq + '건' },
-        { label:'총 예약',     val: s1.total_may.book + '건 (예약률 ' + s1.total_may.rate + '%)' },
-        { label:'내원',        val: s3.may.visit + '건' },
-        { label:'성사 체결',   val: s4.may.total.contract + '건 (체결률 ' + s4.may.total.rate + '%)' },
+        { label:'총 문의',     val: (_may.inq||'—') + '건' },
+        { label:'총 예약',     val: (_may.book||'—') + '건 (예약률 ' + (_may.rate||'—') + '%)' },
+        { label:'내원',        val: (s3.may.visit||'—') + '건' },
+        { label:'성사 체결',   val: (s4.may.total.contract||'—') + '건 (체결률 ' + (s4.may.total.rate||'—') + '%)' },
         { label:'총 매출',     val: fmtWon(s8.may.total) },
       ]
     },
@@ -2614,6 +2620,16 @@ function renderSection00(r) {
   const s4 = r.section04;
   const s5 = r.section05;
   const s8 = r.section08;
+
+  // 데이터 없을 때 방어 (section01 미입력 보고서)
+  if (!s1.total_may || s1.total_may.inq === 0) {
+    s1.total_may = { inq:'—', book:'—', rate:'—' };
+  }
+  // DB 데이터 없을 때 방어
+  const _sdb = r.section03db || {};
+  if (!_sdb.contractAmt || !_sdb.contractAmt.length) {
+    _sdb.contractAmt = [0,0]; _sdb.dbCost = [1,1];
+  }
 
   // ── 전체 KPI (문의→체결→매출)
   function kpi00(label, av, mv, suffix) {
@@ -2662,9 +2678,9 @@ function renderSection00(r) {
     return r.section06.staff[idx] + ' ' + d.rate[idx] + '%';
   };
 
-  const sdb = r.section03db;
-  const roi1 = Math.round((sdb.contractAmt[0]-sdb.dbCost[0])/sdb.dbCost[0]*100);
-  const roi2 = Math.round((sdb.contractAmt[1]-sdb.dbCost[1])/sdb.dbCost[1]*100);
+  const sdb = _sdb;
+  const roi1 = sdb.dbCost[0] ? Math.round((sdb.contractAmt[0]-sdb.dbCost[0])/sdb.dbCost[0]*100) : 0;
+  const roi2 = sdb.dbCost[1] ? Math.round((sdb.contractAmt[1]-sdb.dbCost[1])/sdb.dbCost[1]*100) : 0;
   const sectionCards = [
     { tag:'01', title:'진료과목별 문의·예약', color:'#1565C0',
       items:[
