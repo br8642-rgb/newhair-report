@@ -345,6 +345,30 @@
     <div class="analysis-box" id="ana-box-v03"><p id="ana-v03"></p></div>
   </div>
 
+  <!-- 섹션 cs04 — 성사 현황 (6월 전용, 5월 보고서의 section-05(내부 property section04)와 별개 패널) -->
+  <div class="section-panel" id="section-cs04">
+    <div class="section-header">
+      <div class="section-tag">Section 04</div>
+      <div class="section-title">성사 현황</div>
+      <div class="section-subtitle" id="scs04-subtitle"></div>
+    </div>
+    <div class="kpi-table-wrap">
+      <div class="kpi-label">핵심 지표</div>
+      <div class="kpi-compare" id="scs04-kpi"></div>
+    </div>
+    <div class="card">
+      <div class="card-title">과목별 성사 상세 현황</div>
+      <button class="table-toggle-btn" onclick="toggleTable(this)"><span class="toggle-arrow">▼</span> 표 펼치기</button>
+      <div class="table-collapsible"><div style="overflow-x:auto"><table class="data-table" id="tbl-cs04"></table></div></div>
+    </div>
+    <div class="card" style="margin-bottom:28px;">
+      <div class="card-title">5월 vs 6월 비교 그래프</div>
+      <div class="chart-legend" id="lg-cs04"></div>
+      <div class="chart-wrap" style="height:280px"><canvas id="chart-cs04"></canvas></div>
+    </div>
+    <div class="analysis-box" id="ana-box-cs04"><p id="ana-cs04"></p></div>
+  </div>
+
   <!-- 섹션 03 — DB 현황 -->
   <div class="section-panel" id="section-03">
     <div class="section-header">
@@ -1113,6 +1137,16 @@ const ALL_REPORTS = [
     },
     analysis: '총 예약 518→434건으로 <b>16.2% 감소</b>했고, 그에 따라 내원도 444→368건(−16.7%)으로 함께 줄어듦.\n<b>내원전 취소가 14→23건(취소율 2.7%→5.3%)으로 늘어난 반면</b>, 잔여예약 대비 내원율은 88%→90%로 오히려 개선.\n다만 <b>총예약 기준 최종내원율은 86%→85%로 소폭 하락</b> — 예약 단계에서의 이탈(취소)이 늘어난 영향으로 해석됨.\n<b>당일취소 31→17건, 부도 29→26건으로 둘 다 감소</b>해 내원 당일 관리는 오히려 안정화된 모습.\n과목별로는 <b>탈모치료가 94→61건(−35.1%)으로 가장 큰 폭으로 감소</b>했고, 검사(184→151)·모발이식(86→72)도 동반 감소. <b>처방은 26→32건으로 유일하게 증가.</b>',
   },
+  closingStatus: {
+    may: { visit:229, close:146, rate:64 },
+    jun: { visit:181, close:118, rate:65 },
+    cats: ['모발이식','헤어라인','SMP','탈모치료','기타이식'],
+    byCat: {
+      may: { visit:[86,20,28,94,1], close:[42,7,20,77,0], rate:[49,35,71,82,0] },
+      jun: { visit:[72,19,28,61,1], close:[38,8,21,51,0], rate:[53,42,75,84,0] },
+    },
+    analysis: '전체 체결률 64%→65%로 소폭 개선, 내원(229→181)·체결(146→118) 모두 줄었지만 전환 효율은 오히려 좋아짐.\n<b>헤어라인 체결률 35%→42%(+7%p)로 개선폭이 가장 큼</b>, 다만 내원 자체는 20→19건으로 표본이 작아 지속 관찰 필요.\n<b>SMP 71%→75%, 탈모치료 82%→84%로 두 과목 모두 안정적으로 개선</b> — 탈모치료는 5개 과목 중 체결률 1위 유지.\n<b>모발이식은 49%→53%(+4%p)로 개선</b>됐으나 내원 자체가 86→72건으로 줄어 체결 건수는 42→38건으로 소폭 감소.\n기타이식은 두 달 다 체결 0건(0%)으로 표본이 1건뿐이라 유의미한 해석은 어려움.',
+  },
 },
 /* ── 주간 보고서 ── */
 {
@@ -1618,6 +1652,7 @@ function availableMonthlySections(r) {
   has(!!r.section03db, '03', 'DB 현황');
   has(!!r.section03,   '04', '내원 현황');
   has(!!r.visitStatus, 'v03', '내원 현황', '03');
+  has(!!r.closingStatus, 'cs04', '성사 현황', '04');
   has(!!r.section04,   '05', '성사 현황');
   has(!!r.section05,   '06', '원장님 성사율');
   has(!!r.section06,   '07', '직원별 성사율');
@@ -2118,6 +2153,7 @@ function renderReport(r) {
     renderAnalysis('ana-phone', phoneAnalysis, r);
     if (r.section02) { try { renderSection02(r); } catch(e) { console.warn('section02 렌더링 보류:', e); } }
     if (r.visitStatus) { try { renderSectionVisit(r); } catch(e) { console.warn('내원현황(v03) 렌더링 보류:', e); } }
+    if (r.closingStatus) { try { renderSectionClosing(r); } catch(e) { console.warn('성사현황(cs04) 렌더링 보류:', e); } }
     switchSection('01');
     return;
   }
@@ -2355,6 +2391,32 @@ function renderSectionVisit(r) {
   mkChart('chart-v03-cats', cats, [mkDS('5월 내원', vc.may, C.aprInq), mkDS('6월 내원', vc.jun, C.mayInq)]);
 
   renderAnalysis('ana-v03', v.analysis, r);
+}
+
+/* ═══════════════════════════════
+   섹션 cs04 렌더링 — 성사 현황 (6월 전용)
+═══════════════════════════════ */
+function renderSectionClosing(r) {
+  const c = r.closingStatus, a = c.may, m = c.jun, cats = c.cats;
+  document.getElementById('scs04-subtitle').textContent = r.meta.compare + ' · 과목별 성사(체결) 현황';
+
+  function kpiItem(label, mayVal, junVal, suffix) {
+    const d = junVal - mayVal, cls = d>0?'up':d<0?'down':'flat', arrow = d>0?`▲ ${Math.abs(d)}${suffix==='%'?'%p':''}`:d<0?`▼ ${Math.abs(d)}${suffix==='%'?'%p':''}`:'— 0';
+    return `<div class="kpi-item"><div class="kpi-item-label">${label}</div><div class="kpi-row"><div class="kpi-month"><span class="kpi-month-label">5월</span><span class="kpi-month-val">${mayVal}${suffix}</span></div><span class="kpi-arrow">→</span><div class="kpi-month"><span class="kpi-month-label">6월</span><span class="kpi-month-val">${junVal}${suffix}</span></div><span class="kpi-diff ${cls}">${arrow}</span></div></div>`;
+  }
+  document.getElementById('scs04-kpi').innerHTML =
+    kpiItem('내원',   a.visit, m.visit, '건') +
+    kpiItem('체결',   a.close, m.close, '건') +
+    kpiItem('체결률', a.rate,  m.rate,  '%');
+
+  mkTable('tbl-cs04', ['구분','5월 내원','5월 체결','5월 체결률','6월 내원','6월 체결','6월 체결률','증감'],
+    ['합계', a.visit, a.close, pct(a.rate), m.visit, m.close, pct(m.rate), diff(a.visit, m.visit)],
+    cats.map((cat,i) => [cat, c.byCat.may.visit[i], c.byCat.may.close[i], pct(c.byCat.may.rate[i]), c.byCat.jun.visit[i], c.byCat.jun.close[i], pct(c.byCat.jun.rate[i]), diff(c.byCat.may.visit[i], c.byCat.jun.visit[i])]));
+
+  legend('lg-cs04', [[C.aprInq,'5월 내원'],[C.aprBook,'5월 체결'],[C.mayInq,'6월 내원'],[C.mayBook,'6월 체결']]);
+  mkChart('chart-cs04', cats, [mkDS('5월 내원', c.byCat.may.visit, C.aprInq), mkDS('5월 체결', c.byCat.may.close, C.aprBook), mkDS('6월 내원', c.byCat.jun.visit, C.mayInq), mkDS('6월 체결', c.byCat.jun.close, C.mayBook)]);
+
+  renderAnalysis('ana-cs04', c.analysis, r);
 }
 
 function renderSection03(r) {
