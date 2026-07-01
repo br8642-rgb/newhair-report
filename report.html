@@ -2088,12 +2088,13 @@ function renderSection05(r) {
         <div class="ck-row"><span>체결률</span><div style="display:flex;align-items:center;gap:6px;"><div class="ck-vals"><span>${ar}%</span><span class="arrow">→</span><span>${mr}%</span></div><span class="ck-diff ${cls}">${arrow}${rd!==0?'%p':''}</span></div></div>
       </div>`;
   });
-  legend('lg-s05-rate', [[C.aprInq,'4월 체결률'],[C.mayInq,'5월 체결률']]);
+  const [lblA05, lblM05] = r.meta.compare.replace('2026년 ','').split(' vs ');
+  legend('lg-s05-rate', [[C.aprInq,lblA05+' 체결률'],[C.mayInq,lblM05+' 체결률']]);
   if(charts['chart-s05-rate']) charts['chart-s05-rate'].destroy();
   charts['chart-s05-rate'] = new Chart(document.getElementById('chart-s05-rate'), {
     type:'bar', data:{ labels:s.doctors, datasets:[
-      {label:'4월 체결률',data:s.apr.total.rate,backgroundColor:C.aprInq,borderRadius:3},
-      {label:'5월 체결률',data:s.may.total.rate,backgroundColor:C.mayInq,borderRadius:3},
+      {label:lblA05+' 체결률',data:s.apr.total.rate,backgroundColor:C.aprInq,borderRadius:3},
+      {label:lblM05+' 체결률',data:s.may.total.rate,backgroundColor:C.mayInq,borderRadius:3},
     ]},
     options:{...BASE, scales:{...BASE.scales,y:{...BASE.scales.y,max:105,ticks:{...BASE.scales.y.ticks,callback:v=>v+'%'}}},
       plugins:{...BASE.plugins,tooltip:{...BASE.plugins.tooltip,callbacks:{label:c=>' '+c.dataset.label+': '+c.parsed.y+'%'}}}}
@@ -2134,32 +2135,33 @@ function switchS05Month(month) {
 ═══════════════════════════════ */
 function renderSection04(r) {
   const s=r.section04, a=s.apr, m=s.may;
+  const [lblA, lblM] = r.meta.compare.replace('2026년 ','').split(' vs ');
   document.getElementById('s04-subtitle').textContent = r.meta.compare + ' · 시술 과목별 내원·체결 성사 현황';
   function kpiItem(label,aprVal,mayVal,suffix){
     const d=mayVal-aprVal, cls=d>0?'up':d<0?'down':'flat', arrow=d>0?`▲ ${Math.abs(d)}`:d<0?`▼ ${Math.abs(d)}`:'— 0';
-    return `<div class="kpi-item"><div class="kpi-item-label">${label}</div><div class="kpi-row"><div class="kpi-month"><span class="kpi-month-label">4월</span><span class="kpi-month-val">${aprVal}${suffix}</span></div><span class="kpi-arrow">→</span><div class="kpi-month"><span class="kpi-month-label">5월</span><span class="kpi-month-val">${mayVal}${suffix}</span></div><span class="kpi-diff ${cls}">${arrow}${suffix&&d!==0?suffix:''}</span></div></div>`;
+    return `<div class="kpi-item"><div class="kpi-item-label">${label}</div><div class="kpi-row"><div class="kpi-month"><span class="kpi-month-label">${lblA}</span><span class="kpi-month-val">${aprVal}${suffix}</span></div><span class="kpi-arrow">→</span><div class="kpi-month"><span class="kpi-month-label">${lblM}</span><span class="kpi-month-val">${mayVal}${suffix}</span></div><span class="kpi-diff ${cls}">${arrow}${suffix&&d!==0?suffix:''}</span></div></div>`;
   }
   document.getElementById('s04-kpi').innerHTML =
     kpiItem('총 내원',a.total.visit,m.total.visit,'') +
     kpiItem('총 체결',a.total.contract,m.total.contract,'') +
     kpiItem('체결률',a.total.rate,m.total.rate,'%');
-  legend('lg-s04-rate',[[C.aprInq,'4월 체결률'],[C.mayInq,'5월 체결률']]);
+  legend('lg-s04-rate',[[C.aprInq,lblA+' 체결률'],[C.mayInq,lblM+' 체결률']]);
   if(charts['chart-s04-rate']) charts['chart-s04-rate'].destroy();
   charts['chart-s04-rate'] = new Chart(document.getElementById('chart-s04-rate'), {
     type:'bar', data:{ labels:s.cats, datasets:[
-      {label:'4월 체결률',data:a.rate,backgroundColor:C.aprInq,borderRadius:3},
-      {label:'5월 체결률',data:m.rate,backgroundColor:C.mayInq,borderRadius:3},
+      {label:lblA+' 체결률',data:a.rate,backgroundColor:C.aprInq,borderRadius:3},
+      {label:lblM+' 체결률',data:m.rate,backgroundColor:C.mayInq,borderRadius:3},
     ]},
     options:{...BASE, scales:{...BASE.scales,y:{...BASE.scales.y,max:105,ticks:{...BASE.scales.y.ticks,callback:v=>v+'%'}}},
       plugins:{...BASE.plugins,tooltip:{...BASE.plugins.tooltip,callbacks:{label:c=>' '+c.dataset.label+': '+c.parsed.y+'%'}}}}
   });
-  mkTable('tbl-s04',['구분','4월 내원','4월 체결','4월 체결률','5월 내원','5월 체결','5월 체결률','증감'],
+  mkTable('tbl-s04',['구분',lblA+' 내원',lblA+' 체결',lblA+' 체결률',lblM+' 내원',lblM+' 체결',lblM+' 체결률','증감'],
     ['합계',a.total.visit,a.total.contract,a.total.rate+'%',m.total.visit,m.total.contract,m.total.rate+'%',diff(a.total.contract,m.total.contract)],
     s.cats.map((cat,i)=>[cat,a.visit[i],a.contract[i],a.rate[i]+'%',m.visit[i],m.contract[i],m.rate[i]+'%',diff(a.contract[i],m.contract[i])]));
-  legend('lg-s04-visit',    [[C.aprInq,'4월 내원'],  [C.mayInq,'5월 내원']]);
-  legend('lg-s04-contract', [[C.aprBook,'4월 체결'], [C.mayBook,'5월 체결']]);
-  mkChart('chart-s04-visit',    s.cats, [mkDS('4월 내원',  a.visit,    C.aprInq), mkDS('5월 내원',   m.visit,    C.mayInq)]);
-  mkChart('chart-s04-contract', s.cats, [mkDS('4월 체결',  a.contract, C.aprBook),mkDS('5월 체결',   m.contract, C.mayBook)]);
+  legend('lg-s04-visit',    [[C.aprInq,lblA+' 내원'],  [C.mayInq,lblM+' 내원']]);
+  legend('lg-s04-contract', [[C.aprBook,lblA+' 체결'], [C.mayBook,lblM+' 체결']]);
+  mkChart('chart-s04-visit',    s.cats, [mkDS(lblA+' 내원',  a.visit,    C.aprInq), mkDS(lblM+' 내원',   m.visit,    C.mayInq)]);
+  mkChart('chart-s04-contract', s.cats, [mkDS(lblA+' 체결',  a.contract, C.aprBook),mkDS(lblM+' 체결',   m.contract, C.mayBook)]);
   renderAnalysis('ana-s04', s.analysis);
 }
 
@@ -2221,6 +2223,7 @@ const STAFF_COLORS = ['#5C6BC0','#C62828','#2E7D32','#E65100','#6A1B9A','#00838F
 
 function renderSection06(r) {
   const s = r.section06;
+  const [lblA, lblM] = r.meta.compare.replace('2026년 ','').split(' vs ');
   document.getElementById('s06-subtitle').textContent = r.meta.compare + ' · 직원별 내원·체결 성사 현황';
 
   // ── KPI 카드 (체결률 순위 표시)
@@ -2402,6 +2405,7 @@ const S07_COLORS = [
 
 function renderSection07(r) {
   const s = r.section07;
+  const [lblA, lblM] = r.meta.compare.replace('2026년 ','').split(' vs ');
   document.getElementById('s07-subtitle').textContent = r.meta.compare + ' · 유입경로별 응답수 및 성사 전환율 (중복 선택 포함)';
 
   // ── KPI
@@ -2419,9 +2423,9 @@ function renderSection07(r) {
     const d = mv-av, cls = d>0?'up':d<0?'down':'flat';
     const arrow = d>0?`▲ ${Math.abs(d)}`:d<0?`▼ ${Math.abs(d)}`:'— 0';
     return `<div class="kpi-item"><div class="kpi-item-label">${label}${note?`<span style="font-size:10px;color:#aaa;font-weight:400;margin-left:4px;">${note}</span>`:''}</div><div class="kpi-row">
-      <div class="kpi-month"><span class="kpi-month-label">4월</span><span class="kpi-month-val">${av}${suffix}</span></div>
+      <div class="kpi-month"><span class="kpi-month-label">${lblA}</span><span class="kpi-month-val">${av}${suffix}</span></div>
       <span class="kpi-arrow">→</span>
-      <div class="kpi-month"><span class="kpi-month-label">5월</span><span class="kpi-month-val">${mv}${suffix}</span></div>
+      <div class="kpi-month"><span class="kpi-month-label">${lblM}</span><span class="kpi-month-val">${mv}${suffix}</span></div>
       <span class="kpi-diff ${cls}">${arrow}${suffix&&d!==0?suffix:''}</span>
     </div></div>`;
   }
@@ -2436,10 +2440,10 @@ function renderSection07(r) {
   // ── 상위경로 응답수 비교 막대
   const top10 = s07Top(s, 10);
   const topLabels = top10.map(r => r.name);
-  chLegend('lg-s07-bar', [[C.aprInq,'4월 응답수'],[C.mayInq,'5월 응답수']]);
+  chLegend('lg-s07-bar', [[C.aprInq,lblA+' 응답수'],[C.mayInq,lblM+' 응답수']]);
   mkChart('chart-s07-bar', topLabels,
-    [mkDS('4월 응답수', top10.map(r=>s.apr.count[r.i]), C.aprInq),
-     mkDS('5월 응답수', top10.map(r=>s.may.count[r.i]), C.mayInq)]);
+    [mkDS(lblA+' 응답수', top10.map(r=>s.apr.count[r.i]), C.aprInq),
+     mkDS(lblM+' 응답수', top10.map(r=>s.may.count[r.i]), C.mayInq)]);
 
   // ── 전환율 비교 (상담수 5건 이상 경로)
   const convRoutes = s.routes.map((name,i)=>({
@@ -2449,13 +2453,13 @@ function renderSection07(r) {
   })).filter(r => r.aprC >= 5 || r.mayC >= 5)
      .sort((a,b) => (b.aprR+b.mayR) - (a.aprR+a.mayR));
 
-  chLegend('lg-s07-rate', [['#90CAF9','4월 전환율'],['#1565C0','5월 전환율']]);
+  chLegend('lg-s07-rate', [['#90CAF9',lblA+' 전환율'],['#1565C0',lblM+' 전환율']]);
   if(charts['chart-s07-rate']) charts['chart-s07-rate'].destroy();
   charts['chart-s07-rate'] = new Chart(document.getElementById('chart-s07-rate'), {
     type: 'bar',
     data: { labels: convRoutes.map(r=>r.name), datasets: [
-      { label:'4월 전환율', data: convRoutes.map(r=>r.aprR), backgroundColor: C.aprInq, borderRadius:3 },
-      { label:'5월 전환율', data: convRoutes.map(r=>r.mayR), backgroundColor: C.mayInq, borderRadius:3 },
+      { label:lblA+' 전환율', data: convRoutes.map(r=>r.aprR), backgroundColor: C.aprInq, borderRadius:3 },
+      { label:lblM+' 전환율', data: convRoutes.map(r=>r.mayR), backgroundColor: C.mayInq, borderRadius:3 },
     ]},
     options: { ...BASE,
       scales: { ...BASE.scales, y: { ...BASE.scales.y, max:110, ticks:{...BASE.scales.y.ticks,callback:v=>v+'%'} }},
@@ -2471,14 +2475,14 @@ function renderSection07(r) {
   })).filter(r => r.aprS+r.mayS+r.aprT+r.mayT > 0)
      .sort((a,b) => (b.aprS+b.mayS) - (a.aprS+a.mayS));
 
-  chLegend('lg-s07-surg',  [[C.aprBook,'4월 수술'],[C.mayBook,'5월 수술']]);
-  chLegend('lg-s07-treat', [[C.aprInq, '4월 치료'],[C.mayInq, '5월 치료']]);
+  chLegend('lg-s07-surg',  [[C.aprBook,lblA+' 수술'],[C.mayBook,lblM+' 수술']]);
+  chLegend('lg-s07-treat', [[C.aprInq, lblA+' 치료'],[C.mayInq, lblM+' 치료']]);
   mkChart('chart-s07-surg',  surgRoutes.map(r=>r.name),
-    [mkDS('4월 수술', surgRoutes.map(r=>r.aprS), C.aprBook),
-     mkDS('5월 수술', surgRoutes.map(r=>r.mayS), C.mayBook)]);
+    [mkDS(lblA+' 수술', surgRoutes.map(r=>r.aprS), C.aprBook),
+     mkDS(lblM+' 수술', surgRoutes.map(r=>r.mayS), C.mayBook)]);
   mkChart('chart-s07-treat', surgRoutes.map(r=>r.name),
-    [mkDS('4월 치료', surgRoutes.map(r=>r.aprT), C.aprInq),
-     mkDS('5월 치료', surgRoutes.map(r=>r.mayT), C.mayInq)]);
+    [mkDS(lblA+' 치료', surgRoutes.map(r=>r.aprT), C.aprInq),
+     mkDS(lblM+' 치료', surgRoutes.map(r=>r.mayT), C.mayInq)]);
 
   // ── 과목별 경로 분포
   renderS07CatGrid(s, s07CatMonth);
@@ -2493,7 +2497,7 @@ function renderSection07(r) {
   ])];
 
   mkTable('tbl-s07',
-    ['유입경로','4월 응답수','4월 상담수','4월 수술','4월 치료','4월 전환율','5월 응답수','5월 상담수','5월 수술','5월 치료','5월 전환율'],
+    ['유입경로',lblA+' 응답수',lblA+' 상담수',lblA+' 수술',lblA+' 치료',lblA+' 전환율',lblM+' 응답수',lblM+' 상담수',lblM+' 수술',lblM+' 치료',lblM+' 전환율'],
     [`합계 <span style="font-size:10px;color:#aaa;font-weight:400;">(중복포함)</span>`,
       aprTotal, s.apr.conv.consult.reduce((a,b)=>a+b,0),
       s.apr.conv.surgery.reduce((a,b)=>a+b,0), s.apr.conv.treat.reduce((a,b)=>a+b,0), aprRate+'%',
@@ -2619,9 +2623,9 @@ function renderSection08(r) {
     const pct = ((d/av)*100).toFixed(1);
     const arrow = d>0?`▲ ${fmtWon(Math.abs(d))}`:d<0?`▼ ${fmtWon(Math.abs(d))}`:'— 0';
     return `<div class="kpi-item"><div class="kpi-item-label">${label}</div><div class="kpi-row">
-      <div class="kpi-month"><span class="kpi-month-label">4월</span><span class="kpi-month-val">${fmtWon(av)}</span></div>
+      <div class="kpi-month"><span class="kpi-month-label">${lblA}</span><span class="kpi-month-val">${fmtWon(av)}</span></div>
       <span class="kpi-arrow">→</span>
-      <div class="kpi-month"><span class="kpi-month-label">5월</span><span class="kpi-month-val">${fmtWon(mv)}</span></div>
+      <div class="kpi-month"><span class="kpi-month-label">${lblM}</span><span class="kpi-month-val">${fmtWon(mv)}</span></div>
       <span class="kpi-diff ${cls}">${arrow} (${d>=0?'+':''}${pct}%)</span>
     </div></div>`;
   }
@@ -2826,9 +2830,9 @@ function renderSection00(r) {
     return `<div class="kpi-item">
       <div class="kpi-item-label">${label}</div>
       <div class="kpi-row">
-        <div class="kpi-month"><span class="kpi-month-label">4월</span><span class="kpi-month-val">${av}${suffix}</span></div>
+        <div class="kpi-month"><span class="kpi-month-label">${lblA}</span><span class="kpi-month-val">${av}${suffix}</span></div>
         <span class="kpi-arrow">→</span>
-        <div class="kpi-month"><span class="kpi-month-label">5월</span><span class="kpi-month-val">${mv}${suffix}</span></div>
+        <div class="kpi-month"><span class="kpi-month-label">${lblM}</span><span class="kpi-month-val">${mv}${suffix}</span></div>
         <span class="kpi-diff ${cls}">${arrow}${suffix && d !== 0 ? suffix : ''}</span>
       </div>
     </div>`;
@@ -2840,9 +2844,9 @@ function renderSection00(r) {
     return `<div class="kpi-item">
       <div class="kpi-item-label">${label}</div>
       <div class="kpi-row">
-        <div class="kpi-month"><span class="kpi-month-label">4월</span><span class="kpi-month-val">${fmtWon(av)}</span></div>
+        <div class="kpi-month"><span class="kpi-month-label">${lblA}</span><span class="kpi-month-val">${fmtWon(av)}</span></div>
         <span class="kpi-arrow">→</span>
-        <div class="kpi-month"><span class="kpi-month-label">5월</span><span class="kpi-month-val">${fmtWon(mv)}</span></div>
+        <div class="kpi-month"><span class="kpi-month-label">${lblM}</span><span class="kpi-month-val">${fmtWon(mv)}</span></div>
         <span class="kpi-diff ${cls}">${arrow} (${d >= 0 ? '+' : ''}${pct}%)</span>
       </div>
     </div>`;
