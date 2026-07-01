@@ -369,6 +369,32 @@
     <div class="analysis-box" id="ana-box-cs04"><p id="ana-cs04"></p></div>
   </div>
 
+  <!-- 섹션 ds05 — 원장님 성사 현황 (6월 전용, 5월 보고서의 section-06(내부 property section05)와 별개 패널) -->
+  <div class="section-panel" id="section-ds05">
+    <div class="section-header">
+      <div class="section-tag">Section 05</div>
+      <div class="section-title">원장님 성사 현황</div>
+      <div class="section-subtitle" id="sds05-subtitle"></div>
+    </div>
+    <div class="kpi-table-wrap">
+      <div class="kpi-label">원장님 핵심 지표</div>
+      <div id="sds05-kpi" class="ch-kpi-grid"></div>
+    </div>
+    <div class="s02-section-label">원장님 체결률 비교</div>
+    <div class="card" style="margin-bottom:16px;">
+      <div class="card-title">전체 체결률 비교 <span style="font-size:11px;color:#6b6b6b;font-weight:400;">(5월 vs 6월, %)</span></div>
+      <div class="chart-legend" id="lg-ds05-rate"></div>
+      <div class="chart-wrap" style="height:200px"><canvas id="chart-ds05-rate"></canvas></div>
+    </div>
+    <div class="s02-section-label">원장님 과목 상세</div>
+    <div class="s02-month-tabs">
+      <button class="s02-month-tab active" data-month="may" onclick="switchDs05Month('may')">5월</button>
+      <button class="s02-month-tab" data-month="jun" onclick="switchDs05Month('jun')">6월</button>
+    </div>
+    <div id="sds05-detail-grid"></div>
+    <div class="analysis-box" id="ana-box-ds05"><p id="ana-ds05"></p></div>
+  </div>
+
   <!-- 섹션 03 — DB 현황 -->
   <div class="section-panel" id="section-03">
     <div class="section-header">
@@ -1147,6 +1173,27 @@ const ALL_REPORTS = [
     },
     analysis: '전체 체결률 64%→65%로 소폭 개선, 내원(229→181)·체결(146→118) 모두 줄었지만 전환 효율은 오히려 좋아짐.\n<b>헤어라인 체결률 35%→42%(+7%p)로 개선폭이 가장 큼</b>, 다만 내원 자체는 20→19건으로 표본이 작아 지속 관찰 필요.\n<b>SMP 71%→75%, 탈모치료 82%→84%로 두 과목 모두 안정적으로 개선</b> — 탈모치료는 5개 과목 중 체결률 1위 유지.\n<b>모발이식은 49%→53%(+4%p)로 개선</b>됐으나 내원 자체가 86→72건으로 줄어 체결 건수는 42→38건으로 소폭 감소.\n기타이식은 두 달 다 체결 0건(0%)으로 표본이 1건뿐이라 유의미한 해석은 어려움.',
   },
+  doctorStatus: {
+    doctors: ['김진오','박주성','김진욱','조준상'],
+    cats: ['모발이식','헤어라인','SMP','탈모치료','기타이식'],
+    may: {
+      total: { visit:[102,110,8,8], close:[48,90,4,3], rate:[47,82,50,38] },
+      byCat: {
+        visit: [[71,20,1,10,0],[0,0,27,83,0],[7,0,0,0,1],[8,0,0,0,0]],
+        close: [[35,7,1,5,0],[0,0,19,71,0],[4,0,0,0,0],[3,0,0,0,0]],
+        rate:  [[49,35,100,50,'—'],['—','—',70,86,'—'],[57,'—','—','—',0],[38,'—','—','—','—']],
+      },
+    },
+    jun: {
+      total: { visit:[89,76,10,5], close:[53,62,3,0], rate:[60,82,30,0] },
+      byCat: {
+        visit: [[59,17,2,10,1],[0,0,26,50,0],[8,2,0,0,0],[5,0,0,0,0]],
+        close: [[35,8,2,8,0],[0,0,19,43,0],[3,0,0,0,0],[0,0,0,0,0]],
+        rate:  [[59,47,100,80,0],['—','—',73,86,'—'],[38,0,'—','—','—'],[0,'—','—','—','—']],
+      },
+    },
+    analysis: '박주성Dr은 5월·6월 모두 <b>체결률 82%로 동일하게 최고 수준 유지</b> — SMP·탈모치료 전담 구조에서 안정적 전환.\n<b>김진오Dr은 47%→60%(+13%p)로 가장 큰 폭으로 개선</b>, 모발이식(49%→59%)·헤어라인(35%→47%) 모두 상승하며 전 과목 고르게 좋아짐.\n<b>김진욱Dr은 50%→30%(−20%p)로 하락</b>, 모발이식 57%→38%로 낮아진 게 주 원인.\n<b>조준상Dr은 38%→0%(−38%p)로 급락</b> — 6월 내원 5건 중 체결 0건으로 집중 점검이 필요.',
+  },
 },
 /* ── 주간 보고서 ── */
 {
@@ -1653,6 +1700,7 @@ function availableMonthlySections(r) {
   has(!!r.section03,   '04', '내원 현황');
   has(!!r.visitStatus, 'v03', '내원 현황', '03');
   has(!!r.closingStatus, 'cs04', '성사 현황', '04');
+  has(!!r.doctorStatus, 'ds05', '원장님 성사 현황', '05');
   has(!!r.section04,   '05', '성사 현황');
   has(!!r.section05,   '06', '원장님 성사율');
   has(!!r.section06,   '07', '직원별 성사율');
@@ -2154,6 +2202,7 @@ function renderReport(r) {
     if (r.section02) { try { renderSection02(r); } catch(e) { console.warn('section02 렌더링 보류:', e); } }
     if (r.visitStatus) { try { renderSectionVisit(r); } catch(e) { console.warn('내원현황(v03) 렌더링 보류:', e); } }
     if (r.closingStatus) { try { renderSectionClosing(r); } catch(e) { console.warn('성사현황(cs04) 렌더링 보류:', e); } }
+    if (r.doctorStatus) { try { renderSectionDoctor(r); } catch(e) { console.warn('원장님 성사현황(ds05) 렌더링 보류:', e); } }
     switchSection('01');
     return;
   }
@@ -2417,6 +2466,74 @@ function renderSectionClosing(r) {
   mkChart('chart-cs04', cats, [mkDS('5월 내원', c.byCat.may.visit, C.aprInq), mkDS('5월 체결', c.byCat.may.close, C.aprBook), mkDS('6월 내원', c.byCat.jun.visit, C.mayInq), mkDS('6월 체결', c.byCat.jun.close, C.mayBook)]);
 
   renderAnalysis('ana-cs04', c.analysis, r);
+}
+
+/* ═══════════════════════════════
+   섹션 ds05 렌더링 — 원장님 성사 현황 (6월 전용)
+═══════════════════════════════ */
+let ds05ActiveMonth = 'may';
+const DS05_COLORS = ['#5C6BC0','#C62828','#2E7D32','#E65100'];
+
+function renderSectionDoctor(r) {
+  const s = r.doctorStatus;
+  document.getElementById('sds05-subtitle').textContent = r.meta.compare + ' · 원장님 내원·체결 성사 현황';
+  const kpiGrid = document.getElementById('sds05-kpi');
+  kpiGrid.innerHTML = '';
+  kpiGrid.style.gridTemplateColumns = 'repeat(4,1fr)';
+  s.doctors.forEach((dr, di) => {
+    const av=s.may.total.visit[di], ac=s.may.total.close[di], ar=s.may.total.rate[di];
+    const mv=s.jun.total.visit[di], mc=s.jun.total.close[di], mr=s.jun.total.rate[di];
+    const rd=mr-ar, cls=rd>0?'up':rd<0?'down':'flat';
+    const arrow=rd>0?`▲ ${Math.abs(rd)}`:rd<0?`▼ ${Math.abs(rd)}`:'— 0';
+    kpiGrid.innerHTML += `
+      <div class="ch-kpi-card">
+        <div class="ck-name"><span class="ck-dot" style="background:${DS05_COLORS[di]}"></span>${dr}</div>
+        <div class="ck-row"><span>내원</span><div style="display:flex;align-items:center;gap:6px;"><div class="ck-vals"><span>${av}</span><span class="arrow">→</span><span>${mv}</span></div><span class="ck-diff ${mv-av>0?'up':mv-av<0?'down':'flat'}">${mv-av>0?'▲':'▼'} ${Math.abs(mv-av)}</span></div></div>
+        <hr class="ck-divider">
+        <div class="ck-row"><span>체결</span><div style="display:flex;align-items:center;gap:6px;"><div class="ck-vals"><span>${ac}</span><span class="arrow">→</span><span>${mc}</span></div><span class="ck-diff ${mc-ac>0?'up':mc-ac<0?'down':'flat'}">${mc-ac>0?'▲':'▼'} ${Math.abs(mc-ac)}</span></div></div>
+        <hr class="ck-divider">
+        <div class="ck-row"><span>체결률</span><div style="display:flex;align-items:center;gap:6px;"><div class="ck-vals"><span>${ar}%</span><span class="arrow">→</span><span>${mr}%</span></div><span class="ck-diff ${cls}">${arrow}${rd!==0?'%p':''}</span></div></div>
+      </div>`;
+  });
+  legend('lg-ds05-rate', [[C.aprInq,'5월 체결률'],[C.mayInq,'6월 체결률']]);
+  if(charts['chart-ds05-rate']) charts['chart-ds05-rate'].destroy();
+  charts['chart-ds05-rate'] = new Chart(document.getElementById('chart-ds05-rate'), {
+    type:'bar', data:{ labels:s.doctors, datasets:[
+      {label:'5월 체결률',data:s.may.total.rate,backgroundColor:C.aprInq,borderRadius:3},
+      {label:'6월 체결률',data:s.jun.total.rate,backgroundColor:C.mayInq,borderRadius:3},
+    ]},
+    options:{...BASE, scales:{...BASE.scales,y:{...BASE.scales.y,max:105,ticks:{...BASE.scales.y.ticks,callback:v=>v+'%'}}},
+      plugins:{...BASE.plugins,tooltip:{...BASE.plugins.tooltip,callbacks:{label:c=>' '+c.dataset.label+': '+c.parsed.y+'%'}}}}
+  });
+  renderDs05Detail(s, ds05ActiveMonth);
+  renderAnalysis('ana-ds05', s.analysis, r);
+}
+
+function renderDs05Detail(s, month) {
+  const grid = document.getElementById('sds05-detail-grid');
+  grid.style.cssText = 'display:grid;grid-template-columns:repeat(2,1fr);gap:16px;margin-bottom:28px;';
+  grid.innerHTML = '';
+  const d = s[month];
+  s.doctors.forEach((dr, di) => {
+    const pairs = s.cats.map((cat,ci)=>({cat, visit:d.byCat.visit[di][ci], close:d.byCat.close[di][ci], rate:d.byCat.rate[di][ci]})).filter(p=>p.visit>0||p.close>0);
+    if(pairs.length===0) return;
+    const bars = pairs.map(p=>`
+      <div class="hbar-item">
+        <div class="hbar-label"><span class="hbl-ch">${p.cat}</span><span class="hbl-num">${p.close}/${p.visit}건 <span style="color:#aaa;font-weight:400;">(${p.rate}%)</span></span></div>
+        <div class="hbar-track"><div class="hbar-fill" style="width:${p.rate}%;background:${DS05_COLORS[di]};opacity:0.75;"></div></div>
+      </div>`).join('');
+    grid.innerHTML += `
+      <div class="cat-channel-card">
+        <div class="ccc-title"><span style="width:10px;height:10px;border-radius:50%;background:${DS05_COLORS[di]};display:inline-block;flex-shrink:0;"></span>${dr}<span class="ccc-badge">체결률 ${d.total.rate[di]}%</span></div>
+        <div class="hbar-wrap">${bars}</div>
+      </div>`;
+  });
+}
+
+function switchDs05Month(month) {
+  ds05ActiveMonth = month;
+  document.querySelectorAll('[onclick^="switchDs05"]').forEach(t=>t.classList.toggle('active',t.dataset.month===month));
+  if(currentReport) renderDs05Detail(currentReport.doctorStatus, month);
 }
 
 function renderSection03(r) {
