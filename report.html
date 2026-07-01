@@ -30,6 +30,12 @@
 .data-table tr.total-row td.col-jun-book { background: #FCA5A5; }
 .data-table tr.total-row td.col-rate     { background: #F0F0F0; }
 
+/* ── 섹션3(내원현황) 핵심지표 카드 — 글자 크게 ── */
+.v03-kpi .kpi-item-label { font-size: 16px; font-weight: 800; }
+.v03-kpi .kpi-month-label { font-size: 14px; }
+.v03-kpi .kpi-month-val { font-size: 22px; font-weight: 800; }
+.v03-kpi .kpi-diff { font-size: 15px; }
+
 /* ── 표 접기/펼치기 ── */
 .table-toggle-btn {
   display: inline-flex; align-items: center; gap: 6px;
@@ -299,6 +305,40 @@
 
     <div class="section-divider" data-channel="s02-summary" style="display:none;"></div>
     <div class="analysis-box" id="ana-box-s02-summary" data-channel="s02-summary" style="display:none;"><p id="ana-s02-summary"></p></div>
+  </div>
+
+  <!-- 섹션 v03 — 내원 현황 (6월 전용, 5월 보고서의 section-04와 별개 패널) -->
+  <div class="section-panel" id="section-v03">
+    <div class="section-header">
+      <div class="section-tag">Section 03</div>
+      <div class="section-title">내원 현황</div>
+      <div class="section-subtitle" id="sv03-subtitle"></div>
+    </div>
+    <div class="kpi-table-wrap">
+      <div class="kpi-label">기간별 핵심 지표</div>
+      <div class="kpi-compare v03-kpi" id="sv03-kpi"></div>
+    </div>
+    <div class="s02-section-label">예약 흐름</div>
+    <div class="s02-charts-grid">
+      <div class="card"><div class="card-title">예약 → 내원 흐름 (5월)</div><div class="chart-wrap" style="height:200px"><canvas id="chart-v03-funnel-may"></canvas></div></div>
+      <div class="card"><div class="card-title">예약 → 내원 흐름 (6월)</div><div class="chart-wrap" style="height:200px"><canvas id="chart-v03-funnel-jun"></canvas></div></div>
+    </div>
+    <div class="card" style="margin-bottom:28px;">
+      <div class="card-title">당일취소 · 부도 비교 <span style="font-size:11px;color:#6b6b6b;font-weight:400;">(5월 vs 6월)</span></div>
+      <div class="chart-legend" id="lg-v03-noshow"></div>
+      <div class="chart-wrap" style="height:180px"><canvas id="chart-v03-noshow"></canvas></div>
+    </div>
+    <div class="card">
+      <div class="card-title">과목별 내원 상세</div>
+      <button class="table-toggle-btn" onclick="toggleTable(this)"><span class="toggle-arrow">▼</span> 표 펼치기</button>
+      <div class="table-collapsible"><div style="overflow-x:auto"><table class="data-table" id="tbl-v03-cats"></table></div></div>
+    </div>
+    <div class="card" style="margin-bottom:28px;">
+      <div class="card-title">과목별 내원 비교</div>
+      <div class="chart-legend" id="lg-v03-cats"></div>
+      <div class="chart-wrap" style="height:250px"><canvas id="chart-v03-cats"></canvas></div>
+    </div>
+    <div class="analysis-box" id="ana-box-v03"><p id="ana-v03"></p></div>
   </div>
 
   <!-- 섹션 03 — DB 현황 -->
@@ -1059,6 +1099,16 @@ const ALL_REPORTS = [
     },
     analysis: '5개 채널 중 <b>플친과 왓츠앱만 문의가 늘거나 유지</b>(플친 86→86건, 왓츠앱 38→39건)됐고, 전화·네이버·게시판은 모두 감소.\n<b>게시판이 88→65건(−26.1%)으로 감소폭이 가장 크지만 예약률은 88%로 동일하게 유지</b>돼 상담 품질 자체는 안정적.\n<b>플친 예약률 49%→53%(+4%p)로 5개 채널 중 유일하게 개선</b> — 문의는 그대로인데 전환이 좋아진 케이스.\n<b>왓츠앱 예약률 45%→28%(−17%p)로 낙폭이 가장 커서</b> 문의는 늘었지만 예약 전환이 크게 떨어짐 — 상담 흐름 점검이 시급.\n네이버는 두 달 모두 예약률 98%를 유지하며 5개 채널 중 가장 안정적인 채널로 확인됨.',
   },
+  visitStatus: {
+    may: { total_book:518, cancel_pre:14, remain:504, cancel_pre_rate:2.7, visit:444, visit_rate:88, final_visit_rate:86, same_day_cancel:31, noshow:29 },
+    jun: { total_book:434, cancel_pre:23, remain:411, cancel_pre_rate:5.3, visit:368, visit_rate:90, final_visit_rate:85, same_day_cancel:17, noshow:26 },
+    cats: ['모발이식','헤어라인','SMP','탈모치료','검사','기타이식','처방','기타'],
+    visit_by_cat: {
+      may: [86,20,28,94,184,1,26,5],
+      jun: [72,19,28,61,151,1,32,4],
+    },
+    analysis: '총 예약 518→434건으로 <b>16.2% 감소</b>했고, 그에 따라 내원도 444→368건(−16.7%)으로 함께 줄어듦.\n<b>내원전 취소가 14→23건(취소율 2.7%→5.3%)으로 늘어난 반면</b>, 잔여예약 대비 내원율은 88%→90%로 오히려 개선.\n다만 <b>총예약 기준 최종내원율은 86%→85%로 소폭 하락</b> — 예약 단계에서의 이탈(취소)이 늘어난 영향으로 해석됨.\n<b>당일취소 31→17건, 부도 29→26건으로 둘 다 감소</b>해 내원 당일 관리는 오히려 안정화된 모습.\n과목별로는 <b>탈모치료가 94→61건(−35.1%)으로 가장 큰 폭으로 감소</b>했고, 검사(184→151)·모발이식(86→72)도 동반 감소. <b>처방은 26→32건으로 유일하게 증가.</b>',
+  },
 },
 /* ── 주간 보고서 ── */
 {
@@ -1557,12 +1607,13 @@ const NAV_SECTIONS = {
 // 보고서에 실제로 데이터가 채워진 섹션만 골라 네비게이션에 표시
 function availableMonthlySections(r) {
   const list = [];
-  const has = (cond, id, label) => { if (cond) list.push({id, label}); };
+  const has = (cond, id, label, num) => { if (cond) list.push({id, label, num}); };
   has(r.section01 && r.section01.total, '00', '종합 현황');
   has(r.section01 && r.section01.phone, '01', (r.section01 && r.section01.sectionName) || '진료과목별 문의·예약');
   has((r.section01 && r.section01.naver) || !!(r.section02 && r.section02.kakao), '02', '채널별 문의·예약');
   has(!!r.section03db, '03', 'DB 현황');
   has(!!r.section03,   '04', '내원 현황');
+  has(!!r.visitStatus, 'v03', '내원 현황', '03');
   has(!!r.section04,   '05', '성사 현황');
   has(!!r.section05,   '06', '원장님 성사율');
   has(!!r.section06,   '07', '직원별 성사율');
@@ -1594,7 +1645,7 @@ function buildNav(activeId, type, sectionsOverride) {
   nav.innerHTML = `<img src="assets/logo.png" class="nav-logo" alt="뉴헤어"><div class="nav-divider"></div>`;
   sections.forEach(s => {
     const a = document.createElement('a');
-    a.href='#'; a.textContent=s.id.replace('w','')+' '+s.label; a.dataset.sid=s.id;
+    a.href='#'; a.textContent=(s.num || s.id.replace('w','')) + ' ' + s.label; a.dataset.sid=s.id;
     if(s.id===activeId) a.classList.add('active');
     a.addEventListener('click', e => { e.preventDefault(); switchSection(s.id); });
     nav.appendChild(a);
@@ -2062,6 +2113,7 @@ function renderReport(r) {
     }
     renderAnalysis('ana-phone', phoneAnalysis, r);
     if (r.section02) { try { renderSection02(r); } catch(e) { console.warn('section02 렌더링 보류:', e); } }
+    if (r.visitStatus) { try { renderSectionVisit(r); } catch(e) { console.warn('내원현황(v03) 렌더링 보류:', e); } }
     switchSection('01');
     return;
   }
@@ -2253,6 +2305,53 @@ function renderSection04(r) {
 /* ═══════════════════════════════
    섹션 03 렌더링
 ═══════════════════════════════ */
+/* ═══════════════════════════════
+   섹션 v03 렌더링 — 내원 현황 (6월 전용)
+═══════════════════════════════ */
+function renderSectionVisit(r) {
+  const v = r.visitStatus, a = v.may, m = v.jun;
+  document.getElementById('sv03-subtitle').textContent = r.meta.compare + ' · 예약 흐름 및 과목별 내원 현황';
+
+  function kpiItem(label, mayVal, junVal, suffix) {
+    const d = junVal - mayVal, cls = d>0?'up':d<0?'down':'flat', arrow = d>0?`▲ ${Math.abs(d)}`:d<0?`▼ ${Math.abs(d)}`:'— 0';
+    return `<div class="kpi-item"><div class="kpi-item-label">${label}</div><div class="kpi-row"><div class="kpi-month"><span class="kpi-month-label">5월</span><span class="kpi-month-val">${mayVal}${suffix}</span></div><span class="kpi-arrow">→</span><div class="kpi-month"><span class="kpi-month-label">6월</span><span class="kpi-month-val">${junVal}${suffix}</span></div><span class="kpi-diff ${cls}">${arrow}${suffix&&d!==0?suffix:''}</span></div></div>`;
+  }
+  document.getElementById('sv03-kpi').innerHTML =
+    kpiItem('총 예약',       a.total_book, m.total_book, '건') +
+    kpiItem('취소(내원전)',  a.cancel_pre, m.cancel_pre, '건') +
+    kpiItem('내원',          a.visit,      m.visit,      '건') +
+    kpiItem('내원율',        a.visit_rate, m.visit_rate, '%') +
+    kpiItem('최종내원율',    a.final_visit_rate, m.final_visit_rate, '%') +
+    kpiItem('당일취소',      a.same_day_cancel, m.same_day_cancel, '건') +
+    kpiItem('부도',          a.noshow,     m.noshow,     '건');
+
+  const funnelMax = Math.ceil(Math.max(a.total_book, m.total_book) * 1.1 / 10) * 10;
+  function mkFunnel(id, d) {
+    if (charts[id]) charts[id].destroy();
+    charts[id] = new Chart(document.getElementById(id), {
+      type:'bar',
+      data:{ labels:['총 예약','잔여 예약','내원'], datasets:[{ data:[d.total_book, d.remain, d.visit], backgroundColor:['#90CAF9','#42A5F5','#1565C0'], borderRadius:4 }]},
+      options:{ indexAxis:'y', responsive:true, maintainAspectRatio:false,
+        plugins:{ legend:{display:false}, tooltip:{callbacks:{label:c=>' '+c.parsed.x+'건'}} },
+        scales:{ x:{grid:{color:'#F1F3F5'},ticks:{font:{size:12,family:'Pretendard'},color:'#3d3d3d'},max:funnelMax}, y:{grid:{display:false},ticks:{font:{size:13,family:'Pretendard'},color:'#3d3d3d'}} }}
+    });
+  }
+  mkFunnel('chart-v03-funnel-may', a);
+  mkFunnel('chart-v03-funnel-jun', m);
+
+  legend('lg-v03-noshow', [['#BDBDBD','5월'], ['#616161','6월']]);
+  mkChart('chart-v03-noshow', ['당일취소','부도'], [mkDS('5월', [a.same_day_cancel, a.noshow], '#BDBDBD'), mkDS('6월', [m.same_day_cancel, m.noshow], '#616161')]);
+
+  const cats = v.cats, vc = v.visit_by_cat;
+  mkTable('tbl-v03-cats', ['구분','5월 내원','6월 내원','증감'],
+    ['합계', a.visit, m.visit, diff(a.visit, m.visit)],
+    cats.map((c,i) => [c, vc.may[i], vc.jun[i], diff(vc.may[i], vc.jun[i])]));
+  legend('lg-v03-cats', [[C.aprInq,'5월 내원'], [C.mayInq,'6월 내원']]);
+  mkChart('chart-v03-cats', cats, [mkDS('5월 내원', vc.may, C.aprInq), mkDS('6월 내원', vc.jun, C.mayInq)]);
+
+  renderAnalysis('ana-v03', v.analysis, r);
+}
+
 function renderSection03(r) {
   const s=r.section03, a=s.apr, m=s.may;
   document.getElementById('s03-subtitle').textContent = r.meta.compare + ' · 예약 흐름 및 과목별 내원 현황';
