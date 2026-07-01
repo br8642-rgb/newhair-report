@@ -2090,7 +2090,6 @@ function renderSection05(r) {
         <div class="ck-row"><span>체결률</span><div style="display:flex;align-items:center;gap:6px;"><div class="ck-vals"><span>${ar}%</span><span class="arrow">→</span><span>${mr}%</span></div><span class="ck-diff ${cls}">${arrow}${rd!==0?'%p':''}</span></div></div>
       </div>`;
   });
-  const [lblA05, lblM05] = r.meta.compare.replace('2026년 ','').split(' vs ');
   s05LblA = lblA05; s05LblM = lblM05; // 전역에 저장
   legend('lg-s05-rate', [[C.aprInq,lblA05+' 체결률'],[C.mayInq,lblM05+' 체결률']]);
   if(charts['chart-s05-rate']) charts['chart-s05-rate'].destroy();
