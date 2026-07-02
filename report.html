@@ -3703,10 +3703,12 @@ function renderSectionOverview(r) {
   const dbc = r.dbCampaign;
   const cards = [];
   if (dbc) {
+    const totalCost = dbc.p1.dbCost + dbc.p2.dbCost;
+    const totalNet = dbc.p1.netProfit + dbc.p2.netProfit;
     cards.push({ tag:'03', title:'DB 현황', color:'#0891B2', items:[
-      { label:'1차 ROI', val:`${dbc.p1.roi>=0?'+':''}${dbc.p1.roi}%` },
-      { label:'2차 ROI', val:`${dbc.p2.roi>=0?'+':''}${dbc.p2.roi}%` },
-      { label:'합계 순수익', val: fmtWon(dbc.p1.netProfit + dbc.p2.netProfit) },
+      { label:`1차 DB (${dbc.p1.qty}개)`, val:`내원 ${dbc.p1.visited}명 · 성사 ${dbc.p1.closed}건` },
+      { label:`2차 DB (${dbc.p2.qty}개)`, val:`내원 ${dbc.p2.visited}명 · 성사 ${dbc.p2.closed}건` },
+      { label:'투입 대비 손익', val: `${fmtWon(totalCost)} → <span style="color:${totalNet>=0?'#C62828':'#1565C0'}">${totalNet>=0?'+':''}${fmtWon(totalNet)}</span>` },
     ]});
   }
   cards.push(
