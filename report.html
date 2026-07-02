@@ -2441,20 +2441,20 @@ function renderReport(r) {
   if (!s.naver) {
     // 전화 데이터만 준비된 상태 — 전화 카드만 렌더링, 나머지는 데이터 들어오는 대로 추가
     const ph=s.phone, pc=s.cats;
-    const periods = [
-      { label:'5월', date:'05/01~05/31', color:'#1565C0', d: ph.total_may },
-      { label:'6월', date:'06/01~06/30', color:'#C62828', d: ph.total_jun },
-    ];
-    document.getElementById('s01-kpi').innerHTML = periods.map(p => `
-      <div class="kpi-item">
-        <div class="kpi-item-label" style="color:${p.color};font-weight:800;font-size:22px;">${p.label}</div>
-        <div style="font-size:13px;color:#888;font-weight:600;margin-bottom:4px;">${p.date}</div>
-        <div class="kpi-row">
-          <div class="kpi-month"><span class="kpi-month-label">문의</span><span class="kpi-month-val">${p.d.inq}</span></div>
-          <div class="kpi-month"><span class="kpi-month-label">예약</span><span class="kpi-month-val">${p.d.book}</span></div>
-          <div class="kpi-month"><span class="kpi-month-label">예약률</span><span class="kpi-month-val">${p.d.rate}%</span></div>
-        </div>
-      </div>`).join('');
+    function phKpiItem(label, av, mv, suffix) {
+      const d = mv - av, cls = d>0?'up':d<0?'down':'flat';
+      const arrow = d>0?`▲ ${Math.abs(d)}`:d<0?`▼ ${Math.abs(d)}`:'— 0';
+      return `<div class="kpi-item"><div class="kpi-item-label">${label}</div><div class="kpi-row">
+        <div class="kpi-month"><span class="kpi-month-label">5월</span><span class="kpi-month-val">${av}${suffix}</span></div>
+        <span class="kpi-arrow">→</span>
+        <div class="kpi-month"><span class="kpi-month-label">6월</span><span class="kpi-month-val">${mv}${suffix}</span></div>
+        <span class="kpi-diff ${cls}">${arrow}${suffix&&d!==0?suffix:''}</span>
+      </div></div>`;
+    }
+    document.getElementById('s01-kpi').innerHTML =
+      phKpiItem('문의', ph.total_may.inq, ph.total_jun.inq, '') +
+      phKpiItem('예약', ph.total_may.book, ph.total_jun.book, '') +
+      phKpiItem('예약률', ph.total_may.rate, ph.total_jun.rate, '%');
     mkTable('tbl-phone',['구분','5월 문의','5월 예약','5월 예약률','6월 문의','6월 예약','6월 예약률','증감'],
       ['합계',ph.total_may.inq,ph.total_may.book,ph.total_may.rate+'%',ph.total_jun.inq,ph.total_jun.book,ph.total_jun.rate+'%',diff(ph.total_may.inq,ph.total_jun.inq)],
       pc.map((c,i)=>[c,ph.may.inq[i],ph.may.book[i],ph.may.rate[i]+'%',ph.jun.inq[i],ph.jun.book[i],ph.jun.rate[i]+'%',diff(ph.may.inq[i],ph.jun.inq[i])]));
