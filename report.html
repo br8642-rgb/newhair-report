@@ -36,6 +36,15 @@
 .v03-kpi .kpi-month-val { font-size: 22px; font-weight: 800; }
 .v03-kpi .kpi-diff { font-size: 15px; }
 
+/* ── 직원별 과목 성과 상세 카드 — 글자·막대 크게 ── */
+#sst06-detail-grid .ccc-title { font-size: 17px; font-weight: 800; padding-bottom: 10px; }
+#sst06-detail-grid .ccc-badge { font-size: 13px; padding: 4px 10px; }
+#sst06-detail-grid .hbl-ch { font-size: 15px; font-weight: 700; }
+#sst06-detail-grid .hbl-num { font-size: 15px; font-weight: 700; }
+#sst06-detail-grid .hbar-item { margin-bottom: 14px; }
+#sst06-detail-grid .hbar-track { height: 14px; border-radius: 7px; }
+#sst06-detail-grid .hbar-fill { border-radius: 7px; }
+
 /* ── 표 접기/펼치기 ── */
 .table-toggle-btn {
   display: inline-flex; align-items: center; gap: 6px;
@@ -406,15 +415,10 @@
       <div id="sst06-kpi" class="ch-kpi-grid" style="grid-template-columns:repeat(3,1fr);"></div>
     </div>
     <div class="s02-section-label">전체 체결률 비교</div>
-    <div class="card" style="margin-bottom:16px;">
+    <div class="card" style="margin-bottom:28px;">
       <div class="card-title">직원별 체결률 비교 <span style="font-size:11px;color:#6b6b6b;font-weight:400;">(5월 vs 6월, %)</span></div>
       <div class="ch-legend-row" id="lg-st06-rate"></div>
       <div class="chart-wrap" style="height:220px"><canvas id="chart-st06-rate"></canvas></div>
-    </div>
-    <div class="card" style="margin-bottom:28px;">
-      <div class="card-title">직원별 상담·체결 비교</div>
-      <div class="ch-legend-row" id="lg-st06-vc"></div>
-      <div class="chart-wrap" style="height:260px"><canvas id="chart-st06-vc"></canvas></div>
     </div>
     <div class="s02-section-label">직원별 상세 현황</div>
     <div class="card">
@@ -2212,7 +2216,7 @@ function setupTitleEdit() {
 ═══════════════════════════════ */
 function renderSection02Partial(r) {
   const s01 = r.section01, s02 = r.section02;
-  document.getElementById('s02-subtitle').textContent = r.meta.compare + ' · 채널별 문의·예약 현황';
+  document.getElementById('s02-subtitle').textContent = r.meta.compare + ' · 전화·플친·네이버·게시판·왓츠앱 5개 채널의 문의·예약 현황과 채널별 상세 비교';
 
   // 5월 보고서 전용(채널 간 비교 차트 / 진료과목별 분포) 블록은 숨김
   document.querySelectorAll('[data-channel="s02-full"]').forEach(el => { el.style.display = 'none'; });
@@ -2430,7 +2434,7 @@ function renderReport(r) {
   if (s.kakao) availableChannels.push('플친');
   if (s.board) availableChannels.push('게시판');
   if (s.whatsapp) availableChannels.push('왓츠앱');
-  document.getElementById('s01-subtitle').textContent = r.meta.compare + ' · ' + availableChannels.join(' / ');
+  document.getElementById('s01-subtitle').textContent = r.meta.compare + ' · ' + availableChannels.join(' / ') + ' 채널 신규 문의·예약 및 과목별 상세 현황';
 
   // 데이터 없는 채널 블록(네이버/플친/게시판/왓츠앱/전체합산)은 화면에서 완전히 숨김
   ['naver','kakao','board','whatsapp','total'].forEach(key => {
@@ -2678,7 +2682,7 @@ function renderSection04(r) {
 ═══════════════════════════════ */
 function renderSectionVisit(r) {
   const v = r.visitStatus, a = v.may, m = v.jun;
-  document.getElementById('sv03-subtitle').textContent = r.meta.compare + ' · 예약 흐름 및 과목별 내원 현황';
+  document.getElementById('sv03-subtitle').textContent = r.meta.compare + ' · 예약→내원 전환 흐름, 당일취소·부도 및 과목별 내원 상세 현황';
 
   function kpiItem(label, mayVal, junVal, suffix) {
     const d = junVal - mayVal, cls = d>0?'up':d<0?'down':'flat', arrow = d>0?`▲ ${Math.abs(d)}`:d<0?`▼ ${Math.abs(d)}`:'— 0';
@@ -2726,7 +2730,7 @@ function renderSectionVisit(r) {
 ═══════════════════════════════ */
 function renderSectionClosing(r) {
   const c = r.closingStatus, a = c.may, m = c.jun, cats = c.cats;
-  document.getElementById('scs04-subtitle').textContent = r.meta.compare + ' · 과목별 성사(체결) 현황';
+  document.getElementById('scs04-subtitle').textContent = r.meta.compare + ' · 상담부터 체결까지, 과목별 성사 전환 현황';
 
   function kpiItem(label, mayVal, junVal, suffix) {
     const d = junVal - mayVal, cls = d>0?'up':d<0?'down':'flat', arrow = d>0?`▲ ${Math.abs(d)}${suffix==='%'?'%p':''}`:d<0?`▼ ${Math.abs(d)}${suffix==='%'?'%p':''}`:'— 0';
@@ -2864,14 +2868,6 @@ function renderSectionStaff(r) {
     options:{ ...BASE, scales:{...BASE.scales, y:{...BASE.scales.y, max:105, ticks:{...BASE.scales.y.ticks, callback:v=>v+'%'}}},
       plugins:{...BASE.plugins, tooltip:{...BASE.plugins.tooltip, callbacks:{label:c=>' '+c.dataset.label+': '+c.parsed.y+'%'}}} }
   });
-
-  chLegend('lg-st06-vc', [[C.aprInq,'5월 상담'],[C.aprBook,'5월 체결'],[C.mayInq,'6월 상담'],[C.mayBook,'6월 체결']]);
-  mkChart('chart-st06-vc', s.staff, [
-    mkDS('5월 상담', s.may.total.visit, C.aprInq),
-    mkDS('5월 체결', s.may.total.close, C.aprBook),
-    mkDS('6월 상담', s.jun.total.visit, C.mayInq),
-    mkDS('6월 체결', s.jun.total.close, C.mayBook),
-  ], 260);
 
   const totMayVisit = s.may.total.visit.reduce((a,b)=>a+b,0), totMayClose = s.may.total.close.reduce((a,b)=>a+b,0);
   const totJunVisit = s.jun.total.visit.reduce((a,b)=>a+b,0), totJunClose = s.jun.total.close.reduce((a,b)=>a+b,0);
@@ -3171,7 +3167,7 @@ function switchTr07Month(month) {
    섹션 ov00 렌더링 — 전체 종합 현황 (6월 전용, 다른 섹션 데이터를 종합 집계)
 ═══════════════════════════════ */
 function renderSectionOverview(r) {
-  document.getElementById('sov00-subtitle').textContent = r.meta.compare + ' · 전 섹션 핵심 지표 종합';
+  document.getElementById('sov00-subtitle').textContent = r.meta.compare + ' · 문의부터 매출까지 전 섹션 핵심 지표를 한 화면에 종합 정리';
 
   const ph = r.section01.phone, s02 = r.section02, vs = r.visitStatus, cs = r.closingStatus, ts = r.trafficStatus, rv = r.revenueStatus, mg = r.mergedInquiry;
 
