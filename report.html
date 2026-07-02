@@ -1257,18 +1257,43 @@ function analysisCacheField(id, r) {
   return (r && !LEGACY_REPORT_LABELS[r.meta.label]) ? id + '__' + r.meta.label : id;
 }
 
+// ── 캐시 버전 태그 시스템 ─────────────────────────────────────
+// 목적: 코드의 기본 문구/리스트가 바뀌면 예전에 화면에서 저장해둔 캐시를 자동으로 무효화해서
+//       "코드 수정 → 화면엔 옛날 내용" 문제가 다시는 재발하지 않도록 함.
+// 방식: 저장 시 items 배열 맨 뒤에 "__v:<해시>" 마커를 하나 더 붙여서 저장(기존 Sheets 저장 포맷과 100% 호환).
+//       불러올 때 그 마커의 해시가 지금 코드 기본값의 해시와 다르면(=코드가 바뀌었으면) 캐시를 버리고 코드 기본값을 보여줌.
+//       사람이 화면에서 직접 수정한 내용은 그 시점의 코드 해시로 저장되므로, 코드가 그대로인 한 계속 정상적으로 유지·표시됨.
+const VERSION_MARKER = '__v:';
+function hashText(str) {
+  let h = 0;
+  for (let i = 0; i < str.length; i++) { h = (h * 31 + str.charCodeAt(i)) | 0; }
+  return (h >>> 0).toString(36);
+}
+function packWithVersion(items, version) {
+  return items.concat(VERSION_MARKER + version);
+}
+function unpackVersion(cached) {
+  if (!cached || cached.length === 0) return { items: null, version: null };
+  const last = cached[cached.length - 1];
+  if (typeof last === 'string' && last.indexOf(VERSION_MARKER) === 0) {
+    return { items: cached.slice(0, -1), version: last.slice(VERSION_MARKER.length) };
+  }
+  return { items: cached, version: null }; // 버전 마커 없는 예전 캐시(레거시) — 버전 불일치로 간주해 코드 기본값 사용
+}
+
 // ── 메모리 캐시 읽기
 function cacheRead(reportId, field) {
   return editCache[reportId + ':' + field] || null;
 }
 
-// ── DOM → 메모리 캐시 + Sheets 저장
-function cacheWriteFromDOM(containerId, reportId, field) {
+// ── DOM → 메모리 캐시 + Sheets 저장 (baseVersion 지정 시 버전 마커 포함 저장)
+function cacheWriteFromDOM(containerId, reportId, field, baseVersion) {
   const container = document.getElementById(containerId);
   if (!container) return;
-  const items = Array.from(container.querySelectorAll('[data-item-text]'))
+  let items = Array.from(container.querySelectorAll('[data-item-text]'))
     .map(el => el.innerHTML);
   if (items.length > 0) {
+    if (baseVersion) items = packWithVersion(items, baseVersion);
     editCache[reportId + ':' + field] = items;
     saveToSheets(reportId, field, items);
   }
@@ -2226,23 +2251,25 @@ function mkTable(id, headers, totalRow, rows) {
 function renderAnalysis(id, text, r) {
   const p = document.getElementById(id);
   if(!p) return;
-  // Sheets에 저장된 분석 텍스트가 있으면 우선 적용 (보고서별로 키 분리)
+  // Sheets에 저장된 분석 텍스트가 있어도, 코드의 기본 문구가 그 이후 바뀌었으면(버전 불일치) 코드 내용을 우선 적용
   const field = analysisCacheField(id, r);
-  const cached = cacheRead('analysis', field);
-  p.innerHTML = cached ? cached[0] : text.replace(/\n/g,'<br>');
+  const baseVersion = hashText(text);
+  const { items: cachedItems, version: cachedVersion } = unpackVersion(cacheRead('analysis', field));
+  const useCache = cachedItems && cachedVersion === baseVersion;
+  p.innerHTML = useCache ? cachedItems[0] : text.replace(/\n/g,'<br>');
   if(isEditor) {
     const box = p.closest('.analysis-box');
     box.classList.add('editable');
     box.title = '클릭하여 수정';
     function clickHandler() {
       box.removeEventListener('click', clickHandler);
-      editAnalysis(box, p, field);
+      editAnalysis(box, p, field, baseVersion);
     }
     box.addEventListener('click', clickHandler);
   }
 }
 
-function editAnalysis(box, p, field) {
+function editAnalysis(box, p, field, baseVersion) {
   if(box.querySelector('[contenteditable]')) return;
   const editor = document.createElement('div');
   editor.contentEditable = 'true';
@@ -2276,15 +2303,15 @@ function editAnalysis(box, p, field) {
       const newP = document.createElement('p');
       newP.id = p.id; newP.innerHTML = editor.innerHTML;
       editor.replaceWith(newP);
-      // 분석 텍스트 Sheets 저장
+      // 분석 텍스트 Sheets 저장 (현재 코드 버전 태그 포함)
       if (newP.id) {
         const analysisText = newP.innerHTML;
-        saveToSheets('analysis', field || newP.id, [analysisText]);
+        saveToSheets('analysis', field || newP.id, packWithVersion([analysisText], baseVersion));
         showSaveToast('✔ 저장 완료');
       }
       if(isEditor) {
         newP.closest('.analysis-box').addEventListener('click', function handler() {
-          this.removeEventListener('click', handler); editAnalysis(this, newP, field);
+          this.removeEventListener('click', handler); editAnalysis(this, newP, field, baseVersion);
         });
       }
     }, 100);
@@ -5271,16 +5298,17 @@ function renderEditableList(containerId, addBtnId, items, icon, iconColor, isEdi
   const addBtn    = document.getElementById(addBtnId);
   if (!container) return;
 
-  // 캐시된 편집 내용 우선 사용
+  // 코드에 있는 기본 items 기준으로 버전 계산 — 이 버전과 일치하는 캐시만 신뢰(불일치=코드가 바뀐 것이므로 코드 내용 사용)
+  const baseVersion = hashText(JSON.stringify(items));
   if (reportId && field) {
-    const cached = cacheRead(reportId, field);
-    if (cached) items = cached;
+    const { items: cachedItems, version: cachedVersion } = unpackVersion(cacheRead(reportId, field));
+    if (cachedItems && cachedVersion === baseVersion) items = cachedItems;
   }
 
   if (isEditor && addBtn) addBtn.style.display = 'block';
 
   function saveToCache() {
-    if (reportId && field) cacheWriteFromDOM(containerId, reportId, field);
+    if (reportId && field) cacheWriteFromDOM(containerId, reportId, field, baseVersion);
   }
 
   function makeItem(html) {
