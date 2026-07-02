@@ -2905,10 +2905,10 @@ function renderSectionDbCampaign(r) {
        <span class="badge" style="background:#F1F3F5;color:#6b6b6b;margin-top:8px;display:inline-block;">총 ${fmtWon(totalContract)}</span>`) +
     effCard('순수익', 0, 0,
       `<div style="display:flex;flex-direction:column;gap:4px;">
-         <span style="font-size:13px;font-weight:700;color:${C1}">1차 &nbsp;${p1.netProfit>=0?'+':''}${fmtWon(p1.netProfit)}</span>
-         <span style="font-size:13px;font-weight:700;color:${C2}">2차 &nbsp;${p2.netProfit>=0?'+':''}${fmtWon(p2.netProfit)}</span>
+         <span style="font-size:13px;font-weight:700;color:${C1}">1차 &nbsp;${p1.netProfit>=0?'+':'-'}${fmtWon(Math.abs(p1.netProfit))}</span>
+         <span style="font-size:13px;font-weight:700;color:${C2}">2차 &nbsp;${p2.netProfit>=0?'+':'-'}${fmtWon(Math.abs(p2.netProfit))}</span>
        </div>
-       <span class="badge ${totalNet>=0?'':''}" style="background:#FFEBEE;color:#C62828;margin-top:8px;display:inline-block;">▲ 전체 ${totalNet>=0?'+':''}${fmtWon(totalNet)}</span>`, true) +
+       <span class="badge" style="background:#FFEBEE;color:#C62828;margin-top:8px;display:inline-block;">▲ 전체 ${totalNet>=0?'+':'-'}${fmtWon(Math.abs(totalNet))}</span>`, true) +
     effCard('DB대비 체결률', 0, 0,
       `<div class="kpi-row"><span style="font-size:17px;font-weight:700;color:${C1}">${Math.round(p1.closed/p1.qty*100)}%</span><span class="kpi-arrow">→</span><span style="font-size:17px;font-weight:700;color:${C2}">${Math.round(p2.closed/p2.qty*100)}%</span></div>
        <span class="badge" style="background:#E3F2FD;color:#1565C0;margin-top:8px;display:inline-block;">▼ ${(Math.round(p1.closed/p1.qty*100)-Math.round(p2.closed/p2.qty*100))}%p</span>`);
@@ -3708,7 +3708,7 @@ function renderSectionOverview(r) {
     cards.push({ tag:'03', title:'DB 현황', color:'#0891B2', items:[
       { label:`1차 DB (${dbc.p1.qty}개)`, val:`내원 ${dbc.p1.visited}명 · 성사 ${dbc.p1.closed}건` },
       { label:`2차 DB (${dbc.p2.qty}개)`, val:`내원 ${dbc.p2.visited}명 · 성사 ${dbc.p2.closed}건` },
-      { label:'투입 대비 손익', val: `${fmtWon(totalCost)} → <span style="color:${totalNet>=0?'#C62828':'#1565C0'}">${totalNet>=0?'+':''}${fmtWon(totalNet)}</span>` },
+      { label:'투입 대비 손익', val: `${fmtWon(totalCost)} → <span style="color:${totalNet>=0?'#C62828':'#1565C0'}">${totalNet>=0?'+':'-'}${fmtWon(Math.abs(totalNet))}</span>` },
     ]});
   }
   cards.push(
