@@ -492,6 +492,10 @@
       <div class="kpi-label">핵심 지표 요약</div>
       <div class="kpi-compare" id="srev08-kpi"></div>
     </div>
+    <div class="card" style="margin-bottom:28px;">
+      <div class="card-title">매출 TOP 3 과목</div>
+      <div id="srev08-top3" style="display:grid;grid-template-columns:1fr 1fr;gap:24px;"></div>
+    </div>
     <div class="s02-section-label">과목별 매출 현황</div>
     <div id="srev08-cat-cards" style="display:grid;grid-template-columns:repeat(3,1fr);gap:14px;margin-bottom:28px;"></div>
     <div class="s02-charts-grid">
@@ -2835,6 +2839,28 @@ function renderSectionRevenue(r) {
     </div></div>`;
   }
   document.getElementById('srev08-kpi').innerHTML = kpiItem('총 매출', mayTotal, junTotal);
+
+  function top3Html(monthLabel, revenueArr) {
+    const ranked = s.cats.map((cat,i) => ({ cat, rev: revenueArr[i], color: s.catColors[i] }))
+                          .filter(x => x.rev > 0)
+                          .sort((a,b) => b.rev - a.rev)
+                          .slice(0,3);
+    const total = revenueArr.reduce((a,b)=>a+b,0);
+    const medal = ['🥇','🥈','🥉'];
+    return `<div>
+      <div style="font-size:13px;font-weight:800;color:#555;margin-bottom:10px;">${monthLabel}</div>
+      ${ranked.map((x,i) => `
+        <div style="display:flex;align-items:center;gap:8px;padding:8px 0;${i<ranked.length-1?'border-bottom:1px solid #F1F3F5;':''}">
+          <span style="font-size:16px;">${medal[i]}</span>
+          <span style="width:9px;height:9px;border-radius:50%;background:${x.color};flex-shrink:0;"></span>
+          <span style="flex:1;font-size:13px;font-weight:700;color:#1a1a1a;">${x.cat}</span>
+          <span style="font-size:13px;font-weight:800;color:#1a1a1a;">${fmtWon(x.rev)}</span>
+          <span style="font-size:11px;color:#999;width:42px;text-align:right;">${((x.rev/total)*100).toFixed(1)}%</span>
+        </div>`).join('')}
+    </div>`;
+  }
+  document.getElementById('srev08-top3').innerHTML =
+    top3Html('5월', s.may.revenue) + top3Html('6월', s.jun.revenue);
 
   const cards = document.getElementById('srev08-cat-cards');
   cards.innerHTML = '';
