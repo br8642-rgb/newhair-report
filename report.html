@@ -315,10 +315,62 @@
     <div class="analysis-box" id="ana-box-s02-summary" data-channel="s02-summary" style="display:none;"><p id="ana-s02-summary"></p></div>
   </div>
 
+  <!-- 섹션 db03 — DB 현황 (6월 전용, 1·2차 캠페인 비교, 5월 보고서의 section-03과 별개 패널) -->
+  <div class="section-panel" id="section-db03">
+    <div class="section-header">
+      <div class="section-tag">Section 03</div>
+      <div class="section-title">DB 현황</div>
+      <div class="section-subtitle" id="sdb03-subtitle">1차(100개) vs 2차(200개) · 추가 구매 의사결정 검토용</div>
+    </div>
+
+    <div class="db03-pills" id="db03-pills"></div>
+
+    <div class="db03-section-label">DB 구매 비용 · 수익 분석 (핵심 판단 지표)</div>
+    <div class="card" style="margin-bottom:16px;">
+      <div class="card-title">비용 · 수익 대비표 <span style="font-size:11px;color:#6b6b6b;font-weight:400;" id="db03-unit-price"></span></div>
+      <table class="data-table" id="db03-cost-table"></table>
+    </div>
+    <div class="db03-eff-grid" id="db03-eff-grid"></div>
+
+    <div class="db03-section-label">콜 &amp; 내원 핵심 지표</div>
+    <div class="db03-kpi-grid" id="db03-kpi-grid"></div>
+
+    <div class="db03-section-label">퍼널 단계 &amp; 통화 실패</div>
+    <div class="s02-charts-grid">
+      <div class="card">
+        <div class="card-title">콜 → 체결 단계별 비율</div>
+        <div class="chart-legend" id="db03-funnel-legend"></div>
+        <div id="db03-funnel-list"></div>
+      </div>
+      <div class="card">
+        <div class="card-title">통화 실패 내역</div>
+        <table class="data-table" id="db03-fail-table"></table>
+        <div class="chart-wrap" style="height:200px;margin-top:14px;"><canvas id="chart-db03-fail"></canvas></div>
+      </div>
+    </div>
+
+    <div class="db03-section-label">예약 → 내원 → 체결 흐름</div>
+    <div class="db03-flow-grid">
+      <div class="card db03-flow-card" id="db03-flow-1" style="border-color:var(--blue);"></div>
+      <div class="card db03-flow-card" id="db03-flow-2" style="border-color:var(--red);"></div>
+      <div class="card">
+        <div class="card-title">주요 전환율 비교</div>
+        <div class="chart-legend" id="db03-bar-legend"></div>
+        <div class="chart-wrap" style="height:240px;"><canvas id="chart-db03-bar"></canvas></div>
+      </div>
+    </div>
+
+    <div class="db03-section-label">종합 분석 · 추가 구매 검토 포인트</div>
+    <div class="analysis-box">
+      <div class="kpi-label" style="margin-bottom:14px;">회의 검토용 핵심 분석</div>
+      <div id="db03-insights"></div>
+    </div>
+  </div>
+
   <!-- 섹션 v03 — 내원 현황 (6월 전용, 5월 보고서의 section-04와 별개 패널) -->
   <div class="section-panel" id="section-v03">
     <div class="section-header">
-      <div class="section-tag">Section 03</div>
+      <div class="section-tag">Section 04</div>
       <div class="section-title">내원 현황</div>
       <div class="section-subtitle" id="sv03-subtitle"></div>
     </div>
@@ -356,7 +408,7 @@
   <!-- 섹션 cs04 — 성사 현황 (6월 전용, 5월 보고서의 section-05(내부 property section04)와 별개 패널) -->
   <div class="section-panel" id="section-cs04">
     <div class="section-header">
-      <div class="section-tag">Section 04</div>
+      <div class="section-tag">Section 05</div>
       <div class="section-title">성사 현황</div>
       <div class="section-subtitle" id="scs04-subtitle"></div>
     </div>
@@ -380,7 +432,7 @@
   <!-- 섹션 ds05 — 원장님 성사 현황 (6월 전용, 5월 보고서의 section-06(내부 property section05)와 별개 패널) -->
   <div class="section-panel" id="section-ds05">
     <div class="section-header">
-      <div class="section-tag">Section 05</div>
+      <div class="section-tag">Section 06</div>
       <div class="section-title">원장님 성사 현황</div>
       <div class="section-subtitle" id="sds05-subtitle"></div>
     </div>
@@ -406,7 +458,7 @@
   <!-- 섹션 st06 — 직원별 성사율 (6월 전용, 5월 보고서의 section-07(내부 property section06)와 별개 패널) -->
   <div class="section-panel" id="section-st06">
     <div class="section-header">
-      <div class="section-tag">Section 06</div>
+      <div class="section-tag">Section 07</div>
       <div class="section-title">직원별 성사율</div>
       <div class="section-subtitle" id="sst06-subtitle"></div>
     </div>
@@ -439,7 +491,7 @@
   <!-- 섹션 tr07 — 유입경로 분석 (6월 전용, 5월 보고서의 section-08(내부 property section07)와 별개 패널) -->
   <div class="section-panel" id="section-tr07">
     <div class="section-header">
-      <div class="section-tag">Section 07</div>
+      <div class="section-tag">Section 08</div>
       <div class="section-title">유입경로 분석</div>
       <div class="section-subtitle" id="str07-subtitle"></div>
     </div>
@@ -493,7 +545,7 @@
 
   <div class="section-panel" id="section-rev08">
     <div class="section-header">
-      <div class="section-tag">Section 08</div>
+      <div class="section-tag">Section 09</div>
       <div class="section-title">매출 현황</div>
       <div class="section-subtitle" id="srev08-subtitle"></div>
     </div>
@@ -563,7 +615,7 @@
   <!-- 섹션 rv09 — 종합 리뷰 & 과제 (6월 전용, 5월 보고서의 section-10과 별개 패널) -->
   <div class="section-panel" id="section-rv09">
     <div class="section-header">
-      <div class="section-tag">Section 09</div>
+      <div class="section-tag">Section 10</div>
       <div class="section-title">종합 리뷰 &amp; 과제</div>
       <div class="section-subtitle" id="srv09-subtitle"></div>
     </div>
@@ -1467,6 +1519,29 @@ const ALL_REPORTS = [
     jun: { revenue: [223611815,42320000,45720800,378005900,0,5238000], total: 694896515 },
     analysis: '전체 매출 959,400,480원→694,896,515원으로 <b>27.6% 감소</b>.\nHairLap이 522,073,900원→378,005,900원(−27.6%)으로 <b>전체 매출의 절반 이상(약 54%) 비중을 유지한 채 동반 감소</b>.\n<b>모발이식이 330,117,200원→223,611,815원(−32.3%)으로 감소율이 가장 큼</b>, 헤어라인도 61,683,380원→42,320,000원(−31.4%)으로 비슷한 폭으로 줄어듦.\n<b>SMP만 39,663,000원→45,720,800원(+15.3%)으로 유일하게 증가</b> — 앞선 성사현황에서 확인된 SMP 체결률 개선(71%→75%)과 흐름이 일치.\n기타 매출은 5,863,000원→5,238,000원(−10.7%)으로 소폭 감소, 키오머는 두 달 다 매출 0원으로 미운영 상태.',
   },
+  dbCampaign: {
+    unitPrice: '44,000원 (부가세 포함)',
+    p1: { label:'1차', period:'03/06 – 04/25', qty:100, dbCost:4400000, contract:14800000, netProfit:10400000, roi:236,
+          newDb:103, connected:87, booked:23, cancel:15, cancelRate:65, visited:8, visitedRate:35, closed:3, closedRate:38,
+          fail:{ '재연락/부재':44, '예약거부':49, '보류':14, '신규부재':41, '결번':24 },
+          funnel:{ connectRate:84, bookRate:28, visitRate:35, closeRate:38, dbToClose:3 } },
+    p2: { label:'2차', period:'04/27 – 06/30', qty:200, dbCost:8800000, contract:7200000, netProfit:-1600000, roi:-18,
+          newDb:173, connected:167, booked:30, cancel:16, cancelRate:53, visited:12, visitedRate:40, closed:2, closedRate:17,
+          fail:{ '재연락/부재':44, '예약거부':107, '보류':23, '신규부재':46, '결번':21 },
+          funnel:{ connectRate:96, bookRate:22, visitRate:40, closeRate:17, dbToClose:1 },
+          note:'📱 2차부터 업무폰 병행 운영 — 재연락 시도 증가했으나 부재 多, 고객이 기억 못하는 경우 설명 전 조기 통화 종료 빈번' },
+    insights: [
+      { type:'pos', text:'DB 2배 구매 시 실내원 수는 8명→12명(+50%)으로 증가. 취소율도 65%→53%로 개선되어 예약 후 관리 역량은 향상됨.' },
+      { type:'pos', text:'2차부터 업무폰을 병행 운영하여 통화 연결 소계 87건→167건으로 대폭 증가. 절대적인 콜 운영량은 DB 규모 확대에 비례해 잘 처리됨.' },
+      { type:'neg', text:'업무폰을 통한 재연락 시도에도 부재가 많았고, 이전에 상담 이력이 있는 고객도 기억하지 못하는 경우 설명 시작 전 통화를 끊는 케이스가 빈번. 연결 수 증가가 실질적인 예약 전환으로 이어지지 않은 원인 중 하나.' },
+      { type:'neg', text:'내원대비 체결률이 38%→17%로 급락. DB·콜 운영의 문제가 아니라 <b>상담 클로징 단계의 전환 효율</b>이 핵심 병목. 내원자 수가 늘었음에도 체결이 줄었음.' },
+      { type:'neg', text:'예약거부가 49건→107건으로 2배 이상 증가. DB 수량 확대가 관심도 낮은 잠재고객 비율을 높인 것으로 판단됨. DB 품질 검토 필요.' },
+      { type:'neg', text:'2차 DB는 1차 대비 고객 연령대가 높아진 경향. 60대 후반~70·80대 고령 고객 비율 증가로 상담 시간이 길어지고, 꼬치꼬치 묻는 고객이 늘어 콜당 소요 시간 증가. 예약 취소 사유도 "시골 가야 돼서", "농사 때문에" 등 고령층 특유의 이유가 다수 발생 — DB 연령 분포가 내원율·체결률에 직접 영향을 준 것으로 판단.' },
+      { type:'neu', label:'검토 1', text:'내원 상담 전환율 현황 확인 필요 (별도 논의)' },
+      { type:'neu', label:'검토 2', text:'추가 구매 시 공급업체에 <b>연령 범위 조정 가능 여부 확인</b> — 60대 후반 이상 비율이 높을 경우 내원·체결 전환 효율 저하 가능성 높음' },
+      { type:'neu', label:'검토 3', text:'<b>부재 고객 대상 문자/이미지 발송 기획</b> — 재연락 시도에도 계속 부재인 고객에게 ①22,000원 검사 이벤트 문자 발송, ②모낭수 기준(399만원 / 499만원) 이벤트 이미지 발송으로 관심 환기 및 자발적 인바운드 유도' },
+    ],
+  },
   mergedInquiry: {
     cats: ['이식','헤어','SMP','치료','검사','처방전','기타'],
     may: { inq:[172,26,29,63,238,25,1], book:[116,21,20,50,227,22,0], rate:[67,81,69,79,95,88,0], overseas:[40,4,1,11,7,0,0] },
@@ -2002,13 +2077,14 @@ function availableMonthlySections(r) {
   has((r.section01 && r.section01.naver) || !!(r.section02 && r.section02.kakao), '02', '채널별 문의·예약');
   has(!!r.section03db, '03', 'DB 현황');
   has(!!r.section03,   '04', '내원 현황');
-  has(!!r.visitStatus, 'v03', '내원 현황', '03');
-  has(!!r.closingStatus, 'cs04', '성사 현황', '04');
-  has(!!r.doctorStatus, 'ds05', '원장님 성사 현황', '05');
-  has(!!r.staffStatus, 'st06', '직원별 성사율', '06');
-  has(!!r.trafficStatus, 'tr07', '유입경로 분석', '07');
-  has(!!r.revenueStatus, 'rev08', '매출 현황', '08');
-  has(!!r.reviewStatus, 'rv09', '종합 리뷰 & 과제', '09');
+  has(!!r.dbCampaign, 'db03', 'DB 현황', '03');
+  has(!!r.visitStatus, 'v03', '내원 현황', '04');
+  has(!!r.closingStatus, 'cs04', '성사 현황', '05');
+  has(!!r.doctorStatus, 'ds05', '원장님 성사 현황', '06');
+  has(!!r.staffStatus, 'st06', '직원별 성사율', '07');
+  has(!!r.trafficStatus, 'tr07', '유입경로 분석', '08');
+  has(!!r.revenueStatus, 'rev08', '매출 현황', '09');
+  has(!!r.reviewStatus, 'rv09', '종합 리뷰 & 과제', '10');
   has(!!r.section04,   '05', '성사 현황');
   has(!!r.section05,   '06', '원장님 성사율');
   has(!!r.section06,   '07', '직원별 성사율');
@@ -2512,6 +2588,7 @@ function renderReport(r) {
     }
     renderAnalysis('ana-phone', phoneAnalysis, r);
     if (r.section02) { try { renderSection02(r); } catch(e) { console.warn('section02 렌더링 보류:', e); } }
+    if (r.dbCampaign) { try { renderSectionDbCampaign(r); } catch(e) { console.warn('DB현황(db03) 렌더링 보류:', e); } }
     if (r.visitStatus) { try { renderSectionVisit(r); } catch(e) { console.warn('내원현황(v03) 렌더링 보류:', e); } }
     if (r.closingStatus) { try { renderSectionClosing(r); } catch(e) { console.warn('성사현황(cs04) 렌더링 보류:', e); } }
     if (r.doctorStatus) { try { renderSectionDoctor(r); } catch(e) { console.warn('원장님 성사현황(ds05) 렌더링 보류:', e); } }
@@ -2706,6 +2783,179 @@ function renderSection04(r) {
   mkChart('chart-s04-visit',    s.cats, [mkDS('4월 내원',  a.visit,    C.aprInq), mkDS('5월 내원',   m.visit,    C.mayInq)]);
   mkChart('chart-s04-contract', s.cats, [mkDS('4월 체결',  a.contract, C.aprBook),mkDS('5월 체결',   m.contract, C.mayBook)]);
   renderAnalysis('ana-s04', s.analysis, r);
+}
+
+/* ═══════════════════════════════
+   섹션 db03 렌더링 — DB 현황 (6월 전용, 1·2차 캠페인 비교)
+═══════════════════════════════ */
+function renderSectionDbCampaign(r) {
+  const d = r.dbCampaign, p1 = d.p1, p2 = d.p2;
+  const C1 = 'var(--blue)', C2 = 'var(--red)';
+
+  document.getElementById('sdb03-subtitle').textContent =
+    `1차(${p1.qty}개) vs 2차(${p2.qty}개) · 추가 구매 의사결정 검토용`;
+
+  // 상단 기간 pill
+  document.getElementById('db03-pills').innerHTML = `
+    <span class="badge" style="background:#E3F2FD;color:#1565C0;">1차 &nbsp;${p1.period} &nbsp;(${p1.qty}개)</span>
+    <span class="badge" style="background:#FFEBEE;color:#C62828;">2차 &nbsp;${p2.period} &nbsp;(${p2.qty}개)</span>
+  `;
+
+  // 비용·수익 대비표
+  document.getElementById('db03-unit-price').textContent = 'DB 단가 ' + d.unitPrice;
+  const totalCost = p1.dbCost + p2.dbCost, totalContract = p1.contract + p2.contract, totalNet = p1.netProfit + p2.netProfit;
+  const totalRoi = Math.round(totalNet / totalCost * 100);
+  document.getElementById('db03-cost-table').innerHTML = `
+    <thead><tr><th style="text-align:left">구분</th><th>1차 (${p1.qty}개)</th><th>2차 (${p2.qty}개)</th><th>합계</th></tr></thead>
+    <tbody>
+      <tr><td>DB 구매비</td><td>${fmtWon(p1.dbCost)}</td><td>${fmtWon(p2.dbCost)}</td><td class="db03-total-cell">${fmtWon(totalCost)}</td></tr>
+      <tr><td>체결액 (수익)</td><td>${fmtWon(p1.contract)}</td><td>${fmtWon(p2.contract)}</td><td class="db03-total-cell">${fmtWon(totalContract)}</td></tr>
+      <tr><td>순수익</td>
+        <td class="${p1.netProfit>=0?'up':'down'}">${p1.netProfit>=0?'▲':'▼'} ${fmtWon(Math.abs(p1.netProfit))}</td>
+        <td class="${p2.netProfit>=0?'up':'down'}">${p2.netProfit>=0?'▲':'▼'} ${fmtWon(Math.abs(p2.netProfit))}</td>
+        <td class="db03-total-cell ${totalNet>=0?'up':'down'}">${totalNet>=0?'▲':'▼'} ${fmtWon(Math.abs(totalNet))}</td></tr>
+      <tr><td>투자대비 수익률(ROI)</td><td>${p1.roi>=0?'+':''}${p1.roi}%</td><td>${p2.roi>=0?'+':''}${p2.roi}%</td><td class="db03-total-cell">${totalRoi>=0?'+':''}${totalRoi}%</td></tr>
+    </tbody>
+  `;
+
+  // 효율 카드 4개
+  const effCard = (label, v1, v2, extra, highlight) => `
+    <div class="card" style="padding:16px 18px;${highlight?'border-color:#FFCC00;background:#FFFDE7;':''}">
+      <div class="kpi-item-label" style="margin-bottom:10px;">${label}</div>
+      ${extra}
+    </div>`;
+  document.getElementById('db03-eff-grid').innerHTML =
+    effCard('DB 구매비 합계', p1.dbCost, p2.dbCost,
+      `<div class="kpi-row"><span style="font-size:17px;font-weight:700;color:${C1}">${fmtWon(p1.dbCost)}</span><span class="kpi-arrow">→</span><span style="font-size:17px;font-weight:700;color:${C2}">${fmtWon(p2.dbCost)}</span></div>
+       <span class="badge" style="background:#F1F3F5;color:#6b6b6b;margin-top:8px;display:inline-block;">총 ${fmtWon(totalCost)}</span>`) +
+    effCard('체결액 합계', p1.contract, p2.contract,
+      `<div class="kpi-row"><span style="font-size:17px;font-weight:700;color:${C1}">${fmtWon(p1.contract)}</span><span class="kpi-arrow">→</span><span style="font-size:17px;font-weight:700;color:${C2}">${fmtWon(p2.contract)}</span></div>
+       <span class="badge" style="background:#F1F3F5;color:#6b6b6b;margin-top:8px;display:inline-block;">총 ${fmtWon(totalContract)}</span>`) +
+    effCard('순수익', 0, 0,
+      `<div style="display:flex;flex-direction:column;gap:4px;">
+         <span style="font-size:13px;font-weight:700;color:${C1}">1차 &nbsp;${p1.netProfit>=0?'+':''}${fmtWon(p1.netProfit)}</span>
+         <span style="font-size:13px;font-weight:700;color:${C2}">2차 &nbsp;${p2.netProfit>=0?'+':''}${fmtWon(p2.netProfit)}</span>
+       </div>
+       <span class="badge ${totalNet>=0?'':''}" style="background:#FFEBEE;color:#C62828;margin-top:8px;display:inline-block;">▲ 전체 ${totalNet>=0?'+':''}${fmtWon(totalNet)}</span>`, true) +
+    effCard('DB대비 체결률', 0, 0,
+      `<div class="kpi-row"><span style="font-size:17px;font-weight:700;color:${C1}">${Math.round(p1.closed/p1.qty*100)}%</span><span class="kpi-arrow">→</span><span style="font-size:17px;font-weight:700;color:${C2}">${Math.round(p2.closed/p2.qty*100)}%</span></div>
+       <span class="badge" style="background:#E3F2FD;color:#1565C0;margin-top:8px;display:inline-block;">▼ ${(Math.round(p1.closed/p1.qty*100)-Math.round(p2.closed/p2.qty*100))}%p</span>`);
+
+  // 콜&내원 핵심 지표 KPI 5개
+  const kpi5 = (label, v1, v2, unit, betterWhenDown) => {
+    const d1 = typeof v1 === 'number' ? v1 : parseFloat(v1);
+    const d2 = typeof v2 === 'number' ? v2 : parseFloat(v2);
+    const diff = d2 - d1;
+    const up = betterWhenDown ? diff < 0 : diff > 0;
+    const cls = diff === 0 ? 'flat' : (up ? 'up' : 'down');
+    const arrow = diff === 0 ? '—' : (diff > 0 ? '▲' : '▼');
+    return `<div class="kpi-item" style="border:0.5px solid var(--border);border-radius:8px;padding:14px 16px;">
+      <div class="kpi-item-label">${label}</div>
+      <div class="kpi-row"><span style="font-size:18px;font-weight:700;color:${C1}">${v1}${unit}</span><span class="kpi-arrow" style="font-size:16px;">→</span><span style="font-size:18px;font-weight:700;color:${C2}">${v2}${unit}</span></div>
+      <span class="${cls}" style="font-size:12px;">${arrow} ${diff>=0?'+':''}${Math.round(diff*10)/10}${unit}</span>
+    </div>`;
+  };
+  document.getElementById('db03-kpi-grid').innerHTML =
+    kpi5('총 DB (순신규)', p1.newDb, p2.newDb, '건', false) +
+    kpi5('통화 연결', p1.connected, p2.connected, '건', false) +
+    kpi5('예약 취소율', p1.cancelRate, p2.cancelRate, '%', true) +
+    kpi5('실내원', p1.visited, p2.visited, '명', false) +
+    kpi5('내원대비 체결률', p1.closedRate, p2.closedRate, '%', false);
+
+  // 퍼널 리스트
+  document.getElementById('db03-funnel-legend').innerHTML =
+    `<span><span class="legend-dot" style="background:${C1}"></span>1차</span><span><span class="legend-dot" style="background:${C2}"></span>2차</span>`;
+  const funnelSteps = [
+    { label:'DB연결률', v1:p1.funnel.connectRate, v2:p2.funnel.connectRate },
+    { label:'연결→예약', v1:p1.funnel.bookRate, v2:p2.funnel.bookRate },
+    { label:'예약→내원', v1:p1.funnel.visitRate, v2:p2.funnel.visitRate },
+    { label:'내원→체결', v1:p1.funnel.closeRate, v2:p2.funnel.closeRate },
+    { label:'DB→체결', v1:p1.funnel.dbToClose, v2:p2.funnel.dbToClose },
+  ];
+  document.getElementById('db03-funnel-list').innerHTML = funnelSteps.map(s => `
+    <div style="display:flex;align-items:center;gap:10px;padding:8px 0;border-bottom:0.5px solid var(--border);">
+      <span style="font-size:12px;font-weight:600;color:var(--gray-700);width:82px;flex-shrink:0;">${s.label}</span>
+      <div style="flex:1;display:flex;flex-direction:column;gap:4px;">
+        <div style="height:10px;background:#EAEEF4;border-radius:4px;overflow:hidden;"><div style="height:100%;border-radius:4px;width:${s.v1}%;background:${C1}"></div></div>
+        <div style="height:10px;background:#EAEEF4;border-radius:4px;overflow:hidden;"><div style="height:100%;border-radius:4px;width:${s.v2}%;background:${C2}"></div></div>
+      </div>
+      <div style="width:80px;flex-shrink:0;display:flex;gap:6px;justify-content:flex-end;font-size:12px;font-weight:700;">
+        <span style="color:${C1};width:36px;text-align:right;">${s.v1}%</span><span style="color:${C2};width:36px;text-align:right;">${s.v2}%</span>
+      </div>
+    </div>`).join('');
+
+  // 통화 실패 내역 표 + 차트
+  const failKeys = Object.keys(p1.fail);
+  document.getElementById('db03-fail-table').innerHTML = `
+    <thead><tr><th style="text-align:left">항목</th><th>1차</th><th>2차</th><th>증감</th></tr></thead>
+    <tbody>${failKeys.map(k => {
+      const v1 = p1.fail[k], v2 = p2.fail[k], diff = v2 - v1;
+      const cls = diff === 0 ? 'flat' : diff > 0 ? 'up' : 'down';
+      const arrow = diff === 0 ? '—' : diff > 0 ? '▲' : '▼';
+      return `<tr><td>${k}</td><td>${v1}</td><td>${v2}</td><td class="${cls}">${arrow} ${Math.abs(diff)}</td></tr>`;
+    }).join('')}</tbody>
+  `;
+  const failChartId = 'chart-db03-fail';
+  if (charts[failChartId]) { charts[failChartId].destroy(); }
+  charts[failChartId] = new Chart(document.getElementById(failChartId), {
+    type:'bar',
+    data:{ labels: failKeys, datasets:[
+      { label:'1차', data: failKeys.map(k=>p1.fail[k]), backgroundColor: C1.includes('var')?'#1565C0':C1, borderWidth:0, borderRadius:4 },
+      { label:'2차', data: failKeys.map(k=>p2.fail[k]), backgroundColor: C2.includes('var')?'#D32F2F':C2, borderWidth:0, borderRadius:4 },
+    ]},
+    options:{ responsive:true, maintainAspectRatio:false,
+      plugins:{ legend:{ display:false } },
+      scales:{ y:{ beginAtZero:true, ticks:{ font:{size:11,family:'Pretendard'}, color:'#888' }, grid:{ color:'rgba(0,0,0,0.06)' } },
+                x:{ ticks:{ font:{size:10,family:'Pretendard'}, color:'#444' }, grid:{ display:false } } }
+    }
+  });
+
+  // 예약→내원→체결 흐름 카드
+  const flowCard = (p, colorVar) => `
+    <div style="display:flex;align-items:center;gap:8px;margin-bottom:14px;">
+      <div style="width:12px;height:12px;border-radius:50%;background:${colorVar}"></div>
+      <div style="font-size:14px;font-weight:700;color:${colorVar}">${p.label} &nbsp;${p.period} &nbsp;<span class="badge" style="background:#F1F3F5;color:#6b6b6b;">${p.qty}개 구매</span></div>
+    </div>
+    <div style="display:flex;justify-content:space-between;padding:7px 0;border-bottom:0.5px solid var(--border);font-size:13px;"><span style="color:var(--gray-500);">순신규 DB</span><span style="font-weight:700;">${p.newDb}건</span></div>
+    <div style="display:flex;justify-content:space-between;padding:7px 0;border-bottom:0.5px solid var(--border);font-size:13px;"><span style="color:var(--gray-500);">통화 연결</span><span style="font-weight:700;">${p.connected}건</span></div>
+    <div style="display:flex;justify-content:space-between;padding:7px 0;border-bottom:0.5px solid var(--border);font-size:13px;"><span style="color:var(--gray-500);">내원 예약</span><span style="font-weight:700;">${p.booked}건</span></div>
+    <div style="display:flex;justify-content:space-between;padding:7px 0;border-bottom:0.5px solid var(--border);font-size:13px;"><span style="color:var(--gray-500);">취소</span><span class="badge" style="background:#FFEBEE;color:#C62828;">${p.cancel}건 (${p.cancelRate}%)</span></div>
+    <div style="display:flex;justify-content:space-between;padding:7px 0;border-bottom:0.5px solid var(--border);font-size:13px;"><span style="color:var(--gray-500);">실내원</span><span class="badge" style="background:#E8F5E9;color:#2E7D32;">${p.visited}건 (${p.visitedRate}%)</span></div>
+    <div style="display:flex;justify-content:space-between;padding:7px 0;border-bottom:0.5px solid var(--border);font-size:13px;"><span style="color:var(--gray-500);">체결</span><span class="badge" style="background:#E3F2FD;color:#1565C0;">${p.closed}건 (${p.closedRate}%)</span></div>
+    <div style="display:flex;justify-content:space-between;padding-top:10px;margin-top:4px;border-top:1.5px solid var(--border);"><span style="color:var(--gray-500);font-size:13px;">체결액</span><span style="font-weight:700;font-size:15px;color:${colorVar}">${fmtFull(p.contract)}</span></div>
+    ${p.note ? `<div style="margin-top:10px;background:#FFEBEE;border-radius:8px;padding:8px 12px;font-size:12px;font-weight:600;color:#C62828;line-height:1.6;">${p.note}</div>` : ''}
+  `;
+  document.getElementById('db03-flow-1').innerHTML = flowCard(p1, '#1565C0');
+  document.getElementById('db03-flow-2').innerHTML = flowCard(p2, '#C62828');
+
+  document.getElementById('db03-bar-legend').innerHTML =
+    `<span><span class="legend-dot" style="background:#1565C0"></span>1차</span><span><span class="legend-dot" style="background:#C62828"></span>2차</span>`;
+  const barChartId = 'chart-db03-bar';
+  if (charts[barChartId]) { charts[barChartId].destroy(); }
+  charts[barChartId] = new Chart(document.getElementById(barChartId), {
+    type:'bar',
+    data:{ labels:['연결→예약','예약→내원','내원→체결','DB→체결'],
+      datasets:[
+        { label:'1차', data:[p1.funnel.bookRate, p1.funnel.visitRate, p1.funnel.closeRate, p1.funnel.dbToClose], backgroundColor:'#1565C0', borderWidth:0, borderRadius:4 },
+        { label:'2차', data:[p2.funnel.bookRate, p2.funnel.visitRate, p2.funnel.closeRate, p2.funnel.dbToClose], backgroundColor:'#C62828', borderWidth:0, borderRadius:4 },
+      ]},
+    options:{ responsive:true, maintainAspectRatio:false,
+      plugins:{ legend:{ display:false } },
+      scales:{ y:{ beginAtZero:true, max:100, ticks:{ callback:v=>v+'%', font:{size:11,family:'Pretendard'}, color:'#888' }, grid:{ color:'rgba(0,0,0,0.06)' } },
+                x:{ ticks:{ font:{size:10,family:'Pretendard'}, color:'#444' }, grid:{ display:false } } }
+    }
+  });
+
+  // 종합 인사이트
+  const typeMeta = { pos:{label:'긍정', bg:'#E8F5E9', color:'#2E7D32'}, neg:{label:'주의', bg:'#FFEBEE', color:'#C62828'}, neu:{bg:'#F1F3F5', color:'#6b6b6b'} };
+  document.getElementById('db03-insights').innerHTML = d.insights.map(ins => {
+    const tm = typeMeta[ins.type];
+    const label = ins.label || tm.label;
+    return `<div style="display:flex;align-items:flex-start;gap:10px;padding:10px 0;border-bottom:0.5px solid var(--border);font-size:14px;line-height:1.7;">
+      <span class="badge" style="background:${tm.bg};color:${tm.color};flex-shrink:0;margin-top:2px;">${label}</span>
+      <span style="color:var(--gray-700);">${ins.text}</span>
+    </div>`;
+  }).join('');
 }
 
 /* ═══════════════════════════════
@@ -3378,39 +3628,48 @@ function renderSectionOverview(r) {
     return idx.route + ' ' + idx.c + '건';
   };
 
-  const cards = [
-    { tag:'03', title:'내원 현황', color:'#2E7D32', items:[
+  const dbc = r.dbCampaign;
+  const cards = [];
+  if (dbc) {
+    cards.push({ tag:'03', title:'DB 현황', color:'#0891B2', items:[
+      { label:'1차 ROI', val:`${dbc.p1.roi>=0?'+':''}${dbc.p1.roi}%` },
+      { label:'2차 ROI', val:`${dbc.p2.roi>=0?'+':''}${dbc.p2.roi}%` },
+      { label:'합계 순수익', val: fmtWon(dbc.p1.netProfit + dbc.p2.netProfit) },
+    ]});
+  }
+  cards.push(
+    { tag:'04', title:'내원 현황', color:'#2E7D32', items:[
       { label:'총 예약', val:`${vs.may.total_book}→${vs.jun.total_book}건`, trend:{prev:vs.may.total_book, curr:vs.jun.total_book} },
       { label:'내원', val:`${vs.may.visit}→${vs.jun.visit}건`, trend:{prev:vs.may.visit, curr:vs.jun.visit} },
       { label:'최종내원율', val:`${vs.may.final_visit_rate}%→${vs.jun.final_visit_rate}%`, trend:{prev:vs.may.final_visit_rate, curr:vs.jun.final_visit_rate} },
     ]},
-    { tag:'04', title:'성사 현황', color:'#C62828', items:[
+    { tag:'05', title:'성사 현황', color:'#C62828', items:[
       { label:'상담', val:`${cs.may.visit}→${cs.jun.visit}건`, trend:{prev:cs.may.visit, curr:cs.jun.visit} },
       { label:'체결', val:`${cs.may.close}→${cs.jun.close}건`, trend:{prev:cs.may.close, curr:cs.jun.close} },
       { label:'체결률', val:`${cs.may.rate}%→${cs.jun.rate}%`, trend:{prev:cs.may.rate, curr:cs.jun.rate} },
     ]},
-    { tag:'05', title:'원장님 성사 현황', color:'#E65100', items:[
+    { tag:'06', title:'원장님 성사 현황', color:'#E65100', items:[
       { label:pl+' 1위', val: drTop('may') },
       { label:cl+' 1위', val: drTop('jun') },
       { label:'최대 개선', val:'김진오 원장님 +13%p' },
     ]},
-    { tag:'06', title:'직원별 성사율', color:'#6A1B9A', items:[
+    { tag:'07', title:'직원별 성사율', color:'#6A1B9A', items:[
       { label:pl+' 1위', val: stTop('may') },
       { label:cl+' 1위', val: stTop('jun') },
       { label:'최대 개선', val:'전소영 +16%p' },
     ]},
-    { tag:'07', title:'유입경로 분석', color:'#00838F', items:[
+    { tag:'08', title:'유입경로 분석', color:'#00838F', items:[
       { label:'이식 1위 경로', val: catTop('모발이식', 'jun') },
       { label:'헤어 1위 경로', val: catTop('헤어라인', 'jun') },
       { label:'SMP 1위 경로', val: catTop('SMP', 'jun') },
       { label:'치료 1위 경로', val: catTop('탈모치료', 'jun') },
     ]},
-    { tag:'08', title:'매출 현황', color:'#8D6E63', items:[
+    { tag:'09', title:'매출 현황', color:'#8D6E63', items:[
       { label:'총 매출', val:`${fmtWon(rv.may.total)}→${fmtWon(rv.jun.total)}`, trend:{prev:rv.may.total, curr:rv.jun.total} },
       { label:'증감', val:`${((rv.jun.total-rv.may.total)/rv.may.total*100).toFixed(1)}%` },
       { label:'최대 비중', val: revTop(rv.may.revenue) },
-    ]},
-  ];
+    ]}
+  );
   document.getElementById('sov00-section-cards').innerHTML = cards.map(c => `
     <div class="cat-channel-card" style="border-top:4px solid ${c.color};padding:18px;">
       <div class="ccc-title" style="font-size:18px;margin-bottom:10px;">
