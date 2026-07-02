@@ -1356,11 +1356,14 @@ function loadAllFromSheets() {
       resolve(); return;
     }
     const cbName = '_nhSheetsCb_' + Date.now();
+    // 타임아웃 15초: 시트에 데이터가 많이 쌓일수록(줄 단위 저장 구조) 서버가 키별로 재조립하는 데
+    // 시간이 걸릴 수 있어, 5초는 너무 짧아 조용히 실패(코드 기본값으로 폴백)할 위험이 있었음
     const timeout = setTimeout(() => {
       delete window[cbName];
       if (script.parentNode) script.parentNode.removeChild(script);
+      console.warn('Sheets 불러오기 타임아웃(15초) — 저장된 편집 내용이 이번 로드에는 반영되지 않았을 수 있습니다.');
       resolve();  // 타임아웃 시 그냥 진행
-    }, 5000);
+    }, 15000);
 
     window[cbName] = function(data) {
       clearTimeout(timeout);
@@ -5490,6 +5493,12 @@ function renderEditableList(containerId, addBtnId, items, icon, iconColor, isEdi
       if (s09 && s09.wins && s09.tasks) {
         renderEditableList('s09-wins',  's09-wins-add',  s09.wins,  '✔', '#2E7D32', isEditor, reportScopeId(r), 's09-wins');
         renderEditableList('s09-tasks', 's09-tasks-add', s09.tasks, '▲', '#C62828', isEditor, reportScopeId(r), 's09-tasks');
+      }
+      // 6월 전용 — 종합 리뷰(reviewStatus)의 이달의 성과/과제 (기존 코드에서 누락되어 있던 부분)
+      const rev = r.reviewStatus;
+      if (rev && rev.wins && rev.tasks) {
+        renderEditableList('srv09-wins',  'srv09-wins-add',  rev.wins,  '✔', '#2E7D32', isEditor, reportScopeId(r), 'srv09-wins');
+        renderEditableList('srv09-tasks', 'srv09-tasks-add', rev.tasks, '▲', '#C62828', isEditor, reportScopeId(r), 'srv09-tasks');
       }
     }
 
