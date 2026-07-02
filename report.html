@@ -2287,7 +2287,9 @@ function renderAnalysis(id, text, r) {
   const field = analysisCacheField(id, r);
   const baseVersion = hashText(text);
   const resolved = resolveCache('analysis', field, baseVersion, cacheRead('analysis', field), (items) => {
-    saveToSheets('analysis', field, packWithVersion(items, baseVersion));
+    const packed = packWithVersion(items, baseVersion);
+    editCache['analysis:' + field] = packed; // 메모리 캐시도 즉시 갱신 → 같은 세션 내 재렌더링(보고서 전환 등) 시 중복 이관·저장 방지
+    saveToSheets('analysis', field, packed);
   });
   p.innerHTML = resolved ? resolved[0] : text.replace(/\n/g,'<br>');
   p.dataset.cacheField = field;
@@ -5492,7 +5494,9 @@ function renderEditableList(containerId, addBtnId, items, icon, iconColor, isEdi
       const baseVersion = p.dataset.baseVersion;
       if (!baseVersion) return; // 방어: 버전 정보 없는 예외 케이스는 건드리지 않음(코드 기본값 유지)
       const resolved = resolveCache('analysis', field, baseVersion, editCache['analysis:' + field], (items) => {
-        saveToSheets('analysis', field, packWithVersion(items, baseVersion));
+        const packed = packWithVersion(items, baseVersion);
+        editCache['analysis:' + field] = packed;
+        saveToSheets('analysis', field, packed);
       });
       if (resolved) p.innerHTML = resolved[0];
     });
