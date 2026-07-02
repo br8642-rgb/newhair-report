@@ -3120,6 +3120,13 @@ function renderSectionTraffic(r) {
   const pl = r.meta.prevLabel || '5월', cl = r.meta.currLabel || '6월';
   document.getElementById('str07-subtitle').textContent = r.meta.compare + ' · 유입경로별 건수 및 성사 전환율 (중복 선택 포함)';
 
+  // 경로별 고정 색상표 — 5·6월 합산 응답수 기준 순위로 색을 한 번 정하고,
+  // 도넛(전체/과목별) 전부 이 색을 공유해서 같은 경로는 항상 같은 색으로 표시
+  const routesRankedAll = s.routes.map((name,i) => ({ name, c: s.may.count[i] + s.jun.count[i] }))
+                                   .sort((a,b) => b.c - a.c);
+  tr07RouteColorMap = {};
+  routesRankedAll.forEach((item, idx) => { tr07RouteColorMap[item.name] = S07_COLORS[idx % S07_COLORS.length]; });
+
   const mayTotal = s.may.total, junTotal = s.jun.total;
   const mayConv = s.may.conv.sum.reduce((a,b)=>a+b,0), junConv = s.jun.conv.sum.reduce((a,b)=>a+b,0);
   const mayConsult = s.may.conv.consult.reduce((a,b)=>a+b,0), junConsult = s.jun.conv.consult.reduce((a,b)=>a+b,0);
@@ -3200,6 +3207,7 @@ function renderSectionTraffic(r) {
 }
 
 const TR07_CAT_COLORS = ['#29B6F6','#EC407A','#FFB300','#43A047','#8D6E63','#5C6BC0'];
+let tr07RouteColorMap = {}; // 경로명 → 고정 색상 (5·6월 합산 응답수 순위 기준, 도넛 전체 공유)
 let tr07CatActiveMonth = 'may';
 
 function renderTr07ByCat(bc, month) {
@@ -3211,7 +3219,7 @@ function renderTr07ByCat(bc, month) {
     const others = ranked.slice(5).reduce((sum,x)=>sum+x.c, 0);
     const labels = [...top5.map(x=>x.route), ...(others>0?['기타']:[])];
     const data   = [...top5.map(x=>x.c), ...(others>0?[others]:[])];
-    const colors = [...S07_COLORS.slice(0,5), '#BDBDBD'];
+    const colors = [...top5.map(x=>tr07RouteColorMap[x.route] || '#BDBDBD'), '#BDBDBD'];
 
     const titleEl = document.getElementById('str07-cat-title-'+ci);
     if (titleEl) titleEl.innerHTML = `<span style="width:10px;height:10px;border-radius:50%;background:${TR07_CAT_COLORS[ci]};display:inline-block;margin-right:6px;"></span>${cat} <span style="font-size:11px;color:#6b6b6b;font-weight:400;">총 ${total}건</span>`;
@@ -3257,7 +3265,7 @@ function renderTr07Donut(s, month) {
   const others = sorted.slice(8).reduce((sum,x)=>sum+x.count,0);
   const labels = [...top8.map(x=>x.name), ...(others>0?['기타']:[])];
   const data   = [...top8.map(x=>x.count), ...(others>0?[others]:[])];
-  const colors = [...S07_COLORS.slice(0,8), '#BDBDBD'];
+  const colors = [...top8.map(x=>tr07RouteColorMap[x.name] || '#BDBDBD'), '#BDBDBD'];
 
   document.getElementById('str07-donut-label').textContent = month==='may'?'('+pl+')':'('+cl+')';
 
@@ -3328,14 +3336,14 @@ function renderSectionOverview(r) {
 
   const cards = [
     { tag:'03', title:'내원 현황', color:'#2E7D32', items:[
-      { label:'총 예약', val:`${vs.may.total_book}→${vs.jun.total_book}건` },
-      { label:'내원', val:`${vs.may.visit}→${vs.jun.visit}건` },
-      { label:'최종내원율', val:`${vs.may.final_visit_rate}%→${vs.jun.final_visit_rate}%` },
+      { label:'총 예약', val:`${vs.may.total_book}→${vs.jun.total_book}건`, trend:{prev:vs.may.total_book, curr:vs.jun.total_book} },
+      { label:'내원', val:`${vs.may.visit}→${vs.jun.visit}건`, trend:{prev:vs.may.visit, curr:vs.jun.visit} },
+      { label:'최종내원율', val:`${vs.may.final_visit_rate}%→${vs.jun.final_visit_rate}%`, trend:{prev:vs.may.final_visit_rate, curr:vs.jun.final_visit_rate} },
     ]},
     { tag:'04', title:'성사 현황', color:'#C62828', items:[
-      { label:'상담', val:`${cs.may.visit}→${cs.jun.visit}건` },
-      { label:'체결', val:`${cs.may.close}→${cs.jun.close}건` },
-      { label:'체결률', val:`${cs.may.rate}%→${cs.jun.rate}%` },
+      { label:'상담', val:`${cs.may.visit}→${cs.jun.visit}건`, trend:{prev:cs.may.visit, curr:cs.jun.visit} },
+      { label:'체결', val:`${cs.may.close}→${cs.jun.close}건`, trend:{prev:cs.may.close, curr:cs.jun.close} },
+      { label:'체결률', val:`${cs.may.rate}%→${cs.jun.rate}%`, trend:{prev:cs.may.rate, curr:cs.jun.rate} },
     ]},
     { tag:'05', title:'원장님 성사 현황', color:'#E65100', items:[
       { label:pl+' 1위', val: drTop('may') },
@@ -3354,7 +3362,7 @@ function renderSectionOverview(r) {
       { label:'치료 1위 경로', val: catTop('탈모치료', 'jun') },
     ]},
     { tag:'08', title:'매출 현황', color:'#8D6E63', items:[
-      { label:'총 매출', val:`${fmtWon(rv.may.total)}→${fmtWon(rv.jun.total)}` },
+      { label:'총 매출', val:`${fmtWon(rv.may.total)}→${fmtWon(rv.jun.total)}`, trend:{prev:rv.may.total, curr:rv.jun.total} },
       { label:'증감', val:`${((rv.jun.total-rv.may.total)/rv.may.total*100).toFixed(1)}%` },
       { label:'최대 비중', val: revTop(rv.may.revenue) },
     ]},
@@ -3365,11 +3373,18 @@ function renderSectionOverview(r) {
         <span style="font-size:12px;font-weight:700;background:${c.color};color:#fff;padding:3px 9px;border-radius:10px;">§${c.tag}</span>
         ${c.title}
       </div>
-      ${c.items.map(item => `
+      ${c.items.map(item => {
+        let valColor = '#1a1a1a';
+        if (item.trend) {
+          if (item.trend.curr < item.trend.prev) valColor = '#1565C0';
+          else if (item.trend.curr > item.trend.prev) valColor = '#C62828';
+        }
+        return `
         <div style="display:flex;justify-content:space-between;align-items:center;padding:9px 0;border-bottom:1px solid #f5f5f5;font-size:15px;">
           <span style="color:#888;">${item.label}</span>
-          <span style="font-weight:800;color:#1a1a1a;font-size:17px;">${item.val}</span>
-        </div>`).join('')}
+          <span style="font-weight:800;color:${valColor};font-size:17px;">${item.val}</span>
+        </div>`;
+      }).join('')}
     </div>`).join('');
 
   const ov00FunnelTitleMay = document.getElementById('ov00-funnel-title-may');
@@ -3424,29 +3439,31 @@ function renderSectionReview(r) {
 
   const vs = r.visitStatus, cs = r.closingStatus, rv = r.revenueStatus, mg = r.mergedInquiry;
 
+  function diffBadge(prev, curr) {
+    const d = curr - prev, cls = d>0?'up':d<0?'down':'flat';
+    const arrow = d>0?`▲ ${Math.abs(d)}`:d<0?`▼ ${Math.abs(d)}`:'— 0';
+    return `<span class="${cls}" style="font-size:12px;margin-left:8px;">${arrow}</span>`;
+  }
+
+  const summaryItems = [
+    { label:'신규 문의', prev: mg.total_may.inq, curr: mg.total_jun.inq, prevVal: mg.total_may.inq+'건', currVal: mg.total_jun.inq+'건' },
+    { label:'신규 예약', prev: mg.total_may.book, curr: mg.total_jun.book, prevVal: mg.total_may.book+'건 (예약률 '+mg.total_may.rate+'%)', currVal: mg.total_jun.book+'건 (예약률 '+mg.total_jun.rate+'%)' },
+    { label:'내원', prev: vs.may.visit, curr: vs.jun.visit, prevVal: vs.may.visit+'건', currVal: vs.jun.visit+'건' },
+    { label:'성사 체결', prev: cs.may.close, curr: cs.jun.close, prevVal: cs.may.close+'건 (체결률 '+cs.may.rate+'%)', currVal: cs.jun.close+'건 (체결률 '+cs.jun.rate+'%)' },
+    { label:'총 매출', prev: rv.may.total, curr: rv.jun.total, prevVal: fmtWon(rv.may.total), currVal: fmtWon(rv.jun.total) },
+  ];
+
   const summaries = [
-    { month:pl, color:'#EFF6FF', border:'#1565C0', items:[
-      { label:'신규 문의', val: mg.total_may.inq + '건' },
-      { label:'신규 예약', val: mg.total_may.book + '건 (예약률 ' + mg.total_may.rate + '%)' },
-      { label:'내원', val: vs.may.visit + '건' },
-      { label:'성사 체결', val: cs.may.close + '건 (체결률 ' + cs.may.rate + '%)' },
-      { label:'총 매출', val: fmtWon(rv.may.total) },
-    ]},
-    { month:cl, color:'#FFF5F5', border:'#C62828', items:[
-      { label:'신규 문의', val: mg.total_jun.inq + '건' },
-      { label:'신규 예약', val: mg.total_jun.book + '건 (예약률 ' + mg.total_jun.rate + '%)' },
-      { label:'내원', val: vs.jun.visit + '건' },
-      { label:'성사 체결', val: cs.jun.close + '건 (체결률 ' + cs.jun.rate + '%)' },
-      { label:'총 매출', val: fmtWon(rv.jun.total) },
-    ]},
+    { month:pl, color:'#EFF6FF', border:'#1565C0', showDiff:false },
+    { month:cl, color:'#FFF5F5', border:'#C62828', showDiff:true },
   ];
   document.getElementById('srv09-summary-cards').innerHTML = summaries.map(m => `
     <div class="card" style="border:2px solid ${m.border};">
-      <div class="card-title" style="font-size:17px;font-weight:800;margin-bottom:14px;">${m.month} 핵심 수치</div>
-      ${m.items.map(item => `
+      <div class="card-title" style="font-size:17px;font-weight:800;margin-bottom:14px;">${m.month} 요약</div>
+      ${summaryItems.map(item => `
         <div style="display:flex;justify-content:space-between;align-items:center;padding:8px 0;border-bottom:1px solid #f0f0f0;font-size:15px;">
           <span style="color:#6b6b6b;">${item.label}</span>
-          <span style="font-weight:800;color:#1a1a1a;font-size:16px;">${item.val}</span>
+          <span><span style="font-weight:800;color:#1a1a1a;font-size:16px;">${m.showDiff ? item.currVal : item.prevVal}</span>${m.showDiff ? diffBadge(item.prev, item.curr) : ''}</span>
         </div>`).join('')}
     </div>`).join('');
 
