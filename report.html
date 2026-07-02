@@ -454,6 +454,10 @@
       <div class="kpi-label">핵심 지표 요약</div>
       <div class="kpi-compare" id="str07-kpi"></div>
     </div>
+    <div class="card" style="margin-bottom:28px;">
+      <div class="card-title">유입경로 TOP 3 <span style="font-size:11px;color:#6b6b6b;font-weight:400;">(응답수 기준)</span></div>
+      <div id="str07-top3" style="display:grid;grid-template-columns:1fr 1fr;gap:24px;"></div>
+    </div>
     <div class="s02-charts-grid">
       <div class="card">
         <div class="card-title">응답수 비중 분포 <span style="font-size:11px;color:#6b6b6b;font-weight:400;" id="str07-donut-label"></span></div>
@@ -2977,6 +2981,26 @@ function renderSectionTraffic(r) {
     kpiItem('유입 응답수', mayTotal, junTotal, '', '중복포함') +
     kpiItem('성사 확정수', mayConv,  junConv,  '', '수술+치료') +
     kpiItem('전체 전환율', mayRate,  junRate,  '%', '상담수 기준');
+
+  function top3RouteHtml(monthLabel, countArr, total) {
+    const ranked = s.routes.map((name,i) => ({ name, c: countArr[i] }))
+                            .filter(x => x.c > 0)
+                            .sort((a,b) => b.c - a.c)
+                            .slice(0,3);
+    const medal = ['🥇','🥈','🥉'];
+    return `<div>
+      <div style="font-size:13px;font-weight:800;color:#555;margin-bottom:10px;">${monthLabel}</div>
+      ${ranked.map((x,i) => `
+        <div style="display:flex;align-items:center;gap:8px;padding:8px 0;${i<ranked.length-1?'border-bottom:1px solid #F1F3F5;':''}">
+          <span style="font-size:16px;">${medal[i]}</span>
+          <span style="flex:1;font-size:13px;font-weight:700;color:#1a1a1a;">${x.name}</span>
+          <span style="font-size:13px;font-weight:800;color:#1a1a1a;">${x.c}건</span>
+          <span style="font-size:11px;color:#999;width:42px;text-align:right;">${((x.c/total)*100).toFixed(1)}%</span>
+        </div>`).join('')}
+    </div>`;
+  }
+  document.getElementById('str07-top3').innerHTML =
+    top3RouteHtml('5월', s.may.count, mayTotal) + top3RouteHtml('6월', s.jun.count, junTotal);
 
   renderTr07Donut(s, tr07ActiveMonth);
 
