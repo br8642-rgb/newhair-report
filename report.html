@@ -332,11 +332,11 @@
     </div>
     <div class="s02-section-label">예약 흐름</div>
     <div class="s02-charts-grid">
-      <div class="card"><div class="card-title">예약 → 내원 흐름 (5월)</div><div class="chart-wrap" style="height:200px"><canvas id="chart-v03-funnel-may"></canvas></div></div>
-      <div class="card"><div class="card-title">예약 → 내원 흐름 (6월)</div><div class="chart-wrap" style="height:200px"><canvas id="chart-v03-funnel-jun"></canvas></div></div>
+      <div class="card"><div class="card-title" id="v03-funnel-title-may">예약 → 내원 흐름 (5월)</div><div class="chart-wrap" style="height:200px"><canvas id="chart-v03-funnel-may"></canvas></div></div>
+      <div class="card"><div class="card-title" id="v03-funnel-title-jun">예약 → 내원 흐름 (6월)</div><div class="chart-wrap" style="height:200px"><canvas id="chart-v03-funnel-jun"></canvas></div></div>
     </div>
     <div class="card" style="margin-bottom:28px;">
-      <div class="card-title">당일취소 · 부도 비교 <span style="font-size:11px;color:#6b6b6b;font-weight:400;">(5월 vs 6월)</span></div>
+      <div class="card-title">당일취소 · 부도 비교 <span style="font-size:11px;color:#6b6b6b;font-weight:400;" id="v03-noshow-period">(5월 vs 6월)</span></div>
       <div class="chart-legend" id="lg-v03-noshow"></div>
       <div class="chart-wrap" style="height:180px"><canvas id="chart-v03-noshow"></canvas></div>
     </div>
@@ -396,8 +396,8 @@
     </div>
     <div class="s02-section-label">원장님 과목 상세</div>
     <div class="s02-month-tabs">
-      <button class="s02-month-tab active" data-month="may" onclick="switchDs05Month('may')">5월</button>
-      <button class="s02-month-tab" data-month="jun" onclick="switchDs05Month('jun')">6월</button>
+      <button class="s02-month-tab active" data-month="may" onclick="switchDs05Month('may')" id="ds05-tab-may">5월</button>
+      <button class="s02-month-tab" data-month="jun" onclick="switchDs05Month('jun')" id="ds05-tab-jun">6월</button>
     </div>
     <div id="sds05-detail-grid"></div>
     <div class="analysis-box" id="ana-box-ds05"><p id="ana-ds05"></p></div>
@@ -428,8 +428,8 @@
     </div>
     <div class="s02-section-label">직원별 과목 성과 상세</div>
     <div class="s02-month-tabs">
-      <button class="s02-month-tab active" data-month="may" onclick="switchSt06Month('may')">5월</button>
-      <button class="s02-month-tab" data-month="jun" onclick="switchSt06Month('jun')">6월</button>
+      <button class="s02-month-tab active" data-month="may" onclick="switchSt06Month('may')" id="st06-tab-may">5월</button>
+      <button class="s02-month-tab" data-month="jun" onclick="switchSt06Month('jun')" id="st06-tab-jun">6월</button>
     </div>
     <div class="s06-staff-grid" id="sst06-detail-grid"></div>
     <div class="analysis-box" id="ana-box-st06"><p id="ana-st06"></p></div>
@@ -454,8 +454,8 @@
       <div class="card">
         <div class="card-title">유입경로 비중 분포 <span style="font-size:11px;color:#6b6b6b;font-weight:400;" id="str07-donut-label"></span></div>
         <div class="s02-month-tabs" style="margin-bottom:12px;">
-          <button class="s02-month-tab active" data-month="may" onclick="switchTr07Month('may')">5월</button>
-          <button class="s02-month-tab" data-month="jun" onclick="switchTr07Month('jun')">6월</button>
+          <button class="s02-month-tab active" data-month="may" onclick="switchTr07Month('may')" id="tr07-tab-may">5월</button>
+          <button class="s02-month-tab" data-month="jun" onclick="switchTr07Month('jun')" id="tr07-tab-jun">6월</button>
         </div>
         <div class="chart-wrap" style="height:260px"><canvas id="chart-tr07-donut"></canvas></div>
       </div>
@@ -477,8 +477,8 @@
     </div>
     <div class="s02-section-label">과목별 유입경로 분포 <span style="font-size:11px;font-weight:400;color:#aaa;letter-spacing:0;">(과목별 TOP 5 경로, 중복 선택 포함)</span></div>
     <div class="s02-month-tabs">
-      <button class="s02-month-tab active" data-month="may" onclick="switchTr07CatMonth('may')">5월</button>
-      <button class="s02-month-tab" data-month="jun" onclick="switchTr07CatMonth('jun')">6월</button>
+      <button class="s02-month-tab active" data-month="may" onclick="switchTr07CatMonth('may')" id="tr07cat-tab-may">5월</button>
+      <button class="s02-month-tab" data-month="jun" onclick="switchTr07CatMonth('jun')" id="tr07cat-tab-jun">6월</button>
     </div>
     <div style="display:grid;grid-template-columns:repeat(3,1fr);gap:14px;margin-bottom:28px;">
       <div class="card"><div class="card-title" id="str07-cat-title-0"></div><div class="chart-wrap" style="height:230px"><canvas id="chart-tr07-cat0"></canvas></div></div>
@@ -509,15 +509,15 @@
     <div id="srev08-cat-cards" style="display:grid;grid-template-columns:repeat(4,1fr);gap:14px;margin-bottom:28px;"></div>
     <div class="s02-charts-grid">
       <div class="card">
-        <div class="card-title">과목별 매출 비교 <span style="font-size:11px;color:#6b6b6b;font-weight:400;">(5월 vs 6월)</span></div>
+        <div class="card-title">과목별 매출 비교 <span style="font-size:11px;color:#6b6b6b;font-weight:400;" id="rev08-bar-period">(5월 vs 6월)</span></div>
         <div class="ch-legend-row" id="lg-rev08-bar"></div>
         <div class="chart-wrap" style="height:250px"><canvas id="chart-rev08-bar"></canvas></div>
       </div>
       <div class="card">
         <div class="card-title">매출 비중 <span style="font-size:11px;color:#6b6b6b;font-weight:400;" id="srev08-pie-label"></span></div>
         <div class="s02-month-tabs" style="margin-bottom:12px;">
-          <button class="s02-month-tab active" data-month="may" onclick="switchRev08Month('may')">5월</button>
-          <button class="s02-month-tab" data-month="jun" onclick="switchRev08Month('jun')">6월</button>
+          <button class="s02-month-tab active" data-month="may" onclick="switchRev08Month('may')" id="rev08-tab-may">5월</button>
+          <button class="s02-month-tab" data-month="jun" onclick="switchRev08Month('jun')" id="rev08-tab-jun">6월</button>
         </div>
         <div class="chart-wrap" style="height:240px"><canvas id="chart-rev08-pie"></canvas></div>
       </div>
@@ -543,17 +543,17 @@
     <div class="s02-section-label">전체 전환 흐름</div>
     <div class="s02-charts-grid">
       <div class="card">
-        <div class="card-title">문의 → 예약 → 내원 → 성사 흐름 (5월)</div>
+        <div class="card-title" id="ov00-funnel-title-may">문의 → 예약 → 내원 → 성사 흐름 (5월)</div>
         <div class="chart-wrap" style="height:200px"><canvas id="chart-ov00-funnel-may"></canvas></div>
       </div>
       <div class="card">
-        <div class="card-title">문의 → 예약 → 내원 → 성사 흐름 (6월)</div>
+        <div class="card-title" id="ov00-funnel-title-jun">문의 → 예약 → 내원 → 성사 흐름 (6월)</div>
         <div class="chart-wrap" style="height:200px"><canvas id="chart-ov00-funnel-jun"></canvas></div>
       </div>
     </div>
     <div class="s02-section-label">매출 요약</div>
     <div class="card" style="margin-bottom:28px;">
-      <div class="card-title">과목별 매출 비교 <span style="font-size:11px;color:#6b6b6b;font-weight:400;">(5월 vs 6월)</span></div>
+      <div class="card-title">과목별 매출 비교 <span style="font-size:11px;color:#6b6b6b;font-weight:400;" id="ov00-rev-period">(5월 vs 6월)</span></div>
       <div class="ch-legend-row" id="lg-ov00-rev"></div>
       <div class="chart-wrap" style="height:220px"><canvas id="chart-ov00-rev"></canvas></div>
     </div>
@@ -1300,6 +1300,7 @@ const ALL_REPORTS = [
     label: '2026년 6월 (월간)',
     period: '2026.05 — 2026.06',
     compare: '2026년 5월 vs 6월',
+    prevLabel: '5월', currLabel: '6월',
   },
   section01: {
     sectionName: '전화 현황',
@@ -2247,6 +2248,7 @@ function setupTitleEdit() {
 ═══════════════════════════════ */
 function renderSection02Partial(r) {
   const s01 = r.section01, s02 = r.section02;
+  const pl = r.meta.prevLabel || '5월', cl = r.meta.currLabel || '6월';
   document.getElementById('s02-subtitle').textContent = r.meta.compare + ' · 전화·플친·네이버·게시판·왓츠앱 5개 채널의 문의·예약 현황과 채널별 상세 비교';
 
   // 5월 보고서 전용(채널 간 비교 차트 / 진료과목별 분포) 블록은 숨김
@@ -2285,10 +2287,10 @@ function renderSection02Partial(r) {
   toggleS02Channel('board',    !!s02.board);
   toggleS02Channel('whatsapp', !!s02.whatsapp);
 
-  if (s02.kakao)    renderS02Kakao(s02.kakao);
-  if (s02.naver)    renderS02Naver(s02.naver);
-  if (s02.board)    renderS02Board(s02.board);
-  if (s02.whatsapp) renderS02Whatsapp(s02.whatsapp);
+  if (s02.kakao)    renderS02Kakao(s02.kakao, pl, cl);
+  if (s02.naver)    renderS02Naver(s02.naver, pl, cl);
+  if (s02.board)    renderS02Board(s02.board, pl, cl);
+  if (s02.whatsapp) renderS02Whatsapp(s02.whatsapp, pl, cl);
 
   // ── 종합 분석 (5개 채널 비교)
   const summaryDivider = document.querySelector('[data-channel="s02-summary"].section-divider');
@@ -2307,40 +2309,40 @@ function toggleS02Channel(key, show) {
   document.querySelectorAll('[data-channel="s02-'+key+'"]').forEach(el => { el.style.display = show ? '' : 'none'; });
 }
 
-function renderS02Kakao(kk) {
+function renderS02Kakao(kk, pl, cl) {
   const kc = kk.cats;
-  mkTable('tbl-s02-kakao',['구분','5월 문의','5월 예약','5월 예약률','5월 해외','6월 문의','6월 예약','6월 예약률','6월 해외','증감'],
+  mkTable('tbl-s02-kakao',['구분',pl+' 문의',pl+' 예약',pl+' 예약률',pl+' 해외',cl+' 문의',cl+' 예약',cl+' 예약률',cl+' 해외','증감'],
     ['합계',kk.total_may.inq,kk.total_may.book,pct(kk.total_may.rate),kk.total_may.overseas,kk.total_jun.inq,kk.total_jun.book,pct(kk.total_jun.rate),kk.total_jun.overseas,diff(kk.total_may.inq,kk.total_jun.inq)],
     kc.map((c,i)=>[c,kk.may.inq[i],kk.may.book[i],pct(kk.may.rate[i]),kk.may.overseas[i]||'—',kk.jun.inq[i],kk.jun.book[i],pct(kk.jun.rate[i]),kk.jun.overseas[i]||'—',diff(kk.may.inq[i],kk.jun.inq[i])]));
-  legend('lg-s02-kakao',[[C.aprInq,'5월 문의'],[C.aprBook,'5월 예약'],[C.mayInq,'6월 문의'],[C.mayBook,'6월 예약']]);
-  mkChart('chart-s02-kakao',kc,[mkDS('5월 문의',kk.may.inq,C.aprInq),mkDS('5월 예약',kk.may.book,C.aprBook),mkDS('6월 문의',kk.jun.inq,C.mayInq),mkDS('6월 예약',kk.jun.book,C.mayBook)]);
+  legend('lg-s02-kakao',[[C.aprInq,pl+' 문의'],[C.aprBook,pl+' 예약'],[C.mayInq,cl+' 문의'],[C.mayBook,cl+' 예약']]);
+  mkChart('chart-s02-kakao',kc,[mkDS(pl+' 문의',kk.may.inq,C.aprInq),mkDS(pl+' 예약',kk.may.book,C.aprBook),mkDS(cl+' 문의',kk.jun.inq,C.mayInq),mkDS(cl+' 예약',kk.jun.book,C.mayBook)]);
 }
 
-function renderS02Naver(nv) {
+function renderS02Naver(nv, pl, cl) {
   const nc = nv.cats;
-  mkTable('tbl-s02-naver',['구분','5월 문의','5월 부재','5월 예약','5월 예약률','6월 문의','6월 부재','6월 예약','6월 예약률','증감'],
+  mkTable('tbl-s02-naver',['구분',pl+' 문의',pl+' 부재',pl+' 예약',pl+' 예약률',cl+' 문의',cl+' 부재',cl+' 예약',cl+' 예약률','증감'],
     ['합계',nv.total_may.inq,nv.total_may.absent,nv.total_may.book,pct(nv.total_may.rate),nv.total_jun.inq,nv.total_jun.absent,nv.total_jun.book,pct(nv.total_jun.rate),diff(nv.total_may.inq,nv.total_jun.inq)],
     nc.map((c,i)=>[c,nv.may.inq[i],nv.may.absent[i]||'—',nv.may.book[i],pct(nv.may.rate[i]),nv.jun.inq[i],nv.jun.absent[i]||'—',nv.jun.book[i],pct(nv.jun.rate[i]),diff(nv.may.inq[i],nv.jun.inq[i])]));
-  legend('lg-s02-naver',[[C.aprInq,'5월 문의'],[C.aprBook,'5월 예약'],[C.mayInq,'6월 문의'],[C.mayBook,'6월 예약']]);
-  mkChart('chart-s02-naver',nc,[mkDS('5월 문의',nv.may.inq,C.aprInq),mkDS('5월 예약',nv.may.book,C.aprBook),mkDS('6월 문의',nv.jun.inq,C.mayInq),mkDS('6월 예약',nv.jun.book,C.mayBook)]);
+  legend('lg-s02-naver',[[C.aprInq,pl+' 문의'],[C.aprBook,pl+' 예약'],[C.mayInq,cl+' 문의'],[C.mayBook,cl+' 예약']]);
+  mkChart('chart-s02-naver',nc,[mkDS(pl+' 문의',nv.may.inq,C.aprInq),mkDS(pl+' 예약',nv.may.book,C.aprBook),mkDS(cl+' 문의',nv.jun.inq,C.mayInq),mkDS(cl+' 예약',nv.jun.book,C.mayBook)]);
 }
 
-function renderS02Board(bd) {
+function renderS02Board(bd, pl, cl) {
   const bc = bd.cats;
-  mkTable('tbl-s02-board',['구분','5월 문의','5월 부재','5월 예약','5월 예약률','6월 문의','6월 부재','6월 예약','6월 예약률','증감'],
+  mkTable('tbl-s02-board',['구분',pl+' 문의',pl+' 부재',pl+' 예약',pl+' 예약률',cl+' 문의',cl+' 부재',cl+' 예약',cl+' 예약률','증감'],
     ['합계',bd.total_may.inq,bd.total_may.absent,bd.total_may.book,pct(bd.total_may.rate),bd.total_jun.inq,bd.total_jun.absent,bd.total_jun.book,pct(bd.total_jun.rate),diff(bd.total_may.inq,bd.total_jun.inq)],
     bc.map((c,i)=>[c,bd.may.inq[i],bd.may.absent[i]||'—',bd.may.book[i],pct(bd.may.rate[i]),bd.jun.inq[i],bd.jun.absent[i]||'—',bd.jun.book[i],pct(bd.jun.rate[i]),diff(bd.may.inq[i],bd.jun.inq[i])]));
-  legend('lg-s02-board',[[C.aprInq,'5월 문의'],[C.aprBook,'5월 예약'],[C.mayInq,'6월 문의'],[C.mayBook,'6월 예약']]);
-  mkChart('chart-s02-board',bc,[mkDS('5월 문의',bd.may.inq,C.aprInq),mkDS('5월 예약',bd.may.book,C.aprBook),mkDS('6월 문의',bd.jun.inq,C.mayInq),mkDS('6월 예약',bd.jun.book,C.mayBook)]);
+  legend('lg-s02-board',[[C.aprInq,pl+' 문의'],[C.aprBook,pl+' 예약'],[C.mayInq,cl+' 문의'],[C.mayBook,cl+' 예약']]);
+  mkChart('chart-s02-board',bc,[mkDS(pl+' 문의',bd.may.inq,C.aprInq),mkDS(pl+' 예약',bd.may.book,C.aprBook),mkDS(cl+' 문의',bd.jun.inq,C.mayInq),mkDS(cl+' 예약',bd.jun.book,C.mayBook)]);
 }
 
-function renderS02Whatsapp(wa) {
+function renderS02Whatsapp(wa, pl, cl) {
   const wc = wa.cats;
-  mkTable('tbl-s02-whatsapp',['구분','5월 문의','5월 예약','5월 예약률','5월 이식수술','6월 문의','6월 예약','6월 예약률','6월 이식수술','증감'],
+  mkTable('tbl-s02-whatsapp',['구분',pl+' 문의',pl+' 예약',pl+' 예약률',pl+' 이식수술',cl+' 문의',cl+' 예약',cl+' 예약률',cl+' 이식수술','증감'],
     ['합계',wa.total_may.inq,wa.total_may.book,pct(wa.total_may.rate),wa.total_may.surgery||'—',wa.total_jun.inq,wa.total_jun.book,pct(wa.total_jun.rate),wa.total_jun.surgery||'—',diff(wa.total_may.inq,wa.total_jun.inq)],
     wc.map((c,i)=>[c,wa.may.inq[i],wa.may.book[i],pct(wa.may.rate[i]),wa.may.surgery[i]||'—',wa.jun.inq[i],wa.jun.book[i],pct(wa.jun.rate[i]),wa.jun.surgery[i]||'—',diff(wa.may.inq[i],wa.jun.inq[i])]));
-  legend('lg-s02-whatsapp',[[C.aprInq,'5월 문의'],[C.aprBook,'5월 예약'],[C.mayInq,'6월 문의'],[C.mayBook,'6월 예약']]);
-  mkChart('chart-s02-whatsapp',wc,[mkDS('5월 문의',wa.may.inq,C.aprInq),mkDS('5월 예약',wa.may.book,C.aprBook),mkDS('6월 문의',wa.jun.inq,C.mayInq),mkDS('6월 예약',wa.jun.book,C.mayBook)]);
+  legend('lg-s02-whatsapp',[[C.aprInq,pl+' 문의'],[C.aprBook,pl+' 예약'],[C.mayInq,cl+' 문의'],[C.mayBook,cl+' 예약']]);
+  mkChart('chart-s02-whatsapp',wc,[mkDS(pl+' 문의',wa.may.inq,C.aprInq),mkDS(pl+' 예약',wa.may.book,C.aprBook),mkDS(cl+' 문의',wa.jun.inq,C.mayInq),mkDS(cl+' 예약',wa.jun.book,C.mayBook)]);
 }
 
 function renderSection02(r) {
@@ -2476,13 +2478,14 @@ function renderReport(r) {
   if (!s.naver) {
     // 전화 데이터만 준비된 상태 — 전화 카드만 렌더링, 나머지는 데이터 들어오는 대로 추가
     const ph=s.phone, pc=s.cats;
+    const pl = r.meta.prevLabel || '5월', cl = r.meta.currLabel || '6월';
     function phKpiItem(label, av, mv, suffix) {
       const d = mv - av, cls = d>0?'up':d<0?'down':'flat';
       const arrow = d>0?`▲ ${Math.abs(d)}`:d<0?`▼ ${Math.abs(d)}`:'— 0';
       return `<div class="kpi-item"><div class="kpi-item-label">${label}</div><div class="kpi-row">
-        <div class="kpi-month"><span class="kpi-month-label">5월</span><span class="kpi-month-val">${av}${suffix}</span></div>
+        <div class="kpi-month"><span class="kpi-month-label">${pl}</span><span class="kpi-month-val">${av}${suffix}</span></div>
         <span class="kpi-arrow">→</span>
-        <div class="kpi-month"><span class="kpi-month-label">6월</span><span class="kpi-month-val">${mv}${suffix}</span></div>
+        <div class="kpi-month"><span class="kpi-month-label">${cl}</span><span class="kpi-month-val">${mv}${suffix}</span></div>
         <span class="kpi-diff ${cls}">${arrow}${suffix&&d!==0?suffix:''}</span>
       </div></div>`;
     }
@@ -2490,13 +2493,13 @@ function renderReport(r) {
       phKpiItem('문의', ph.total_may.inq, ph.total_jun.inq, '') +
       phKpiItem('예약', ph.total_may.book, ph.total_jun.book, '') +
       phKpiItem('예약률', ph.total_may.rate, ph.total_jun.rate, '%');
-    mkTable('tbl-phone',['구분','5월 문의','5월 예약','5월 예약률','6월 문의','6월 예약','6월 예약률','증감'],
+    mkTable('tbl-phone',['구분',pl+' 문의',pl+' 예약',pl+' 예약률',cl+' 문의',cl+' 예약',cl+' 예약률','증감'],
       ['합계',ph.total_may.inq,ph.total_may.book,ph.total_may.rate+'%',ph.total_jun.inq,ph.total_jun.book,ph.total_jun.rate+'%',diff(ph.total_may.inq,ph.total_jun.inq)],
       pc.map((c,i)=>[c,ph.may.inq[i],ph.may.book[i],ph.may.rate[i]+'%',ph.jun.inq[i],ph.jun.book[i],ph.jun.rate[i]+'%',diff(ph.may.inq[i],ph.jun.inq[i])]));
-    legend('lg-phone',[[C.aprInq,'5월 문의'],[C.aprBook,'5월 예약'],[C.mayInq,'6월 문의'],[C.mayBook,'6월 예약']]);
+    legend('lg-phone',[[C.aprInq,pl+' 문의'],[C.aprBook,pl+' 예약'],[C.mayInq,cl+' 문의'],[C.mayBook,cl+' 예약']]);
     const phTitleEl=document.querySelector('#chart-phone').closest('.card').querySelector('.card-title');
-    if(phTitleEl) phTitleEl.textContent='5월 vs 6월 비교 그래프';
-    mkChart('chart-phone',pc,[mkDS('5월 문의',ph.may.inq,C.aprInq),mkDS('5월 예약',ph.may.book,C.aprBook),mkDS('6월 문의',ph.jun.inq,C.mayInq),mkDS('6월 예약',ph.jun.book,C.mayBook)],280);
+    if(phTitleEl) phTitleEl.textContent=pl+' vs '+cl+' 비교 그래프';
+    mkChart('chart-phone',pc,[mkDS(pl+' 문의',ph.may.inq,C.aprInq),mkDS(pl+' 예약',ph.may.book,C.aprBook),mkDS(cl+' 문의',ph.jun.inq,C.mayInq),mkDS(cl+' 예약',ph.jun.book,C.mayBook)],280);
     // 전년 동월 비교 데이터 없음 — 카드 자체를 숨김
     if(charts['chart-phone-yoy']){ charts['chart-phone-yoy'].destroy(); delete charts['chart-phone-yoy']; }
     const yoyCard = document.getElementById('card-phone-yoy');
@@ -2713,11 +2716,12 @@ function renderSection04(r) {
 ═══════════════════════════════ */
 function renderSectionVisit(r) {
   const v = r.visitStatus, a = v.may, m = v.jun;
+  const pl = r.meta.prevLabel || '5월', cl = r.meta.currLabel || '6월';
   document.getElementById('sv03-subtitle').textContent = r.meta.compare + ' · 예약→내원 전환 흐름, 당일취소·부도 및 과목별 내원 상세 현황';
 
   function kpiItem(label, mayVal, junVal, suffix) {
     const d = junVal - mayVal, cls = d>0?'up':d<0?'down':'flat', arrow = d>0?`▲ ${Math.abs(d)}`:d<0?`▼ ${Math.abs(d)}`:'— 0';
-    return `<div class="kpi-item"><div class="kpi-item-label">${label}</div><div class="kpi-row"><div class="kpi-month"><span class="kpi-month-label">5월</span><span class="kpi-month-val">${mayVal}${suffix}</span></div><span class="kpi-arrow">→</span><div class="kpi-month"><span class="kpi-month-label">6월</span><span class="kpi-month-val">${junVal}${suffix}</span></div><span class="kpi-diff ${cls}">${arrow}${suffix&&d!==0?suffix:''}</span></div></div>`;
+    return `<div class="kpi-item"><div class="kpi-item-label">${label}</div><div class="kpi-row"><div class="kpi-month"><span class="kpi-month-label">${pl}</span><span class="kpi-month-val">${mayVal}${suffix}</span></div><span class="kpi-arrow">→</span><div class="kpi-month"><span class="kpi-month-label">${cl}</span><span class="kpi-month-val">${junVal}${suffix}</span></div><span class="kpi-diff ${cls}">${arrow}${suffix&&d!==0?suffix:''}</span></div></div>`;
   }
   document.getElementById('sv03-kpi-flow').innerHTML =
     kpiItem('총 예약',       a.total_book, m.total_book, '건') +
@@ -2728,6 +2732,13 @@ function renderSectionVisit(r) {
     kpiItem('취소(내원전)',  a.cancel_pre, m.cancel_pre, '건') +
     kpiItem('당일취소',      a.same_day_cancel, m.same_day_cancel, '건') +
     kpiItem('부도',          a.noshow,     m.noshow,     '건');
+
+  const funnelTitleMay = document.getElementById('v03-funnel-title-may');
+  const funnelTitleJun = document.getElementById('v03-funnel-title-jun');
+  if (funnelTitleMay) funnelTitleMay.textContent = '예약 → 내원 흐름 (' + pl + ')';
+  if (funnelTitleJun) funnelTitleJun.textContent = '예약 → 내원 흐름 (' + cl + ')';
+  const noshowPeriodEl = document.getElementById('v03-noshow-period');
+  if (noshowPeriodEl) noshowPeriodEl.textContent = '(' + pl + ' vs ' + cl + ')';
 
   const funnelMax = Math.ceil(Math.max(a.total_book, m.total_book) * 1.1 / 10) * 10;
   function mkFunnel(id, d) {
@@ -2743,15 +2754,15 @@ function renderSectionVisit(r) {
   mkFunnel('chart-v03-funnel-may', a);
   mkFunnel('chart-v03-funnel-jun', m);
 
-  legend('lg-v03-noshow', [['#BDBDBD','5월'], ['#616161','6월']]);
-  mkChart('chart-v03-noshow', ['당일취소','부도'], [mkDS('5월', [a.same_day_cancel, a.noshow], '#BDBDBD'), mkDS('6월', [m.same_day_cancel, m.noshow], '#616161')]);
+  legend('lg-v03-noshow', [['#BDBDBD',pl], ['#616161',cl]]);
+  mkChart('chart-v03-noshow', ['당일취소','부도'], [mkDS(pl, [a.same_day_cancel, a.noshow], '#BDBDBD'), mkDS(cl, [m.same_day_cancel, m.noshow], '#616161')]);
 
   const cats = v.cats, vc = v.visit_by_cat;
-  mkTable('tbl-v03-cats', ['구분','5월 내원','6월 내원','증감'],
+  mkTable('tbl-v03-cats', ['구분',pl+' 내원',cl+' 내원','증감'],
     ['합계', a.visit, m.visit, diff(a.visit, m.visit)],
     cats.map((c,i) => [c, vc.may[i], vc.jun[i], diff(vc.may[i], vc.jun[i])]));
-  legend('lg-v03-cats', [[C.aprInq,'5월 내원'], [C.mayInq,'6월 내원']]);
-  mkChart('chart-v03-cats', cats, [mkDS('5월 내원', vc.may, C.aprInq), mkDS('6월 내원', vc.jun, C.mayInq)]);
+  legend('lg-v03-cats', [[C.aprInq,pl+' 내원'], [C.mayInq,cl+' 내원']]);
+  mkChart('chart-v03-cats', cats, [mkDS(pl+' 내원', vc.may, C.aprInq), mkDS(cl+' 내원', vc.jun, C.mayInq)]);
 
   renderAnalysis('ana-v03', v.analysis, r);
 }
@@ -2761,23 +2772,24 @@ function renderSectionVisit(r) {
 ═══════════════════════════════ */
 function renderSectionClosing(r) {
   const c = r.closingStatus, a = c.may, m = c.jun, cats = c.cats;
+  const pl = r.meta.prevLabel || '5월', cl = r.meta.currLabel || '6월';
   document.getElementById('scs04-subtitle').textContent = r.meta.compare + ' · 상담부터 체결까지, 과목별 성사 전환 현황';
 
   function kpiItem(label, mayVal, junVal, suffix) {
     const d = junVal - mayVal, cls = d>0?'up':d<0?'down':'flat', arrow = d>0?`▲ ${Math.abs(d)}${suffix==='%'?'%p':''}`:d<0?`▼ ${Math.abs(d)}${suffix==='%'?'%p':''}`:'— 0';
-    return `<div class="kpi-item"><div class="kpi-item-label">${label}</div><div class="kpi-row"><div class="kpi-month"><span class="kpi-month-label">5월</span><span class="kpi-month-val">${mayVal}${suffix}</span></div><span class="kpi-arrow">→</span><div class="kpi-month"><span class="kpi-month-label">6월</span><span class="kpi-month-val">${junVal}${suffix}</span></div><span class="kpi-diff ${cls}">${arrow}</span></div></div>`;
+    return `<div class="kpi-item"><div class="kpi-item-label">${label}</div><div class="kpi-row"><div class="kpi-month"><span class="kpi-month-label">${pl}</span><span class="kpi-month-val">${mayVal}${suffix}</span></div><span class="kpi-arrow">→</span><div class="kpi-month"><span class="kpi-month-label">${cl}</span><span class="kpi-month-val">${junVal}${suffix}</span></div><span class="kpi-diff ${cls}">${arrow}</span></div></div>`;
   }
   document.getElementById('scs04-kpi').innerHTML =
     kpiItem('상담',   a.visit, m.visit, '건') +
     kpiItem('체결',   a.close, m.close, '건') +
     kpiItem('체결률', a.rate,  m.rate,  '%');
 
-  mkTable('tbl-cs04', ['구분','5월 상담','5월 체결','5월 체결률','6월 상담','6월 체결','6월 체결률','증감'],
+  mkTable('tbl-cs04', ['구분',pl+' 상담',pl+' 체결',pl+' 체결률',cl+' 상담',cl+' 체결',cl+' 체결률','증감'],
     ['합계', a.visit, a.close, pct(a.rate), m.visit, m.close, pct(m.rate), diff(a.visit, m.visit)],
     cats.map((cat,i) => [cat, c.byCat.may.visit[i], c.byCat.may.close[i], pct(c.byCat.may.rate[i]), c.byCat.jun.visit[i], c.byCat.jun.close[i], pct(c.byCat.jun.rate[i]), diff(c.byCat.may.visit[i], c.byCat.jun.visit[i])]));
 
-  legend('lg-cs04', [[C.aprInq,'5월 상담'],[C.aprBook,'5월 체결'],[C.mayInq,'6월 상담'],[C.mayBook,'6월 체결']]);
-  mkChart('chart-cs04', cats, [mkDS('5월 상담', c.byCat.may.visit, C.aprInq), mkDS('5월 체결', c.byCat.may.close, C.aprBook), mkDS('6월 상담', c.byCat.jun.visit, C.mayInq), mkDS('6월 체결', c.byCat.jun.close, C.mayBook)]);
+  legend('lg-cs04', [[C.aprInq,pl+' 상담'],[C.aprBook,pl+' 체결'],[C.mayInq,cl+' 상담'],[C.mayBook,cl+' 체결']]);
+  mkChart('chart-cs04', cats, [mkDS(pl+' 상담', c.byCat.may.visit, C.aprInq), mkDS(pl+' 체결', c.byCat.may.close, C.aprBook), mkDS(cl+' 상담', c.byCat.jun.visit, C.mayInq), mkDS(cl+' 체결', c.byCat.jun.close, C.mayBook)]);
 
   renderAnalysis('ana-cs04', c.analysis, r);
 }
@@ -2790,6 +2802,7 @@ const DS05_COLORS = ['#5C6BC0','#C62828','#2E7D32','#E65100'];
 
 function renderSectionDoctor(r) {
   const s = r.doctorStatus;
+  const pl = r.meta.prevLabel || '5월', cl = r.meta.currLabel || '6월';
   document.getElementById('sds05-subtitle').textContent = r.meta.compare + ' · 원장님 상담·체결 성사 현황';
   const kpiGrid = document.getElementById('sds05-kpi');
   kpiGrid.innerHTML = '';
@@ -2809,18 +2822,21 @@ function renderSectionDoctor(r) {
         <div class="ck-row"><span>체결률</span><div style="display:flex;align-items:center;gap:6px;"><div class="ck-vals"><span>${ar}%</span><span class="arrow">→</span><span>${mr}%</span></div><span class="ck-diff ${cls}">${arrow}${rd!==0?'%p':''}</span></div></div>
       </div>`;
   });
-  legend('lg-ds05-rate', [[C.aprInq,'5월 체결률'],[C.mayInq,'6월 체결률']]);
+  legend('lg-ds05-rate', [[C.aprInq,pl+' 체결률'],[C.mayInq,cl+' 체결률']]);
   if(charts['chart-ds05-rate']) charts['chart-ds05-rate'].destroy();
   charts['chart-ds05-rate'] = new Chart(document.getElementById('chart-ds05-rate'), {
     type:'bar', data:{ labels:s.doctors, datasets:[
-      {label:'5월 체결률',data:s.may.total.rate,backgroundColor:C.aprInq,borderRadius:3},
-      {label:'6월 체결률',data:s.jun.total.rate,backgroundColor:C.mayInq,borderRadius:3},
+      {label:pl+' 체결률',data:s.may.total.rate,backgroundColor:C.aprInq,borderRadius:3},
+      {label:cl+' 체결률',data:s.jun.total.rate,backgroundColor:C.mayInq,borderRadius:3},
     ]},
     options:{...BASE, scales:{...BASE.scales,y:{...BASE.scales.y,max:105,ticks:{...BASE.scales.y.ticks,callback:v=>v+'%'}}},
       plugins:{...BASE.plugins,tooltip:{...BASE.plugins.tooltip,callbacks:{label:c=>' '+c.dataset.label+': '+c.parsed.y+'%'}}}}
   });
   renderDs05Detail(s, ds05ActiveMonth);
   renderAnalysis('ana-ds05', s.analysis, r);
+  const ds05TabMay = document.getElementById('ds05-tab-may'), ds05TabJun = document.getElementById('ds05-tab-jun');
+  if (ds05TabMay) ds05TabMay.textContent = pl;
+  if (ds05TabJun) ds05TabJun.textContent = cl;
 }
 
 function renderDs05Detail(s, month) {
@@ -2857,6 +2873,7 @@ let st06ActiveMonth = 'may';
 
 function renderSectionStaff(r) {
   const s = r.staffStatus;
+  const pl = r.meta.prevLabel || '5월', cl = r.meta.currLabel || '6월';
   document.getElementById('sst06-subtitle').textContent = r.meta.compare + ' · 직원별 상담·체결 성사 현황';
 
   const kpiGrid = document.getElementById('sst06-kpi');
@@ -2888,13 +2905,13 @@ function renderSectionStaff(r) {
       </div>`;
   });
 
-  chLegend('lg-st06-rate', [[C.aprInq,'5월 체결률'],[C.mayInq,'6월 체결률']]);
+  chLegend('lg-st06-rate', [[C.aprInq,pl+' 체결률'],[C.mayInq,cl+' 체결률']]);
   if(charts['chart-st06-rate']) charts['chart-st06-rate'].destroy();
   charts['chart-st06-rate'] = new Chart(document.getElementById('chart-st06-rate'), {
     type:'bar',
     data:{ labels:s.staff, datasets:[
-      { label:'5월 체결률', data:s.may.total.rate.map(v=>v==='—'?0:v), backgroundColor:C.aprInq, borderRadius:3 },
-      { label:'6월 체결률', data:s.jun.total.rate.map(v=>v==='—'?0:v), backgroundColor:C.mayInq, borderRadius:3 },
+      { label:pl+' 체결률', data:s.may.total.rate.map(v=>v==='—'?0:v), backgroundColor:C.aprInq, borderRadius:3 },
+      { label:cl+' 체결률', data:s.jun.total.rate.map(v=>v==='—'?0:v), backgroundColor:C.mayInq, borderRadius:3 },
     ]},
     options:{ ...BASE, scales:{...BASE.scales, y:{...BASE.scales.y, max:105, ticks:{...BASE.scales.y.ticks, callback:v=>v+'%'}}},
       plugins:{...BASE.plugins, tooltip:{...BASE.plugins.tooltip, callbacks:{label:c=>' '+c.dataset.label+': '+c.parsed.y+'%'}}} }
@@ -2902,12 +2919,15 @@ function renderSectionStaff(r) {
 
   const totMayVisit = s.may.total.visit.reduce((a,b)=>a+b,0), totMayClose = s.may.total.close.reduce((a,b)=>a+b,0);
   const totJunVisit = s.jun.total.visit.reduce((a,b)=>a+b,0), totJunClose = s.jun.total.close.reduce((a,b)=>a+b,0);
-  mkTable('tbl-st06', ['직원','5월 상담','5월 체결','5월 체결률','6월 상담','6월 체결','6월 체결률','증감'],
+  mkTable('tbl-st06', ['직원',pl+' 상담',pl+' 체결',pl+' 체결률',cl+' 상담',cl+' 체결',cl+' 체결률','증감'],
     ['합계', totMayVisit, totMayClose, Math.round(totMayClose/totMayVisit*100)+'%', totJunVisit, totJunClose, Math.round(totJunClose/totJunVisit*100)+'%', diff(totMayClose, totJunClose)],
     s.staff.map((name,si) => [name, s.may.total.visit[si], s.may.total.close[si], pct(s.may.total.rate[si]), s.jun.total.visit[si], s.jun.total.close[si], pct(s.jun.total.rate[si]), diff(s.may.total.close[si], s.jun.total.close[si])]));
 
   renderSt06Detail(s, st06ActiveMonth);
   renderAnalysis('ana-st06', s.analysis, r);
+  const st06TabMay = document.getElementById('st06-tab-may'), st06TabJun = document.getElementById('st06-tab-jun');
+  if (st06TabMay) st06TabMay.textContent = pl;
+  if (st06TabJun) st06TabJun.textContent = cl;
 }
 
 function renderSt06Detail(s, month) {
@@ -2943,6 +2963,7 @@ let rev08ActiveMonth = 'may';
 
 function renderSectionRevenue(r) {
   const s = r.revenueStatus;
+  const pl = r.meta.prevLabel || '5월', cl = r.meta.currLabel || '6월';
   document.getElementById('srev08-subtitle').textContent = r.meta.compare + ' · 진료과목별 매출 현황';
 
   const mayTotal = s.may.total, junTotal = s.jun.total;
@@ -2954,9 +2975,9 @@ function renderSectionRevenue(r) {
     const pctv = ((d/av)*100).toFixed(1);
     const arrow = d>0?`▲ ${fmtWon(Math.abs(d))}`:d<0?`▼ ${fmtWon(Math.abs(d))}`:'— 0';
     return `<div class="kpi-item"><div class="kpi-item-label">${label}</div><div class="kpi-row">
-      <div class="kpi-month"><span class="kpi-month-label">5월</span><span class="kpi-month-val">${fmtWon(av)}</span></div>
+      <div class="kpi-month"><span class="kpi-month-label">${pl}</span><span class="kpi-month-val">${fmtWon(av)}</span></div>
       <span class="kpi-arrow">→</span>
-      <div class="kpi-month"><span class="kpi-month-label">6월</span><span class="kpi-month-val">${fmtWon(mv)}</span></div>
+      <div class="kpi-month"><span class="kpi-month-label">${cl}</span><span class="kpi-month-val">${fmtWon(mv)}</span></div>
       <span class="kpi-diff ${cls}">${arrow} (${d>=0?'+':''}${pctv}%)</span>
     </div></div>`;
   }
@@ -2985,7 +3006,7 @@ function renderSectionRevenue(r) {
     </div>`;
   }
   document.getElementById('srev08-top3').innerHTML =
-    top3Html('5월', s.may.revenue) + top3Html('6월', s.jun.revenue);
+    top3Html(pl, s.may.revenue) + top3Html(cl, s.jun.revenue);
 
   const cards = document.getElementById('srev08-cat-cards');
   cards.innerHTML = '';
@@ -3000,10 +3021,10 @@ function renderSectionRevenue(r) {
     cards.innerHTML += `
       <div class="ch-kpi-card">
         <div class="ck-name"><span class="ck-dot" style="background:${s.catColors[ci]}"></span>${cat}</div>
-        <div class="ck-row"><span>5월</span><span style="font-size:13px;font-weight:700;color:#1a1a1a;">${fmtWon(av)}</span></div>
+        <div class="ck-row"><span>${pl}</span><span style="font-size:13px;font-weight:700;color:#1a1a1a;">${fmtWon(av)}</span></div>
         <div class="ck-row" style="margin-bottom:6px;"><span style="color:#bbb;font-size:10px;">비중</span><span style="font-size:11px;color:#888;">${mayShare}%</span></div>
         <hr class="ck-divider">
-        <div class="ck-row"><span>6월</span><span style="font-size:13px;font-weight:700;color:#1a1a1a;">${fmtWon(mv)}</span></div>
+        <div class="ck-row"><span>${cl}</span><span style="font-size:13px;font-weight:700;color:#1a1a1a;">${fmtWon(mv)}</span></div>
         <div class="ck-row" style="margin-bottom:6px;"><span style="color:#bbb;font-size:10px;">비중</span><span style="font-size:11px;color:#888;">${junShare}%</span></div>
         <hr class="ck-divider">
         <div class="ck-row"><span>증감</span><span class="ck-diff ${cls}" style="font-size:11px;">${arrow}</span></div>
@@ -3014,13 +3035,15 @@ function renderSectionRevenue(r) {
   const visibleIdx  = s.cats.map((_,i)=>i).filter(i => s.may.revenue[i]>0 || s.jun.revenue[i]>0);
   const visibleColors = visibleIdx.map(i => s.catColors[i]);
   const lightColors = visibleColors.map(c => lightenHex(c, 0.55));
-  chLegend('lg-rev08-bar', [['#BDBDBD','5월 (연한색)'], ['#616161','6월 (진한색)']]);
+  chLegend('lg-rev08-bar', [['#BDBDBD',pl+' (연한색)'], ['#616161',cl+' (진한색)']]);
+  const rev08BarPeriod = document.getElementById('rev08-bar-period');
+  if (rev08BarPeriod) rev08BarPeriod.textContent = '(' + pl + ' vs ' + cl + ')';
   if(charts['chart-rev08-bar']) charts['chart-rev08-bar'].destroy();
   charts['chart-rev08-bar'] = new Chart(document.getElementById('chart-rev08-bar'), {
     type:'bar',
     data:{ labels: visibleCats, datasets:[
-      { label:'5월', data: visibleIdx.map(i=>Math.round(s.may.revenue[i]/10000)), backgroundColor:lightColors, borderRadius:3 },
-      { label:'6월', data: visibleIdx.map(i=>Math.round(s.jun.revenue[i]/10000)), backgroundColor:visibleColors, borderRadius:3 },
+      { label:pl, data: visibleIdx.map(i=>Math.round(s.may.revenue[i]/10000)), backgroundColor:lightColors, borderRadius:3 },
+      { label:cl, data: visibleIdx.map(i=>Math.round(s.jun.revenue[i]/10000)), backgroundColor:visibleColors, borderRadius:3 },
     ]},
     options:{ ...BASE,
       plugins:{ ...BASE.plugins, tooltip:{ ...BASE.plugins.tooltip,
@@ -3032,7 +3055,7 @@ function renderSectionRevenue(r) {
   renderRev08Pie(s, rev08ActiveMonth);
 
   mkTable('tbl-rev08',
-    ['과목','5월 매출','5월 비중','6월 매출','6월 비중','증감'],
+    ['과목',pl+' 매출',pl+' 비중',cl+' 매출',cl+' 비중','증감'],
     ['합계', fmtFull(mayTotal), '100%', fmtFull(junTotal), '100%',
       `<span class="${diff8>=0?'up':'down'}">${diff8>=0?'▲':'▼'} ${fmtWon(Math.abs(diff8))} (${diff8>=0?'+':''}${diffPct}%)</span>`],
     s.cats.map((cat,i) => {
@@ -3045,10 +3068,14 @@ function renderSectionRevenue(r) {
   );
 
   renderAnalysis('ana-rev08', s.analysis, r);
+  const rev08TabMay = document.getElementById('rev08-tab-may'), rev08TabJun = document.getElementById('rev08-tab-jun');
+  if (rev08TabMay) rev08TabMay.textContent = pl;
+  if (rev08TabJun) rev08TabJun.textContent = cl;
 }
 
 function renderRev08Pie(s, month) {
-  document.getElementById('srev08-pie-label').textContent = month==='may'?'(5월)':'(6월)';
+  const pl = (currentReport && currentReport.meta.prevLabel) || '5월', cl = (currentReport && currentReport.meta.currLabel) || '6월';
+  document.getElementById('srev08-pie-label').textContent = month==='may'?'('+pl+')':'('+cl+')';
   const data   = s[month].revenue.filter(v=>v>0);
   const labels = s.cats.filter((_,i)=>s[month].revenue[i]>0);
   const colors = s.catColors.filter((_,i)=>s[month].revenue[i]>0);
@@ -3090,6 +3117,7 @@ let tr07ActiveMonth = 'may';
 
 function renderSectionTraffic(r) {
   const s = r.trafficStatus;
+  const pl = r.meta.prevLabel || '5월', cl = r.meta.currLabel || '6월';
   document.getElementById('str07-subtitle').textContent = r.meta.compare + ' · 유입경로별 건수 및 성사 전환율 (중복 선택 포함)';
 
   const mayTotal = s.may.total, junTotal = s.jun.total;
@@ -3118,16 +3146,16 @@ function renderSectionTraffic(r) {
     </div>`;
   }
   document.getElementById('str07-top3').innerHTML =
-    top3RouteHtml('5월', s.may.count, mayTotal) + top3RouteHtml('6월', s.jun.count, junTotal);
+    top3RouteHtml(pl, s.may.count, mayTotal) + top3RouteHtml(cl, s.jun.count, junTotal);
 
   renderTr07Donut(s, tr07ActiveMonth);
 
   const top10 = s.routes.map((name,i)=>({name,i,c:s.may.count[i]+s.jun.count[i]}))
                          .sort((a,b)=>b.c-a.c).slice(0,10);
-  chLegend('lg-tr07-bar', [[C.aprInq,'5월 건수'],[C.mayInq,'6월 건수']]);
+  chLegend('lg-tr07-bar', [[C.aprInq,pl+' 건수'],[C.mayInq,cl+' 건수']]);
   mkChart('chart-tr07-bar', top10.map(x=>x.name),
-    [mkDS('5월 건수', top10.map(x=>s.may.count[x.i]), C.aprInq),
-     mkDS('6월 건수', top10.map(x=>s.jun.count[x.i]), C.mayInq)], 300);
+    [mkDS(pl+' 건수', top10.map(x=>s.may.count[x.i]), C.aprInq),
+     mkDS(cl+' 건수', top10.map(x=>s.jun.count[x.i]), C.mayInq)], 300);
 
   const convRoutes = s.routes.map((name,i)=>({
     name, i,
@@ -3136,13 +3164,13 @@ function renderSectionTraffic(r) {
   })).filter(x => x.mayC >= 5 || x.junC >= 5)
      .sort((a,b) => (b.mayR+b.junR) - (a.mayR+a.junR));
 
-  chLegend('lg-tr07-rate', [['#90CAF9','5월 전환율'],['#1565C0','6월 전환율']]);
+  chLegend('lg-tr07-rate', [['#90CAF9',pl+' 전환율'],['#1565C0',cl+' 전환율']]);
   if(charts['chart-tr07-rate']) charts['chart-tr07-rate'].destroy();
   charts['chart-tr07-rate'] = new Chart(document.getElementById('chart-tr07-rate'), {
     type: 'bar',
     data: { labels: convRoutes.map(x=>x.name), datasets: [
-      { label:'5월 전환율', data: convRoutes.map(x=>x.mayR), backgroundColor:'#90CAF9', borderRadius:3 },
-      { label:'6월 전환율', data: convRoutes.map(x=>x.junR), backgroundColor:'#1565C0', borderRadius:3 },
+      { label:pl+' 전환율', data: convRoutes.map(x=>x.mayR), backgroundColor:'#90CAF9', borderRadius:3 },
+      { label:cl+' 전환율', data: convRoutes.map(x=>x.junR), backgroundColor:'#1565C0', borderRadius:3 },
     ]},
     options: { ...BASE,
       scales: { ...BASE.scales, y: { ...BASE.scales.y, max:110, ticks:{...BASE.scales.y.ticks,callback:v=>v+'%'} }},
@@ -3151,7 +3179,7 @@ function renderSectionTraffic(r) {
   });
 
   mkTable('tbl-tr07',
-    ['유입경로','5월 건수','5월 전환율','6월 건수','6월 전환율','증감(건수)'],
+    ['유입경로',pl+' 건수',pl+' 전환율',cl+' 건수',cl+' 전환율','증감(건수)'],
     [`합계 <span style="font-size:10px;color:#aaa;font-weight:400;">(중복포함)</span>`,
       mayTotal, mayRate+'%', junTotal, junRate+'%', diff(mayTotal, junTotal)],
     s.routes.map((name,i) => [
@@ -3163,6 +3191,12 @@ function renderSectionTraffic(r) {
   if (r.trafficByCat) { renderTr07ByCat(r.trafficByCat, tr07CatActiveMonth); }
 
   renderAnalysis('ana-tr07', s.analysis, r);
+  const tr07TabMay = document.getElementById('tr07-tab-may'), tr07TabJun = document.getElementById('tr07-tab-jun');
+  if (tr07TabMay) tr07TabMay.textContent = pl;
+  if (tr07TabJun) tr07TabJun.textContent = cl;
+  const tr07CatTabMay = document.getElementById('tr07cat-tab-may'), tr07CatTabJun = document.getElementById('tr07cat-tab-jun');
+  if (tr07CatTabMay) tr07CatTabMay.textContent = pl;
+  if (tr07CatTabJun) tr07CatTabJun.textContent = cl;
 }
 
 const TR07_CAT_COLORS = ['#29B6F6','#EC407A','#FFB300','#43A047','#8D6E63','#5C6BC0'];
@@ -3216,6 +3250,7 @@ function switchTr07CatMonth(month) {
 }
 
 function renderTr07Donut(s, month) {
+  const pl = (currentReport && currentReport.meta.prevLabel) || '5월', cl = (currentReport && currentReport.meta.currLabel) || '6월';
   const d = s[month];
   const sorted = s.routes.map((name,i)=>({name,i,count:d.count[i]})).filter(x=>x.count>0).sort((a,b)=>b.count-a.count);
   const top8 = sorted.slice(0,8);
@@ -3224,7 +3259,7 @@ function renderTr07Donut(s, month) {
   const data   = [...top8.map(x=>x.count), ...(others>0?[others]:[])];
   const colors = [...S07_COLORS.slice(0,8), '#BDBDBD'];
 
-  document.getElementById('str07-donut-label').textContent = month==='may'?'(5월)':'(6월)';
+  document.getElementById('str07-donut-label').textContent = month==='may'?'('+pl+')':'('+cl+')';
 
   const existing = charts['chart-tr07-donut'];
   if (existing) {
@@ -3261,6 +3296,7 @@ function switchTr07Month(month) {
 ═══════════════════════════════ */
 function renderSectionOverview(r) {
   document.getElementById('sov00-subtitle').textContent = r.meta.compare + ' · 문의부터 매출까지 전 섹션 핵심 지표를 한 화면에 종합 정리';
+  const pl = r.meta.prevLabel || '5월', cl = r.meta.currLabel || '6월';
 
   const ph = r.section01.phone, s02 = r.section02, vs = r.visitStatus, cs = r.closingStatus, ts = r.trafficStatus, rv = r.revenueStatus, mg = r.mergedInquiry, tbc = r.trafficByCat;
 
@@ -3302,13 +3338,13 @@ function renderSectionOverview(r) {
       { label:'체결률', val:`${cs.may.rate}%→${cs.jun.rate}%` },
     ]},
     { tag:'05', title:'원장님 성사 현황', color:'#E65100', items:[
-      { label:'5월 1위', val: drTop('may') },
-      { label:'6월 1위', val: drTop('jun') },
+      { label:pl+' 1위', val: drTop('may') },
+      { label:cl+' 1위', val: drTop('jun') },
       { label:'최대 개선', val:'김진오 원장님 +13%p' },
     ]},
     { tag:'06', title:'직원별 성사율', color:'#6A1B9A', items:[
-      { label:'5월 1위', val: stTop('may') },
-      { label:'6월 1위', val: stTop('jun') },
+      { label:pl+' 1위', val: stTop('may') },
+      { label:cl+' 1위', val: stTop('jun') },
       { label:'최대 개선', val:'전소영 +16%p' },
     ]},
     { tag:'07', title:'유입경로 분석', color:'#00838F', items:[
@@ -3336,6 +3372,11 @@ function renderSectionOverview(r) {
         </div>`).join('')}
     </div>`).join('');
 
+  const ov00FunnelTitleMay = document.getElementById('ov00-funnel-title-may');
+  const ov00FunnelTitleJun = document.getElementById('ov00-funnel-title-jun');
+  if (ov00FunnelTitleMay) ov00FunnelTitleMay.textContent = '문의 → 예약 → 내원 → 성사 흐름 (' + pl + ')';
+  if (ov00FunnelTitleJun) ov00FunnelTitleJun.textContent = '문의 → 예약 → 내원 → 성사 흐름 (' + cl + ')';
+
   function mkFunnelOv00(id, inq, book, visit, contract, sharedMax) {
     if(charts[id]) charts[id].destroy();
     charts[id] = new Chart(document.getElementById(id), {
@@ -3354,13 +3395,15 @@ function renderSectionOverview(r) {
 
   const revCats = rv.cats.filter((_,i)=>rv.may.revenue[i]>0 || rv.jun.revenue[i]>0);
   const revIdx  = rv.cats.map((_,i)=>i).filter(i=>rv.may.revenue[i]>0 || rv.jun.revenue[i]>0);
-  chLegend('lg-ov00-rev', [[C.aprBook,'5월'],[C.mayBook,'6월']]);
+  chLegend('lg-ov00-rev', [[C.aprBook,pl],[C.mayBook,cl]]);
+  const ov00RevPeriod = document.getElementById('ov00-rev-period');
+  if (ov00RevPeriod) ov00RevPeriod.textContent = '(' + pl + ' vs ' + cl + ')';
   if(charts['chart-ov00-rev']) charts['chart-ov00-rev'].destroy();
   charts['chart-ov00-rev'] = new Chart(document.getElementById('chart-ov00-rev'), {
     type:'bar',
     data:{ labels: revCats, datasets:[
-      { label:'5월', data: revIdx.map(i=>Math.round(rv.may.revenue[i]/10000)), backgroundColor:C.aprBook, borderRadius:3 },
-      { label:'6월', data: revIdx.map(i=>Math.round(rv.jun.revenue[i]/10000)), backgroundColor:C.mayBook, borderRadius:3 },
+      { label:pl, data: revIdx.map(i=>Math.round(rv.may.revenue[i]/10000)), backgroundColor:C.aprBook, borderRadius:3 },
+      { label:cl, data: revIdx.map(i=>Math.round(rv.jun.revenue[i]/10000)), backgroundColor:C.mayBook, borderRadius:3 },
     ]},
     options:{ ...BASE,
       plugins:{ ...BASE.plugins, tooltip:{...BASE.plugins.tooltip, callbacks:{label:c=>` ${c.dataset.label}: ${c.parsed.y.toLocaleString()}만원`}}},
@@ -3376,19 +3419,20 @@ function renderSectionOverview(r) {
 ═══════════════════════════════ */
 function renderSectionReview(r) {
   const rev = r.reviewStatus;
+  const pl = r.meta.prevLabel || '5월', cl = r.meta.currLabel || '6월';
   document.getElementById('srv09-subtitle').textContent = r.meta.compare + ' · 이달의 성과 및 개선 과제';
 
   const vs = r.visitStatus, cs = r.closingStatus, rv = r.revenueStatus, mg = r.mergedInquiry;
 
   const summaries = [
-    { month:'5월', color:'#EFF6FF', border:'#1565C0', items:[
+    { month:pl, color:'#EFF6FF', border:'#1565C0', items:[
       { label:'신규 문의', val: mg.total_may.inq + '건' },
       { label:'신규 예약', val: mg.total_may.book + '건 (예약률 ' + mg.total_may.rate + '%)' },
       { label:'내원', val: vs.may.visit + '건' },
       { label:'성사 체결', val: cs.may.close + '건 (체결률 ' + cs.may.rate + '%)' },
       { label:'총 매출', val: fmtWon(rv.may.total) },
     ]},
-    { month:'6월', color:'#FFF5F5', border:'#C62828', items:[
+    { month:cl, color:'#FFF5F5', border:'#C62828', items:[
       { label:'신규 문의', val: mg.total_jun.inq + '건' },
       { label:'신규 예약', val: mg.total_jun.book + '건 (예약률 ' + mg.total_jun.rate + '%)' },
       { label:'내원', val: vs.jun.visit + '건' },
