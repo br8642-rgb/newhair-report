@@ -1263,6 +1263,11 @@ function analysisCacheField(id, r) {
 // 방식: 저장 시 items 배열 맨 뒤에 "__v:<해시>" 마커를 하나 더 붙여서 저장(기존 Sheets 저장 포맷과 100% 호환).
 //       불러올 때 그 마커의 해시가 지금 코드 기본값의 해시와 다르면(=코드가 바뀌었으면) 캐시를 버리고 코드 기본값을 보여줌.
 //       사람이 화면에서 직접 수정한 내용은 그 시점의 코드 해시로 저장되므로, 코드가 그대로인 한 계속 정상적으로 유지·표시됨.
+//
+// 레거시 캐시(버전 마커 없는 예전 저장분) 처리 원칙:
+//   - FORCE_RESET_FIELDS에 등록된 필드(=이번에 Claude가 코드로 직접 새로 고친 필드)만 예전 캐시를 버리고 코드 내용 사용
+//   - 그 외 모든 필드는 예전 캐시를 그대로 "채택"하고, 즉시 현재 버전 마커를 붙여 재저장(자동 이관) →
+//     사람이 예전에 화면에서 직접 수정해둔 내용을 기억 못 해도 안전하게 보존됨
 const VERSION_MARKER = '__v:';
 function hashText(str) {
   let h = 0;
@@ -1278,7 +1283,33 @@ function unpackVersion(cached) {
   if (typeof last === 'string' && last.indexOf(VERSION_MARKER) === 0) {
     return { items: cached.slice(0, -1), version: last.slice(VERSION_MARKER.length) };
   }
-  return { items: cached, version: null }; // 버전 마커 없는 예전 캐시(레거시) — 버전 불일치로 간주해 코드 기본값 사용
+  return { items: cached, version: null }; // 버전 마커 없는 예전(레거시) 캐시
+}
+
+// 2026-07 DB현황 섹션 추가 작업에서 Claude가 코드로 직접 새로 고친 필드 — 예전 캐시를 무시하고 코드 내용을 강제 적용
+const FORCE_RESET_FIELDS = [
+  { reportId: 'analysis', fieldPrefix: 'ana-ov00' }, // 00 전체 종합현황 분석 — DB현황 내용 반영
+  { fieldExact: 'srv09-tasks' },                     // 10 종합리뷰 과제 리스트 — 김승희 항목 제거 + DB 과제 추가
+];
+function isForceResetField(reportId, field) {
+  return FORCE_RESET_FIELDS.some(f =>
+    (f.reportId === undefined || f.reportId === reportId) &&
+    (f.fieldPrefix === undefined || field.indexOf(f.fieldPrefix) === 0) &&
+    (f.fieldExact === undefined || field === f.fieldExact)
+  );
+}
+
+// 캐시 판정 공통 로직 — 사용할 items를 반환(없으면 null → 코드 기본값 사용)
+// migrateFn: 레거시 캐시를 자동 이관(현재 버전으로 재저장)할 때 호출
+function resolveCache(reportId, field, baseVersion, rawCached, migrateFn) {
+  const { items, version } = unpackVersion(rawCached);
+  if (!items) return null;
+  if (version === baseVersion) return items; // 버전 일치 → 정상 사용
+  if (version === null && !isForceResetField(reportId, field)) {
+    if (migrateFn) migrateFn(items); // 레거시 자동 이관
+    return items;
+  }
+  return null; // 강제리셋 대상의 레거시 캐시, 또는 버전 불일치 → 코드 기본값
 }
 
 // ── 메모리 캐시 읽기
@@ -2252,11 +2283,13 @@ function renderAnalysis(id, text, r) {
   const p = document.getElementById(id);
   if(!p) return;
   // Sheets에 저장된 분석 텍스트가 있어도, 코드의 기본 문구가 그 이후 바뀌었으면(버전 불일치) 코드 내용을 우선 적용
+  // 단, 강제리셋 대상이 아닌 레거시 캐시는 자동 이관(채택+재저장)되어 보존됨
   const field = analysisCacheField(id, r);
   const baseVersion = hashText(text);
-  const { items: cachedItems, version: cachedVersion } = unpackVersion(cacheRead('analysis', field));
-  const useCache = cachedItems && cachedVersion === baseVersion;
-  p.innerHTML = useCache ? cachedItems[0] : text.replace(/\n/g,'<br>');
+  const resolved = resolveCache('analysis', field, baseVersion, cacheRead('analysis', field), (items) => {
+    saveToSheets('analysis', field, packWithVersion(items, baseVersion));
+  });
+  p.innerHTML = resolved ? resolved[0] : text.replace(/\n/g,'<br>');
   if(isEditor) {
     const box = p.closest('.analysis-box');
     box.classList.add('editable');
@@ -5298,11 +5331,15 @@ function renderEditableList(containerId, addBtnId, items, icon, iconColor, isEdi
   const addBtn    = document.getElementById(addBtnId);
   if (!container) return;
 
-  // 코드에 있는 기본 items 기준으로 버전 계산 — 이 버전과 일치하는 캐시만 신뢰(불일치=코드가 바뀐 것이므로 코드 내용 사용)
+  // 코드에 있는 기본 items 기준으로 버전 계산 — 강제리셋 대상이 아닌 레거시 캐시는 자동 이관(채택+재저장)되어 보존됨
   const baseVersion = hashText(JSON.stringify(items));
   if (reportId && field) {
-    const { items: cachedItems, version: cachedVersion } = unpackVersion(cacheRead(reportId, field));
-    if (cachedItems && cachedVersion === baseVersion) items = cachedItems;
+    const resolved = resolveCache(reportId, field, baseVersion, cacheRead(reportId, field), (migratedItems) => {
+      const packed = packWithVersion(migratedItems, baseVersion);
+      editCache[reportId + ':' + field] = packed;
+      saveToSheets(reportId, field, packed);
+    });
+    if (resolved) items = resolved;
   }
 
   if (isEditor && addBtn) addBtn.style.display = 'block';
