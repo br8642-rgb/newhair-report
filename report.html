@@ -3236,7 +3236,7 @@ function switchTr07Month(month) {
 function renderSectionOverview(r) {
   document.getElementById('sov00-subtitle').textContent = r.meta.compare + ' · 문의부터 매출까지 전 섹션 핵심 지표를 한 화면에 종합 정리';
 
-  const ph = r.section01.phone, s02 = r.section02, vs = r.visitStatus, cs = r.closingStatus, ts = r.trafficStatus, rv = r.revenueStatus, mg = r.mergedInquiry;
+  const ph = r.section01.phone, s02 = r.section02, vs = r.visitStatus, cs = r.closingStatus, ts = r.trafficStatus, rv = r.revenueStatus, mg = r.mergedInquiry, tbc = r.trafficByCat;
 
   function kpi00(label, av, mv, suffix) {
     const d = mv - av, cls = d > 0 ? 'up' : d < 0 ? 'down' : 'flat';
@@ -3286,6 +3286,13 @@ function renderSectionOverview(r) {
     return idx.c;
   };
 
+  const catTop = (cat, month) => {
+    if (!tbc) return '—';
+    const arr = tbc[month].byCat[cat];
+    const idx = tbc.routes.map((route,i)=>({route,c:arr[i]})).sort((a,b)=>b.c-a.c)[0];
+    return idx.route + ' ' + idx.c + '건';
+  };
+
   const cards = [
     { tag:'03', title:'내원 현황', color:'#2E7D32', items:[
       { label:'총 예약', val:`${vs.may.total_book}→${vs.jun.total_book}건` },
@@ -3310,7 +3317,10 @@ function renderSectionOverview(r) {
     { tag:'07', title:'유입경로 분석', color:'#00838F', items:[
       { label:'응답수', val:`${ts.may.total}→${ts.jun.total}건` },
       { label:'전환율', val:`${Math.round(ts.may.conv.sum.reduce((a,b)=>a+b,0)/ts.may.conv.consult.reduce((a,b)=>a+b,0)*100)}%→${Math.round(ts.jun.conv.sum.reduce((a,b)=>a+b,0)/ts.jun.conv.consult.reduce((a,b)=>a+b,0)*100)}%` },
-      { label:'1위 경로', val: trTop(ts.may.count) },
+      { label:'이식 1위 경로', val: catTop('모발이식', 'jun') },
+      { label:'헤어 1위 경로', val: catTop('헤어라인', 'jun') },
+      { label:'SMP 1위 경로', val: catTop('SMP', 'jun') },
+      { label:'치료 1위 경로', val: catTop('탈모치료', 'jun') },
     ]},
     { tag:'08', title:'매출 현황', color:'#8D6E63', items:[
       { label:'총 매출', val:`${fmtWon(rv.may.total)}→${fmtWon(rv.jun.total)}` },
