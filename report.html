@@ -444,15 +444,15 @@
       <div class="section-subtitle" id="str07-subtitle"></div>
     </div>
     <div class="note-box" style="background:#FFFBEA;border:1px solid #FDE68A;border-radius:8px;padding:12px 16px;margin-bottom:20px;font-size:13px;color:#78716C;line-height:1.6;">
-      <b>⚠ 중복 응답 데이터</b> — 유입경로는 고객 1인이 복수 선택 가능합니다. 경로별 응답수 합계는 실제 내원수(Section 01)보다 높을 수 있으며, 전환율은 경로별 상담수 기준으로 산출됩니다.
+      <b>⚠ 중복 선택 데이터</b> — 유입경로는 고객 1인이 복수 선택 가능합니다. 경로별 집계 건수 합계는 실제 내원수(Section 01)보다 높을 수 있으며, 전환율은 경로별 상담수 기준으로 산출됩니다.
     </div>
     <div class="card" style="margin-bottom:28px;">
-      <div class="card-title">유입경로 TOP 3 <span style="font-size:11px;color:#6b6b6b;font-weight:400;">(응답수 기준)</span></div>
+      <div class="card-title">유입경로 TOP 3 <span style="font-size:11px;color:#6b6b6b;font-weight:400;">(건수 기준)</span></div>
       <div id="str07-top3" style="display:grid;grid-template-columns:1fr 1fr;gap:24px;"></div>
     </div>
     <div class="s02-charts-grid">
       <div class="card">
-        <div class="card-title">응답수 비중 분포 <span style="font-size:11px;color:#6b6b6b;font-weight:400;" id="str07-donut-label"></span></div>
+        <div class="card-title">유입경로 비중 분포 <span style="font-size:11px;color:#6b6b6b;font-weight:400;" id="str07-donut-label"></span></div>
         <div class="s02-month-tabs" style="margin-bottom:12px;">
           <button class="s02-month-tab active" data-month="may" onclick="switchTr07Month('may')">5월</button>
           <button class="s02-month-tab" data-month="jun" onclick="switchTr07Month('jun')">6월</button>
@@ -460,7 +460,7 @@
         <div class="chart-wrap" style="height:260px"><canvas id="chart-tr07-donut"></canvas></div>
       </div>
       <div class="card">
-        <div class="card-title">상위 유입경로 응답수 비교 <span style="font-size:11px;color:#6b6b6b;font-weight:400;">(Top 10)</span></div>
+        <div class="card-title">상위 유입경로 비교 <span style="font-size:11px;color:#6b6b6b;font-weight:400;">(Top 10)</span></div>
         <div class="chart-legend" id="lg-tr07-bar"></div>
         <div class="chart-wrap" style="height:300px"><canvas id="chart-tr07-bar"></canvas></div>
       </div>
@@ -506,7 +506,7 @@
       <div id="srev08-top3" style="display:grid;grid-template-columns:1fr 1fr;gap:24px;"></div>
     </div>
     <div class="s02-section-label">과목별 매출 현황</div>
-    <div id="srev08-cat-cards" style="display:grid;grid-template-columns:repeat(3,1fr);gap:14px;margin-bottom:28px;"></div>
+    <div id="srev08-cat-cards" style="display:grid;grid-template-columns:repeat(4,1fr);gap:14px;margin-bottom:28px;"></div>
     <div class="s02-charts-grid">
       <div class="card">
         <div class="card-title">과목별 매출 비교 <span style="font-size:11px;color:#6b6b6b;font-weight:400;">(5월 vs 6월)</span></div>
@@ -1435,7 +1435,7 @@ const ALL_REPORTS = [
         rate:    [51,31,22,18,46,44,20,0,50,50,20,0,48,100,60,60,33,60,40,25,0,45,0,0,0,0,0,0,0,0,0,0],
       },
     },
-    analysis: '전체 유입 응답수 666건→527건(중복포함)으로 <b>21.1% 감소</b>, 성사 확정수도 205건→162건으로 비슷한 폭(−21.0%)으로 줄어 전체 전환율은 35%로 5·6월 동일하게 유지.\n<b>네이버검색이 두 달 다 응답수 1위(133→105건, 비중 20%)</b>를 유지하며 가장 안정적인 채널로 확인됨.\n<b>유튜브는 응답수 95→78건으로 줄었지만 전환율은 44%→51%(+7%p)로 개선</b> — 양보다 질이 좋아진 케이스.\n<b>기존고객 응답수가 69→32건(−53.6%)으로 급감</b>했으나 전환율은 43%→48%로 오히려 상승, 재방문 문의의 질은 유지됨.\n<b>레딧은 5월 0건에서 6월 5건(전환율 60%)으로 신규 유입 발생</b>, 해외 채널 다변화 신호로 지속 관찰 필요.',
+    analysis: '전체 유입 건수 666건→527건(중복포함)으로 <b>21.1% 감소</b>, 성사 확정수도 205건→162건으로 비슷한 폭(−21.0%)으로 줄어 전체 전환율은 35%로 5·6월 동일하게 유지.\n<b>네이버검색이 두 달 다 건수 1위(133→105건, 비중 20%)</b>를 유지하며 가장 안정적인 채널로 확인됨.\n<b>유튜브는 유입 95→78건으로 줄었지만 전환율은 44%→51%(+7%p)로 개선</b> — 양보다 질이 좋아진 케이스.\n<b>기존고객 유입이 69→32건(−53.6%)으로 급감</b>했으나 전환율은 43%→48%로 오히려 상승, 재방문 문의의 질은 유지됨.\n<b>레딧은 5월 0건에서 6월 5건(전환율 60%)으로 신규 유입 발생</b>, 해외 채널 다변화 신호로 지속 관찰 필요.',
   },
   trafficByCat: {
     cats: ['모발이식','헤어라인','SMP','탈모치료','검사','처방'],
@@ -1478,7 +1478,7 @@ const ALL_REPORTS = [
     total_jun: { inq:471, book:377, rate:80, overseas:60 },
   },
   overviewExtra: {
-    analysis: '6월은 신규 문의(554→471, −15.0%)·신규 예약(456→377)·내원(444→368)·체결(146→118)까지 <b>전 지표가 동반 감소</b>했지만, 체결률은 64%→65%로 오히려 개선되며 전환 효율 자체는 유지됨.\n<b>매출은 9억 5,940만원→6억 9,490만원으로 27.6% 감소</b> — 문의 감소폭(−15.0%)보다 매출 감소폭이 더 커서 과목 믹스 변화(고단가 모발이식·헤어라인 비중 감소)가 영향을 준 것으로 보임.\n원장님·직원 성과에서는 <b>김진오 원장님(+13%p)·전소영(+16%p)이 가장 큰 개선폭</b>을 보임.\n유입경로는 <b>네이버검색이 두 달 다 응답수 1위</b>를 유지하는 가운데, SMP는 매출·체결률이 동반 개선된 유일한 과목으로 확인됨.\n종합하면 6월은 <b>양적 지표는 줄었지만 질적 지표(체결률)는 유지·개선</b>된 달 — 문의량 자체의 회복이 다음 달 핵심 과제.',
+    analysis: '6월은 신규 문의(554→471, −15.0%)·신규 예약(456→377)·내원(444→368)·체결(146→118)까지 <b>전 지표가 동반 감소</b>했지만, 체결률은 64%→65%로 오히려 개선되며 전환 효율 자체는 유지됨.\n<b>매출은 9억 5,940만원→6억 9,490만원으로 27.6% 감소</b> — 문의 감소폭(−15.0%)보다 매출 감소폭이 더 커서 과목 믹스 변화(고단가 모발이식·헤어라인 비중 감소)가 영향을 준 것으로 보임.\n원장님·직원 성과에서는 <b>김진오 원장님(+13%p)·전소영(+16%p)이 가장 큰 개선폭</b>을 보임.\n유입경로는 <b>네이버검색이 두 달 다 건수 1위</b>를 유지하는 가운데, SMP는 매출·체결률이 동반 개선된 유일한 과목으로 확인됨.\n종합하면 6월은 <b>양적 지표는 줄었지만 질적 지표(체결률)는 유지·개선</b>된 달 — 문의량 자체의 회복이 다음 달 핵심 과제.',
   },
   reviewStatus: {
     wins: [
@@ -2973,15 +2973,18 @@ function renderSectionRevenue(r) {
                           .slice(0,3);
     const total = revenueArr.reduce((a,b)=>a+b,0);
     const medal = ['🥇','🥈','🥉'];
+    const medalBg = ['#FFF9E6','#F5F5F5','#FDF0E6'];
     return `<div>
       <div style="font-size:13px;font-weight:800;color:#555;margin-bottom:10px;">${monthLabel}</div>
       ${ranked.map((x,i) => `
-        <div style="display:flex;align-items:center;gap:8px;padding:8px 0;${i<ranked.length-1?'border-bottom:1px solid #F1F3F5;':''}">
-          <span style="font-size:16px;">${medal[i]}</span>
+        <div style="display:flex;align-items:center;gap:10px;padding:10px 14px;margin-bottom:8px;background:${medalBg[i]};border-radius:8px;">
+          <span style="font-size:18px;flex-shrink:0;">${medal[i]}</span>
           <span style="width:9px;height:9px;border-radius:50%;background:${x.color};flex-shrink:0;"></span>
-          <span style="flex:1;font-size:13px;font-weight:700;color:#1a1a1a;">${x.cat}</span>
-          <span style="font-size:13px;font-weight:800;color:#1a1a1a;">${fmtWon(x.rev)}</span>
-          <span style="font-size:11px;color:#999;width:42px;text-align:right;">${((x.rev/total)*100).toFixed(1)}%</span>
+          <span style="font-size:13px;font-weight:700;color:#1a1a1a;">${x.cat}</span>
+          <span style="margin-left:auto;text-align:right;">
+            <div style="font-size:14px;font-weight:800;color:#1a1a1a;">${fmtWon(x.rev)}</div>
+            <div style="font-size:11px;color:#999;">${((x.rev/total)*100).toFixed(1)}%</div>
+          </span>
         </div>`).join('')}
     </div>`;
   }
@@ -3091,7 +3094,7 @@ let tr07ActiveMonth = 'may';
 
 function renderSectionTraffic(r) {
   const s = r.trafficStatus;
-  document.getElementById('str07-subtitle').textContent = r.meta.compare + ' · 유입경로별 응답수 및 성사 전환율 (중복 선택 포함)';
+  document.getElementById('str07-subtitle').textContent = r.meta.compare + ' · 유입경로별 건수 및 성사 전환율 (중복 선택 포함)';
 
   const mayTotal = s.may.total, junTotal = s.jun.total;
   const mayConv = s.may.conv.sum.reduce((a,b)=>a+b,0), junConv = s.jun.conv.sum.reduce((a,b)=>a+b,0);
@@ -3104,14 +3107,17 @@ function renderSectionTraffic(r) {
                             .sort((a,b) => b.c - a.c)
                             .slice(0,3);
     const medal = ['🥇','🥈','🥉'];
+    const medalBg = ['#FFF9E6','#F5F5F5','#FDF0E6'];
     return `<div>
       <div style="font-size:13px;font-weight:800;color:#555;margin-bottom:10px;">${monthLabel}</div>
       ${ranked.map((x,i) => `
-        <div style="display:flex;align-items:center;gap:8px;padding:8px 0;${i<ranked.length-1?'border-bottom:1px solid #F1F3F5;':''}">
-          <span style="font-size:16px;">${medal[i]}</span>
-          <span style="flex:1;font-size:13px;font-weight:700;color:#1a1a1a;">${x.name}</span>
-          <span style="font-size:13px;font-weight:800;color:#1a1a1a;">${x.c}건</span>
-          <span style="font-size:11px;color:#999;width:42px;text-align:right;">${((x.c/total)*100).toFixed(1)}%</span>
+        <div style="display:flex;align-items:center;gap:10px;padding:10px 14px;margin-bottom:8px;background:${medalBg[i]};border-radius:8px;">
+          <span style="font-size:18px;flex-shrink:0;">${medal[i]}</span>
+          <span style="font-size:13px;font-weight:700;color:#1a1a1a;">${x.name}</span>
+          <span style="margin-left:auto;text-align:right;">
+            <div style="font-size:14px;font-weight:800;color:#1a1a1a;">${x.c}건</div>
+            <div style="font-size:11px;color:#999;">${((x.c/total)*100).toFixed(1)}%</div>
+          </span>
         </div>`).join('')}
     </div>`;
   }
@@ -3122,10 +3128,10 @@ function renderSectionTraffic(r) {
 
   const top10 = s.routes.map((name,i)=>({name,i,c:s.may.count[i]+s.jun.count[i]}))
                          .sort((a,b)=>b.c-a.c).slice(0,10);
-  chLegend('lg-tr07-bar', [[C.aprInq,'5월 응답수'],[C.mayInq,'6월 응답수']]);
+  chLegend('lg-tr07-bar', [[C.aprInq,'5월 건수'],[C.mayInq,'6월 건수']]);
   mkChart('chart-tr07-bar', top10.map(x=>x.name),
-    [mkDS('5월 응답수', top10.map(x=>s.may.count[x.i]), C.aprInq),
-     mkDS('6월 응답수', top10.map(x=>s.jun.count[x.i]), C.mayInq)], 300);
+    [mkDS('5월 건수', top10.map(x=>s.may.count[x.i]), C.aprInq),
+     mkDS('6월 건수', top10.map(x=>s.jun.count[x.i]), C.mayInq)], 300);
 
   const convRoutes = s.routes.map((name,i)=>({
     name, i,
@@ -3149,7 +3155,7 @@ function renderSectionTraffic(r) {
   });
 
   mkTable('tbl-tr07',
-    ['유입경로','5월 응답수','5월 전환율','6월 응답수','6월 전환율','증감(응답수)'],
+    ['유입경로','5월 건수','5월 전환율','6월 건수','6월 전환율','증감(건수)'],
     [`합계 <span style="font-size:10px;color:#aaa;font-weight:400;">(중복포함)</span>`,
       mayTotal, mayRate+'%', junTotal, junRate+'%', diff(mayTotal, junTotal)],
     s.routes.map((name,i) => [
