@@ -2290,6 +2290,8 @@ function renderAnalysis(id, text, r) {
     saveToSheets('analysis', field, packWithVersion(items, baseVersion));
   });
   p.innerHTML = resolved ? resolved[0] : text.replace(/\n/g,'<br>');
+  p.dataset.cacheField = field;
+  p.dataset.baseVersion = baseVersion;
   if(isEditor) {
     const box = p.closest('.analysis-box');
     box.classList.add('editable');
@@ -5484,13 +5486,15 @@ function renderEditableList(containerId, addBtnId, items, icon, iconColor, isEdi
       }
     }
 
-    // ── 분석 텍스트 갱신: Sheets에 저장된 항목만 덮어씀 (보고서별 키로 분리 조회)
+    // ── 분석 텍스트 갱신: 버전 태그 검증을 거쳐서만 반영 (강제리셋 대상 필드는 캐시 무시, 그 외 레거시 캐시는 자동 이관)
     document.querySelectorAll('.analysis-box p[id]').forEach(p => {
-      const field = analysisCacheField(p.id, r);
-      const cached = editCache['analysis:' + field];
-      if (cached && cached[0]) {
-        p.innerHTML = cached[0];
-      }
+      const field = p.dataset.cacheField || analysisCacheField(p.id, r);
+      const baseVersion = p.dataset.baseVersion;
+      if (!baseVersion) return; // 방어: 버전 정보 없는 예외 케이스는 건드리지 않음(코드 기본값 유지)
+      const resolved = resolveCache('analysis', field, baseVersion, editCache['analysis:' + field], (items) => {
+        saveToSheets('analysis', field, packWithVersion(items, baseVersion));
+      });
+      if (resolved) p.innerHTML = resolved[0];
     });
   });
 })();
