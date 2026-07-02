@@ -480,7 +480,14 @@
       <button class="s02-month-tab active" data-month="may" onclick="switchTr07CatMonth('may')">5월</button>
       <button class="s02-month-tab" data-month="jun" onclick="switchTr07CatMonth('jun')">6월</button>
     </div>
-    <div id="str07-bycat-grid" style="display:grid;grid-template-columns:repeat(3,1fr);gap:14px;margin-bottom:28px;"></div>
+    <div style="display:grid;grid-template-columns:repeat(3,1fr);gap:14px;margin-bottom:28px;">
+      <div class="card"><div class="card-title" id="str07-cat-title-0"></div><div class="chart-wrap" style="height:230px"><canvas id="chart-tr07-cat0"></canvas></div></div>
+      <div class="card"><div class="card-title" id="str07-cat-title-1"></div><div class="chart-wrap" style="height:230px"><canvas id="chart-tr07-cat1"></canvas></div></div>
+      <div class="card"><div class="card-title" id="str07-cat-title-2"></div><div class="chart-wrap" style="height:230px"><canvas id="chart-tr07-cat2"></canvas></div></div>
+      <div class="card"><div class="card-title" id="str07-cat-title-3"></div><div class="chart-wrap" style="height:230px"><canvas id="chart-tr07-cat3"></canvas></div></div>
+      <div class="card"><div class="card-title" id="str07-cat-title-4"></div><div class="chart-wrap" style="height:230px"><canvas id="chart-tr07-cat4"></canvas></div></div>
+      <div class="card"><div class="card-title" id="str07-cat-title-5"></div><div class="chart-wrap" style="height:230px"><canvas id="chart-tr07-cat5"></canvas></div></div>
+    </div>
     <div class="analysis-box" id="ana-box-tr07"><p id="ana-tr07"></p></div>
   </div>
 
@@ -3151,26 +3158,43 @@ const TR07_CAT_COLORS = ['#29B6F6','#EC407A','#FFB300','#43A047','#8D6E63','#5C6
 let tr07CatActiveMonth = 'may';
 
 function renderTr07ByCat(bc, month) {
-  const grid = document.getElementById('str07-bycat-grid');
-  if (!grid) return;
-  grid.innerHTML = '';
   const d = bc[month];
   bc.cats.forEach((cat, ci) => {
     const total = d.total[ci];
-    const top5 = bc.routes.map((route, ri) => ({ route, c: d.byCat[cat][ri] }))
-                           .filter(x => x.c > 0)
-                           .sort((a,b) => b.c - a.c)
-                           .slice(0, 5);
-    const bars = top5.map(x => `
-      <div class="hbar-item">
-        <div class="hbar-label"><span class="hbl-ch">${x.route}</span><span class="hbl-num">${x.c}건 <span style="color:#aaa;font-weight:400;">(${((x.c/total)*100).toFixed(0)}%)</span></span></div>
-        <div class="hbar-track"><div class="hbar-fill" style="width:${(x.c/top5[0].c*100)}%;background:${TR07_CAT_COLORS[ci]};opacity:0.8;"></div></div>
-      </div>`).join('');
-    grid.innerHTML += `
-      <div class="cat-channel-card">
-        <div class="ccc-title"><span style="width:10px;height:10px;border-radius:50%;background:${TR07_CAT_COLORS[ci]};display:inline-block;flex-shrink:0;"></span>${cat}<span class="ccc-badge">총 ${total}건</span></div>
-        <div class="hbar-wrap">${bars}</div>
-      </div>`;
+    const ranked = bc.routes.map((route, ri) => ({ route, c: d.byCat[cat][ri] })).filter(x => x.c > 0).sort((a,b) => b.c - a.c);
+    const top5 = ranked.slice(0, 5);
+    const others = ranked.slice(5).reduce((sum,x)=>sum+x.c, 0);
+    const labels = [...top5.map(x=>x.route), ...(others>0?['기타']:[])];
+    const data   = [...top5.map(x=>x.c), ...(others>0?[others]:[])];
+    const colors = [...S07_COLORS.slice(0,5), '#BDBDBD'];
+
+    const titleEl = document.getElementById('str07-cat-title-'+ci);
+    if (titleEl) titleEl.innerHTML = `<span style="width:10px;height:10px;border-radius:50%;background:${TR07_CAT_COLORS[ci]};display:inline-block;margin-right:6px;"></span>${cat} <span style="font-size:11px;color:#6b6b6b;font-weight:400;">총 ${total}건</span>`;
+
+    const chartId = 'chart-tr07-cat'+ci;
+    const canvas = document.getElementById(chartId);
+    if (!canvas) return;
+    const existing = charts[chartId];
+    if (existing) {
+      existing.data.labels = labels;
+      existing.data.datasets[0].data = data;
+      existing.data.datasets[0].backgroundColor = colors;
+      existing.options.plugins.tooltip.callbacks.label = c => ` ${c.label}: ${c.parsed}건 (${((c.parsed/total)*100).toFixed(0)}%)`;
+      existing.update();
+    } else {
+      charts[chartId] = new Chart(canvas, {
+        type:'doughnut',
+        data:{ labels, datasets:[{ data, backgroundColor:colors, borderWidth:2, borderColor:'#fff' }]},
+        options:{
+          responsive:true, maintainAspectRatio:false, cutout:'52%',
+          plugins:{
+            legend:{ display:true, position:'bottom', labels:{ font:{size:10,family:'Pretendard'}, color:'#555', boxWidth:8, padding:6 }},
+            tooltip:{ titleFont:{size:12,family:'Pretendard'}, bodyFont:{size:12,family:'Pretendard'},
+              callbacks:{ label: c => ` ${c.label}: ${c.parsed}건 (${((c.parsed/total)*100).toFixed(0)}%)` }}
+          }
+        }
+      });
+    }
   });
 }
 
