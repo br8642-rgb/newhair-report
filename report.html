@@ -479,6 +479,12 @@
       <button class="table-toggle-btn" onclick="toggleTable(this)"><span class="toggle-arrow">▼</span> 표 펼치기</button>
       <div class="table-collapsible"><div style="overflow-x:auto"><table class="data-table" id="tbl-tr07"></table></div></div>
     </div>
+    <div class="s02-section-label">과목별 유입경로 분포 <span style="font-size:11px;font-weight:400;color:#aaa;letter-spacing:0;">(과목별 TOP 5 경로, 중복 선택 포함)</span></div>
+    <div class="s02-month-tabs">
+      <button class="s02-month-tab active" data-month="may" onclick="switchTr07CatMonth('may')">5월</button>
+      <button class="s02-month-tab" data-month="jun" onclick="switchTr07CatMonth('jun')">6월</button>
+    </div>
+    <div id="str07-bycat-grid" style="display:grid;grid-template-columns:repeat(3,1fr);gap:14px;margin-bottom:28px;"></div>
     <div class="analysis-box" id="ana-box-tr07"><p id="ana-tr07"></p></div>
   </div>
 
@@ -1427,6 +1433,32 @@ const ALL_REPORTS = [
       },
     },
     analysis: '전체 유입 응답수 666건→527건(중복포함)으로 <b>21.1% 감소</b>, 성사 확정수도 205건→162건으로 비슷한 폭(−21.0%)으로 줄어 전체 전환율은 35%로 5·6월 동일하게 유지.\n<b>네이버검색이 두 달 다 응답수 1위(133→105건, 비중 20%)</b>를 유지하며 가장 안정적인 채널로 확인됨.\n<b>유튜브는 응답수 95→78건으로 줄었지만 전환율은 44%→51%(+7%p)로 개선</b> — 양보다 질이 좋아진 케이스.\n<b>기존고객 응답수가 69→32건(−53.6%)으로 급감</b>했으나 전환율은 43%→48%로 오히려 상승, 재방문 문의의 질은 유지됨.\n<b>레딧은 5월 0건에서 6월 5건(전환율 60%)으로 신규 유입 발생</b>, 해외 채널 다변화 신호로 지속 관찰 필요.',
+  },
+  trafficByCat: {
+    cats: ['모발이식','헤어라인','SMP','탈모치료','검사','처방'],
+    routes: ['유튜브','네이버검색','네이버지도','구글검색','고객소개','대다모','이마반','뉴헤어네이버카페','타카페(타커뮤니티)','뉴헤어홈페이지','뉴헤어네이버블로그','대머리블로그','기존고객','직원소개','타병원소개','기타(타채널/타SNS)','왓츠앱','레딧','해외','AI','위챗','인스타그램','기타-입소문','기타-지나가다(미예약)','DB마케팅','글로우백','외부DB','미기재','나만의닥터','HOLD','디시인사이드','페이스북'],
+    may: {
+      total: [128,35,41,162,263,37],
+      byCat: {
+        '모발이식': [14,22,5,10,16,18,1,1,0,4,3,1,5,2,2,0,2,0,2,15,0,1,0,0,1,0,1,2,0,0,0,0],
+        '헤어라인': [7,7,1,0,5,0,0,0,0,2,0,0,5,0,1,2,0,0,0,4,0,0,1,0,0,0,0,0,0,0,0,0],
+        'SMP': [8,7,0,9,1,2,0,0,1,1,1,0,5,0,1,0,0,0,0,3,0,1,1,0,0,0,0,0,0,0,0,0],
+        '탈모치료': [31,20,11,7,14,4,1,0,0,3,0,0,21,0,3,3,1,0,0,7,0,2,1,0,17,0,15,1,0,0,0,0],
+        '검사': [32,69,50,24,23,2,0,4,1,6,4,0,27,1,1,1,0,0,1,4,0,3,2,0,3,0,2,1,1,1,0,0],
+        '처방': [3,8,4,1,7,0,0,0,0,1,1,0,6,1,0,0,0,0,0,1,0,2,0,0,0,0,0,0,1,1,0,0],
+      },
+    },
+    jun: {
+      total: [119,25,36,97,213,37],
+      byCat: {
+        '모발이식': [11,19,4,8,14,14,1,1,0,7,2,0,6,1,4,1,2,5,4,11,0,3,0,0,0,0,0,1,0,0,0,0],
+        '헤어라인': [5,3,0,1,5,0,0,0,0,0,0,0,1,0,0,2,0,0,0,5,0,1,1,1,0,0,0,0,0,0,0,0],
+        'SMP': [11,6,6,1,1,1,0,0,0,2,1,0,3,0,0,0,0,0,0,2,0,1,1,0,0,0,0,0,0,0,0,0],
+        '탈모치료': [23,19,4,3,11,3,1,0,1,2,1,1,10,0,1,2,0,0,1,4,1,2,1,0,3,0,3,0,0,0,0,0],
+        '검사': [27,51,38,24,16,7,3,3,1,6,7,0,7,0,0,1,1,0,2,4,0,3,2,0,3,1,2,0,1,0,2,1],
+        '처방': [1,7,1,5,6,2,0,0,0,0,1,0,5,0,0,0,0,0,0,2,0,1,2,0,1,0,0,1,0,2,0,0],
+      },
+    },
   },
   revenueStatus: {
     cats: ['모발이식','헤어라인','SMP','HairLap','키오머','기타'],
@@ -3129,7 +3161,42 @@ function renderSectionTraffic(r) {
     ])
   );
 
+  if (r.trafficByCat) { renderTr07ByCat(r.trafficByCat, tr07CatActiveMonth); }
+
   renderAnalysis('ana-tr07', s.analysis, r);
+}
+
+const TR07_CAT_COLORS = ['#29B6F6','#EC407A','#FFB300','#43A047','#8D6E63','#5C6BC0'];
+let tr07CatActiveMonth = 'may';
+
+function renderTr07ByCat(bc, month) {
+  const grid = document.getElementById('str07-bycat-grid');
+  if (!grid) return;
+  grid.innerHTML = '';
+  const d = bc[month];
+  bc.cats.forEach((cat, ci) => {
+    const total = d.total[ci];
+    const top5 = bc.routes.map((route, ri) => ({ route, c: d.byCat[cat][ri] }))
+                           .filter(x => x.c > 0)
+                           .sort((a,b) => b.c - a.c)
+                           .slice(0, 5);
+    const bars = top5.map(x => `
+      <div class="hbar-item">
+        <div class="hbar-label"><span class="hbl-ch">${x.route}</span><span class="hbl-num">${x.c}건 <span style="color:#aaa;font-weight:400;">(${((x.c/total)*100).toFixed(0)}%)</span></span></div>
+        <div class="hbar-track"><div class="hbar-fill" style="width:${(x.c/top5[0].c*100)}%;background:${TR07_CAT_COLORS[ci]};opacity:0.8;"></div></div>
+      </div>`).join('');
+    grid.innerHTML += `
+      <div class="cat-channel-card">
+        <div class="ccc-title"><span style="width:10px;height:10px;border-radius:50%;background:${TR07_CAT_COLORS[ci]};display:inline-block;flex-shrink:0;"></span>${cat}<span class="ccc-badge">총 ${total}건</span></div>
+        <div class="hbar-wrap">${bars}</div>
+      </div>`;
+  });
+}
+
+function switchTr07CatMonth(month) {
+  tr07CatActiveMonth = month;
+  document.querySelectorAll('[onclick^="switchTr07CatMonth"]').forEach(t => t.classList.toggle('active', t.dataset.month === month));
+  if (currentReport && currentReport.trafficByCat) renderTr07ByCat(currentReport.trafficByCat, month);
 }
 
 function renderTr07Donut(s, month) {
