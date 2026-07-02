@@ -3122,10 +3122,12 @@ function renderSectionTraffic(r) {
 
   // 경로별 고정 색상표 — 5·6월 합산 응답수 기준 순위로 색을 한 번 정하고,
   // 도넛(전체/과목별) 전부 이 색을 공유해서 같은 경로는 항상 같은 색으로 표시
+  // (경로 수가 팔레트보다 많아도 안 겹치도록 HSL 회전으로 필요한 만큼 생성)
   const routesRankedAll = s.routes.map((name,i) => ({ name, c: s.may.count[i] + s.jun.count[i] }))
                                    .sort((a,b) => b.c - a.c);
+  const tr07Palette = genDistinctColors(routesRankedAll.length);
   tr07RouteColorMap = {};
-  routesRankedAll.forEach((item, idx) => { tr07RouteColorMap[item.name] = S07_COLORS[idx % S07_COLORS.length]; });
+  routesRankedAll.forEach((item, idx) => { tr07RouteColorMap[item.name] = tr07Palette[idx]; });
 
   const mayTotal = s.may.total, junTotal = s.jun.total;
   const mayConv = s.may.conv.sum.reduce((a,b)=>a+b,0), junConv = s.jun.conv.sum.reduce((a,b)=>a+b,0);
@@ -3208,6 +3210,18 @@ function renderSectionTraffic(r) {
 
 const TR07_CAT_COLORS = ['#29B6F6','#EC407A','#FFB300','#43A047','#8D6E63','#5C6BC0'];
 let tr07RouteColorMap = {}; // 경로명 → 고정 색상 (5·6월 합산 응답수 순위 기준, 도넛 전체 공유)
+
+// n개의 서로 겹치지 않는 색상을 HSL 색상환을 돌려가며 생성 (경로 수가 많아도 안전)
+function genDistinctColors(n) {
+  const colors = [];
+  const satLight = [[72,46],[68,58],[75,38]]; // 채도/명도를 살짝 바꿔가며 회전 한 바퀴당 색 다양성 확보
+  for (let i = 0; i < n; i++) {
+    const hue = Math.round((360 / Math.min(n, 12)) * (i % Math.min(n, 12)));
+    const [sat, light] = satLight[Math.floor(i / Math.min(n, 12)) % satLight.length];
+    colors.push(`hsl(${hue}, ${sat}%, ${light}%)`);
+  }
+  return colors;
+}
 let tr07CatActiveMonth = 'may';
 
 function renderTr07ByCat(bc, month) {
