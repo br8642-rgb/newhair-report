@@ -2340,10 +2340,15 @@ function editAnalysis(box, p, field, baseVersion) {
       const newP = document.createElement('p');
       newP.id = p.id; newP.innerHTML = editor.innerHTML;
       editor.replaceWith(newP);
-      // 분석 텍스트 Sheets 저장 (현재 코드 버전 태그 포함)
+      // 분석 텍스트 저장 (메모리 캐시 즉시 갱신 + Sheets 저장, 현재 코드 버전 태그 포함)
       if (newP.id) {
         const analysisText = newP.innerHTML;
-        saveToSheets('analysis', field || newP.id, packWithVersion([analysisText], baseVersion));
+        const cacheField = field || newP.id;
+        const packed = packWithVersion([analysisText], baseVersion);
+        editCache['analysis:' + cacheField] = packed;
+        newP.dataset.cacheField = cacheField;
+        newP.dataset.baseVersion = baseVersion;
+        saveToSheets('analysis', cacheField, packed);
         showSaveToast('✔ 저장 완료');
       }
       if(isEditor) {
