@@ -2991,6 +2991,7 @@ function renderSectionRevenue(r) {
   const cards = document.getElementById('srev08-cat-cards');
   cards.innerHTML = '';
   s.cats.forEach((cat, ci) => {
+    if (cat === '키오머' || cat === '기타') return;
     const av = s.may.revenue[ci], mv = s.jun.revenue[ci];
     const d = mv - av;
     const cls = d>0?'up':d<0?'down':'flat';
@@ -3054,7 +3055,15 @@ function renderRev08Pie(s, month) {
   const colors = s.catColors.filter((_,i)=>s[month].revenue[i]>0);
   const total  = s[month].total;
 
-  if(charts['chart-rev08-pie']) charts['chart-rev08-pie'].destroy();
+  const existing = charts['chart-rev08-pie'];
+  if (existing) {
+    existing.data.labels = labels;
+    existing.data.datasets[0].data = data;
+    existing.data.datasets[0].backgroundColor = colors;
+    existing.options.plugins.tooltip.callbacks.label = c => ` ${c.label}: ${fmtWon(c.parsed)} (${((c.parsed/total)*100).toFixed(1)}%)`;
+    existing.update();
+    return;
+  }
   charts['chart-rev08-pie'] = new Chart(document.getElementById('chart-rev08-pie'), {
     type:'doughnut',
     data:{ labels, datasets:[{ data, backgroundColor:colors, borderWidth:2, borderColor:'#fff' }]},
