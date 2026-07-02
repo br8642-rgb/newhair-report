@@ -3211,13 +3211,16 @@ function renderSectionTraffic(r) {
 const TR07_CAT_COLORS = ['#29B6F6','#EC407A','#FFB300','#43A047','#8D6E63','#5C6BC0'];
 let tr07RouteColorMap = {}; // 경로명 → 고정 색상 (5·6월 합산 응답수 순위 기준, 도넛 전체 공유)
 
-// n개의 서로 겹치지 않는 색상을 HSL 색상환을 돌려가며 생성 (경로 수가 많아도 안전)
+// n개의 서로 겹치지 않는 색상을 생성 (황금각 회전 — 경로 수가 많아져도 인접 색상끼리 절대 안 겹침)
+// 기존 방식(12색 회전 후 명도만 바꿔 재사용)은 "진한 초록" vs "연한 초록(연두)"처럼
+// 같은 색상(hue)이 명도만 다르게 재등장해 구분이 어려운 문제가 있어 hue 자체를 매번 다르게 생성하도록 변경
 function genDistinctColors(n) {
   const colors = [];
-  const satLight = [[72,46],[68,58],[75,38]]; // 채도/명도를 살짝 바꿔가며 회전 한 바퀴당 색 다양성 확보
+  const GOLDEN_ANGLE = 137.508; // 황금각 — 몇 개를 생성하든 색상환에 고르게 흩뿌려져 인접 색과 안 겹침
   for (let i = 0; i < n; i++) {
-    const hue = Math.round((360 / Math.min(n, 12)) * (i % Math.min(n, 12)));
-    const [sat, light] = satLight[Math.floor(i / Math.min(n, 12)) % satLight.length];
+    const hue = Math.round((i * GOLDEN_ANGLE) % 360);
+    const sat = 68;
+    const light = 48;
     colors.push(`hsl(${hue}, ${sat}%, ${light}%)`);
   }
   return colors;
