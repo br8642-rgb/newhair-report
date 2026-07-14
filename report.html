@@ -1229,6 +1229,41 @@
     </div>
   </div>
 
+  <!-- ════════════════════════════════════
+       WQ — 2026년 6~7월 상반기 현황 (주간) — 신규 독립 보고서
+       기존 section-w00~w04 / renderWeeklyReport() / weeklyPhone 은 참고만 하고 전혀 수정하지 않음
+  ════════════════════════════════════ -->
+
+  <!-- WQ-01 전화 현황 -->
+  <div class="section-panel" id="section-wq-01">
+    <div class="section-header">
+      <div class="section-tag">Section 01</div>
+      <div class="section-title">전화 현황</div>
+      <div class="section-subtitle" id="wq01-subtitle"></div>
+    </div>
+    <div class="kpi-table-wrap">
+      <div class="kpi-label">기간별 핵심 지표</div>
+      <div class="kpi-compare" id="wq01-kpi"></div>
+    </div>
+    <div class="s02-section-label">과목별 상세</div>
+    <div class="card">
+      <div class="card-title">과목별 문의·예약 상세</div>
+      <button class="table-toggle-btn" onclick="toggleTable(this)"><span class="toggle-arrow">▼</span> 표 펼치기</button>
+      <div class="table-collapsible"><div style="overflow-x:auto"><table class="data-table" id="tbl-wq01"></table></div></div>
+    </div>
+    <div class="card" style="margin-top:16px;margin-bottom:16px;">
+      <div class="card-title">과목별 문의 비교 <span style="font-size:11px;color:#6b6b6b;font-weight:400;">(2기간)</span></div>
+      <div class="ch-legend-row" id="lg-wq01-inq"></div>
+      <div class="chart-wrap" style="height:250px"><canvas id="chart-wq01-inq"></canvas></div>
+    </div>
+    <div class="card" style="margin-bottom:28px;">
+      <div class="card-title">과목별 예약률 비교 <span style="font-size:11px;color:#6b6b6b;font-weight:400;">(2기간, %)</span></div>
+      <div class="ch-legend-row" id="lg-wq01-rate"></div>
+      <div class="chart-wrap" style="height:230px"><canvas id="chart-wq01-rate"></canvas></div>
+    </div>
+    <div class="analysis-box" id="ana-box-wq01"><p id="ana-wq01"></p></div>
+  </div>
+
 </div>
 
 <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.4.1/chart.umd.js"></script>
@@ -1403,6 +1438,39 @@ function showSaveToast(msg, isError) {
    데이터
 ════════════════════════════════════ */
 const ALL_REPORTS = [
+/* ── WQ: 2026년 6~7월 상반기 현황 (주간) — 신규, 기존 보고서와 완전 분리 ──
+   기본 화면(index 0)으로 노출하기로 확정. 배열 순서만 맨 앞으로 옮긴 것이며, 내용/다른 보고서는 무변경.
+   현재는 wq-01(전화현황) p1·p2 데이터만 확정됨.
+   p3(7/1~7/16)는 7/16 이후 데이터 도착 시 p1/p2 옆에 추가하고 KPI·차트·테이블을 2기간→3기간으로 확장 예정.
+   wq-00(종합현황)·wq-02(채널별현황)·wq-03(내원현황)·wq-04(종합리뷰)도 데이터 도착 시 wqData에 순서대로 추가. */
+{
+  meta: {
+    title: '뉴헤어 유입·내원 현황',
+    type: 'wq',
+    label: '2026년 6~7월 상반기 현황 (주간)',
+    period: '2026.05.25 — 2026.06.30',
+    periods: ['5/25~6/13', '6/15~6/30'],
+    periodLabels: ['5/25~6/13', '6/15~6/30'],
+    periodNote: '※ 5/25~6/13 기간에는 6/8~6/11(4일) 휴진 포함 — 두 기간 모두 일요일 제외 14영업일 기준 비교',
+  },
+  wqData: {
+    phoneStatus: {
+      cats: ['이식','헤어','SMP','치료','검사','처방전','기타'],
+      p1: { // 5/25~6/13 (14영업일, 휴진 6/8~6/11 포함)
+        inq:  [59,12,12,24,99,17,0],
+        book: [51,12, 8,21,97,17,0],
+        rate: [86,100,67,88,98,100,'—'],
+        total: { inq:223, book:206, rate:92 },
+      },
+      p2: { // 6/15~6/30 (14영업일)
+        inq:  [60, 5, 7,27,107,15,1],
+        book: [48, 4, 6,23,106,15,1],
+        rate: [80,80,86,85, 99,100,100],
+        total: { inq:222, book:203, rate:91 },
+      },
+    },
+  },
+},
 /* ── 월간 보고서 (6월) ── */
 {
   meta: {
@@ -2124,7 +2192,29 @@ const NAV_SECTIONS = {
     {id:'w03',label:'내원 현황'},
     {id:'w04',label:'종합 리뷰'},
   ],
+  // ── WQ: 2026년 6~7월 상반기 현황(주간) 전용 — 기존 weekly와 완전히 분리된 신규 타입
+  //    섹션은 데이터가 들어오는 대로 하나씩 추가 예정 (availableWqSections()가 실제 채워진 것만 노출)
+  wq: [
+    {id:'wq-00',label:'종합 현황'},
+    {id:'wq-01',label:'전화 현황'},
+    {id:'wq-02',label:'채널별 현황'},
+    {id:'wq-03',label:'내원 현황'},
+    {id:'wq-04',label:'종합 리뷰'},
+  ],
 };
+
+// wq 보고서에 실제로 데이터가 채워진 섹션만 골라 네비게이션에 표시
+function availableWqSections(r) {
+  const wq = (r && r.wqData) || {};
+  const list = [];
+  const has = (cond, id, label) => { if (cond) list.push({id, label}); };
+  has(!!wq.overview,     'wq-00', '종합 현황');
+  has(!!wq.phoneStatus,  'wq-01', '전화 현황');
+  has(!!wq.channelStatus,'wq-02', '채널별 현황');
+  has(!!wq.visitStatus,  'wq-03', '내원 현황');
+  has(!!wq.review,       'wq-04', '종합 리뷰');
+  return list;
+}
 
 // 보고서에 실제로 데이터가 채워진 섹션만 골라 네비게이션에 표시
 function availableMonthlySections(r) {
@@ -2594,6 +2684,17 @@ function renderReport(r) {
     const fw = document.getElementById('section-w00');
     if (fw) fw.classList.add('active');
     renderWeeklyReport(r);
+    return;
+  }
+
+  if (r.meta.type === 'wq') {
+    const wqSections = availableWqSections(r);
+    const firstWq = wqSections[0] ? wqSections[0].id : 'wq-01';
+    buildNav(firstWq, 'wq', wqSections);
+    document.querySelectorAll('.section-panel').forEach(p => p.classList.remove('active'));
+    const fq = document.getElementById('section-' + firstWq);
+    if (fq) fq.classList.add('active');
+    renderWqReport(r);
     return;
   }
 
@@ -5335,6 +5436,112 @@ function renderWeeklyReport(r) {
     `전체 신규 문의(전화+플친+왓츠앱) <b>205→185→201건</b>, 내원 <b>170→142→155건</b>으로 5월 하반기 저점 후 6월 상반기 회복세.\n예약률 84%→77%→81% — 5월 하반기 SMP·이식 예약률 하락이 전체 예약률 하락의 주요 원인.\n<b>5월 하반기 당일취소 16건·부도 12건 급증</b>이 내원 감소의 핵심 — 6월 당일취소 7건으로 개선.\n네이버 예약률 100%, 게시판·왓츠앱 문의 최고치 달성 등 채널 전반은 긍정적.`,
     r
   );
+}
+
+/* ════════════════════════════════════
+   WQ — 2026년 6~7월 상반기 현황(주간) 전용 렌더 함수
+   기존 renderWeeklyReport() / weeklyPhone 은 참조하지 않고 완전히 독립적으로 동작.
+   섹션은 r.wqData에 해당 키가 있을 때만 렌더링 — 데이터가 들어오는 대로 하나씩 이 함수 안에 블록 추가.
+════════════════════════════════════ */
+const WQC = ['#90CAF9', '#C62828']; // 1기간=연파랑, 2기간=빨강 (3기간 완성 시 WC 참고해 팔레트 확장)
+
+function renderWqReport(r) {
+  const wq = r.wqData || {};
+
+  // ── WQ-01 전화 현황
+  if (wq.phoneStatus) {
+    const ph = wq.phoneStatus;
+    const PL = ph.periodLabels || wq.periodLabels || r.meta.periodLabels;
+    const PD = ph.periods || wq.periods || r.meta.periods;
+    const ps = [ph.p1, ph.p2];
+
+    document.getElementById('wq01-subtitle').textContent = PL.join(' / ') + ' · 과목별 문의·예약 현황';
+
+    document.getElementById('wq01-kpi').innerHTML = ps.map((p, i) => `
+      <div class="kpi-item">
+        <div class="kpi-item-label" style="color:${WQC[i]};font-weight:800;font-size:15px;">${PL[i]}</div>
+        <div style="font-size:13px;color:#888;font-weight:600;margin-bottom:4px;">${PD[i]}</div>
+        <div class="kpi-row">
+          <div class="kpi-month"><span class="kpi-month-label">문의</span><span class="kpi-month-val">${p.total.inq}</span></div>
+          <div class="kpi-month"><span class="kpi-month-label">예약</span><span class="kpi-month-val">${p.total.book}</span></div>
+          <div class="kpi-month"><span class="kpi-month-label">예약률</span><span class="kpi-month-val">${p.total.rate}%</span></div>
+        </div>
+      </div>`).join('');
+
+    // 상세 테이블 — 기간별 배경색 구분을 위해 직접 렌더 (기존 sw01 테이블 빌더 참고, 2기간용으로 별도 작성)
+    (function () {
+      const tbl = document.getElementById('tbl-wq01');
+      if (!tbl) return;
+      const BG = [
+        ['#EFF6FF', '#EFF6FF', '#DBEAFE'], // 1기간: 연파랑 계열
+        ['#FFF1F2', '#FFF1F2', '#FFE4E4'], // 2기간: 연빨강 계열
+      ];
+      tbl.innerHTML = '';
+      const thead = tbl.createTHead();
+      const gr = thead.insertRow();
+      [['과목', 1, '', null],
+       [PL[0], 3, BG[0][2], PD[0]], [PL[1], 3, BG[1][2], PD[1]],
+      ].forEach(([txt, span, bg, date]) => {
+        const th = document.createElement('th');
+        th.colSpan = span;
+        if (bg) {
+          th.style.cssText = `background:${bg};text-align:center;`;
+          th.innerHTML = `<span style="font-size:13px;font-weight:700;">${txt}</span> <span style="font-size:11px;color:#888;font-weight:400;">${date}</span>`;
+        } else {
+          th.textContent = txt;
+        }
+        gr.appendChild(th);
+      });
+      const dr = thead.insertRow();
+      const subHeaders = ['', '문의', '예약', '예약률', '문의', '예약', '예약률'];
+      subHeaders.forEach((label, ci) => {
+        const th = document.createElement('th');
+        const bgIdx = ci === 0 ? -1 : Math.floor((ci - 1) / 3);
+        if (bgIdx >= 0) th.style.background = BG[bgIdx][0];
+        th.textContent = label;
+        if (ci > 0 && ci % 3 === 1) th.style.borderLeft = '2px solid #cbd5e1';
+        dr.appendChild(th);
+      });
+
+      const tbody = tbl.createTBody();
+      const tot = tbody.insertRow(); tot.className = 'total-row';
+      [['합계', false],
+       [ph.p1.total.inq, 0], [ph.p1.total.book, 0], [ph.p1.total.rate + '%', 0],
+       [ph.p2.total.inq, 1], [ph.p2.total.book, 1], [ph.p2.total.rate + '%', 1],
+      ].forEach(([val, gi], ci) => {
+        const td = tot.insertCell(); td.innerHTML = val;
+        if (gi !== false) td.style.background = BG[gi][1];
+        if (ci > 0 && (ci - 1) % 3 === 0) td.style.borderLeft = '2px solid #cbd5e1';
+        if (ci === 0) td.style.textAlign = 'left';
+      });
+      ph.cats.forEach((cat, ci2) => {
+        const tr = tbody.insertRow();
+        [[cat, false],
+         [ph.p1.inq[ci2], 0], [ph.p1.book[ci2], 0], [pct(ph.p1.rate[ci2]), 0],
+         [ph.p2.inq[ci2], 1], [ph.p2.book[ci2], 1], [pct(ph.p2.rate[ci2]), 1],
+        ].forEach(([val, gi], ci) => {
+          const td = tr.insertCell(); td.innerHTML = val;
+          if (gi !== false) td.style.background = BG[gi][0];
+          if (ci > 0 && (ci - 1) % 3 === 0) td.style.borderLeft = '2px solid #cbd5e1';
+          if (ci === 0) td.style.textAlign = 'left';
+        });
+      });
+    })();
+
+    chLegend('lg-wq01-inq', WQC.map((c, i) => ([c, PL[i]])));
+    mkChart('chart-wq01-inq', ph.cats, ps.map((p, i) => mkDS(PL[i], p.inq, WQC[i])));
+
+    chLegend('lg-wq01-rate', WQC.map((c, i) => ([c, PL[i]])));
+    mkChart('chart-wq01-rate', ph.cats, ps.map((p, i) => mkDS(PL[i], p.rate.map(v => v === '—' ? 0 : v), WQC[i])), 110);
+
+    renderAnalysis('ana-wq01',
+      `전화 신규문의 <b>223→222건</b>으로 두 기간 거의 동일 수준 유지, 예약도 206→203건으로 안정적.\n전체 예약률은 <b>92%→91%(−1%p)</b>로 큰 변화 없이 안정적으로 유지됨.\n<b>이식 예약률 86%→80%(−6%p)로 하락</b> — 문의는 59→60건으로 늘었지만 전환은 다소 아쉬움.\n<b>헤어 문의 12→5건으로 크게 감소</b>했고 예약률도 100%→80%로 함께 하락.\n<b>SMP는 문의 12→7건 줄었지만 예약률 67%→86%(+19%p)로 개선</b> — 상담 품질은 오히려 좋아짐.\n검사는 <b>98%→99%로 두 기간 모두 최고 수준</b> 유지, 처방전도 100% 그대로 안정적.`,
+      r
+    );
+  }
+
+  // ── WQ-02 채널별 현황, WQ-03 내원 현황, WQ-00 종합 현황, WQ-04 종합 리뷰
+  // → 데이터 확정되는 대로 이 아래에 순서대로 추가 예정 (wq.channelStatus / wq.visitStatus / wq.overview / wq.review)
 }
 
 /* ═══════════════════════════════
