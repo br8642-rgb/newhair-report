@@ -5691,13 +5691,14 @@ function renderWqReport(r) {
       const rowsHtml = rows.map(({label, ri, suffix}) => {
         const vals = chd.totals.map(t => getVal(t, ri));
         const d = vals[1]-vals[0];
+        const trailColor = d > 0 ? 'var(--red)' : d < 0 ? 'var(--blue)' : '#555';
         return `
           <div style="margin-bottom:14px;">
             <div style="font-size:12px;color:#aaa;margin-bottom:4px;">${label}</div>
             <div style="display:flex;align-items:center;gap:6px;white-space:nowrap;">
               <span style="font-size:18px;font-weight:800;color:#555;">${vals[0]}${suffix}</span>
               <span style="color:#ddd;font-size:12px;">→</span>
-              <span style="font-size:20px;font-weight:800;color:${WQC[1]};">${vals[1]}${suffix}</span>
+              <span style="font-size:20px;font-weight:800;color:${trailColor};">${vals[1]}${suffix}</span>
               ${badge(d,suffix)}
             </div>
           </div>
