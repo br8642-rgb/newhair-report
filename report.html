@@ -1326,6 +1326,31 @@
     <div class="analysis-box" id="ana-box-wq02"><p id="ana-wq02"></p></div>
   </div>
 
+  <!-- WQ-03 내원 현황 -->
+  <div class="section-panel" id="section-wq-03">
+    <div class="section-header">
+      <div class="section-tag">Section 03</div>
+      <div class="section-title">내원 현황</div>
+      <div class="section-subtitle" id="wq03-subtitle"></div>
+    </div>
+    <div class="kpi-table-wrap">
+      <div class="kpi-label">기간별 핵심 지표</div>
+      <div class="kpi-compare" id="wq03-kpi"></div>
+    </div>
+    <div class="s02-section-label">과목별 내원 현황</div>
+    <div class="card">
+      <div class="card-title">과목별 내원 상세</div>
+      <button class="table-toggle-btn" onclick="toggleTable(this)"><span class="toggle-arrow">▼</span> 표 펼치기</button>
+      <div class="table-collapsible"><div style="overflow-x:auto"><table class="data-table" id="tbl-wq03-cats"></table></div></div>
+    </div>
+    <div class="card" style="margin-top:16px;margin-bottom:28px;">
+      <div class="card-title">과목별 내원 비교 <span style="font-size:11px;color:#6b6b6b;font-weight:400;">(2기간)</span></div>
+      <div class="ch-legend-row" id="lg-wq03-cats"></div>
+      <div class="chart-wrap" style="height:240px"><canvas id="chart-wq03-cats"></canvas></div>
+    </div>
+    <div class="analysis-box" id="ana-box-wq03"><p id="ana-wq03"></p></div>
+  </div>
+
 </div>
 
 <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.4.1/chart.umd.js"></script>
@@ -1550,6 +1575,12 @@ const ALL_REPORTS = [
         p1: { inq:[17,2,0,3,5,0], book:[5,0,0,0,5,0], rate:[29,0,'—',0,100,'—'], surgery:[0,0,0,0,0,0], total:{inq:27,book:10,rate:37} },
         p2: { inq:[18,2,0,1,0,0], book:[6,0,0,0,0,0], rate:[33,0,'—',0,'—','—'], surgery:[1,0,0,0,0,0], total:{inq:21,book:6,rate:29} },
       },
+    },
+    visitStatus: {
+      // 키오머·흉터재봉합 두 과목은 두 기간 모두 0건이라 제외(확인됨)
+      cats: ['모발이식','헤어라인','SMP','탈모치료','검사','기타이식','처방','기타'],
+      p1: { total_book:253, cancel_pre:9,  remain:244, cancel_pre_rate:3.6, visit:209, visit_rate:86, final_visit_rate:83, same_day:13, noshow:22, by_cat:[40,10,18,46,71,1,20,3] },
+      p2: { total_book:280, cancel_pre:14, remain:266, cancel_pre_rate:5.0, visit:242, visit_rate:91, final_visit_rate:86, same_day:11, noshow:13, by_cat:[49,15,14,36,105,0,20,3] },
     },
   },
 },
@@ -5774,8 +5805,90 @@ function renderWqReport(r) {
     );
   }
 
-  // ── WQ-03 내원 현황, WQ-00 종합 현황, WQ-04 종합 리뷰
-  // → 데이터 확정되는 대로 이 아래에 순서대로 추가 예정 (wq.visitStatus / wq.overview / wq.review)
+  // ── WQ-03 내원 현황
+  if (wq.visitStatus) {
+    const vst = wq.visitStatus;
+    const VL = vst.periodLabels || wq.periodLabels || r.meta.periodLabels;
+    const VD = vst.periods || wq.periods || r.meta.periods;
+    const vs = [vst.p1, vst.p2];
+
+    document.getElementById('wq03-subtitle').textContent =
+      VL.join(' / ') + ' · 예약 흐름 및 과목별 내원 현황';
+
+    const kpiWrap3 = document.getElementById('wq03-kpi');
+    kpiWrap3.style.cssText = 'display:grid;grid-template-columns:repeat(2,1fr);gap:16px;';
+    kpiWrap3.innerHTML = vs.map((v, i) => {
+      const prev = i > 0 ? vs[i - 1] : null;
+      const dV = prev ? v.visit - prev.visit : 0;
+      const dR = prev ? v.visit_rate - prev.visit_rate : 0;
+      function dS(d, s = '') {
+        if (!prev) return '';
+        const cls = d > 0 ? 'up' : d < 0 ? 'down' : 'flat';
+        return `<span class="kpi-diff ${cls}" style="font-size:12px;">${d > 0 ? '▲' : '▼'} ${Math.abs(d)}${s && d !== 0 ? s : ''}</span>`;
+      }
+      function row(label, val, badge = '') {
+        return `<div style="display:flex;justify-content:space-between;align-items:center;padding:6px 0;border-bottom:1px solid #f0f0f0;">
+          <span style="font-size:13px;color:#888;white-space:nowrap;">${label}</span>
+          <span style="font-size:20px;font-weight:800;white-space:nowrap;">${val}${badge ? ' ' + badge : ''}</span>
+        </div>`;
+      }
+      return `<div class="kpi-item" style="border:1px solid #e8eaed;border-radius:12px;padding:16px;box-shadow:0 1px 4px rgba(0,0,0,.05);">
+        <div style="font-size:20px;font-weight:800;color:${WQC[i]};margin-bottom:3px;">${VL[i]}</div>
+        <div style="font-size:14px;color:#888;font-weight:600;margin-bottom:12px;">${VD[i]}</div>
+        ${row('총 예약', v.total_book + '건')}
+        ${row('내원전 취소', v.cancel_pre + '건 (' + v.cancel_pre_rate + '%)')}
+        ${row('내원', v.visit + '건', dS(dV))}
+        ${row('내원율', v.visit_rate + '%', dS(dR, '%p'))}
+        ${row('최종내원율', v.final_visit_rate + '%')}
+        ${row('당일취소', v.same_day + '건')}
+        ${row('부도', v.noshow + '건')}
+      </div>`;
+    }).join('');
+
+    (function () {
+      const tbl = document.getElementById('tbl-wq03-cats'); if (!tbl) return;
+      const BG = [['#EFF6FF', '#DBEAFE'], ['#FFF1F2', '#FFE4E4']];
+      tbl.innerHTML = '';
+      const thead = tbl.createTHead();
+      const gr = thead.insertRow();
+      [['과목', '', ''], ...VL.map((l, i) => [l, VD[i], BG[i][1]])].forEach(([txt, date, bg]) => {
+        const th = document.createElement('th');
+        if (bg) {
+          th.style.cssText = `background:${bg};text-align:center;`;
+          th.innerHTML = `<div><span style="font-size:13px;font-weight:700;">${txt}</span> <span style="font-size:11px;color:#888;font-weight:400;">${date}</span></div><div style="font-size:12px;color:#666;margin-top:2px;">내원</div>`;
+        } else {
+          th.textContent = txt;
+        }
+        gr.appendChild(th);
+      });
+      const tbody = tbl.createTBody();
+      const tot = tbody.insertRow(); tot.className = 'total-row';
+      ['합계', ...vs.map(v => v.visit)].forEach((v, ci) => {
+        const td = tot.insertCell(); td.innerHTML = v;
+        if (ci > 0) { td.style.background = BG[ci - 1][1]; td.style.borderLeft = '2px solid #cbd5e1'; }
+        else td.style.textAlign = 'left';
+      });
+      vst.cats.forEach((cat, ci2) => {
+        const tr = tbody.insertRow();
+        [cat, ...vs.map(v => v.by_cat[ci2] || 0)].forEach((v, ci) => {
+          const td = tr.insertCell(); td.innerHTML = v;
+          if (ci > 0) { td.style.background = BG[ci - 1][0]; td.style.borderLeft = '2px solid #cbd5e1'; }
+          else td.style.textAlign = 'left';
+        });
+      });
+    })();
+
+    chLegend('lg-wq03-cats', WQC.map((c, i) => ([c, VL[i]])));
+    mkChart('chart-wq03-cats', vst.cats, vs.map((v, i) => mkDS(VL[i], v.by_cat, WQC[i])));
+
+    renderAnalysis('ana-wq03',
+      `총 예약 <b>253→280건으로 증가</b>했고 내원도 209→242건(+15.8%)으로 함께 늘어남.\n<b>내원율 86%→91%(+5%p)로 개선</b>됐으나, <b>내원전 취소율은 3.6%→5.0%로 함께 상승</b> — 예약 확정 후 이탈이 다소 늘어난 영향.\n<b>최종내원율(총예약 기준) 83%→86%로 개선</b>돼 전체적으로는 긍정적인 흐름.\n<b>당일취소 13→11건으로 감소</b>했으나 <b>부도는 22→13건으로 크게 줄어 내원 당일 관리가 뚜렷하게 개선</b>됨.\n과목별로는 <b>검사 71→105건(+47.9%)으로 가장 크게 증가</b>했고, 모발이식(40→49)·헤어라인(10→15)도 동반 증가. <b>탈모치료는 46→36건으로 유일하게 감소.</b>`,
+      r
+    );
+  }
+
+  // ── WQ-00 종합 현황, WQ-04 종합 리뷰
+  // → 데이터 확정되는 대로 이 아래에 순서대로 추가 예정 (wq.overview / wq.review)
 }
 
 /* ═══════════════════════════════
