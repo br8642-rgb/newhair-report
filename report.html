@@ -2195,11 +2195,11 @@ const NAV_SECTIONS = {
   // ── WQ: 2026년 6~7월 상반기 현황(주간) 전용 — 기존 weekly와 완전히 분리된 신규 타입
   //    섹션은 데이터가 들어오는 대로 하나씩 추가 예정 (availableWqSections()가 실제 채워진 것만 노출)
   wq: [
-    {id:'wq-00',label:'종합 현황'},
-    {id:'wq-01',label:'전화 현황'},
-    {id:'wq-02',label:'채널별 현황'},
-    {id:'wq-03',label:'내원 현황'},
-    {id:'wq-04',label:'종합 리뷰'},
+    {id:'wq-00',label:'종합 현황',num:'00'},
+    {id:'wq-01',label:'전화 현황',num:'01'},
+    {id:'wq-02',label:'채널별 현황',num:'02'},
+    {id:'wq-03',label:'내원 현황',num:'03'},
+    {id:'wq-04',label:'종합 리뷰',num:'04'},
   ],
 };
 
@@ -2207,12 +2207,12 @@ const NAV_SECTIONS = {
 function availableWqSections(r) {
   const wq = (r && r.wqData) || {};
   const list = [];
-  const has = (cond, id, label) => { if (cond) list.push({id, label}); };
-  has(!!wq.overview,     'wq-00', '종합 현황');
-  has(!!wq.phoneStatus,  'wq-01', '전화 현황');
-  has(!!wq.channelStatus,'wq-02', '채널별 현황');
-  has(!!wq.visitStatus,  'wq-03', '내원 현황');
-  has(!!wq.review,       'wq-04', '종합 리뷰');
+  const has = (cond, id, label, num) => { if (cond) list.push({id, label, num}); };
+  has(!!wq.overview,     'wq-00', '종합 현황', '00');
+  has(!!wq.phoneStatus,  'wq-01', '전화 현황', '01');
+  has(!!wq.channelStatus,'wq-02', '채널별 현황', '02');
+  has(!!wq.visitStatus,  'wq-03', '내원 현황', '03');
+  has(!!wq.review,       'wq-04', '종합 리뷰', '04');
   return list;
 }
 
