@@ -1283,7 +1283,7 @@
       <div class="table-collapsible"><div style="overflow-x:auto"><table class="data-table" id="tbl-wq02-kakao"></table></div></div>
     </div>
     <div class="card" style="margin-top:16px;margin-bottom:28px;">
-      <div class="card-title">플친 문의 추이 <span style="font-size:11px;color:#6b6b6b;font-weight:400;">(2기간)</span></div>
+      <div class="card-title">플친 문의 추이 <span style="font-size:11px;color:#6b6b6b;font-weight:400;">(3기간)</span></div>
       <div class="ch-legend-row" id="lg-wq02-kakao"></div>
       <div class="chart-wrap" style="height:220px"><canvas id="chart-wq02-kakao"></canvas></div>
     </div>
@@ -1295,7 +1295,7 @@
       <div class="table-collapsible"><div style="overflow-x:auto"><table class="data-table" id="tbl-wq02-naver"></table></div></div>
     </div>
     <div class="card" style="margin-top:16px;margin-bottom:28px;">
-      <div class="card-title">네이버 문의 추이 <span style="font-size:11px;color:#6b6b6b;font-weight:400;">(2기간)</span></div>
+      <div class="card-title">네이버 문의 추이 <span style="font-size:11px;color:#6b6b6b;font-weight:400;">(3기간)</span></div>
       <div class="ch-legend-row" id="lg-wq02-naver"></div>
       <div class="chart-wrap" style="height:220px"><canvas id="chart-wq02-naver"></canvas></div>
     </div>
@@ -1307,7 +1307,7 @@
       <div class="table-collapsible"><div style="overflow-x:auto"><table class="data-table" id="tbl-wq02-board"></table></div></div>
     </div>
     <div class="card" style="margin-top:16px;margin-bottom:28px;">
-      <div class="card-title">게시판 문의 추이 <span style="font-size:11px;color:#6b6b6b;font-weight:400;">(2기간)</span></div>
+      <div class="card-title">게시판 문의 추이 <span style="font-size:11px;color:#6b6b6b;font-weight:400;">(3기간)</span></div>
       <div class="ch-legend-row" id="lg-wq02-board"></div>
       <div class="chart-wrap" style="height:220px"><canvas id="chart-wq02-board"></canvas></div>
     </div>
@@ -1319,7 +1319,7 @@
       <div class="table-collapsible"><div style="overflow-x:auto"><table class="data-table" id="tbl-wq02-wa"></table></div></div>
     </div>
     <div class="card" style="margin-top:16px;margin-bottom:28px;">
-      <div class="card-title">왓츠앱 문의 추이 <span style="font-size:11px;color:#6b6b6b;font-weight:400;">(2기간)</span></div>
+      <div class="card-title">왓츠앱 문의 추이 <span style="font-size:11px;color:#6b6b6b;font-weight:400;">(3기간)</span></div>
       <div class="ch-legend-row" id="lg-wq02-wa"></div>
       <div class="chart-wrap" style="height:220px"><canvas id="chart-wq02-wa"></canvas></div>
     </div>
@@ -1569,22 +1569,29 @@ const ALL_REPORTS = [
     },
     channelStatus: {
       cats: ['이식','헤어','SMP','치료','검사','처방전'],
+      // wq-01과 동일하게 이 섹션도 3기간으로 확장 — 전용 기간 라벨 오버라이드
+      periodLabels: ['5/25~6/13', '6/15~6/30', '7/1~7/16'],
+      periods: ['5/25~6/13', '6/15~6/30', '7/1~7/16'],
       kakao: {
         p1: { inq:[28,5,6,7,3,2], book:[11,1,4,3,1,1], rate:[39,20,67,43,33,50], overseas:[11,2,0,2,null,null], total:{inq:51,book:21,rate:41,overseas:15} },
         p2: { inq:[28,1,2,7,17,0], book:[12,0,2,2,15,0], rate:[43,0,100,29,88,'—'], overseas:[7,1,1,3,null,null], total:{inq:55,book:31,rate:56,overseas:12} },
+        p3: { inq:[19,4,4,10,15,0], book:[10,3,2,4,13,0], rate:[53,75,50,40,87,'—'], overseas:[9,0,3,3,null,null], total:{inq:52,book:32,rate:62,overseas:15} },
       },
       naver: {
         // p1(5/25~6/13) 문의 합계 85는 과목별 합(84)보다 1건 많음 — 특정 과목에 매칭 안 된 문의 1건 존재(확인됨, 별도 항목 안 만들고 합계에만 반영)
         p1: { inq:[9,5,2,1,66,1], absent:[2,0,0,1,1,0], book:[9,5,2,1,65,1], rate:[100,100,100,100,98,100], total:{inq:85,absent:4,book:83,rate:98} },
         p2: { inq:[7,0,2,3,58,1], absent:[0,0,0,0,2,0], book:[6,0,2,3,56,1], rate:[86,'—',100,100,97,100], total:{inq:71,absent:2,book:68,rate:96} },
+        p3: { inq:[12,1,1,4,52,3], absent:[0,0,0,0,4,0], book:[12,1,1,4,48,3], rate:[100,100,100,100,92,100], total:{inq:73,absent:4,book:69,rate:95} },
       },
       board: {
         p1: { inq:[23,1,2,9,20,0], absent:[2,0,0,5,3,1], book:[20,1,2,8,19,0], rate:[87,100,100,89,95,'—'], total:{inq:55,absent:11,book:50,rate:91} },
         p2: { inq:[12,0,2,5,9,0], absent:[1,1,1,1,1,0], book:[8,0,1,5,9,0], rate:[67,'—',50,100,100,'—'], total:{inq:28,absent:5,book:23,rate:82} },
+        p3: { inq:[21,3,1,7,15,3], absent:[2,1,1,4,2,0], book:[18,2,0,7,15,3], rate:[86,67,0,100,100,100], total:{inq:50,absent:10,book:45,rate:90} },
       },
       whatsapp: {
         p1: { inq:[17,2,0,3,5,0], book:[5,0,0,0,5,0], rate:[29,0,'—',0,100,'—'], surgery:[0,0,0,0,0,0], total:{inq:27,book:10,rate:37} },
         p2: { inq:[18,2,0,1,0,0], book:[6,0,0,0,0,0], rate:[33,0,'—',0,'—','—'], surgery:[1,0,0,0,0,0], total:{inq:21,book:6,rate:29} },
+        p3: { inq:[19,1,1,7,1,0], book:[2,1,0,1,0,0], rate:[11,100,0,14,0,'—'], surgery:[0,0,0,0,0,0], total:{inq:29,book:4,rate:14} },
       },
     },
     visitStatus: {
@@ -5675,20 +5682,23 @@ function renderWqReport(r) {
     const ch = wq.channelStatus;
     const PL2 = ch.periodLabels || wq.periodLabels || r.meta.periodLabels;
     const PD2 = ch.periods || wq.periods || r.meta.periods;
+    const NP2 = PL2.length;
+    // 3기간부터는 기존 5~6월 주간 보고서(WC)와 동일한 팔레트로 표시(연파랑/진파랑/빨강)
+    const PC2 = NP2 >= 3 ? WC.slice(0, NP2) : WQC.slice(0, NP2);
 
     document.getElementById('wq02-subtitle').textContent =
       PL2.join(' / ') + ' · 플친 · 네이버 · 게시판 · 왓츠앱';
 
-    // 채널 KPI 카드 (2기간 비교)
+    // 채널 KPI 카드 (기간 수만큼 값 체인으로 연결)
     const chKpiData = [
       { label:'플친',   color:'#F9A825', emoji:'💬',
-        totals: [ch.kakao.p1.total, ch.kakao.p2.total] },
+        totals: [ch.kakao.p1.total, ch.kakao.p2.total, ch.kakao.p3 && ch.kakao.p3.total].filter(Boolean) },
       { label:'네이버', color:'#2E7D32', emoji:'<span style="display:inline-flex;align-items:center;justify-content:center;width:22px;height:22px;background:#03C75A;border-radius:4px;font-size:13px;font-weight:900;color:#fff;font-family:sans-serif;line-height:1;flex-shrink:0;">N</span>',
-        totals: [ch.naver.p1.total, ch.naver.p2.total] },
+        totals: [ch.naver.p1.total, ch.naver.p2.total, ch.naver.p3 && ch.naver.p3.total].filter(Boolean) },
       { label:'게시판', color:'#00838F', emoji:'📋',
-        totals: [ch.board.p1.total, ch.board.p2.total] },
+        totals: [ch.board.p1.total, ch.board.p2.total, ch.board.p3 && ch.board.p3.total].filter(Boolean) },
       { label:'왓츠앱', color:'#43A047', emoji:'🌍',
-        totals: [ch.whatsapp.p1.total, ch.whatsapp.p2.total] },
+        totals: [ch.whatsapp.p1.total, ch.whatsapp.p2.total, ch.whatsapp.p3 && ch.whatsapp.p3.total].filter(Boolean) },
     ];
 
     const kpiWrap2 = document.getElementById('wq02-kpi');
@@ -5707,17 +5717,20 @@ function renderWqReport(r) {
       }
       const rowsHtml = rows.map(({label, ri, suffix}) => {
         const vals = chd.totals.map(t => getVal(t, ri));
-        const d = vals[1]-vals[0];
-        const trailColor = d > 0 ? 'var(--red)' : d < 0 ? 'var(--blue)' : '#555';
+        const segsHtml = vals.map((v, i) => {
+          if (i === 0) return `<span style="font-size:18px;font-weight:800;color:#555;">${v}${suffix}</span>`;
+          const d = v - vals[i-1];
+          const isLast = i === vals.length - 1;
+          const color = isLast ? (d > 0 ? 'var(--red)' : d < 0 ? 'var(--blue)' : '#555') : '#555';
+          const size = isLast ? 20 : 18;
+          return `<span style="color:#ddd;font-size:12px;">→</span>
+            <span style="font-size:${size}px;font-weight:800;color:${color};">${v}${suffix}</span>
+            ${badge(d,suffix)}`;
+        }).join('');
         return `
           <div style="margin-bottom:14px;">
             <div style="font-size:12px;color:#aaa;margin-bottom:4px;">${label}</div>
-            <div style="display:flex;align-items:center;gap:6px;white-space:nowrap;">
-              <span style="font-size:18px;font-weight:800;color:#555;">${vals[0]}${suffix}</span>
-              <span style="color:#ddd;font-size:12px;">→</span>
-              <span style="font-size:20px;font-weight:800;color:${trailColor};">${vals[1]}${suffix}</span>
-              ${badge(d,suffix)}
-            </div>
+            <div style="display:flex;align-items:center;gap:6px;white-space:nowrap;">${segsHtml}</div>
           </div>
           <hr class="ck-divider">`;
       }).join('');
@@ -5728,16 +5741,18 @@ function renderWqReport(r) {
         </div>
         ${rowsHtml}
         <div style="display:flex;gap:5px;margin-top:8px;flex-wrap:wrap;">
-          ${PL2.map((l,i)=>`<span style="font-size:11px;padding:2px 7px;border-radius:8px;background:${WQC[i]}22;color:${WQC[i]};font-weight:700;">${l}</span>`).join('')}
+          ${PL2.map((l,i)=>`<span style="font-size:11px;padding:2px 7px;border-radius:8px;background:${PC2[i]}22;color:${PC2[i]};font-weight:700;">${l}</span>`).join('')}
         </div>
       </div>`;
     }).join('');
 
-    // 채널 테이블 공통 렌더 (2기간용 — 기존 renderChWeeklyTable 3기간 버전과 별도)
+    // 채널 테이블 공통 렌더 — 기간 수(NP2)에 맞춰 동적으로 열 그룹 생성
     function renderChWqTable(tblId, chData, extraCol) {
       const tbl = document.getElementById(tblId); if(!tbl) return;
-      const BG = [['#EFF6FF','#DBEAFE'],['#FFF1F2','#FFE4E4']];
+      const BGSETS = [['#EFF6FF','#DBEAFE'],['#E3EEFC','#C6DEF7'],['#FFF1F2','#FFE4E4']];
+      const BG = NP2 === 2 ? [BGSETS[0], BGSETS[2]] : BGSETS.slice(0, NP2);
       const colPer = extraCol ? 4 : 3;
+      const ps2 = [chData.p1, chData.p2, chData.p3].filter(Boolean);
       tbl.innerHTML = '';
       const thead = tbl.createTHead();
       const gr = thead.insertRow();
@@ -5752,7 +5767,7 @@ function renderWqReport(r) {
         gr.appendChild(th);
       });
       const dr = thead.insertRow();
-      ['',...[0,1].flatMap(() => {
+      ['',...ps2.flatMap(() => {
         const base=[['문의'],['예약'],['예약률']];
         if(extraCol) base.push([extraCol]); return base;
       })].forEach(([label],ci)=>{
@@ -5764,7 +5779,6 @@ function renderWqReport(r) {
         dr.appendChild(th);
       });
       const tbody=tbl.createTBody();
-      const ps2=[chData.p1,chData.p2];
       const tot=tbody.insertRow(); tot.className='total-row';
       const tc=['합계']; ps2.forEach((p)=>{
         tc.push(p.total.inq,p.total.book,pct(p.total.rate));
@@ -5797,28 +5811,28 @@ function renderWqReport(r) {
       });
     }
 
+    function chDatasets(chData) {
+      return [chData.p1, chData.p2, chData.p3].filter(Boolean).map((p,i)=>mkDS(PL2[i],p.inq,PC2[i]));
+    }
+
     renderChWqTable('tbl-wq02-kakao', ch.kakao, '해외');
-    chLegend('lg-wq02-kakao', WQC.map((c,i)=>([c,PL2[i]])));
-    mkChart('chart-wq02-kakao', ch.cats,
-      [ch.kakao.p1,ch.kakao.p2].map((p,i)=>mkDS(PL2[i],p.inq,WQC[i])));
+    chLegend('lg-wq02-kakao', PC2.map((c,i)=>([c,PL2[i]])));
+    mkChart('chart-wq02-kakao', ch.cats, chDatasets(ch.kakao));
 
     renderChWqTable('tbl-wq02-naver', ch.naver, '부재');
-    chLegend('lg-wq02-naver', WQC.map((c,i)=>([c,PL2[i]])));
-    mkChart('chart-wq02-naver', ch.cats,
-      [ch.naver.p1,ch.naver.p2].map((p,i)=>mkDS(PL2[i],p.inq,WQC[i])));
+    chLegend('lg-wq02-naver', PC2.map((c,i)=>([c,PL2[i]])));
+    mkChart('chart-wq02-naver', ch.cats, chDatasets(ch.naver));
 
     renderChWqTable('tbl-wq02-board', ch.board, '부재');
-    chLegend('lg-wq02-board', WQC.map((c,i)=>([c,PL2[i]])));
-    mkChart('chart-wq02-board', ch.cats,
-      [ch.board.p1,ch.board.p2].map((p,i)=>mkDS(PL2[i],p.inq,WQC[i])));
+    chLegend('lg-wq02-board', PC2.map((c,i)=>([c,PL2[i]])));
+    mkChart('chart-wq02-board', ch.cats, chDatasets(ch.board));
 
     renderChWqTable('tbl-wq02-wa', ch.whatsapp, '수술');
-    chLegend('lg-wq02-wa', WQC.map((c,i)=>([c,PL2[i]])));
-    mkChart('chart-wq02-wa', ch.cats,
-      [ch.whatsapp.p1,ch.whatsapp.p2].map((p,i)=>mkDS(PL2[i],p.inq,WQC[i])));
+    chLegend('lg-wq02-wa', PC2.map((c,i)=>([c,PL2[i]])));
+    mkChart('chart-wq02-wa', ch.cats, chDatasets(ch.whatsapp));
 
     renderAnalysis('ana-wq02',
-      `4개 채널 중 <b>플친 문의 51→55건, 예약률 41%→56%(+15%p)로 가장 크게 개선</b> — 문의도 늘고 전환도 좋아진 채널.\n<b>네이버 예약률 98%→96%로 두 기간 모두 채널 중 최고 수준</b> 유지, 문의는 85→71건으로 다소 감소.\n<b>게시판 문의 55→28건으로 절반 가까이 감소</b>했고 예약률도 91%→82%로 함께 하락 — 점검 필요.\n<b>왓츠앱 문의 27→21건 감소, 예약률 37%→29%로 하락</b> — 해외 상담 전환 흐름 확인 필요.`,
+      `4개 채널 중 <b>플친 문의 51→55→52건으로 7월 들어 주춤</b>했지만 <b>예약률은 41%→56%→62%로 3기간 연속 개선</b> — 전환 흐름이 꾸준히 좋아지는 채널.\n<b>네이버 예약률 98%→96%→95%로 여전히 채널 중 최고 수준</b> 유지, 문의는 85→71→73건으로 다시 소폭 회복.\n<b>게시판 문의 55→28→50건으로 반등</b>했으나 예약률은 91%→82%→90%로 오르내림 — 안정화 필요.\n<b>왓츠앱 예약률 37%→29%→14%로 3기간 연속 하락</b> — 문의(27→21→29건)는 늘었지만 전환이 계속 나빠지는 추세로 점검이 시급함.`,
       r
     );
   }
