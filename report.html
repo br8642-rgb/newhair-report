@@ -1252,12 +1252,12 @@
       <div class="table-collapsible"><div style="overflow-x:auto"><table class="data-table" id="tbl-wq01"></table></div></div>
     </div>
     <div class="card" style="margin-top:16px;margin-bottom:16px;">
-      <div class="card-title">과목별 문의 비교 <span style="font-size:11px;color:#6b6b6b;font-weight:400;">(2기간)</span></div>
+      <div class="card-title">과목별 문의 비교 <span id="wq01-inq-pcount" style="font-size:11px;color:#6b6b6b;font-weight:400;"></span></div>
       <div class="ch-legend-row" id="lg-wq01-inq"></div>
       <div class="chart-wrap" style="height:250px"><canvas id="chart-wq01-inq"></canvas></div>
     </div>
     <div class="card" style="margin-bottom:28px;">
-      <div class="card-title">과목별 예약률 비교 <span style="font-size:11px;color:#6b6b6b;font-weight:400;">(2기간, %)</span></div>
+      <div class="card-title">과목별 예약률 비교 <span id="wq01-rate-pcount" style="font-size:11px;color:#6b6b6b;font-weight:400;"></span></div>
       <div class="ch-legend-row" id="lg-wq01-rate"></div>
       <div class="chart-wrap" style="height:230px"><canvas id="chart-wq01-rate"></canvas></div>
     </div>
@@ -1543,6 +1543,10 @@ const ALL_REPORTS = [
   wqData: {
     phoneStatus: {
       cats: ['이식','헤어','SMP','치료','검사','처방전','기타'],
+      // wq-01만 3기간으로 먼저 확장 — wq-02/03은 아직 2기간이라 r.meta.periodLabels(2개)를 그대로 씀.
+      // 이 섹션 전용으로 3기간 라벨을 오버라이드(다른 섹션엔 영향 없음).
+      periodLabels: ['5/25~6/13', '6/15~6/30', '7/1~7/16'],
+      periods: ['5/25~6/13', '6/15~6/30', '7/1~7/16'],
       p1: { // 5/25~6/13 (14영업일, 휴진 6/8~6/11 포함)
         inq:  [59,12,12,24,99,17,0],
         book: [51,12, 8,21,97,17,0],
@@ -1554,6 +1558,12 @@ const ALL_REPORTS = [
         book: [48, 4, 6,23,106,15,1],
         rate: [80,80,86,85, 99,100,100],
         total: { inq:222, book:203, rate:91 },
+      },
+      p3: { // 7/1~7/16 (14영업일)
+        inq:  [86,10,11,31,107,16,0],
+        book: [69, 9, 9,25,102,16,0],
+        rate: [80,90,82,81, 95,100,'—'],
+        total: { inq:261, book:230, rate:88 },
       },
     },
     channelStatus: {
@@ -5566,13 +5576,16 @@ function renderWqReport(r) {
     const ph = wq.phoneStatus;
     const PL = ph.periodLabels || wq.periodLabels || r.meta.periodLabels;
     const PD = ph.periods || wq.periods || r.meta.periods;
-    const ps = [ph.p1, ph.p2];
+    const ps = [ph.p1, ph.p2, ph.p3].filter(Boolean);
+    // 3기간(p1~p3)부터는 기존 5~6월 주간 보고서(WC)와 동일한 팔레트로 표시(연파랑/진파랑/빨강).
+    // wq-02·wq-03은 아직 2기간이라 기존 WQC(연파랑/빨강)를 그대로 유지 — 여기서만 로컬로 색을 정함.
+    const PC = ps.length >= 3 ? WC.slice(0, ps.length) : WQC.slice(0, ps.length);
 
-    document.getElementById('wq01-subtitle').textContent = PL.join(' / ') + ' · 과목별 문의·예약 현황';
+    document.getElementById('wq01-subtitle').textContent = PL.slice(0, ps.length).join(' / ') + ' · 과목별 문의·예약 현황';
 
     document.getElementById('wq01-kpi').innerHTML = ps.map((p, i) => `
       <div class="kpi-item">
-        <div class="kpi-item-label" style="color:${WQC[i]};font-weight:800;font-size:15px;">${PL[i]}</div>
+        <div class="kpi-item-label" style="color:${PC[i]};font-weight:800;font-size:15px;">${PL[i]}</div>
         <div style="font-size:13px;color:#888;font-weight:600;margin-bottom:4px;">${PD[i]}</div>
         <div class="kpi-row">
           <div class="kpi-month"><span class="kpi-month-label">문의</span><span class="kpi-month-val">${p.total.inq}</span></div>
@@ -5581,74 +5594,77 @@ function renderWqReport(r) {
         </div>
       </div>`).join('');
 
-    // 상세 테이블 — 기간별 배경색 구분을 위해 직접 렌더 (기존 sw01 테이블 빌더 참고, 2기간용으로 별도 작성)
+    // 상세 테이블 — 기간 수(ps.length)에 맞춰 동적으로 열 그룹 생성 (2기간이든 3기간이든 동일 코드로 처리)
     (function () {
       const tbl = document.getElementById('tbl-wq01');
       if (!tbl) return;
-      const BG = [
-        ['#EFF6FF', '#EFF6FF', '#DBEAFE'], // 1기간: 연파랑 계열
-        ['#FFF1F2', '#FFF1F2', '#FFE4E4'], // 2기간: 연빨강 계열
+      const BGSETS = [
+        ['#EFF6FF', '#EFF6FF', '#DBEAFE'], // 1기간: 연파랑
+        ['#E3EEFC', '#E3EEFC', '#C6DEF7'], // 2기간: 진파랑 계열(연하게)
+        ['#FFF1F2', '#FFF1F2', '#FFE4E4'], // 3기간(또는 마지막): 연빨강
       ];
+      // 기간이 2개면 1번째·마지막(연빨강) 배색만 사용해 기존 2기간 화면과 동일한 톤 유지
+      const BG = ps.length === 2 ? [BGSETS[0], BGSETS[2]] : BGSETS.slice(0, ps.length);
+      const colPer = 3;
       tbl.innerHTML = '';
       const thead = tbl.createTHead();
       const gr = thead.insertRow();
-      [['과목', 1, '', null],
-       [PL[0], 3, BG[0][2], PD[0]], [PL[1], 3, BG[1][2], PD[1]],
-      ].forEach(([txt, span, bg, date]) => {
-        const th = document.createElement('th');
-        th.colSpan = span;
-        if (bg) {
-          th.style.cssText = `background:${bg};text-align:center;`;
-          th.innerHTML = `<span style="font-size:13px;font-weight:700;">${txt}</span> <span style="font-size:11px;color:#888;font-weight:400;">${date}</span>`;
-        } else {
-          th.textContent = txt;
-        }
-        gr.appendChild(th);
-      });
+      [['과목', 1, '', null], ...PL.slice(0, ps.length).map((l, i) => [l, colPer, BG[i][2], PD[i]])]
+        .forEach(([txt, span, bg, date]) => {
+          const th = document.createElement('th');
+          th.colSpan = span;
+          if (bg) {
+            th.style.cssText = `background:${bg};text-align:center;`;
+            th.innerHTML = `<span style="font-size:13px;font-weight:700;">${txt}</span> <span style="font-size:11px;color:#888;font-weight:400;">${date}</span>`;
+          } else {
+            th.textContent = txt;
+          }
+          gr.appendChild(th);
+        });
       const dr = thead.insertRow();
-      const subHeaders = ['', '문의', '예약', '예약률', '문의', '예약', '예약률'];
+      const subHeaders = ['', ...ps.flatMap(() => ['문의', '예약', '예약률'])];
       subHeaders.forEach((label, ci) => {
         const th = document.createElement('th');
-        const bgIdx = ci === 0 ? -1 : Math.floor((ci - 1) / 3);
+        const bgIdx = ci === 0 ? -1 : Math.floor((ci - 1) / colPer);
         if (bgIdx >= 0) th.style.background = BG[bgIdx][0];
         th.textContent = label;
-        if (ci > 0 && ci % 3 === 1) th.style.borderLeft = '2px solid #cbd5e1';
+        if (ci > 0 && (ci - 1) % colPer === 0) th.style.borderLeft = '2px solid #cbd5e1';
         dr.appendChild(th);
       });
 
       const tbody = tbl.createTBody();
       const tot = tbody.insertRow(); tot.className = 'total-row';
-      [['합계', false],
-       [ph.p1.total.inq, 0], [ph.p1.total.book, 0], [ph.p1.total.rate + '%', 0],
-       [ph.p2.total.inq, 1], [ph.p2.total.book, 1], [ph.p2.total.rate + '%', 1],
-      ].forEach(([val, gi], ci) => {
+      const totCells = ['합계', ...ps.flatMap(p => [p.total.inq, p.total.book, p.total.rate + '%'])];
+      totCells.forEach((val, ci) => {
         const td = tot.insertCell(); td.innerHTML = val;
-        if (gi !== false) td.style.background = BG[gi][1];
-        if (ci > 0 && (ci - 1) % 3 === 0) td.style.borderLeft = '2px solid #cbd5e1';
+        const gi = ci === 0 ? -1 : Math.floor((ci - 1) / colPer);
+        if (gi >= 0) td.style.background = BG[gi][1];
+        if (ci > 0 && (ci - 1) % colPer === 0) td.style.borderLeft = '2px solid #cbd5e1';
         if (ci === 0) td.style.textAlign = 'left';
       });
       ph.cats.forEach((cat, ci2) => {
         const tr = tbody.insertRow();
-        [[cat, false],
-         [ph.p1.inq[ci2], 0], [ph.p1.book[ci2], 0], [pct(ph.p1.rate[ci2]), 0],
-         [ph.p2.inq[ci2], 1], [ph.p2.book[ci2], 1], [pct(ph.p2.rate[ci2]), 1],
-        ].forEach(([val, gi], ci) => {
+        const cells = [cat, ...ps.flatMap(p => [p.inq[ci2], p.book[ci2], pct(p.rate[ci2])])];
+        cells.forEach((val, ci) => {
           const td = tr.insertCell(); td.innerHTML = val;
-          if (gi !== false) td.style.background = BG[gi][0];
-          if (ci > 0 && (ci - 1) % 3 === 0) td.style.borderLeft = '2px solid #cbd5e1';
+          const gi = ci === 0 ? -1 : Math.floor((ci - 1) / colPer);
+          if (gi >= 0) td.style.background = BG[gi][0];
+          if (ci > 0 && (ci - 1) % colPer === 0) td.style.borderLeft = '2px solid #cbd5e1';
           if (ci === 0) td.style.textAlign = 'left';
         });
       });
     })();
 
-    chLegend('lg-wq01-inq', WQC.map((c, i) => ([c, PL[i]])));
-    mkChart('chart-wq01-inq', ph.cats, ps.map((p, i) => mkDS(PL[i], p.inq, WQC[i])));
+    document.getElementById('wq01-inq-pcount').textContent = `(${ps.length}기간)`;
+    document.getElementById('wq01-rate-pcount').textContent = `(${ps.length}기간, %)`;
+    chLegend('lg-wq01-inq', PC.map((c, i) => ([c, PL[i]])));
+    mkChart('chart-wq01-inq', ph.cats, ps.map((p, i) => mkDS(PL[i], p.inq, PC[i])));
 
-    chLegend('lg-wq01-rate', WQC.map((c, i) => ([c, PL[i]])));
-    mkChart('chart-wq01-rate', ph.cats, ps.map((p, i) => mkDS(PL[i], p.rate.map(v => v === '—' ? 0 : v), WQC[i])), 110);
+    chLegend('lg-wq01-rate', PC.map((c, i) => ([c, PL[i]])));
+    mkChart('chart-wq01-rate', ph.cats, ps.map((p, i) => mkDS(PL[i], p.rate.map(v => v === '—' ? 0 : v), PC[i])), 110);
 
     renderAnalysis('ana-wq01',
-      `전화 신규문의 <b>223→222건</b>으로 두 기간 거의 동일 수준 유지, 예약도 206→203건으로 안정적.\n전체 예약률은 <b>92%→91%(−1%p)</b>로 큰 변화 없이 안정적으로 유지됨.\n<b>이식 예약률 86%→80%(−6%p)로 하락</b> — 문의는 59→60건으로 늘었지만 전환은 다소 아쉬움.\n<b>헤어 문의 12→5건으로 크게 감소</b>했고 예약률도 100%→80%로 함께 하락.\n<b>SMP는 문의 12→7건 줄었지만 예약률 67%→86%(+19%p)로 개선</b> — 상담 품질은 오히려 좋아짐.\n검사는 <b>98%→99%로 두 기간 모두 최고 수준</b> 유지, 처방전도 100% 그대로 안정적.`,
+      `전화 신규문의 <b>223→222→261건</b>으로 7월 들어 뚜렷하게 증가, 예약도 206→203→230건으로 함께 늘어남.\n전체 예약률은 <b>92%→91%→88%로 3기간 연속 소폭 하락</b> — 문의량은 늘었지만 전환 효율은 조금씩 떨어지는 추세.\n<b>이식 문의 59→60→86건으로 큰 폭 증가</b>했으나 예약률은 86%→80%→80%로 두 기간째 정체 — 물량 대비 전환 관리 필요.\n<b>헤어 문의 12→5→10건으로 회복</b>, 예약률도 100%→80%→90%로 다시 개선.\n<b>SMP 문의 12→7→11건, 예약률 67%→86%→82%로 안정적인 수준</b> 유지.\n<b>검사는 98%→99%→95%로 여전히 최고 수준</b>이지만 3기간째 소폭 하락, 처방전은 100%→100%→100%로 변함없이 안정적.`,
       r
     );
   }
