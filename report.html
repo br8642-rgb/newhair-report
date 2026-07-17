@@ -1344,7 +1344,7 @@
       <div class="table-collapsible"><div style="overflow-x:auto"><table class="data-table" id="tbl-wq03-cats"></table></div></div>
     </div>
     <div class="card" style="margin-top:16px;margin-bottom:28px;">
-      <div class="card-title">과목별 내원 비교 <span style="font-size:11px;color:#6b6b6b;font-weight:400;">(2기간)</span></div>
+      <div class="card-title">과목별 내원 비교 <span style="font-size:11px;color:#6b6b6b;font-weight:400;">(3기간)</span></div>
       <div class="ch-legend-row" id="lg-wq03-cats"></div>
       <div class="chart-wrap" style="height:240px"><canvas id="chart-wq03-cats"></canvas></div>
     </div>
@@ -1595,10 +1595,13 @@ const ALL_REPORTS = [
       },
     },
     visitStatus: {
-      // 키오머·흉터재봉합 두 과목은 두 기간 모두 0건이라 제외(확인됨)
+      // 키오머·흉터재봉합 두 과목은 세 기간 모두 0건이라 제외(확인됨)
       cats: ['모발이식','헤어라인','SMP','탈모치료','검사','기타이식','처방','기타'],
+      periodLabels: ['5/25~6/13', '6/15~6/30', '7/1~7/16'],
+      periods: ['5/25~6/13', '6/15~6/30', '7/1~7/16'],
       p1: { total_book:253, cancel_pre:9,  remain:244, cancel_pre_rate:3.6, visit:209, visit_rate:86, final_visit_rate:83, same_day:13, noshow:22, by_cat:[40,10,18,46,71,1,20,3] },
       p2: { total_book:280, cancel_pre:14, remain:266, cancel_pre_rate:5.0, visit:242, visit_rate:91, final_visit_rate:86, same_day:11, noshow:13, by_cat:[49,15,14,36,105,0,20,3] },
+      p3: { total_book:269, cancel_pre:9,  remain:260, cancel_pre_rate:3.3, visit:220, visit_rate:85, final_visit_rate:82, same_day:14, noshow:26, by_cat:[48,5,13,39,89,0,21,5] },
     },
   },
 },
@@ -5842,13 +5845,16 @@ function renderWqReport(r) {
     const vst = wq.visitStatus;
     const VL = vst.periodLabels || wq.periodLabels || r.meta.periodLabels;
     const VD = vst.periods || wq.periods || r.meta.periods;
-    const vs = [vst.p1, vst.p2];
+    const vs = [vst.p1, vst.p2, vst.p3].filter(Boolean);
+    const NP3 = vs.length;
+    // 3기간부터는 기존 5~6월 주간 보고서(WC)와 동일한 팔레트로 표시(연파랑/진파랑/빨강)
+    const PC3 = NP3 >= 3 ? WC.slice(0, NP3) : WQC.slice(0, NP3);
 
     document.getElementById('wq03-subtitle').textContent =
-      VL.join(' / ') + ' · 예약 흐름 및 과목별 내원 현황';
+      VL.slice(0, NP3).join(' / ') + ' · 예약 흐름 및 과목별 내원 현황';
 
     const kpiWrap3 = document.getElementById('wq03-kpi');
-    kpiWrap3.style.cssText = 'display:grid;grid-template-columns:repeat(2,1fr);gap:16px;';
+    kpiWrap3.style.cssText = `display:grid;grid-template-columns:repeat(${NP3},1fr);gap:16px;`;
     kpiWrap3.innerHTML = vs.map((v, i) => {
       const prev = i > 0 ? vs[i - 1] : null;
       const dV = prev ? v.visit - prev.visit : 0;
@@ -5865,7 +5871,7 @@ function renderWqReport(r) {
         </div>`;
       }
       return `<div class="kpi-item" style="border:1px solid #e8eaed;border-radius:12px;padding:16px;box-shadow:0 1px 4px rgba(0,0,0,.05);">
-        <div style="font-size:20px;font-weight:800;color:${WQC[i]};margin-bottom:3px;">${VL[i]}</div>
+        <div style="font-size:20px;font-weight:800;color:${PC3[i]};margin-bottom:3px;">${VL[i]}</div>
         <div style="font-size:14px;color:#888;font-weight:600;margin-bottom:12px;">${VD[i]}</div>
         ${row('총 예약', v.total_book + '건')}
         ${row('내원전 취소', v.cancel_pre + '건 (' + v.cancel_pre_rate + '%)')}
@@ -5879,11 +5885,12 @@ function renderWqReport(r) {
 
     (function () {
       const tbl = document.getElementById('tbl-wq03-cats'); if (!tbl) return;
-      const BG = [['#EFF6FF', '#DBEAFE'], ['#FFF1F2', '#FFE4E4']];
+      const BGSETS = [['#EFF6FF', '#DBEAFE'], ['#E3EEFC', '#C6DEF7'], ['#FFF1F2', '#FFE4E4']];
+      const BG = NP3 === 2 ? [BGSETS[0], BGSETS[2]] : BGSETS.slice(0, NP3);
       tbl.innerHTML = '';
       const thead = tbl.createTHead();
       const gr = thead.insertRow();
-      [['과목', '', ''], ...VL.map((l, i) => [l, VD[i], BG[i][1]])].forEach(([txt, date, bg]) => {
+      [['과목', '', ''], ...VL.slice(0, NP3).map((l, i) => [l, VD[i], BG[i][1]])].forEach(([txt, date, bg]) => {
         const th = document.createElement('th');
         if (bg) {
           th.style.cssText = `background:${bg};text-align:center;`;
@@ -5910,11 +5917,11 @@ function renderWqReport(r) {
       });
     })();
 
-    chLegend('lg-wq03-cats', WQC.map((c, i) => ([c, VL[i]])));
-    mkChart('chart-wq03-cats', vst.cats, vs.map((v, i) => mkDS(VL[i], v.by_cat, WQC[i])));
+    chLegend('lg-wq03-cats', PC3.map((c, i) => ([c, VL[i]])));
+    mkChart('chart-wq03-cats', vst.cats, vs.map((v, i) => mkDS(VL[i], v.by_cat, PC3[i])));
 
     renderAnalysis('ana-wq03',
-      `총 예약 <b>253→280건으로 증가</b>했고 내원도 209→242건(+15.8%)으로 함께 늘어남.\n<b>내원율 86%→91%(+5%p)로 개선</b>됐으나, <b>내원전 취소율은 3.6%→5.0%로 함께 상승</b> — 예약 확정 후 이탈이 다소 늘어난 영향.\n<b>최종내원율(총예약 기준) 83%→86%로 개선</b>돼 전체적으로는 긍정적인 흐름.\n<b>당일취소 13→11건으로 감소</b>했으나 <b>부도는 22→13건으로 크게 줄어 내원 당일 관리가 뚜렷하게 개선</b>됨.\n과목별로는 <b>검사 71→105건(+47.9%)으로 가장 크게 증가</b>했고, 모발이식(40→49)·헤어라인(10→15)도 동반 증가. <b>탈모치료는 46→36건으로 유일하게 감소.</b>`,
+      `총 예약 <b>253→280→269건으로 6월 하반기 정점 이후 소폭 감소</b>했고, 내원도 209→242→220건으로 같은 흐름.\n<b>내원율 86%→91%→85%로 다시 하락</b>, <b>내원전 취소율도 3.6%→5.0%→3.3%로 개선</b>됐지만 내원율 자체는 첫 기간 수준으로 되돌아감.\n<b>최종내원율(총예약 기준) 83%→86%→82%</b>로 3기간 중 가장 낮은 수준.\n<b>당일취소 13→11→14건, 부도 22→13→26건으로 다시 증가</b> — 6월 하반기의 개선 흐름이 7월 들어 다소 꺾인 모습.\n과목별로는 <b>검사 71→105→89건으로 여전히 최다</b>지만 6월 하반기 대비 감소, <b>탈모치료 46→36→39건으로 소폭 회복.</b>`,
       r
     );
   }
