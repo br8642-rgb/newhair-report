@@ -6291,6 +6291,13 @@ function renderEditableList(containerId, addBtnId, items, icon, iconColor, isEdi
         renderEditableList('sw04-wins',  'sw04-wins-add',  wp.wins,  '✔', '#2E7D32', isEditor, reportScopeId(r),  'sw04-wins');
         renderEditableList('sw04-tasks', 'sw04-tasks-add', wp.tasks, '▲', '#C62828', isEditor, reportScopeId(r),  'sw04-tasks');
       }
+    } else if (r.meta.type === 'wq') {
+      // wq(2026년 6~7월 상반기 현황) 종합리뷰(wq-04)의 성과·과제 — Sheets 로드 후 재반영 누락돼 있던 부분 추가
+      const wqRev = r.wqData && r.wqData.review;
+      if (wqRev && wqRev.wins && wqRev.tasks) {
+        renderEditableList('wq04-wins',  'wq04-wins-add',  wqRev.wins,  '✔', '#2E7D32', isEditor, reportScopeId(r), 'wq04-wins');
+        renderEditableList('wq04-tasks', 'wq04-tasks-add', wqRev.tasks, '▲', '#C62828', isEditor, reportScopeId(r), 'wq04-tasks');
+      }
     } else {
       const s09 = r.section09;
       if (s09 && s09.wins && s09.tasks) {
