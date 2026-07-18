@@ -2451,6 +2451,9 @@ function availableMonthlySections(r) {
 }
 
 let isEditor = false;
+// Sheets 최초 로드가 끝났는지 추적 — wq-04 성과/과제가 "코드 기본값 잠깐 표시 → 저장된 내용으로 교체"되며
+// 깜빡이는 것을 막기 위해 사용(다른 보고서 렌더링 로직에는 영향 없음, 이 플래그를 안 쓰는 기존 분기는 그대로 동작)
+let sheetsLoaded = false;
 let currentReport = null;
 let s02ActiveMonth = 'apr';
 let s06ActiveMonth = 'apr';
@@ -6123,9 +6126,19 @@ function renderWqReport(r) {
       </div>`;
     }).join('');
 
-    // 저장(편집-캐시) 관련 함수는 기존 안정화된 함수를 호출만 함 — 로직 자체는 손대지 않음
-    renderEditableList('wq04-wins', 'wq04-wins-add', wq.review.wins, '✔', '#2E7D32', isEditor, reportScopeId(r), 'wq04-wins');
-    renderEditableList('wq04-tasks', 'wq04-tasks-add', wq.review.tasks, '▲', '#C62828', isEditor, reportScopeId(r), 'wq04-tasks');
+    // 저장(편집-캐시) 관련 함수는 기존 안정화된 함수를 호출만 함 — 로직 자체는 손대지 않음.
+    // 단, Sheets 로드가 끝나기 전에는 "코드 기본값이 잠깐 보였다 저장된 내용으로 바뀌는" 깜빡임을 막기 위해
+    // 최초 1회는 로딩 표시만 하고, loadAllFromSheets().then() 콜백에서 sheetsLoaded=true가 된 이후에만 실제 렌더링.
+    // (이미 로드가 끝난 뒤 보고서를 전환해 들어온 경우엔 바로 정상 렌더링됨 — 깜빡임 없음)
+    if (sheetsLoaded) {
+      renderEditableList('wq04-wins', 'wq04-wins-add', wq.review.wins, '✔', '#2E7D32', isEditor, reportScopeId(r), 'wq04-wins');
+      renderEditableList('wq04-tasks', 'wq04-tasks-add', wq.review.tasks, '▲', '#C62828', isEditor, reportScopeId(r), 'wq04-tasks');
+    } else {
+      const winsEl = document.getElementById('wq04-wins');
+      const tasksEl = document.getElementById('wq04-tasks');
+      if (winsEl) winsEl.innerHTML = '<div style="color:#aaa;font-size:14px;padding:8px 0;">불러오는 중…</div>';
+      if (tasksEl) tasksEl.innerHTML = '<div style="color:#aaa;font-size:14px;padding:8px 0;">불러오는 중…</div>';
+    }
 
     const noteEl4wq = document.getElementById('wq04-period-note');
     if (noteEl4wq) noteEl4wq.textContent = wq.periodNote || r.meta.periodNote || '';
@@ -6281,6 +6294,7 @@ function renderEditableList(containerId, addBtnId, items, icon, iconColor, isEdi
 
   // 화면 먼저 뜨고 백그라운드에서 Sheets 로드 → 성과·과제 + 분석 텍스트 갱신
   loadAllFromSheets().then(() => {
+    sheetsLoaded = true;
     const sel = document.getElementById('report-select');
     const r   = ALL_REPORTS[+sel.value || 0];
 
