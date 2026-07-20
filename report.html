@@ -1277,7 +1277,7 @@
       <div class="table-collapsible"><div style="overflow-x:auto"><table class="data-table" id="tbl-wq01"></table></div></div>
     </div>
     <div class="card" style="margin-top:16px;margin-bottom:16px;">
-      <div class="card-title">과목별 문의 비교 <span id="wq01-inq-pcount" style="font-size:11px;color:#6b6b6b;font-weight:400;"></span></div>
+      <div class="card-title">과목별 문의·예약 비교 <span id="wq01-inq-pcount" style="font-size:11px;color:#6b6b6b;font-weight:400;"></span></div>
       <div class="ch-legend-row" id="lg-wq01-inq"></div>
       <div class="chart-wrap" style="height:250px"><canvas id="chart-wq01-inq"></canvas></div>
     </div>
@@ -2531,6 +2531,13 @@ function mkChart(id,labels,datasets,maxY,unit){
   charts[id]=new Chart(document.getElementById(id),{type:'bar',data:{labels,datasets},options:opts});
 }
 function mkDS(label,data,color){return{label,data,backgroundColor:color,borderRadius:3};}
+// hex 색상을 흰색과 섞어 더 밝게 만드는 헬퍼 — wq-01 문의·예약 막대를 "연하게(문의)/진하게(예약)"로 구분할 때 사용
+function lightenColor(hex, ratio) {
+  const c = hex.replace('#', '');
+  const r = parseInt(c.substring(0, 2), 16), g = parseInt(c.substring(2, 4), 16), b = parseInt(c.substring(4, 6), 16);
+  const mix = v => Math.round(v + (255 - v) * ratio);
+  return `rgb(${mix(r)},${mix(g)},${mix(b)})`;
+}
 
 function diff(a,b){
   const d=b-a;
@@ -5832,8 +5839,13 @@ function renderWqReport(r) {
 
     document.getElementById('wq01-inq-pcount').textContent = `(${ps.length}기간)`;
     document.getElementById('wq01-rate-pcount').textContent = `(${ps.length}기간, %)`;
-    chLegend('lg-wq01-inq', PC.map((c, i) => ([c, PL[i]])));
-    mkChart('chart-wq01-inq', ph.cats, ps.map((p, i) => mkDS(PL[i], p.inq, PC[i])));
+    // 문의(연한 톤)+예약(원래 색, 진하게) — 기간별로 나란히 묶어서 표시
+    const inqBookColors = PC.map(c => lightenColor(c, 0.55));
+    chLegend('lg-wq01-inq', ps.flatMap((p, i) => ([[inqBookColors[i], PL[i] + ' 문의'], [PC[i], PL[i] + ' 예약']])));
+    mkChart('chart-wq01-inq', ph.cats, ps.flatMap((p, i) => ([
+      mkDS(PL[i] + ' 문의', p.inq, inqBookColors[i]),
+      mkDS(PL[i] + ' 예약', p.book, PC[i]),
+    ])));
 
     chLegend('lg-wq01-rate', PC.map((c, i) => ([c, PL[i]])));
     mkChart('chart-wq01-rate', ph.cats, ps.map((p, i) => mkDS(PL[i], p.rate.map(v => v === '—' ? 0 : v), PC[i])), 110, '%');
