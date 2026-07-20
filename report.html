@@ -2521,9 +2521,13 @@ const BASE = {
   }
 };
 const charts={};
-function mkChart(id,labels,datasets,maxY){
+function mkChart(id,labels,datasets,maxY,unit){
   if(charts[id]) charts[id].destroy();
-  const opts=maxY?{...BASE,scales:{...BASE.scales,y:{...BASE.scales.y,max:maxY}}}:BASE;
+  let opts=maxY?{...BASE,scales:{...BASE.scales,y:{...BASE.scales.y,max:maxY}}}:BASE;
+  // unit을 넘긴 경우에만 툴팁 단위를 교체(기본 '건') — 인자 없는 기존 호출부는 이 분기를 안 타서 완전히 동일하게 동작
+  if (unit) {
+    opts = {...opts, plugins:{...opts.plugins, tooltip:{...opts.plugins.tooltip, callbacks:{label:c=>' '+c.dataset.label+': '+c.parsed.y+unit}}}};
+  }
   charts[id]=new Chart(document.getElementById(id),{type:'bar',data:{labels,datasets},options:opts});
 }
 function mkDS(label,data,color){return{label,data,backgroundColor:color,borderRadius:3};}
@@ -5832,7 +5836,7 @@ function renderWqReport(r) {
     mkChart('chart-wq01-inq', ph.cats, ps.map((p, i) => mkDS(PL[i], p.inq, PC[i])));
 
     chLegend('lg-wq01-rate', PC.map((c, i) => ([c, PL[i]])));
-    mkChart('chart-wq01-rate', ph.cats, ps.map((p, i) => mkDS(PL[i], p.rate.map(v => v === '—' ? 0 : v), PC[i])), 110);
+    mkChart('chart-wq01-rate', ph.cats, ps.map((p, i) => mkDS(PL[i], p.rate.map(v => v === '—' ? 0 : v), PC[i])), 110, '%');
 
     renderAnalysis('ana-wq01',
       `전화 신규문의 <b>223→222→261건</b>으로 7월 들어 뚜렷하게 증가, 예약도 206→203→230건으로 함께 늘어남.\n전체 예약률은 <b>92%→91%→88%로 3기간 연속 소폭 하락</b> — 문의량은 늘었지만 전환 효율은 조금씩 떨어지는 추세.\n<b>이식 문의 59→60→86건으로 큰 폭 증가</b>, 예약도 51→48→69건으로 함께 늘었지만 예약률은 86%→80%→80%로 두 기간째 정체 — 물량 대비 전환 관리 필요.\n<b>헤어 문의 12→5→10건으로 회복</b>, 예약률도 100%→80%→90%로 다시 개선.\n<b>SMP 문의 12→7→11건, 예약률 67%→86%→82%로 안정적인 수준</b> 유지.\n<b>검사는 98%→99%→95%로 여전히 최고 수준</b>이지만 3기간째 소폭 하락, 처방전은 100%→100%→100%로 변함없이 안정적.`,
