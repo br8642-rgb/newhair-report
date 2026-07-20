@@ -1308,7 +1308,7 @@
       <div class="table-collapsible"><div style="overflow-x:auto"><table class="data-table" id="tbl-wq02-kakao"></table></div></div>
     </div>
     <div class="card" style="margin-top:16px;margin-bottom:28px;">
-      <div class="card-title">플친 문의 추이 <span style="font-size:11px;color:#6b6b6b;font-weight:400;">(3기간)</span></div>
+      <div class="card-title">플친 문의·예약 추이 <span style="font-size:11px;color:#6b6b6b;font-weight:400;">(3기간)</span></div>
       <div class="ch-legend-row" id="lg-wq02-kakao"></div>
       <div class="chart-wrap" style="height:220px"><canvas id="chart-wq02-kakao"></canvas></div>
     </div>
@@ -1320,7 +1320,7 @@
       <div class="table-collapsible"><div style="overflow-x:auto"><table class="data-table" id="tbl-wq02-naver"></table></div></div>
     </div>
     <div class="card" style="margin-top:16px;margin-bottom:28px;">
-      <div class="card-title">네이버 문의 추이 <span style="font-size:11px;color:#6b6b6b;font-weight:400;">(3기간)</span></div>
+      <div class="card-title">네이버 문의·예약 추이 <span style="font-size:11px;color:#6b6b6b;font-weight:400;">(3기간)</span></div>
       <div class="ch-legend-row" id="lg-wq02-naver"></div>
       <div class="chart-wrap" style="height:220px"><canvas id="chart-wq02-naver"></canvas></div>
     </div>
@@ -1332,7 +1332,7 @@
       <div class="table-collapsible"><div style="overflow-x:auto"><table class="data-table" id="tbl-wq02-board"></table></div></div>
     </div>
     <div class="card" style="margin-top:16px;margin-bottom:28px;">
-      <div class="card-title">게시판 문의 추이 <span style="font-size:11px;color:#6b6b6b;font-weight:400;">(3기간)</span></div>
+      <div class="card-title">게시판 문의·예약 추이 <span style="font-size:11px;color:#6b6b6b;font-weight:400;">(3기간)</span></div>
       <div class="ch-legend-row" id="lg-wq02-board"></div>
       <div class="chart-wrap" style="height:220px"><canvas id="chart-wq02-board"></canvas></div>
     </div>
@@ -1344,7 +1344,7 @@
       <div class="table-collapsible"><div style="overflow-x:auto"><table class="data-table" id="tbl-wq02-wa"></table></div></div>
     </div>
     <div class="card" style="margin-top:16px;margin-bottom:28px;">
-      <div class="card-title">왓츠앱 문의 추이 <span style="font-size:11px;color:#6b6b6b;font-weight:400;">(3기간)</span></div>
+      <div class="card-title">왓츠앱 문의·예약 추이 <span style="font-size:11px;color:#6b6b6b;font-weight:400;">(3기간)</span></div>
       <div class="ch-legend-row" id="lg-wq02-wa"></div>
       <div class="chart-wrap" style="height:220px"><canvas id="chart-wq02-wa"></canvas></div>
     </div>
@@ -6029,25 +6029,40 @@ function renderWqReport(r) {
       });
     }
 
+    // 문의(연한 톤)+예약(원래 색, 진하게), 기간별 회색 배경 밴드까지 wq-01과 동일한 방식으로 표시
+    const ch2Colors = PC2.map(c => lightenColor(c, 0.55));
+    const ch2Shades = ['rgba(60,60,60,0.16)', 'rgba(120,120,120,0.13)', 'rgba(190,190,190,0.10)'].slice(0, NP2);
     function chDatasets(chData) {
-      return [chData.p1, chData.p2, chData.p3].filter(Boolean).map((p,i)=>mkDS(PL2[i],p.inq,PC2[i]));
+      return [chData.p1, chData.p2, chData.p3].filter(Boolean).flatMap((p, i) => ([
+        mkDS(PL2[i] + ' 문의', p.inq, ch2Colors[i]),
+        mkDS(PL2[i] + ' 예약', p.book, PC2[i]),
+      ]));
+    }
+    function renderChWqChart(canvasId, chData) {
+      if (charts[canvasId]) charts[canvasId].destroy();
+      charts[canvasId] = new Chart(document.getElementById(canvasId), {
+        type: 'bar',
+        data: { labels: ch.cats, datasets: chDatasets(chData) },
+        options: BASE,
+        plugins: [periodBgPlugin(NP2, 2, ch2Shades)],
+      });
     }
 
     renderChWqTable('tbl-wq02-kakao', ch.kakao, '해외');
-    chLegend('lg-wq02-kakao', PC2.map((c,i)=>([c,PL2[i]])));
-    mkChart('chart-wq02-kakao', ch.cats, chDatasets(ch.kakao));
+    chLegend('lg-wq02-kakao', PL2.flatMap((l, i) => ([[ch2Colors[i], l + ' 문의'], [PC2[i], l + ' 예약']])));
+    renderChWqChart('chart-wq02-kakao', ch.kakao);
 
     renderChWqTable('tbl-wq02-naver', ch.naver, '부재');
-    chLegend('lg-wq02-naver', PC2.map((c,i)=>([c,PL2[i]])));
-    mkChart('chart-wq02-naver', ch.cats, chDatasets(ch.naver));
+    chLegend('lg-wq02-naver', PL2.flatMap((l, i) => ([[ch2Colors[i], l + ' 문의'], [PC2[i], l + ' 예약']])));
+    renderChWqChart('chart-wq02-naver', ch.naver);
 
     renderChWqTable('tbl-wq02-board', ch.board, '부재');
-    chLegend('lg-wq02-board', PC2.map((c,i)=>([c,PL2[i]])));
-    mkChart('chart-wq02-board', ch.cats, chDatasets(ch.board));
+    chLegend('lg-wq02-board', PL2.flatMap((l, i) => ([[ch2Colors[i], l + ' 문의'], [PC2[i], l + ' 예약']])));
+    renderChWqChart('chart-wq02-board', ch.board);
 
     renderChWqTable('tbl-wq02-wa', ch.whatsapp, '수술');
-    chLegend('lg-wq02-wa', PC2.map((c,i)=>([c,PL2[i]])));
-    mkChart('chart-wq02-wa', ch.cats, chDatasets(ch.whatsapp));
+    chLegend('lg-wq02-wa', PL2.flatMap((l, i) => ([[ch2Colors[i], l + ' 문의'], [PC2[i], l + ' 예약']])));
+    renderChWqChart('chart-wq02-wa', ch.whatsapp);
 
     renderAnalysis('ana-wq02',
       `4개 채널 중 <b>플친 문의 51→55→52건으로 7월 들어 주춤</b>했지만 <b>예약률은 41%→56%→62%로 3기간 연속 개선</b> — 전환 흐름이 꾸준히 좋아지는 채널.\n<b>네이버 예약률 98%→96%→95%로 여전히 채널 중 최고 수준</b> 유지, 문의는 85→71→73건으로 다시 소폭 회복.\n<b>게시판 문의 55→28→50건으로 반등</b>했으나 예약률은 91%→82%→90%로 오르내림 — 안정화 필요.\n<b>왓츠앱은 해외 문의 27→21→29건으로 꾸준히 증가</b> 중인 채널 — 예약률 37%→29%→14%는 해외 거주 특성상 즉시 예약 전환이 어려운 점이 반영된 결과로 보임.`,
