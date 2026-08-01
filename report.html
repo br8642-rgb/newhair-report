@@ -3744,7 +3744,10 @@ function renderDs05Detail(s, month) {
       return `
       <div class="hbar-item">
         <div class="hbar-label"><span class="hbl-ch">${cat}</span><span class="hbl-num" data-ds05-num="${di}-${ci}"></span></div>
-        <div class="hbar-track"><div class="hbar-fill" data-ds05-fill="${di}-${ci}" style="width:0%;background:${DS05_COLORS[di]};opacity:0.75;"></div></div>
+        <div class="hbar-track" style="position:relative;">
+          <div class="hbar-fill" data-ds05-fill-visit="${di}-${ci}" style="position:absolute;left:0;top:0;height:100%;width:0%;background:${DS05_COLORS[di]};opacity:0.25;"></div>
+          <div class="hbar-fill" data-ds05-fill-close="${di}-${ci}" style="position:absolute;left:0;top:0;height:100%;width:0%;background:${DS05_COLORS[di]};opacity:0.9;"></div>
+        </div>
       </div>`;
     }).join('');
     grid.innerHTML += `
@@ -3758,8 +3761,8 @@ function renderDs05Detail(s, month) {
 }
 
 // DOM 구조는 그대로 두고 막대 너비·수치만 갱신 — .hbar-fill의 기존 CSS transition(width .6s ease)이 자동으로 부드럽게 바뀜
-// 막대 길이는 체결률(%)이 아니라 "내원 건수"를 기준으로 함(체결률은 이미 카드 제목 옆 배지에 표시되므로 중복 안 함) —
-// 두 기간(may/jun) 중 더 큰 값을 100%로 놓고 정규화해서, 건수가 늘고 줄어드는 게 막대 길이 변화로 그대로 보이게 함
+// 막대는 2겹: 연한 색(내원 건수 길이) + 진한 색(체결 건수 길이, 내원 막대 안에 겹침) — 색으로 %를 표현하지 않고 절대 건수만 표현.
+// 두 기간(may/jun) 중 더 큰 내원 건수를 100%로 놓고 정규화해서, 건수가 늘고 줄어드는 게 막대 길이 변화로 그대로 보이게 함
 function updateDs05DetailValues(s, month) {
   const d = s[month];
   s.doctors.forEach((dr, di) => {
@@ -3772,11 +3775,14 @@ function updateDs05DetailValues(s, month) {
       const close = d.byCat.close[di][ci] || 0;
       const rate = d.byCat.rate[di][ci];
       const maxVisit = Math.max(s.may.byCat.visit[di][ci] || 0, s.jun.byCat.visit[di][ci] || 0);
-      const widthPct = maxVisit > 0 ? Math.round(visit / maxVisit * 100) : 0;
+      const visitPct = maxVisit > 0 ? Math.round(visit / maxVisit * 100) : 0;
+      const closePct = maxVisit > 0 ? Math.round(close / maxVisit * 100) : 0;
       const numEl = document.querySelector(`[data-ds05-num="${di}-${ci}"]`);
-      const fillEl = document.querySelector(`[data-ds05-fill="${di}-${ci}"]`);
+      const fillVisitEl = document.querySelector(`[data-ds05-fill-visit="${di}-${ci}"]`);
+      const fillCloseEl = document.querySelector(`[data-ds05-fill-close="${di}-${ci}"]`);
       if (numEl) numEl.innerHTML = `${close}/${visit}건 <span style="color:#aaa;font-weight:400;">(${rate === '—' ? '—' : rate + '%'})</span>`;
-      if (fillEl) fillEl.style.width = widthPct + '%';
+      if (fillVisitEl) fillVisitEl.style.width = visitPct + '%';
+      if (fillCloseEl) fillCloseEl.style.width = closePct + '%';
     });
   });
 }
