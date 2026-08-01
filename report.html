@@ -375,7 +375,7 @@
       <div class="section-subtitle" id="dbf03-subtitle"></div>
     </div>
     <div class="db03-pills" id="dbf03-pills"></div>
-    <div class="db03-flow-grid" id="dbf03-cards" style="grid-template-columns:repeat(3,1fr);"></div>
+    <div class="db03-flow-grid" id="dbf03-cards" style="grid-template-columns:repeat(4,1fr);align-items:stretch;"></div>
     <div class="analysis-box" id="ana-box-dbf03" style="margin-top:20px;"><p id="ana-dbf03"></p></div>
   </div>
 
@@ -1648,6 +1648,7 @@ const ALL_REPORTS = [
   dbCampaignFinal: {
     // 1차/2차는 6월 보고서(dbCampaign)에 있는 값 그대로 재사용, 3차(7/1~7/31)만 신규.
     // 총건(165) vs 실패내역 합(169)에 4건 차이가 있는데 원인 추적이 번거로워 그대로 둠(집계 시점 차이 등으로 흔히 발생).
+    totalDbCost: 13200000, // 1차(4,400,000)+2차(8,800,000) — 3차는 신규 구매 없어 추가 비용 없음
     periods: [
       { label:'1차', period:'03/06 – 04/25', color:'#90CAF9',
         newDb:103, connected:87, booked:23, visited:8, visitedRate:35, closed:3, closedRate:38, dbToClose:3, contract:14800000,
@@ -1659,7 +1660,7 @@ const ALL_REPORTS = [
         totalCalls:165, newDb:25, connected:58, booked:17, visited:5, visitedRate:25, closed:2, closedRate:40, dbToClose:8, contract:4700000,
         fail:{ '재연락부재':99, '보류':4, '예약거부':37, '부적합':0, '신규부재':8, '결번':4 } },
     ],
-    analysis: '1~3차에 걸쳐 총 301개 DB(1차 100개+2차 200개, <b>3차는 신규 구매 없이 기존 소진</b>)를 운영했고, 이번 3차를 끝으로 DB 캠페인을 마감합니다.\n체결 기준으로는 1차 3건→2차 2건→3차 2건으로 각 차수 모두 소수의 체결을 확보했고, <b>디비대비체결률은 3%→1%→8%로 3차가 오히려 가장 높은 전환율</b>을 보였습니다 — 재연락 중심 운영이었음에도 효율이 나쁘지 않았음.\n체결액은 1차 1,480만원·2차 720만원·3차 470만원으로 <b>총 2,670만원 매출</b>을 확보.\n3차는 신규 구매 없이 기존 리스트 재활용만으로 8% 체결률을 낸 만큼, 향후 재연락 캠페인의 가능성을 보여준 결과로 볼 수 있음.',
+    analysis: '1~3차 통합 기준 — 신규 DB 301건(1차 100개+2차 200개 구매, 3차는 추가 구매 없이 기존 소진) 중 연결 312건, 예약 70건(디비대비 23%・연결대비 22%), 내원 25건(예약대비 36%), 체결 7건(내원대비 28%, 디비대비 2%)로 마감.\n<b>총 DB 구매비 1,320만원 대비 체결액 2,670만원으로 순수익 +1,350만원(투자대비수익률 +102%)</b>을 기록.\n숫자상으로는 흑자지만, <b>3차례에 걸친 통화·재연락 운영 부담 대비 크게 남는 구조는 아니라고 판단</b>해 이번 3차를 마지막으로 DB 구매·재연락 캠페인을 중단하기로 함.',
   },
 },
 /* ── WQ: 2026년 6~7월 상반기 현황 (주간) — 신규, 기존 보고서와 완전 분리 ──
@@ -3474,43 +3475,76 @@ function renderSectionDbCampaign(r) {
 ═══════════════════════════════ */
 function renderSectionDbCampaignFinal(r) {
   const d = r.dbCampaignFinal;
-  const periods = d.periods; // [{label, period, color, ...metrics}, ...]
+  const realPeriods = d.periods; // [{label, period, color, ...metrics}, ...]
 
-  document.getElementById('dbf03-subtitle').textContent = 'DB 캠페인 1~3차 마감 종합 — 신규 구매 없이 기존 DB 소진 완료';
+  // 1~3차 통합(합계) 카드용 데이터 계산
+  const sum = key => realPeriods.reduce((a, p) => a + (p[key] || 0), 0);
+  const totalNewDb = sum('newDb'), totalConnected = sum('connected'), totalBooked = sum('booked'),
+        totalVisited = sum('visited'), totalClosed = sum('closed'), totalContract = sum('contract');
+  const totalCard = {
+    label: '합계', period: '1~3차 통합', color: '#333', isTotal: true,
+    newDb: totalNewDb, connected: totalConnected, booked: totalBooked,
+    visited: totalVisited, visitedRate: Math.round(totalVisited / totalBooked * 100),
+    closed: totalClosed, closedRate: Math.round(totalClosed / totalVisited * 100),
+    dbToClose: Math.round(totalClosed / totalNewDb * 100 * 10) / 10,
+    contract: totalContract,
+    dbCost: d.totalDbCost, netProfit: totalContract - d.totalDbCost,
+    roi: Math.round((totalContract - d.totalDbCost) / d.totalDbCost * 100),
+  };
+  const periods = [...realPeriods, totalCard];
 
-  document.getElementById('dbf03-pills').innerHTML = periods.map(p =>
+  document.getElementById('dbf03-subtitle').textContent = 'DB 캠페인 1~3차 마감 종합 — 3차부터 신규 구매 없이 기존 DB 소진';
+
+  document.getElementById('dbf03-pills').innerHTML = realPeriods.map(p =>
     `<span class="badge" style="background:${p.color}22;color:${p.color};">${p.label} &nbsp;${p.period}${p.note ? ' · ' + p.note : ''}</span>`
   ).join('');
 
-  const row = (label, val) => val === undefined ? '' :
+  const row = (label, val) =>
     `<div style="display:flex;justify-content:space-between;padding:6px 0;border-bottom:0.5px solid var(--border);font-size:13px;">
       <span style="color:var(--gray-500);">${label}</span><span style="font-weight:700;">${val}</span>
     </div>`;
 
-  document.getElementById('dbf03-cards').innerHTML = periods.map(p => `
-    <div>
+  document.getElementById('dbf03-cards').innerHTML = periods.map(p => {
+    const bookRateDb = Math.round(p.booked / p.newDb * 100);
+    const bookRateConn = Math.round(p.booked / p.connected * 100);
+    return `
+    <div class="card" style="display:flex;flex-direction:column;${p.isTotal ? 'border-color:#333;background:#FAFAFA;' : ''}">
       <div style="display:flex;align-items:center;gap:8px;margin-bottom:10px;">
         <div style="width:12px;height:12px;border-radius:50%;background:${p.color}"></div>
-        <div style="font-size:14px;font-weight:700;color:${p.color};">${p.label} &nbsp;${p.period}</div>
+        <div style="font-size:14px;font-weight:700;color:${p.color};">${p.label} &nbsp;<span style="font-size:12px;color:var(--gray-500);font-weight:600;">${p.period}</span></div>
       </div>
-      ${row('총건(신규+재연락)', p.totalCalls !== undefined ? p.totalCalls + '건' : undefined)}
+      ${row('총건(신규+재연락)', p.totalCalls !== undefined ? p.totalCalls + '건' : '—')}
       ${row('신규 DB(순신규)', p.newDb + '건')}
       ${row('통화 연결 소계', p.connected + '건')}
       ${row('예약', p.booked + '건')}
-      ${row('내원', p.visited + '건' + (p.visitedRate !== undefined ? ` (${p.visitedRate}%)` : ''))}
-      ${row('체결', p.closed + '건' + (p.closedRate !== undefined ? ` (${p.closedRate}%)` : ''))}
+      ${row('예약률 (디비대비・연결대비)', bookRateDb + '% · ' + bookRateConn + '%')}
+      ${row('내원', p.visited + '건 (' + p.visitedRate + '%)')}
+      ${row('체결', p.closed + '건 (' + p.closedRate + '%)')}
       ${row('디비대비 체결률', p.dbToClose + '%')}
       <div style="display:flex;justify-content:space-between;padding-top:10px;margin-top:4px;border-top:1.5px solid var(--border);">
         <span style="color:var(--gray-500);font-size:13px;">체결액</span>
         <span style="font-weight:700;font-size:15px;color:${p.color}">${fmtFull(p.contract)}</span>
       </div>
+      ${p.isTotal ? `
+        <div style="margin-top:10px;background:#FFFDE7;border-radius:8px;padding:10px 12px;">
+          ${row('총 DB 구매비', fmtFull(p.dbCost))}
+          <div style="display:flex;justify-content:space-between;padding:6px 0;font-size:13px;">
+            <span style="color:var(--gray-500);">순수익</span>
+            <span class="${p.netProfit >= 0 ? 'up' : 'down'}" style="font-weight:700;">${p.netProfit >= 0 ? '▲' : '▼'} ${fmtFull(Math.abs(p.netProfit))}</span>
+          </div>
+          <div style="display:flex;justify-content:space-between;padding:6px 0 0;font-size:13px;">
+            <span style="color:var(--gray-500);">투자대비수익률(ROI)</span>
+            <span style="font-weight:700;">${p.roi >= 0 ? '+' : ''}${p.roi}%</span>
+          </div>
+        </div>` : ''}
       ${p.fail ? `
         <button class="table-toggle-btn" onclick="toggleTable(this)" style="margin-top:12px;"><span class="toggle-arrow">▼</span> 통화실패 상세 펼치기</button>
         <div class="table-collapsible"><div style="padding-top:8px;">
           ${Object.entries(p.fail).map(([k, v]) => row(k, v + '건')).join('')}
         </div></div>` : ''}
     </div>
-  `).join('');
+  `;
+  }).join('');
 
   if (d.analysis) renderAnalysis('ana-dbf03', d.analysis, r);
 }
