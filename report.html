@@ -601,6 +601,13 @@
       <div class="table-collapsible"><div style="overflow-x:auto"><table class="data-table" id="tbl-rev08"></table></div></div>
     </div>
     <div class="analysis-box" id="ana-box-rev08"><p id="ana-rev08"></p></div>
+
+    <!-- 시술 건수(과목별 개수 + 평균 단가) — r.procedureCount 있을 때만 노출, 없으면(6월 등) 완전히 숨김 -->
+    <div id="rev08-proc-block" style="display:none;">
+      <div class="s02-section-label">과목별 시술 건수 <span style="font-size:11px;color:#999;font-weight:400;text-transform:none;letter-spacing:0;">(매출이 건수 때문인지 단가 때문인지 확인용)</span></div>
+      <div id="rev08-proc-cards" style="display:grid;grid-template-columns:repeat(4,1fr);gap:14px;margin-bottom:16px;"></div>
+      <div class="analysis-box" id="ana-box-rev08-proc"><p id="ana-rev08-proc"></p></div>
+    </div>
   </div>
 
   <!-- 섹션 ov00 — 전체 종합 현황 (6월 전용, 5월 보고서의 section-00과 별개 패널) -->
@@ -1796,6 +1803,16 @@ const ALL_REPORTS = [
     may: { revenue: [223611815,42320000,45720800,378005900,0,5238000], total: 694896515 }, // 6월(비교용, 기존 6월 보고서와 정확히 일치)
     jun: { revenue: [316334500,37139085,53172500,413972520,0,6725600], total: 827344205 }, // 7월(신규)
     analysis: '전체 매출 694,896,515원→827,344,205원으로 <b>19.1% 증가</b>.\n<b>모발이식이 223,611,815원→316,334,500원(+41.5%)으로 가장 크게 증가</b> — 앞선 전화현황에서 확인된 이식 문의 급증(94→142건)과 흐름이 일치.\nHairLap도 378,005,900원→413,972,520원(+9.5%)으로 <b>여전히 전체 매출의 절반(약 50%) 비중을 차지</b>하며 안정적으로 증가.\n<b>SMP 45,720,800원→53,172,500원(+16.3%)으로 동반 성장</b>, 기타 매출도 5,238,000원→6,725,600원(+28.4%)으로 늘어남.\n<b>헤어라인만 42,320,000원→37,139,085원(−12.2%)으로 유일하게 감소</b> — 앞선 원장님·직원 성사현황에서도 헤어라인 체결률이 하락했던 흐름과 일치. 키오머는 두 달 다 매출 0원으로 미운영 상태.',
+  },
+  procedureCount: {
+    // 매출이 건수 때문인지 단가 때문인지 확인용 — 6월 보고서엔 없는 신규 항목, 매출현황(rev08) 패널 안에 조건부로만 표시됨.
+    // 기타이식은 제외(요청에 따라), 자가세포주사는 HairLap 매출에 포함돼 있어 단가 계산 없이 건수만 참고 표시.
+    cats: ['모발이식','헤어라인','SMP'],
+    may: [27,8,17],
+    jun: [43,6,22],
+    injectionMay: 4,
+    injectionJun: 9,
+    analysis: '<b>모발이식 매출 +41.5%는 건수 증가(27→43건, +59.3%)가 주도</b> — 평균단가는 828만→736만원으로 오히려 소폭 하락, 물량으로 매출을 늘린 구조.\n헤어라인은 건수(8→6건)가 줄었는데도 매출 감소폭(−12.2%)이 크지 않았던 이유가 <b>평균단가 529만→619만원으로 상승</b>했기 때문으로 확인.\nSMP는 건수(17→22건, +29.4%)와 매출(+16.3%)이 함께 늘었지만, 평균단가는 269만→242만원으로 소폭 낮아짐.\n자가세포주사는 4→9건으로 늘었고(HairLap 매출에 포함), HairLap 매출 증가(+9.5%)에 일부 기여한 것으로 보임.',
   },
 },
 /* ── WQ: 2026년 6~7월 상반기 현황 (주간) — 신규, 기존 보고서와 완전 분리 ──
@@ -3241,6 +3258,17 @@ function renderReport(r) {
     if (r.staffStatus) { try { renderSectionStaff(r); } catch(e) { console.warn('직원별 성사율(st06) 렌더링 보류:', e); } }
     if (r.trafficStatus) { try { renderSectionTraffic(r); } catch(e) { console.warn('유입경로 분석(tr07) 렌더링 보류:', e); } }
     if (r.revenueStatus) { try { renderSectionRevenue(r); } catch(e) { console.warn('매출현황(rev08) 렌더링 보류:', e); } }
+    // 시술 건수(과목별 개수+평균단가) — 데이터 있는 보고서(7월~)만 표시, 없으면(6월 등) 블록 자체를 숨김
+    (function () {
+      const block = document.getElementById('rev08-proc-block');
+      if (!block) return;
+      if (r.procedureCount) {
+        block.style.display = '';
+        try { renderRev08ProcedureCount(r); } catch(e) { console.warn('시술 건수 렌더링 보류:', e); }
+      } else {
+        block.style.display = 'none';
+      }
+    })();
     if (r.overviewExtra) { try { renderSectionOverview(r); } catch(e) { console.warn('종합현황(ov00) 렌더링 보류:', e); } }
     if (r.reviewStatus) { try { renderSectionReview(r); } catch(e) { console.warn('종합리뷰(rv09) 렌더링 보류:', e); } }
     switchSection(firstSectionId);
@@ -4181,6 +4209,54 @@ function switchRev08Month(month) {
   rev08ActiveMonth = month;
   document.querySelectorAll('[onclick^="switchRev08Month"]').forEach(t=>t.classList.toggle('active',t.dataset.month===month));
   if(currentReport) renderRev08Pie(currentReport.revenueStatus, month);
+}
+
+/* ═══════════════════════════════
+   과목별 시술 건수(rev08-proc) — 매출이 건수 때문인지 단가 때문인지 확인용.
+   renderSectionRevenue()/기존 매출 렌더링은 전혀 안 건드리고 완전히 독립적으로 동작.
+   r.procedureCount가 있는 보고서(7월~)에서만 호출됨.
+═══════════════════════════════ */
+function renderRev08ProcedureCount(r) {
+  const pc = r.procedureCount, rev = r.revenueStatus;
+  const pl = r.meta.prevLabel || '5월', cl = r.meta.currLabel || '6월';
+
+  function fmtDiff(d, unit) {
+    if (d === 0) return `<span class="flat" style="font-size:11px;">— 0${unit}</span>`;
+    return `<span class="${d>0?'up':'down'}" style="font-size:11px;">${d>0?'▲':'▼'} ${Math.abs(d).toLocaleString()}${unit}</span>`;
+  }
+  function row(label, val) {
+    return `<div style="display:flex;justify-content:space-between;padding:6px 0;border-bottom:0.5px solid var(--border);font-size:13px;">
+      <span style="color:var(--gray-500);">${label}</span><span style="font-weight:700;">${val}</span>
+    </div>`;
+  }
+
+  const cards = pc.cats.map((cat, i) => {
+    const ci = rev.cats.indexOf(cat); // revenueStatus.cats에서 같은 과목의 매출 찾기
+    const cMay = pc.may[i], cJun = pc.jun[i];
+    const revMay = ci >= 0 ? rev.may.revenue[ci] : null;
+    const revJun = ci >= 0 ? rev.jun.revenue[ci] : null;
+    const avgMay = revMay != null && cMay > 0 ? Math.round(revMay / cMay) : null;
+    const avgJun = revJun != null && cJun > 0 ? Math.round(revJun / cJun) : null;
+    return `
+      <div class="card" style="display:flex;flex-direction:column;">
+        <div class="card-title" style="margin-bottom:12px;">${cat}</div>
+        ${row('건수', `${cMay}건 → ${cJun}건 ${fmtDiff(cJun-cMay,'건')}`)}
+        ${row('평균 단가', avgMay != null && avgJun != null ? `${fmtWon(avgMay)} → ${fmtWon(avgJun)}` : '—')}
+      </div>`;
+  });
+
+  // 자가세포주사 — HairLap 매출에 포함돼 있어 단가 계산 없이 건수만 참고용으로 표시(다른 카드와 행 구성은 동일하게 유지)
+  if (pc.injectionMay != null && pc.injectionJun != null) {
+    cards.push(`
+      <div class="card" style="display:flex;flex-direction:column;">
+        <div class="card-title" style="margin-bottom:12px;">자가세포주사</div>
+        ${row('건수', `${pc.injectionMay}건 → ${pc.injectionJun}건 ${fmtDiff(pc.injectionJun-pc.injectionMay,'건')}`)}
+        ${row('평균 단가', '<span style="color:#aaa;">— (HairLap 매출에 포함)</span>')}
+      </div>`);
+  }
+
+  document.getElementById('rev08-proc-cards').innerHTML = cards.join('');
+  if (pc.analysis) renderAnalysis('ana-rev08-proc', pc.analysis, r);
 }
 
 /* ═══════════════════════════════
