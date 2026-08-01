@@ -3758,6 +3758,8 @@ function renderDs05Detail(s, month) {
 }
 
 // DOM 구조는 그대로 두고 막대 너비·수치만 갱신 — .hbar-fill의 기존 CSS transition(width .6s ease)이 자동으로 부드럽게 바뀜
+// 막대 길이는 체결률(%)이 아니라 "내원 건수"를 기준으로 함(체결률은 이미 카드 제목 옆 배지에 표시되므로 중복 안 함) —
+// 두 기간(may/jun) 중 더 큰 값을 100%로 놓고 정규화해서, 건수가 늘고 줄어드는 게 막대 길이 변화로 그대로 보이게 함
 function updateDs05DetailValues(s, month) {
   const d = s[month];
   s.doctors.forEach((dr, di) => {
@@ -3769,11 +3771,12 @@ function updateDs05DetailValues(s, month) {
       const visit = d.byCat.visit[di][ci] || 0;
       const close = d.byCat.close[di][ci] || 0;
       const rate = d.byCat.rate[di][ci];
-      const rateNum = (rate === '—' || !visit) ? 0 : rate;
+      const maxVisit = Math.max(s.may.byCat.visit[di][ci] || 0, s.jun.byCat.visit[di][ci] || 0);
+      const widthPct = maxVisit > 0 ? Math.round(visit / maxVisit * 100) : 0;
       const numEl = document.querySelector(`[data-ds05-num="${di}-${ci}"]`);
       const fillEl = document.querySelector(`[data-ds05-fill="${di}-${ci}"]`);
       if (numEl) numEl.innerHTML = `${close}/${visit}건 <span style="color:#aaa;font-weight:400;">(${rate === '—' ? '—' : rate + '%'})</span>`;
-      if (fillEl) fillEl.style.width = rateNum + '%';
+      if (fillEl) fillEl.style.width = widthPct + '%';
     });
   });
 }
