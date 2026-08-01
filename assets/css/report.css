@@ -88,7 +88,7 @@ body { font-family: var(--font); background: var(--bg); color: var(--gray-900); 
 
 /* ANALYSIS BOX */
 .analysis-box { border-left:3px solid var(--gray-900); padding:18px 22px; margin-top:4px; margin-bottom:24px; background:var(--card-bg); border-radius:0 8px 8px 0; border:0.5px solid var(--border); border-left:3px solid var(--gray-900); }
-.analysis-box p { font-size:15px; color:var(--gray-700); line-height:1.9; }
+.analysis-box p { font-size:15px; color:var(--gray-700); line-height:1.9; word-break: keep-all; overflow-wrap: break-word; }
 .analysis-box .a-up { color:var(--red); font-weight:700; }
 .analysis-box .a-down { color:var(--blue); font-weight:700; }
 .analysis-box .a-bold { font-weight:700; color:var(--gray-900); }
