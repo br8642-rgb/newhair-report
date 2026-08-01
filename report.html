@@ -45,6 +45,14 @@
 #sst06-detail-grid .hbar-track { height: 14px; border-radius: 7px; }
 #sst06-detail-grid .hbar-fill { border-radius: 7px; }
 
+#sds05-detail-grid .ccc-title { font-size: 17px; font-weight: 800; padding-bottom: 10px; }
+#sds05-detail-grid .ccc-badge { font-size: 13px; padding: 4px 10px; }
+#sds05-detail-grid .hbl-ch { font-size: 15px; font-weight: 700; }
+#sds05-detail-grid .hbl-num { font-size: 15px; font-weight: 700; }
+#sds05-detail-grid .hbar-item { margin-bottom: 14px; }
+#sds05-detail-grid .hbar-track { height: 14px; border-radius: 7px; }
+#sds05-detail-grid .hbar-fill { border-radius: 7px; }
+
 /* ── 표 접기/펼치기 ── */
 .table-toggle-btn {
   display: inline-flex; align-items: center; gap: 6px;
@@ -3769,14 +3777,20 @@ function updateDs05DetailValues(s, month) {
     const badge = document.querySelector(`[data-ds05-badge="${di}"]`);
     if (badge) badge.textContent = '체결률 ' + d.total.rate[di] + '%';
     const fixedCats = (DS05_SUBJECTS[dr] || s.cats).filter(cat => s.cats.includes(cat));
+    // 막대 길이 기준(100%)을 과목별이 아니라 "이 원장님 카드 전체, 6월+7월 통틀어 최댓값" 하나로 고정
+    // → 과목 간 실제 규모 차이와 전달 대비 증감이 같은 척도 안에서 같이 보임
+    const doctorMax = Math.max(...fixedCats.map(cat => {
+      const ci = s.cats.indexOf(cat);
+      return Math.max(s.may.byCat.visit[di][ci] || 0, s.jun.byCat.visit[di][ci] || 0);
+    }), 1); // 전부 0인 경우 나눗셈 방지용 최소 1
     fixedCats.forEach(cat => {
       const ci = s.cats.indexOf(cat);
       const visit = d.byCat.visit[di][ci] || 0;
       const close = d.byCat.close[di][ci] || 0;
       const rate = d.byCat.rate[di][ci];
-      const maxVisit = Math.max(s.may.byCat.visit[di][ci] || 0, s.jun.byCat.visit[di][ci] || 0);
-      const visitPct = maxVisit > 0 ? Math.round(visit / maxVisit * 100) : 0;
-      const closePct = maxVisit > 0 ? Math.round(close / maxVisit * 100) : 0;
+      // 제곱근 압축 — 작은 과목(예: SMP 2건)도 최소한의 두께로 보이면서, 큰 과목은 여전히 더 길게 보이도록
+      const visitPct = Math.round(Math.sqrt(visit / doctorMax) * 100);
+      const closePct = Math.round(Math.sqrt(close / doctorMax) * 100);
       const numEl = document.querySelector(`[data-ds05-num="${di}-${ci}"]`);
       const fillVisitEl = document.querySelector(`[data-ds05-fill-visit="${di}-${ci}"]`);
       const fillCloseEl = document.querySelector(`[data-ds05-fill-close="${di}-${ci}"]`);
