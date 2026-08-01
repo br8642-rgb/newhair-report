@@ -3683,6 +3683,14 @@ function renderSectionClosing(r) {
 ═══════════════════════════════ */
 let ds05ActiveMonth = 'may';
 const DS05_COLORS = ['#5C6BC0','#C62828','#2E7D32','#E65100'];
+// 원장님별 고정 진료과목 — 실제 상담 여부와 무관하게 항상 이 과목들로 표시(0건이어도 노출).
+// 새로운 과목을 상담하게 되면 이 목록에 추가해서 반영.
+const DS05_SUBJECTS = {
+  '김진오 원장님': ['모발이식','헤어라인','SMP','탈모치료','기타이식'],
+  '박주성 원장님': ['SMP','탈모치료'],
+  '김진욱 원장님': ['모발이식','헤어라인'],
+  '조준상 원장님': ['모발이식','헤어라인'],
+};
 
 function renderSectionDoctor(r) {
   const s = r.doctorStatus;
@@ -3727,27 +3735,53 @@ function renderDs05Detail(s, month) {
   const grid = document.getElementById('sds05-detail-grid');
   grid.style.cssText = 'display:grid;grid-template-columns:repeat(2,1fr);gap:16px;margin-bottom:28px;';
   grid.innerHTML = '';
-  const d = s[month];
   s.doctors.forEach((dr, di) => {
-    const pairs = s.cats.map((cat,ci)=>({cat, visit:d.byCat.visit[di][ci], close:d.byCat.close[di][ci], rate:d.byCat.rate[di][ci]})).filter(p=>p.visit>0||p.close>0);
-    if(pairs.length===0) return;
-    const bars = pairs.map(p=>`
+    // 고정 진료과목(DS05_SUBJECTS) 기준 — 그 기간에 상담이 없었어도 항상 노출
+    const fixedCats = (DS05_SUBJECTS[dr] || s.cats).filter(cat => s.cats.includes(cat));
+    if (fixedCats.length === 0) return;
+    const bars = fixedCats.map(cat => {
+      const ci = s.cats.indexOf(cat);
+      return `
       <div class="hbar-item">
-        <div class="hbar-label"><span class="hbl-ch">${p.cat}</span><span class="hbl-num">${p.close}/${p.visit}건 <span style="color:#aaa;font-weight:400;">(${p.rate}%)</span></span></div>
-        <div class="hbar-track"><div class="hbar-fill" style="width:${p.rate}%;background:${DS05_COLORS[di]};opacity:0.75;"></div></div>
-      </div>`).join('');
+        <div class="hbar-label"><span class="hbl-ch">${cat}</span><span class="hbl-num" data-ds05-num="${di}-${ci}"></span></div>
+        <div class="hbar-track"><div class="hbar-fill" data-ds05-fill="${di}-${ci}" style="width:0%;background:${DS05_COLORS[di]};opacity:0.75;"></div></div>
+      </div>`;
+    }).join('');
     grid.innerHTML += `
       <div class="cat-channel-card">
-        <div class="ccc-title"><span style="width:10px;height:10px;border-radius:50%;background:${DS05_COLORS[di]};display:inline-block;flex-shrink:0;"></span>${dr}<span class="ccc-badge">체결률 ${d.total.rate[di]}%</span></div>
+        <div class="ccc-title"><span style="width:10px;height:10px;border-radius:50%;background:${DS05_COLORS[di]};display:inline-block;flex-shrink:0;"></span>${dr}<span class="ccc-badge" data-ds05-badge="${di}"></span></div>
         <div class="hbar-wrap">${bars}</div>
       </div>`;
+  });
+  // 그리드를 새로 만든 직후이므로 값은 애니메이션 없이 바로 채움(0%에서 시작하면 어색함) — 다음 프레임에 실제값으로 세팅해 자연스럽게 채워지는 효과
+  requestAnimationFrame(() => updateDs05DetailValues(s, month));
+}
+
+// DOM 구조는 그대로 두고 막대 너비·수치만 갱신 — .hbar-fill의 기존 CSS transition(width .6s ease)이 자동으로 부드럽게 바뀜
+function updateDs05DetailValues(s, month) {
+  const d = s[month];
+  s.doctors.forEach((dr, di) => {
+    const badge = document.querySelector(`[data-ds05-badge="${di}"]`);
+    if (badge) badge.textContent = '체결률 ' + d.total.rate[di] + '%';
+    const fixedCats = (DS05_SUBJECTS[dr] || s.cats).filter(cat => s.cats.includes(cat));
+    fixedCats.forEach(cat => {
+      const ci = s.cats.indexOf(cat);
+      const visit = d.byCat.visit[di][ci] || 0;
+      const close = d.byCat.close[di][ci] || 0;
+      const rate = d.byCat.rate[di][ci];
+      const rateNum = (rate === '—' || !visit) ? 0 : rate;
+      const numEl = document.querySelector(`[data-ds05-num="${di}-${ci}"]`);
+      const fillEl = document.querySelector(`[data-ds05-fill="${di}-${ci}"]`);
+      if (numEl) numEl.innerHTML = `${close}/${visit}건 <span style="color:#aaa;font-weight:400;">(${rate === '—' ? '—' : rate + '%'})</span>`;
+      if (fillEl) fillEl.style.width = rateNum + '%';
+    });
   });
 }
 
 function switchDs05Month(month) {
   ds05ActiveMonth = month;
   document.querySelectorAll('[onclick^="switchDs05"]').forEach(t=>t.classList.toggle('active',t.dataset.month===month));
-  if(currentReport) renderDs05Detail(currentReport.doctorStatus, month);
+  if (currentReport) updateDs05DetailValues(currentReport.doctorStatus, month);
 }
 
 /* ═══════════════════════════════
