@@ -1713,6 +1713,29 @@ const ALL_REPORTS = [
     },
     analysis: '<b>박주성 원장님은 6월·7월 모두 체결률 80%→79%로 안정적인 최고 수준 유지</b> — SMP 69%→83%로 개선, 탈모치료는 86%→77%로 다소 낮아짐.\n<b>조준상 원장님은 0%→38%(+38%p)로 가장 크게 개선</b> — 상담 5→16건으로 늘면서 체결도 0→6건 발생, SMP는 100% 체결.\n<b>김진욱 원장님도 20%→42%(+22%p)로 개선</b>, 모발이식 25%→43%로 상승.\n<b>김진오 원장님은 55%→48%(−7%p)로 소폭 하락</b> — 헤어라인 상담이 17→8건으로 줄면서 체결도 0건으로 떨어진 영향, 모발이식(54%→53%)은 안정적으로 유지.',
   },
+  staffStatus: {
+    // 6월(may) 수치는 이후 취소로 조정된 최신값 — 기존 6월 보고서 원본과 다름(확인됨, 의도된 차이)
+    // 최무근은 담당 과목이 SMP가 아니라 탈모치료로 확인됨(기존 저장 데이터의 라벨 오류 정정, 확인됨)
+    staff: ['전소영','손예진','신유지','조영은','최무근','김승희'],
+    cats: ['모발이식','헤어라인','SMP','탈모치료'],
+    may: {
+      total: { visit:[36,42,28,34,26,0], close:[23,24,18,19,19,0], rate:[64,57,64,56,73,'—'] },
+      byCat: {
+        visit: [[12,7,0,17],[25,5,0,12],[11,4,0,13],[14,2,2,16],[0,0,0,26],[0,0,0,0]],
+        close: [[6,4,0,13],[12,1,0,11],[4,1,0,13],[5,0,1,13],[0,0,0,19],[0,0,0,0]],
+        rate:  [[50,57,'—',76],[48,20,'—',92],[36,25,'—',100],[36,0,50,81],['—','—','—',73],['—','—','—','—']],
+      },
+    },
+    jun: {
+      total: { visit:[43,50,47,48,23,5], close:[25,30,31,28,19,0], rate:[58,60,66,58,83,0] },
+      byCat: {
+        visit: [[23,4,1,15],[22,2,0,26],[22,3,0,22],[22,3,0,23],[0,0,0,23],[4,1,0,0]],
+        close: [[10,1,1,13],[11,1,0,18],[12,0,0,19],[10,1,0,17],[0,0,0,19],[0,0,0,0]],
+        rate:  [[43,25,100,87],[50,50,'—',69],[55,0,'—',86],[45,33,'—',74],['—','—','—',83],[0,0,'—','—']],
+      },
+    },
+    analysis: '<b>최무근은 탈모치료 전담 체결률 73%→83%(+10%p)로 가장 크게 개선</b>, 6명 중 유일하게 80%대 진입.\n<b>신유지(64%→66%)·조영은(56%→58%)·손예진(57%→60%)은 전부 소폭 개선</b>돼 전반적으로 안정적인 흐름.\n<b>전소영은 64%→58%(−6%p)로 다소 하락</b> — 모발이식(50%→43%)·헤어라인(57%→25%) 모두 낮아진 영향이나, SMP에서 처음으로 1건 체결(100%) 성사.\n<b>김승희는 7월 상담이 0→5건으로 처음 발생</b>했으나 아직 체결로 이어지지는 않아 지켜볼 필요가 있음.',
+  },
 },
 /* ── WQ: 2026년 6~7월 상반기 현황 (주간) — 신규, 기존 보고서와 완전 분리 ──
    기본 화면(index 0)으로 노출하기로 확정. 배열 순서만 맨 앞으로 옮긴 것이며, 내용/다른 보고서는 무변경.
@@ -3871,30 +3894,78 @@ function renderSectionStaff(r) {
   if (st06TabJun) st06TabJun.textContent = cl;
 }
 
+// 직원별 고정 진료과목 — 실제 상담 여부와 무관하게 항상 이 과목들로 표시(0건이어도 노출).
+// 새로운 과목을 상담하게 되면 이 목록에 추가해서 반영.
+const STAFF_SUBJECTS = {
+  '전소영': ['모발이식','헤어라인','SMP','탈모치료'],
+  '손예진': ['모발이식','헤어라인','탈모치료'],
+  '신유지': ['모발이식','헤어라인','탈모치료'],
+  '조영은': ['모발이식','헤어라인','SMP','탈모치료'],
+  '최무근': ['탈모치료'],
+  '김승희': ['모발이식','헤어라인'],
+};
+
 function renderSt06Detail(s, month) {
   const grid = document.getElementById('sst06-detail-grid');
   grid.innerHTML = '';
-  const d = s[month];
   s.staff.forEach((name, si) => {
-    const pairs = s.cats.map((cat,ci)=>({cat, visit:d.byCat.visit[si][ci], close:d.byCat.close[si][ci], rate:d.byCat.rate[si][ci]})).filter(p=>p.visit>0||p.close>0);
-    if(pairs.length===0) return;
-    const bars = pairs.map(p=>`
+    // 고정 진료과목(STAFF_SUBJECTS) 기준 — 그 기간에 상담이 없었어도 항상 노출. 목록에 없으면 기존 방식(전체 cats)으로 대체.
+    const fixedCats = (STAFF_SUBJECTS[name] || s.cats).filter(cat => s.cats.includes(cat));
+    if (fixedCats.length === 0) return;
+    const bars = fixedCats.map(cat => {
+      const ci = s.cats.indexOf(cat);
+      return `
       <div class="hbar-item">
-        <div class="hbar-label"><span class="hbl-ch">${p.cat}</span><span class="hbl-num">${p.close}/${p.visit}건 <span style="color:#aaa;font-weight:400;">(${pct(p.rate)})</span></span></div>
-        <div class="hbar-track"><div class="hbar-fill" style="width:${p.rate==='—'?0:p.rate}%;background:${STAFF_COLORS[si]};opacity:0.8;"></div></div>
-      </div>`).join('');
+        <div class="hbar-label"><span class="hbl-ch">${cat}</span><span class="hbl-num" data-st06-num="${si}-${ci}"></span></div>
+        <div class="hbar-track" style="position:relative;">
+          <div class="hbar-fill" data-st06-fill-visit="${si}-${ci}" style="position:absolute;left:0;top:0;height:100%;width:0%;background:${STAFF_COLORS[si]};opacity:0.25;"></div>
+          <div class="hbar-fill" data-st06-fill-close="${si}-${ci}" style="position:absolute;left:0;top:0;height:100%;width:0%;background:${STAFF_COLORS[si]};opacity:0.9;"></div>
+        </div>
+      </div>`;
+    }).join('');
     grid.innerHTML += `
       <div class="cat-channel-card">
-        <div class="ccc-title"><span style="width:10px;height:10px;border-radius:50%;background:${STAFF_COLORS[si]};display:inline-block;flex-shrink:0;"></span>${name}<span class="ccc-badge">체결률 ${pct(d.total.rate[si])}</span></div>
+        <div class="ccc-title"><span style="width:10px;height:10px;border-radius:50%;background:${STAFF_COLORS[si]};display:inline-block;flex-shrink:0;"></span>${name}<span class="ccc-badge" data-st06-badge="${si}"></span></div>
         <div class="hbar-wrap">${bars}</div>
       </div>`;
+  });
+  requestAnimationFrame(() => updateSt06DetailValues(s, month));
+}
+
+// DOM 구조는 그대로 두고 막대 너비·수치만 갱신 — .hbar-fill의 기존 CSS transition(width .6s ease)이 자동으로 부드럽게 바뀜
+// 막대는 2겹(연한=상담, 진한=체결, 절대 건수 기준), 기준(100%)은 그 직원의 5월+6월(또는 6월+7월) 통틀어 최댓값 하나로 고정,
+// 제곱근으로 압축해서 작은 과목도 최소한의 두께는 보이게 함 — 원장님 성사현황(ds05)과 동일한 방식.
+function updateSt06DetailValues(s, month) {
+  const d = s[month];
+  s.staff.forEach((name, si) => {
+    const badge = document.querySelector(`[data-st06-badge="${si}"]`);
+    if (badge) badge.textContent = '체결률 ' + pct(d.total.rate[si]);
+    const fixedCats = (STAFF_SUBJECTS[name] || s.cats).filter(cat => s.cats.includes(cat));
+    const staffMax = Math.max(...fixedCats.map(cat => {
+      const ci = s.cats.indexOf(cat);
+      return Math.max(s.may.byCat.visit[si][ci] || 0, s.jun.byCat.visit[si][ci] || 0);
+    }), 1);
+    fixedCats.forEach(cat => {
+      const ci = s.cats.indexOf(cat);
+      const visit = d.byCat.visit[si][ci] || 0;
+      const close = d.byCat.close[si][ci] || 0;
+      const rate = d.byCat.rate[si][ci];
+      const visitPct = Math.round(Math.sqrt(visit / staffMax) * 100);
+      const closePct = Math.round(Math.sqrt(close / staffMax) * 100);
+      const numEl = document.querySelector(`[data-st06-num="${si}-${ci}"]`);
+      const fillVisitEl = document.querySelector(`[data-st06-fill-visit="${si}-${ci}"]`);
+      const fillCloseEl = document.querySelector(`[data-st06-fill-close="${si}-${ci}"]`);
+      if (numEl) numEl.innerHTML = `${close}/${visit}건 <span style="color:#aaa;font-weight:400;">(${pct(rate)})</span>`;
+      if (fillVisitEl) fillVisitEl.style.width = visitPct + '%';
+      if (fillCloseEl) fillCloseEl.style.width = closePct + '%';
+    });
   });
 }
 
 function switchSt06Month(month) {
   st06ActiveMonth = month;
   document.querySelectorAll('[onclick^="switchSt06"]').forEach(t => t.classList.toggle('active', t.dataset.month === month));
-  if(currentReport) renderSt06Detail(currentReport.staffStatus, month);
+  if (currentReport) updateSt06DetailValues(currentReport.staffStatus, month);
 }
 
 /* ═══════════════════════════════
