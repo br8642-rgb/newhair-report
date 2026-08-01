@@ -367,6 +367,18 @@
     </div>
   </div>
 
+  <!-- 섹션 dbf03 — DB 현황(마감 보고, 7월 전용) — 기존 section-db03(6월)과 완전 분리된 신규 패널 -->
+  <div class="section-panel" id="section-dbf03">
+    <div class="section-header">
+      <div class="section-tag">Section 03</div>
+      <div class="section-title">DB 현황 (마감 보고)</div>
+      <div class="section-subtitle" id="dbf03-subtitle"></div>
+    </div>
+    <div class="db03-pills" id="dbf03-pills"></div>
+    <div class="db03-flow-grid" id="dbf03-cards" style="grid-template-columns:repeat(3,1fr);"></div>
+    <div class="analysis-box" id="ana-box-dbf03" style="margin-top:20px;"><p id="ana-dbf03"></p></div>
+  </div>
+
   <!-- 섹션 v03 — 내원 현황 (6월 전용, 5월 보고서의 section-04와 별개 패널) -->
   <div class="section-panel" id="section-v03">
     <div class="section-header">
@@ -1633,6 +1645,22 @@ const ALL_REPORTS = [
     },
     analysis: '5개 채널 모두 문의가 늘었습니다 — 전화 344→485건(+41%), 플친 85→108건(+27%), 네이버 124→155건(+25%), 게시판 65→90건(+38%), 왓츠앱 37→60건(+62%)로 전 채널 동반 성장.\n<b>게시판은 문의가 크게 늘었는데도 예약률 88%로 그대로 유지</b>돼 성장과 전환 안정을 동시에 확보한 채널로 확인됨.\n<b>네이버는 96%로 여전히 5개 채널 중 최고 예약률</b>을 유지하며 안정적인 핵심 채널 역할을 이어감.\n전화·플친·왓츠앱은 예약률이 소폭(1~4%p) 하락했는데, 문의량 자체가 크게 늘어난 영향으로 보이며 — 특히 <b>왓츠앱은 문의가 62%로 가장 크게 늘어난 채널</b>이라 늘어난 문의를 어떻게 예약으로 잘 연결할지 살펴볼 필요가 있음.',
   },
+  dbCampaignFinal: {
+    // 1차/2차는 6월 보고서(dbCampaign)에 있는 값 그대로 재사용, 3차(7/1~7/31)만 신규.
+    // 총건(165) vs 실패내역 합(169)에 4건 차이가 있는데 원인 추적이 번거로워 그대로 둠(집계 시점 차이 등으로 흔히 발생).
+    periods: [
+      { label:'1차', period:'03/06 – 04/25', color:'#90CAF9',
+        newDb:103, connected:87, booked:23, visited:8, visitedRate:35, closed:3, closedRate:38, dbToClose:3, contract:14800000,
+        fail:{ '재연락/부재':44, '예약거부':49, '보류':14, '신규부재':41, '결번':24 } },
+      { label:'2차', period:'04/27 – 06/30', color:'#1565C0', note:'업무폰 병행 운영',
+        newDb:173, connected:167, booked:30, visited:12, visitedRate:40, closed:2, closedRate:17, dbToClose:1, contract:7200000,
+        fail:{ '재연락/부재':44, '예약거부':107, '보류':23, '신규부재':46, '결번':21 } },
+      { label:'3차', period:'07/01 – 07/31', color:'#C62828', note:'신규 구매 없이 기존 DB 소진 + 재연락 위주(신규 25건)',
+        totalCalls:165, newDb:25, connected:58, booked:17, visited:5, visitedRate:25, closed:2, closedRate:40, dbToClose:8, contract:4700000,
+        fail:{ '재연락부재':99, '보류':4, '예약거부':37, '부적합':0, '신규부재':8, '결번':4 } },
+    ],
+    analysis: '1~3차에 걸쳐 총 301개 DB(1차 100개+2차 200개, <b>3차는 신규 구매 없이 기존 소진</b>)를 운영했고, 이번 3차를 끝으로 DB 캠페인을 마감합니다.\n체결 기준으로는 1차 3건→2차 2건→3차 2건으로 각 차수 모두 소수의 체결을 확보했고, <b>디비대비체결률은 3%→1%→8%로 3차가 오히려 가장 높은 전환율</b>을 보였습니다 — 재연락 중심 운영이었음에도 효율이 나쁘지 않았음.\n체결액은 1차 1,480만원·2차 720만원·3차 470만원으로 <b>총 2,670만원 매출</b>을 확보.\n3차는 신규 구매 없이 기존 리스트 재활용만으로 8% 체결률을 낸 만큼, 향후 재연락 캠페인의 가능성을 보여준 결과로 볼 수 있음.',
+  },
 },
 /* ── WQ: 2026년 6~7월 상반기 현황 (주간) — 신규, 기존 보고서와 완전 분리 ──
    기본 화면(index 0)으로 노출하기로 확정. 배열 순서만 맨 앞으로 옮긴 것이며, 내용/다른 보고서는 무변경.
@@ -2492,6 +2520,7 @@ function availableMonthlySections(r) {
   has(!!r.section03db, '03', 'DB 현황');
   has(!!r.section03,   '04', '내원 현황');
   has(!!r.dbCampaign, 'db03', 'DB 현황', '03');
+  has(!!r.dbCampaignFinal, 'dbf03', 'DB 현황 (마감)', '03');
   has(!!r.visitStatus, 'v03', '내원 현황', '04');
   has(!!r.closingStatus, 'cs04', '성사 현황', '05');
   has(!!r.doctorStatus, 'ds05', '원장님 성사 현황', '06');
@@ -3069,6 +3098,7 @@ function renderReport(r) {
     renderAnalysis('ana-phone', phoneAnalysis, r);
     if (r.section02) { try { renderSection02(r); } catch(e) { console.warn('section02 렌더링 보류:', e); } }
     if (r.dbCampaign) { try { renderSectionDbCampaign(r); } catch(e) { console.warn('DB현황(db03) 렌더링 보류:', e); } }
+    if (r.dbCampaignFinal) { try { renderSectionDbCampaignFinal(r); } catch(e) { console.warn('DB현황(마감,dbf03) 렌더링 보류:', e); } }
     if (r.visitStatus) { try { renderSectionVisit(r); } catch(e) { console.warn('내원현황(v03) 렌더링 보류:', e); } }
     if (r.closingStatus) { try { renderSectionClosing(r); } catch(e) { console.warn('성사현황(cs04) 렌더링 보류:', e); } }
     if (r.doctorStatus) { try { renderSectionDoctor(r); } catch(e) { console.warn('원장님 성사현황(ds05) 렌더링 보류:', e); } }
@@ -3436,6 +3466,53 @@ function renderSectionDbCampaign(r) {
       <span style="color:var(--gray-700);">${ins.text}</span>
     </div>`;
   }).join('');
+}
+
+/* ═══════════════════════════════
+   섹션 dbf03 렌더링 — DB 현황(마감 보고, 7월 전용)
+   기존 renderSectionDbCampaign()/section-db03(6월)과 완전 독립. 핵심 숫자만 담은 단순 3구간 카드.
+═══════════════════════════════ */
+function renderSectionDbCampaignFinal(r) {
+  const d = r.dbCampaignFinal;
+  const periods = d.periods; // [{label, period, color, ...metrics}, ...]
+
+  document.getElementById('dbf03-subtitle').textContent = 'DB 캠페인 1~3차 마감 종합 — 신규 구매 없이 기존 DB 소진 완료';
+
+  document.getElementById('dbf03-pills').innerHTML = periods.map(p =>
+    `<span class="badge" style="background:${p.color}22;color:${p.color};">${p.label} &nbsp;${p.period}${p.note ? ' · ' + p.note : ''}</span>`
+  ).join('');
+
+  const row = (label, val) => val === undefined ? '' :
+    `<div style="display:flex;justify-content:space-between;padding:6px 0;border-bottom:0.5px solid var(--border);font-size:13px;">
+      <span style="color:var(--gray-500);">${label}</span><span style="font-weight:700;">${val}</span>
+    </div>`;
+
+  document.getElementById('dbf03-cards').innerHTML = periods.map(p => `
+    <div>
+      <div style="display:flex;align-items:center;gap:8px;margin-bottom:10px;">
+        <div style="width:12px;height:12px;border-radius:50%;background:${p.color}"></div>
+        <div style="font-size:14px;font-weight:700;color:${p.color};">${p.label} &nbsp;${p.period}</div>
+      </div>
+      ${row('총건(신규+재연락)', p.totalCalls !== undefined ? p.totalCalls + '건' : undefined)}
+      ${row('신규 DB(순신규)', p.newDb + '건')}
+      ${row('통화 연결 소계', p.connected + '건')}
+      ${row('예약', p.booked + '건')}
+      ${row('내원', p.visited + '건' + (p.visitedRate !== undefined ? ` (${p.visitedRate}%)` : ''))}
+      ${row('체결', p.closed + '건' + (p.closedRate !== undefined ? ` (${p.closedRate}%)` : ''))}
+      ${row('디비대비 체결률', p.dbToClose + '%')}
+      <div style="display:flex;justify-content:space-between;padding-top:10px;margin-top:4px;border-top:1.5px solid var(--border);">
+        <span style="color:var(--gray-500);font-size:13px;">체결액</span>
+        <span style="font-weight:700;font-size:15px;color:${p.color}">${fmtFull(p.contract)}</span>
+      </div>
+      ${p.fail ? `
+        <button class="table-toggle-btn" onclick="toggleTable(this)" style="margin-top:12px;"><span class="toggle-arrow">▼</span> 통화실패 상세 펼치기</button>
+        <div class="table-collapsible"><div style="padding-top:8px;">
+          ${Object.entries(p.fail).map(([k, v]) => row(k, v + '건')).join('')}
+        </div></div>` : ''}
+    </div>
+  `).join('');
+
+  if (d.analysis) renderAnalysis('ana-dbf03', d.analysis, r);
 }
 
 /* ═══════════════════════════════
