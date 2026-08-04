@@ -4568,6 +4568,11 @@ function renderSectionOverview(r) {
 
   const dbc = r.dbCampaign;
   const cards = [];
+  cards.push({ tag:'01', title:'전화 현황', color:'#1565C0', items:[
+    { label:'문의', val:`${ph.total_may.inq}→${ph.total_jun.inq}건`, trend:{prev:ph.total_may.inq, curr:ph.total_jun.inq} },
+    { label:'예약', val:`${ph.total_may.book}→${ph.total_jun.book}건`, trend:{prev:ph.total_may.book, curr:ph.total_jun.book} },
+    { label:'예약률', val:`${ph.total_may.rate}%→${ph.total_jun.rate}%`, trend:{prev:ph.total_may.rate, curr:ph.total_jun.rate} },
+  ]});
   if (dbc) {
     const totalCost = dbc.p1.dbCost + dbc.p2.dbCost;
     const totalNet = dbc.p1.netProfit + dbc.p2.netProfit;
