@@ -1815,9 +1815,11 @@ const ALL_REPORTS = [
     injectionJun: 9,
   },
   mergedInquiry: {
-    // ov00(종합현황)·rv09(종합리뷰)에서 total_may/total_jun(inq/book/rate)만 사용됨 — 이미 검증된 전화+플친+네이버+게시판+왓츠앱 수치를 그대로 합산.
-    total_may: { inq:655, book:553, rate:84 },
-    total_jun: { inq:898, book:730, rate:81 },
+    // ov00(종합현황)·rv09(종합리뷰)에서 total_may/total_jun(inq/book/rate)만 사용됨.
+    // 전화+플친+왓츠앱만 합산 — 네이버·게시판은 전화로 예약이 이뤄져 전화 수치에 이미 포함되므로 제외
+    // (기존 6월 보고서도 동일한 방식: 전화346+플친86+왓츠앱39=471로 정확히 일치, 확인됨).
+    total_may: { inq:466, book:375, rate:80 },
+    total_jun: { inq:653, book:502, rate:77 },
   },
   overviewExtra: {
     analysis: '신규문의(전화 기준) 344→485건(+40.9%)으로 크게 증가, 성사현황 기준 상담 181→232건, 체결 112→141건으로 동반 성장.\n전체 체결률은 62%→61%로 거의 동일한 수준 유지.\n매출은 6.95억→8.27억원(+19.1%)으로 문의 증가폭보다는 낮지만 견조하게 증가 — 모발이식이 문의·매출 증가를 모두 주도.',
