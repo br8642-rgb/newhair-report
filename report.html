@@ -1675,6 +1675,16 @@ const ALL_REPORTS = [
       },
       analysis: '4개 채널 중 <b>플친은 문의 48→54→56건으로 꾸준히 증가</b>했고 예약률도 60%→46%→52%로 2구간 이후 다소 회복.\n<b>네이버는 예약률 94%→98%→99%로 3구간 내내 채널 중 최고 수준</b>을 유지하며 가장 안정적인 채널로 확인됨.\n게시판은 문의 48→40→45건, 예약률 90%→85%→89%로 세 구간 모두 준수한 수준.\n<b>왓츠앱은 문의 26→31→38건으로 꾸준히 늘었지만 예약률은 15%→39%→26%로 구간마다 크게 오르내림</b> — 해외 고객 특성상 즉시 예약 전환이 어려운 흐름이 이어지는 것으로 보이며, 전환 관리를 계속 지켜볼 필요가 있음.',
     },
+    visitStatus: {
+      // 흉터재봉합은 3구간 모두 0건이라 제외(요청에 따라). 8/1~8/15 모발이식은 1건 누락돼 있던 것 확인 후 정정(52→53건, 내원 합계 237→238건과 일치).
+      cats: ['모발이식','헤어라인','SMP','탈모치료','검사','기타이식','키오머','처방','기타'],
+      periodLabels: ['7/2~7/16', '7/17~7/31', '8/1~8/15'],
+      periods: ['7/2~7/16', '7/17~7/31', '8/1~8/15'],
+      p1: { total_book:269, cancel_pre:9,  remain:260, cancel_pre_rate:3.3, visit:220, visit_rate:85, final_visit_rate:82, same_day:14, noshow:26, by_cat:[48,5,13,39,89,0,0,21,5] },
+      p2: { total_book:288, cancel_pre:12, remain:276, cancel_pre_rate:4.2, visit:254, visit_rate:92, final_visit_rate:88, same_day:10, noshow:12, by_cat:[56,10,11,50,108,0,0,17,2] },
+      p3: { total_book:271, cancel_pre:9,  remain:262, cancel_pre_rate:3.3, visit:238, visit_rate:91, final_visit_rate:88, same_day:13, noshow:11, by_cat:[53,6,13,44,105,1,1,11,4] },
+      analysis: '총 예약 269→288→271건으로 2구간에 정점을 찍고 3구간은 다시 조정되는 흐름.\n<b>내원율 85%→92%→91%로 2구간부터 높은 수준을 유지</b>, 최종내원율도 82%→88%→88%로 개선된 채 안정적.\n<b>당일취소 14→10→13건, 부도 26→12→11건으로 둘 다 2구간 이후 뚜렷하게 개선</b>된 흐름을 유지.\n과목별로는 <b>검사 89→108→105건으로 여전히 최다</b>, 모발이식도 48→56→53건으로 안정적인 흐름을 이어감.',
+    },
   },
 },
 /* ── 2026년 7월 (월간) — 신규, 기존 보고서와 완전 분리 ──
@@ -2754,13 +2764,15 @@ function availableWqSections(r) {
   const wq = (r && r.wqData) || {};
   const list = [];
   const has = (cond, id, label, num) => { if (cond) list.push({id, label, num}); };
-  // 종합현황(00)·종합리뷰(04)는 별도 데이터가 아니라 01~03을 종합해서 만드는 섹션이라, 셋 다 있을 때만 노출
+  // 종합현황(00)·종합리뷰(04)는 별도 데이터가 아니라 01~03을 종합해서 만드는 섹션이라, 셋 다 있을 때만 노출.
+  // 실제 렌더링 함수도 wq.overview/wq.review 존재를 요구하므로, 네비게이션 노출 조건도 동일하게 맞춤
+  // (안 맞추면 "탭은 보이는데 클릭하면 빈 화면"이 되는 불일치가 생김).
   const allReady = !!(wq.phoneStatus && wq.channelStatus && wq.visitStatus);
-  has(allReady,           'wq-00', '종합 현황', '00');
+  has(allReady && !!wq.overview, 'wq-00', '종합 현황', '00');
   has(!!wq.phoneStatus,   'wq-01', '전화 현황', '01');
   has(!!wq.channelStatus, 'wq-02', '채널별 현황', '02');
   has(!!wq.visitStatus,   'wq-03', '내원 현황', '03');
-  has(allReady,           'wq-04', '종합 리뷰', '04');
+  has(allReady && !!wq.review, 'wq-04', '종합 리뷰', '04');
   return list;
 }
 
