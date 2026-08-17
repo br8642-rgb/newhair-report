@@ -1328,6 +1328,7 @@
       <div class="kpi-compare" id="wq02-kpi"></div>
     </div>
     <!-- 플친 -->
+    <div id="wq02-block-kakao">
     <div class="s02-section-label">플친 (카카오채널)</div>
     <div class="card">
       <div class="card-title">플친 문의·예약 상세 <span style="font-size:11px;color:#6b6b6b;font-weight:400;">(해외 포함)</span></div>
@@ -1339,7 +1340,9 @@
       <div class="ch-legend-row" id="lg-wq02-kakao"></div>
       <div class="chart-wrap" style="height:220px"><canvas id="chart-wq02-kakao"></canvas></div>
     </div>
+    </div>
     <!-- 네이버 -->
+    <div id="wq02-block-naver">
     <div class="s02-section-label">네이버</div>
     <div class="card">
       <div class="card-title">네이버 문의·예약 상세</div>
@@ -1351,7 +1354,9 @@
       <div class="ch-legend-row" id="lg-wq02-naver"></div>
       <div class="chart-wrap" style="height:220px"><canvas id="chart-wq02-naver"></canvas></div>
     </div>
+    </div>
     <!-- 게시판 -->
+    <div id="wq02-block-board">
     <div class="s02-section-label">게시판</div>
     <div class="card">
       <div class="card-title">게시판 문의·예약 상세</div>
@@ -1363,7 +1368,9 @@
       <div class="ch-legend-row" id="lg-wq02-board"></div>
       <div class="chart-wrap" style="height:220px"><canvas id="chart-wq02-board"></canvas></div>
     </div>
+    </div>
     <!-- 왓츠앱 -->
+    <div id="wq02-block-whatsapp">
     <div class="s02-section-label">왓츠앱</div>
     <div class="card">
       <div class="card-title">왓츠앱 문의·예약 상세</div>
@@ -1374,6 +1381,7 @@
       <div class="card-title">왓츠앱 문의·예약 추이 <span style="font-size:11px;color:#6b6b6b;font-weight:400;">(3기간)</span></div>
       <div class="ch-legend-row" id="lg-wq02-wa"></div>
       <div class="chart-wrap" style="height:220px"><canvas id="chart-wq02-wa"></canvas></div>
+    </div>
     </div>
     <div class="analysis-box" id="ana-box-wq02"><p id="ana-wq02"></p></div>
   </div>
@@ -1639,6 +1647,17 @@ const ALL_REPORTS = [
         rate: [83,71,77,81, 95,100],
         total: { inq:220, book:196, rate:89 },
       },
+      analysis: '전화 신규문의 248→225→220건으로 3구간 연속 소폭 감소하는 추세지만, 예약률은 88%→88%→89%로 오히려 안정적으로 유지.\n헤어 예약률이 90%→46%→71%로 2구간에서 크게 흔들렸다가 3구간에 다시 회복되는 모습.\nSMP는 82%→88%→77%, 치료도 78%→86%→81%로 두 과목 다 구간별로 오르내림이 있음.\n검사는 95%→97%→95%로 3구간 내내 최고 수준을 유지, 처방전도 100%로 변함없이 안정적.',
+    },
+    channelStatus: {
+      cats: ['이식','헤어','SMP','치료','검사','처방전'],
+      kakao: {
+        p1: { inq:[18,3,4,9,14,0], book:[9,2,2,4,12,0], rate:[50,67,50,44,86,'—'], overseas:[9,0,3,3,null,null], total:{inq:48,book:29,rate:60,overseas:15} },
+        p2: { inq:[20,3,9,9,12,1], book:[6,1,3,4,10,1], rate:[30,33,33,44,83,100], overseas:[8,3,1,1,null,null], total:{inq:54,book:25,rate:46,overseas:13} },
+        // 8/1~8/15는 기타 1건이 섞여 있어 과목별 합(55)이 총합(56)보다 1건 적음(확인됨) — 합계(total)는 실제 표기값 그대로 사용
+        p3: { inq:[23,5,6,4,17,0], book:[8,2,4,1,14,0], rate:[35,40,67,25,82,'—'], overseas:[13,4,2,0,null,null], total:{inq:56,book:29,rate:52,overseas:19} },
+      },
+      analysis: '플친 문의는 48→54→56건으로 3구간 내내 꾸준히 증가.\n예약률은 60%→46%→52%로 2구간에 크게 낮아졌다가 3구간에 다소 회복 — 문의 증가 대비 전환 흐름을 계속 지켜볼 필요가 있음.',
     },
   },
 },
@@ -6335,6 +6354,7 @@ function renderWqReport(r) {
     });
 
     renderAnalysis('ana-wq00',
+      (wq.overview && wq.overview.analysis) ||
       `전화·플친·왓츠앱 합산 신규 문의 <b>301→298→342건</b>으로 7월 들어 뚜렷하게 증가, 예약도 237→240→266건으로 동반 상승.\n합산 예약률은 <b>79%→81%→78%로 6월 하반기 정점 이후 소폭 하락</b>.\n내원은 <b>209→242→220건, 내원율 86%→91%→85%</b>로 6월 하반기 최고치 이후 7월 들어 다시 조정.\n<b>부도는 22→13→26건으로 7월 재증가</b>해 내원 관리 측면에서 눈여겨봐야 할 대목.`,
       r
     );
@@ -6449,6 +6469,7 @@ function renderWqReport(r) {
     mkChart('chart-wq01-rate', ph.cats, ps.map((p, i) => mkDS(PL[i], p.rate.map(v => v === '—' ? 0 : v), PC[i])), 110, '%');
 
     renderAnalysis('ana-wq01',
+      ph.analysis ||
       `전화 신규문의 <b>223→222→261건</b>으로 7월 들어 뚜렷하게 증가, 예약도 206→203→230건으로 함께 늘어남.\n전체 예약률은 <b>92%→91%→88%로 3기간 연속 소폭 하락</b> — 문의량은 늘었지만 전환 효율은 조금씩 떨어지는 추세.\n<b>이식 문의 59→60→86건으로 큰 폭 증가</b>, 예약도 51→48→69건으로 함께 늘었지만 예약률은 86%→80%→80%로 두 기간째 정체 — 물량 대비 전환 관리 필요.\n<b>헤어 문의 12→5→10건으로 회복</b>, 예약률도 100%→80%→90%로 다시 개선.\n<b>SMP 문의 12→7→11건, 예약률 67%→86%→82%로 안정적인 수준</b> 유지.\n<b>검사는 98%→99%→95%로 여전히 최고 수준</b>이지만 3기간째 소폭 하락, 처방전은 100%→100%→100%로 변함없이 안정적.`,
       r
     );
@@ -6464,19 +6485,19 @@ function renderWqReport(r) {
     const PC2 = NP2 >= 3 ? WC.slice(0, NP2) : WQC.slice(0, NP2);
 
     document.getElementById('wq02-subtitle').textContent =
-      PL2.join(' / ') + ' · 플친 · 네이버 · 게시판 · 왓츠앱';
+      PL2.join(' / ') + ' · ' + [ch.kakao&&'플친', ch.naver&&'네이버', ch.board&&'게시판', ch.whatsapp&&'왓츠앱'].filter(Boolean).join(' · ');
 
-    // 채널 KPI 카드 (기간 수만큼 값 체인으로 연결)
+    // 채널 KPI 카드 (기간 수만큼 값 체인으로 연결) — 데이터 있는 채널만 포함
     const chKpiData = [
-      { label:'플친',   color:'#F9A825', emoji:'💬',
+      ch.kakao && { label:'플친',   color:'#F9A825', emoji:'💬',
         totals: [ch.kakao.p1.total, ch.kakao.p2.total, ch.kakao.p3 && ch.kakao.p3.total].filter(Boolean) },
-      { label:'네이버', color:'#2E7D32', emoji:'<span style="display:inline-flex;align-items:center;justify-content:center;width:22px;height:22px;background:#03C75A;border-radius:4px;font-size:13px;font-weight:900;color:#fff;font-family:sans-serif;line-height:1;flex-shrink:0;">N</span>',
+      ch.naver && { label:'네이버', color:'#2E7D32', emoji:'<span style="display:inline-flex;align-items:center;justify-content:center;width:22px;height:22px;background:#03C75A;border-radius:4px;font-size:13px;font-weight:900;color:#fff;font-family:sans-serif;line-height:1;flex-shrink:0;">N</span>',
         totals: [ch.naver.p1.total, ch.naver.p2.total, ch.naver.p3 && ch.naver.p3.total].filter(Boolean) },
-      { label:'게시판', color:'#00838F', emoji:'📋',
+      ch.board && { label:'게시판', color:'#00838F', emoji:'📋',
         totals: [ch.board.p1.total, ch.board.p2.total, ch.board.p3 && ch.board.p3.total].filter(Boolean) },
-      { label:'왓츠앱', color:'#43A047', emoji:'🌍',
+      ch.whatsapp && { label:'왓츠앱', color:'#43A047', emoji:'🌍',
         totals: [ch.whatsapp.p1.total, ch.whatsapp.p2.total, ch.whatsapp.p3 && ch.whatsapp.p3.total].filter(Boolean) },
-    ];
+    ].filter(Boolean);
 
     const kpiWrap2 = document.getElementById('wq02-kpi');
     kpiWrap2.style.cssText = 'display:grid;grid-template-columns:repeat(2,1fr);gap:16px;margin-bottom:28px;';
@@ -6607,23 +6628,41 @@ function renderWqReport(r) {
       });
     }
 
-    renderChWqTable('tbl-wq02-kakao', ch.kakao, '해외');
-    chLegend('lg-wq02-kakao', PL2.flatMap((l, i) => ([[ch2Colors[i], l + ' 문의'], [PC2[i], l + ' 예약']])));
-    renderChWqChart('chart-wq02-kakao', ch.kakao);
+    function showBlock(id, show) {
+      const el = document.getElementById(id);
+      if (el) el.style.display = show ? '' : 'none';
+    }
 
-    renderChWqTable('tbl-wq02-naver', ch.naver, '부재');
-    chLegend('lg-wq02-naver', PL2.flatMap((l, i) => ([[ch2Colors[i], l + ' 문의'], [PC2[i], l + ' 예약']])));
-    renderChWqChart('chart-wq02-naver', ch.naver);
+    if (ch.kakao) {
+      showBlock('wq02-block-kakao', true);
+      renderChWqTable('tbl-wq02-kakao', ch.kakao, '해외');
+      chLegend('lg-wq02-kakao', PL2.flatMap((l, i) => ([[ch2Colors[i], l + ' 문의'], [PC2[i], l + ' 예약']])));
+      renderChWqChart('chart-wq02-kakao', ch.kakao);
+    } else showBlock('wq02-block-kakao', false);
 
-    renderChWqTable('tbl-wq02-board', ch.board, '부재');
-    chLegend('lg-wq02-board', PL2.flatMap((l, i) => ([[ch2Colors[i], l + ' 문의'], [PC2[i], l + ' 예약']])));
-    renderChWqChart('chart-wq02-board', ch.board);
+    if (ch.naver) {
+      showBlock('wq02-block-naver', true);
+      renderChWqTable('tbl-wq02-naver', ch.naver, '부재');
+      chLegend('lg-wq02-naver', PL2.flatMap((l, i) => ([[ch2Colors[i], l + ' 문의'], [PC2[i], l + ' 예약']])));
+      renderChWqChart('chart-wq02-naver', ch.naver);
+    } else showBlock('wq02-block-naver', false);
 
-    renderChWqTable('tbl-wq02-wa', ch.whatsapp, '수술');
-    chLegend('lg-wq02-wa', PL2.flatMap((l, i) => ([[ch2Colors[i], l + ' 문의'], [PC2[i], l + ' 예약']])));
-    renderChWqChart('chart-wq02-wa', ch.whatsapp);
+    if (ch.board) {
+      showBlock('wq02-block-board', true);
+      renderChWqTable('tbl-wq02-board', ch.board, '부재');
+      chLegend('lg-wq02-board', PL2.flatMap((l, i) => ([[ch2Colors[i], l + ' 문의'], [PC2[i], l + ' 예약']])));
+      renderChWqChart('chart-wq02-board', ch.board);
+    } else showBlock('wq02-block-board', false);
+
+    if (ch.whatsapp) {
+      showBlock('wq02-block-whatsapp', true);
+      renderChWqTable('tbl-wq02-wa', ch.whatsapp, '수술');
+      chLegend('lg-wq02-wa', PL2.flatMap((l, i) => ([[ch2Colors[i], l + ' 문의'], [PC2[i], l + ' 예약']])));
+      renderChWqChart('chart-wq02-wa', ch.whatsapp);
+    } else showBlock('wq02-block-whatsapp', false);
 
     renderAnalysis('ana-wq02',
+      ch.analysis ||
       `4개 채널 중 <b>플친 문의 51→55→52건으로 7월 들어 주춤</b>했지만 <b>예약률은 41%→56%→62%로 3기간 연속 개선</b> — 전환 흐름이 꾸준히 좋아지는 채널.\n<b>네이버 예약률 98%→96%→95%로 여전히 채널 중 최고 수준</b> 유지, 문의는 85→71→73건으로 다시 소폭 회복.\n<b>게시판 문의 55→28→50건으로 반등</b>했으나 예약률은 91%→82%→90%로 오르내림 — 안정화 필요.\n<b>왓츠앱은 해외 문의 27→21→29건으로 꾸준히 증가</b> 중인 채널 — 예약률 37%→29%→14%는 해외 거주 특성상 즉시 예약 전환이 어려운 점이 반영된 결과로 보임.`,
       r
     );
@@ -6710,6 +6749,7 @@ function renderWqReport(r) {
     mkChart('chart-wq03-cats', vst.cats, vs.map((v, i) => mkDS(VL[i], v.by_cat, PC3[i])));
 
     renderAnalysis('ana-wq03',
+      vst.analysis ||
       `총 예약 <b>253→280→269건으로 6월 하반기 정점 이후 소폭 감소</b>했고, 내원도 209→242→220건으로 같은 흐름.\n<b>내원율 86%→91%→85%로 다시 하락</b>, <b>내원전 취소율도 3.6%→5.0%→3.3%로 개선</b>됐지만 내원율 자체는 첫 기간 수준으로 되돌아감.\n<b>최종내원율(총예약 기준) 83%→86%→82%</b>로 3기간 중 가장 낮은 수준.\n<b>당일취소 13→11→14건, 부도 22→13→26건으로 다시 증가</b> — 6월 하반기의 개선 흐름이 7월 들어 다소 꺾인 모습.\n과목별로는 <b>검사 71→105→89건으로 여전히 최다</b>지만 6월 하반기 대비 감소, <b>탈모치료 46→36→39건으로 소폭 회복.</b>`,
       r
     );
@@ -6773,6 +6813,7 @@ function renderWqReport(r) {
     if (noteEl4wq) noteEl4wq.textContent = wq.periodNote || r.meta.periodNote || '';
 
     renderAnalysis('ana-wq04',
+      wq.review.analysis ||
       `전화·플친·왓츠앱 문의는 꾸준히 늘고 있지만, 예약률·내원율은 6월 하반기를 정점으로 7월 들어 소폭 조정되는 흐름 (자세한 수치는 종합현황 참고).\n채널별로는 <b>플친이 41%→56%→62%로 3기간 내내 꾸준히 개선</b>되며 채널 관리의 방향성 자체는 긍정적.\n왓츠앱·전화 이식·부도 관련 세부 원인과 대응 방향은 아래 개선 과제 참고.`,
       r
     );
