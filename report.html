@@ -1544,9 +1544,11 @@ const _saveTimers = {};
 function saveToSheets(reportId, field, items) {
   if (!SHEET_SCRIPT_URL || SHEET_SCRIPT_URL === 'YOUR_SCRIPT_URL_HERE') return;
   const key = reportId + ':' + field;
+  // 어느 보고서 탭에 저장할지는 저장 시점의 활성 보고서(currentReport)로 자동 판별 — 호출부는 전혀 안 건드림
+  const reportLabel = currentReport && currentReport.meta.label;
   clearTimeout(_saveTimers[key]);
   _saveTimers[key] = setTimeout(() => {
-    const body = 'payload=' + encodeURIComponent(JSON.stringify({ action:'save', reportId, field, items }));
+    const body = 'payload=' + encodeURIComponent(JSON.stringify({ action:'save', reportId, field, items, reportLabel }));
     fetch(SHEET_SCRIPT_URL, {
       method: 'POST',
       mode: 'no-cors',
@@ -1559,6 +1561,37 @@ function saveToSheets(reportId, field, items) {
 }
 
 // ── Sheets 불러오기: JSONP (CORS 우회)
+// ── 보고서 1개 분량만 불러오기 — loadAllFromSheets(전체)와 같은 JSONP 방식이지만 action=loadReport로 그 보고서 탭만 요청
+function loadReportFromSheets(reportLabel) {
+  return new Promise(resolve => {
+    if (!SHEET_SCRIPT_URL || SHEET_SCRIPT_URL === 'YOUR_SCRIPT_URL_HERE') {
+      resolve(); return;
+    }
+    const cbName = '_nhSheetsCb_' + Date.now();
+    const timeout = setTimeout(() => {
+      delete window[cbName];
+      if (script.parentNode) script.parentNode.removeChild(script);
+      console.warn('Sheets 불러오기 타임아웃(15초) — 저장된 편집 내용이 이번 로드에는 반영되지 않았을 수 있습니다.');
+      resolve();
+    }, 15000);
+
+    window[cbName] = function(data) {
+      clearTimeout(timeout);
+      if (script.parentNode) script.parentNode.removeChild(script);
+      delete window[cbName];
+      if (data && typeof data === 'object') {
+        Object.assign(editCache, data);
+      }
+      resolve();
+    };
+
+    const script = document.createElement('script');
+    script.src = SHEET_SCRIPT_URL + '?action=loadReport&reportId=' + encodeURIComponent(reportLabel) + '&callback=' + cbName;
+    script.onerror = () => { clearTimeout(timeout); delete window[cbName]; resolve(); };
+    document.head.appendChild(script);
+  });
+}
+
 function loadAllFromSheets() {
   return new Promise(resolve => {
     if (!SHEET_SCRIPT_URL || SHEET_SCRIPT_URL === 'YOUR_SCRIPT_URL_HERE') {
@@ -2869,7 +2902,75 @@ function buildSelector() {
     o.value = i; o.textContent = r.meta.label;
     sel.appendChild(o);
   });
-  sel.addEventListener('change', () => renderReport(ALL_REPORTS[+sel.value]));
+  sel.addEventListener('change', () => switchToReport(ALL_REPORTS[+sel.value]));
+}
+
+// Sheets에서 이미 한 번 불러온 보고서 라벨 집합 — 같은 세션 안에서는 재요청 안 함
+const loadedReportLabels = new Set();
+
+// 특정 보고서의 성과·과제·분석문단을 Sheets에서 불러온 최신 내용으로 갱신 — renderReport() 직후, 그 보고서 데이터를 불러온 뒤에 호출
+// 기존 부트스트랩 안에 있던 로직을 그대로 옮긴 것 — 내용은 무변경, 재사용 가능하게 함수로만 분리
+function refreshEditableContentFor(r) {
+  // ── 성과·과제 갱신 (해당 섹션 데이터가 아직 없는 보고서는 건너뜀)
+  if (r.meta.type === 'weekly') {
+    const wp = r.weeklyPhone;
+    if (wp && wp.wins && wp.tasks) {
+      renderEditableList('sw04-wins',  'sw04-wins-add',  wp.wins,  '✔', '#2E7D32', (isEditor && !LEGACY_REPORT_LABELS[r.meta.label]), reportScopeId(r),  'sw04-wins');
+      renderEditableList('sw04-tasks', 'sw04-tasks-add', wp.tasks, '▲', '#C62828', (isEditor && !LEGACY_REPORT_LABELS[r.meta.label]), reportScopeId(r),  'sw04-tasks');
+    }
+  } else if (r.meta.type === 'wq') {
+    const wqRev = r.wqData && r.wqData.review;
+    if (wqRev && wqRev.wins && wqRev.tasks) {
+      renderEditableList('wq04-wins',  'wq04-wins-add',  wqRev.wins,  '✔', '#2E7D32', isEditor, reportScopeId(r), 'wq04-wins');
+      renderEditableList('wq04-tasks', 'wq04-tasks-add', wqRev.tasks, '▲', '#C62828', isEditor, reportScopeId(r), 'wq04-tasks');
+    }
+  } else {
+    const s09 = r.section09;
+    if (s09 && s09.wins && s09.tasks) {
+      renderEditableList('s09-wins',  's09-wins-add',  s09.wins,  '✔', '#2E7D32', (isEditor && !LEGACY_REPORT_LABELS[r.meta.label]), reportScopeId(r), 's09-wins');
+      renderEditableList('s09-tasks', 's09-tasks-add', s09.tasks, '▲', '#C62828', (isEditor && !LEGACY_REPORT_LABELS[r.meta.label]), reportScopeId(r), 's09-tasks');
+    }
+    const rev = r.reviewStatus;
+    if (rev && rev.wins && rev.tasks) {
+      renderEditableList('srv09-wins',  'srv09-wins-add',  rev.wins,  '✔', '#2E7D32', isEditor, reportScopeId(r), 'srv09-wins');
+      renderEditableList('srv09-tasks', 'srv09-tasks-add', rev.tasks, '▲', '#C62828', isEditor, reportScopeId(r), 'srv09-tasks');
+    }
+  }
+
+  // ── 분석 텍스트 갱신: 버전 태그 검증을 거쳐서만 반영 (강제리셋 대상 필드는 캐시 무시, 그 외 레거시 캐시는 자동 이관)
+  document.querySelectorAll('.analysis-box p[id]').forEach(p => {
+    const field = p.dataset.cacheField || analysisCacheField(p.id, r);
+    const baseVersion = p.dataset.baseVersion;
+    if (!baseVersion) return; // 방어: 버전 정보 없는 예외 케이스는 건드리지 않음(코드 기본값 유지)
+    const resolved = resolveCache('analysis', field, baseVersion, editCache['analysis:' + field], (items) => {
+      const packed = packWithVersion(items, baseVersion);
+      editCache['analysis:' + field] = packed;
+      saveToSheets('analysis', field, packed);
+    });
+    if (resolved) p.innerHTML = resolved[0];
+  });
+}
+
+// 보고서 전환 진입점 — 레거시(5월/5~6월 주간)는 편집이 꺼져있어 Sheets를 아예 안 부름.
+// 이미 이번 세션에 한 번 불러온 보고서는 재요청 없이 캐시 그대로 반영. 처음 보는 보고서만 그 순간 불러옴.
+function switchToReport(r) {
+  const isLegacy = !!LEGACY_REPORT_LABELS[r.meta.label];
+  const alreadyLoaded = isLegacy || loadedReportLabels.has(r.meta.label);
+  // sheetsLoaded는 renderReport() 안(wq-04 등)에서 동기적으로 참조되므로, 반드시 renderReport 호출 "전에"
+  // 지금 렌더링할 이 보고서 기준으로 정확히 맞춰둬야 기존 깜빡임 방지 로직이 제대로 동작함
+  sheetsLoaded = alreadyLoaded;
+  renderReport(r);
+  if (isLegacy) return; // 편집 자체가 없으니 Sheets 조회 불필요
+  if (alreadyLoaded) {
+    refreshEditableContentFor(r);
+    return;
+  }
+  loadReportFromSheets(r.meta.label).then(() => {
+    loadedReportLabels.add(r.meta.label);
+    if (currentReport !== r) return; // 로딩 도중 사용자가 다른 보고서로 또 전환했으면 이 결과는 화면에 안 맞으니 버림
+    sheetsLoaded = true;
+    refreshEditableContentFor(r);
+  });
 }
 
 const C = { aprInq:'#90CAF9', aprBook:'#EF9A9A', mayInq:'#1565C0', mayBook:'#C62828' };
@@ -6842,9 +6943,9 @@ function renderWqReport(r) {
     }).join('');
 
     // 저장(편집-캐시) 관련 함수는 기존 안정화된 함수를 호출만 함 — 로직 자체는 손대지 않음.
-    // 단, Sheets 로드가 끝나기 전에는 "코드 기본값이 잠깐 보였다 저장된 내용으로 바뀌는" 깜빡임을 막기 위해
-    // 최초 1회는 로딩 표시만 하고, loadAllFromSheets().then() 콜백에서 sheetsLoaded=true가 된 이후에만 실제 렌더링.
-    // (이미 로드가 끝난 뒤 보고서를 전환해 들어온 경우엔 바로 정상 렌더링됨 — 깜빡임 없음)
+    // 단, 이 보고서의 Sheets 데이터 로드가 끝나기 전에는 "코드 기본값이 잠깐 보였다 저장된 내용으로 바뀌는" 깜빡임을 막기 위해
+    // 최초 1회는 로딩 표시만 하고, switchToReport()가 이 보고서의 로드를 끝낸 뒤 sheetsLoaded=true로 재렌더링할 때만 실제 표시.
+    // (이미 이번 세션에 불러온 적 있는 보고서로 전환한 경우엔 바로 정상 렌더링됨 — 깜빡임 없음)
     if (sheetsLoaded) {
       renderEditableList('wq04-wins', 'wq04-wins-add', wq.review.wins, '✔', '#2E7D32', isEditor, reportScopeId(r), 'wq04-wins');
       renderEditableList('wq04-tasks', 'wq04-tasks-add', wq.review.tasks, '▲', '#C62828', isEditor, reportScopeId(r), 'wq04-tasks');
@@ -7006,55 +7107,10 @@ function renderEditableList(containerId, addBtnId, items, icon, iconColor, isEdi
   checkAuth();
   buildSelector();
   setupTitleEdit();
-  renderReport(ALL_REPORTS[0]);
-
-  // 화면 먼저 뜨고 백그라운드에서 Sheets 로드 → 성과·과제 + 분석 텍스트 갱신
-  loadAllFromSheets().then(() => {
-    sheetsLoaded = true;
-    const sel = document.getElementById('report-select');
-    const r   = ALL_REPORTS[+sel.value || 0];
-
-    // ── 성과·과제 갱신 (해당 섹션 데이터가 아직 없는 보고서는 건너뜀)
-    if (r.meta.type === 'weekly') {
-      const wp = r.weeklyPhone;
-      if (wp && wp.wins && wp.tasks) {
-        renderEditableList('sw04-wins',  'sw04-wins-add',  wp.wins,  '✔', '#2E7D32', (isEditor && !LEGACY_REPORT_LABELS[r.meta.label]), reportScopeId(r),  'sw04-wins');
-        renderEditableList('sw04-tasks', 'sw04-tasks-add', wp.tasks, '▲', '#C62828', (isEditor && !LEGACY_REPORT_LABELS[r.meta.label]), reportScopeId(r),  'sw04-tasks');
-      }
-    } else if (r.meta.type === 'wq') {
-      // wq(2026년 6~7월 상반기 현황) 종합리뷰(wq-04)의 성과·과제 — Sheets 로드 후 재반영 누락돼 있던 부분 추가
-      const wqRev = r.wqData && r.wqData.review;
-      if (wqRev && wqRev.wins && wqRev.tasks) {
-        renderEditableList('wq04-wins',  'wq04-wins-add',  wqRev.wins,  '✔', '#2E7D32', isEditor, reportScopeId(r), 'wq04-wins');
-        renderEditableList('wq04-tasks', 'wq04-tasks-add', wqRev.tasks, '▲', '#C62828', isEditor, reportScopeId(r), 'wq04-tasks');
-      }
-    } else {
-      const s09 = r.section09;
-      if (s09 && s09.wins && s09.tasks) {
-        renderEditableList('s09-wins',  's09-wins-add',  s09.wins,  '✔', '#2E7D32', (isEditor && !LEGACY_REPORT_LABELS[r.meta.label]), reportScopeId(r), 's09-wins');
-        renderEditableList('s09-tasks', 's09-tasks-add', s09.tasks, '▲', '#C62828', (isEditor && !LEGACY_REPORT_LABELS[r.meta.label]), reportScopeId(r), 's09-tasks');
-      }
-      // 6월 전용 — 종합 리뷰(reviewStatus)의 이달의 성과/과제 (기존 코드에서 누락되어 있던 부분)
-      const rev = r.reviewStatus;
-      if (rev && rev.wins && rev.tasks) {
-        renderEditableList('srv09-wins',  'srv09-wins-add',  rev.wins,  '✔', '#2E7D32', isEditor, reportScopeId(r), 'srv09-wins');
-        renderEditableList('srv09-tasks', 'srv09-tasks-add', rev.tasks, '▲', '#C62828', isEditor, reportScopeId(r), 'srv09-tasks');
-      }
-    }
-
-    // ── 분석 텍스트 갱신: 버전 태그 검증을 거쳐서만 반영 (강제리셋 대상 필드는 캐시 무시, 그 외 레거시 캐시는 자동 이관)
-    document.querySelectorAll('.analysis-box p[id]').forEach(p => {
-      const field = p.dataset.cacheField || analysisCacheField(p.id, r);
-      const baseVersion = p.dataset.baseVersion;
-      if (!baseVersion) return; // 방어: 버전 정보 없는 예외 케이스는 건드리지 않음(코드 기본값 유지)
-      const resolved = resolveCache('analysis', field, baseVersion, editCache['analysis:' + field], (items) => {
-        const packed = packWithVersion(items, baseVersion);
-        editCache['analysis:' + field] = packed;
-        saveToSheets('analysis', field, packed);
-      });
-      if (resolved) p.innerHTML = resolved[0];
-    });
-  });
+  // 화면 먼저 뜨고(코드 기본값), 백그라운드에서 "이 보고서 것만" Sheets 로드 → 성과·과제 + 분석 텍스트 갱신
+  // (기존엔 전체 보고서 데이터를 한 번에 불러왔음 — 이제 지금 보는 보고서 1개 분량만 불러와서 초기 로딩이 빨라짐.
+  //  다른 보고서로 처음 전환할 때 그 보고서 것만 그 순간 불러옴 — switchToReport() 참고)
+  switchToReport(ALL_REPORTS[0]);
 })();
 </script>
 </body>
