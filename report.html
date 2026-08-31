@@ -1458,6 +1458,14 @@ const LEGACY_REPORT_LABELS = {
   '2026년 5월 (월간)': true,
   '2026년 5~6월 상반기 현황 (주간)': true,
 };
+// ── 편집만 끄고 저장 키(scope)는 그대로 유지하고 싶은 "완성된" 보고서용 — LEGACY_REPORT_LABELS와 별개.
+//    reportScopeId/analysisCacheField 등 저장 관련 로직은 전혀 건드리지 않고, 편집 UI 노출 여부에만 사용.
+const EDIT_DISABLED_LABELS = {
+  '2026년 7~8월 상반기 현황 (주간)': true,
+  '2026년 7월 (월간)': true,
+  '2026년 6~7월 상반기 현황 (주간)': true,
+  '2026년 6월 (월간)': true,
+};
 function reportScopeId(r) {
   const base = r.meta.title + '_' + r.meta.type;
   return LEGACY_REPORT_LABELS[r.meta.label] ? base : base + '__' + r.meta.label;
@@ -2921,8 +2929,8 @@ function refreshEditableContentFor(r) {
   } else if (r.meta.type === 'wq') {
     const wqRev = r.wqData && r.wqData.review;
     if (wqRev && wqRev.wins && wqRev.tasks) {
-      renderEditableList('wq04-wins',  'wq04-wins-add',  wqRev.wins,  '✔', '#2E7D32', isEditor, reportScopeId(r), 'wq04-wins');
-      renderEditableList('wq04-tasks', 'wq04-tasks-add', wqRev.tasks, '▲', '#C62828', isEditor, reportScopeId(r), 'wq04-tasks');
+      renderEditableList('wq04-wins',  'wq04-wins-add',  wqRev.wins,  '✔', '#2E7D32', (isEditor && !EDIT_DISABLED_LABELS[r.meta.label]), reportScopeId(r), 'wq04-wins');
+      renderEditableList('wq04-tasks', 'wq04-tasks-add', wqRev.tasks, '▲', '#C62828', (isEditor && !EDIT_DISABLED_LABELS[r.meta.label]), reportScopeId(r), 'wq04-tasks');
     }
   } else {
     const s09 = r.section09;
@@ -3109,7 +3117,7 @@ function renderAnalysis(id, text, r) {
   p.innerHTML = resolved ? resolved[0] : text.replace(/\n/g,'<br>');
   p.dataset.cacheField = field;
   p.dataset.baseVersion = baseVersion;
-  if(isEditor && !LEGACY_REPORT_LABELS[r.meta.label]) {
+  if(isEditor && !LEGACY_REPORT_LABELS[r.meta.label] && !EDIT_DISABLED_LABELS[r.meta.label]) {
     const box = p.closest('.analysis-box');
     box.classList.add('editable');
     box.title = '클릭하여 수정';
@@ -6947,8 +6955,8 @@ function renderWqReport(r) {
     // 최초 1회는 로딩 표시만 하고, switchToReport()가 이 보고서의 로드를 끝낸 뒤 sheetsLoaded=true로 재렌더링할 때만 실제 표시.
     // (이미 이번 세션에 불러온 적 있는 보고서로 전환한 경우엔 바로 정상 렌더링됨 — 깜빡임 없음)
     if (sheetsLoaded) {
-      renderEditableList('wq04-wins', 'wq04-wins-add', wq.review.wins, '✔', '#2E7D32', isEditor, reportScopeId(r), 'wq04-wins');
-      renderEditableList('wq04-tasks', 'wq04-tasks-add', wq.review.tasks, '▲', '#C62828', isEditor, reportScopeId(r), 'wq04-tasks');
+      renderEditableList('wq04-wins', 'wq04-wins-add', wq.review.wins, '✔', '#2E7D32', (isEditor && !EDIT_DISABLED_LABELS[r.meta.label]), reportScopeId(r), 'wq04-wins');
+      renderEditableList('wq04-tasks', 'wq04-tasks-add', wq.review.tasks, '▲', '#C62828', (isEditor && !EDIT_DISABLED_LABELS[r.meta.label]), reportScopeId(r), 'wq04-tasks');
     } else {
       const winsEl = document.getElementById('wq04-wins');
       const tasksEl = document.getElementById('wq04-tasks');
