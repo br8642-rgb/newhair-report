@@ -2935,13 +2935,13 @@ function refreshEditableContentFor(r) {
   } else {
     const s09 = r.section09;
     if (s09 && s09.wins && s09.tasks) {
-      renderEditableList('s09-wins',  's09-wins-add',  s09.wins,  '✔', '#2E7D32', (isEditor && !LEGACY_REPORT_LABELS[r.meta.label]), reportScopeId(r), 's09-wins');
-      renderEditableList('s09-tasks', 's09-tasks-add', s09.tasks, '▲', '#C62828', (isEditor && !LEGACY_REPORT_LABELS[r.meta.label]), reportScopeId(r), 's09-tasks');
+      renderEditableList('s09-wins',  's09-wins-add',  s09.wins,  '✔', '#2E7D32', (isEditor && !LEGACY_REPORT_LABELS[r.meta.label] && !EDIT_DISABLED_LABELS[r.meta.label]), reportScopeId(r), 's09-wins');
+      renderEditableList('s09-tasks', 's09-tasks-add', s09.tasks, '▲', '#C62828', (isEditor && !LEGACY_REPORT_LABELS[r.meta.label] && !EDIT_DISABLED_LABELS[r.meta.label]), reportScopeId(r), 's09-tasks');
     }
     const rev = r.reviewStatus;
     if (rev && rev.wins && rev.tasks) {
-      renderEditableList('srv09-wins',  'srv09-wins-add',  rev.wins,  '✔', '#2E7D32', isEditor, reportScopeId(r), 'srv09-wins');
-      renderEditableList('srv09-tasks', 'srv09-tasks-add', rev.tasks, '▲', '#C62828', isEditor, reportScopeId(r), 'srv09-tasks');
+      renderEditableList('srv09-wins',  'srv09-wins-add',  rev.wins,  '✔', '#2E7D32', (isEditor && !LEGACY_REPORT_LABELS[r.meta.label] && !EDIT_DISABLED_LABELS[r.meta.label]), reportScopeId(r), 'srv09-wins');
+      renderEditableList('srv09-tasks', 'srv09-tasks-add', rev.tasks, '▲', '#C62828', (isEditor && !LEGACY_REPORT_LABELS[r.meta.label] && !EDIT_DISABLED_LABELS[r.meta.label]), reportScopeId(r), 'srv09-tasks');
     }
   }
 
@@ -4927,8 +4927,8 @@ function renderSectionReview(r) {
         </div>`).join('')}
     </div>`).join('');
 
-  renderEditableList('srv09-wins',  'srv09-wins-add',  rev.wins,  '✔', '#2E7D32', isEditor, reportScopeId(r), 'srv09-wins');
-  renderEditableList('srv09-tasks', 'srv09-tasks-add', rev.tasks, '▲', '#C62828', isEditor, reportScopeId(r), 'srv09-tasks');
+  renderEditableList('srv09-wins',  'srv09-wins-add',  rev.wins,  '✔', '#2E7D32', (isEditor && !LEGACY_REPORT_LABELS[r.meta.label] && !EDIT_DISABLED_LABELS[r.meta.label]), reportScopeId(r), 'srv09-wins');
+  renderEditableList('srv09-tasks', 'srv09-tasks-add', rev.tasks, '▲', '#C62828', (isEditor && !LEGACY_REPORT_LABELS[r.meta.label] && !EDIT_DISABLED_LABELS[r.meta.label]), reportScopeId(r), 'srv09-tasks');
 
   document.getElementById('srv09-focus').innerHTML = `
     <div style="display:grid;grid-template-columns:repeat(2,1fr);gap:12px;">
@@ -5542,10 +5542,10 @@ function renderSection09(r) {
     </div>`).join('');
 
   // ── 성과 리스트
-  renderEditableList('s09-wins', 's09-wins-add', s09.wins, '✔', '#2E7D32', (isEditor && !LEGACY_REPORT_LABELS[r.meta.label]), reportScopeId(r), 's09-wins');
+  renderEditableList('s09-wins', 's09-wins-add', s09.wins, '✔', '#2E7D32', (isEditor && !LEGACY_REPORT_LABELS[r.meta.label] && !EDIT_DISABLED_LABELS[r.meta.label]), reportScopeId(r), 's09-wins');
 
   // ── 과제 리스트
-  renderEditableList('s09-tasks', 's09-tasks-add', s09.tasks, '▲', '#C62828', (isEditor && !LEGACY_REPORT_LABELS[r.meta.label]), reportScopeId(r), 's09-tasks');
+  renderEditableList('s09-tasks', 's09-tasks-add', s09.tasks, '▲', '#C62828', (isEditor && !LEGACY_REPORT_LABELS[r.meta.label] && !EDIT_DISABLED_LABELS[r.meta.label]), reportScopeId(r), 's09-tasks');
 
   // ── 다음달 포커스 카드
   document.getElementById('s09-focus').innerHTML = `
