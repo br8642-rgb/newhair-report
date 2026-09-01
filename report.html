@@ -1653,6 +1653,33 @@ function showSaveToast(msg, isError) {
    데이터
 ════════════════════════════════════ */
 const ALL_REPORTS = [
+/* ── 2026년 8월 (월간) — 신규, 기존 보고서와 완전 분리 ──
+   기본 화면(index 0)으로 노출. 7월 보고서 자체는 전혀 안 건드리고, 비교용 7월 수치만 이 객체 안에 복사해서 담음.
+   DB 캠페인은 7월 3차를 마지막으로 마감되어 이번 보고서부터 DB 현황 섹션 자체를 제외(dbCampaign/dbCampaignFinal 필드 없음) — 나머지 탭 번호는 자동으로 하나씩 당겨짐.
+   현재는 section01(전화현황)만 확정됨 — 나머지 섹션은 데이터 도착 시 순서대로 추가 예정. */
+{
+  meta: {
+    title: '뉴헤어 유입·내원 현황',
+    type: 'monthly',
+    label: '2026년 8월 (월간)',
+    period: '2026.07 — 2026.08',
+    compare: '2026년 7월 vs 8월',
+    prevLabel: '7월', currLabel: '8월',
+  },
+  section01: {
+    sectionName: '전화 현황',
+    cats: ['이식','헤어','SMP','치료','검사','처방전'], // 기타 과목 제외(요청에 따라 — 7월 0건/8월 1건으로 표본이 작아 분석문단에서 비교만 언급)
+    phone: {
+      may: { inq:[137,23,19,51,221,28], book:[114,15,16,43,213,28], rate:[83,65,84,84,96,100] }, // 7월(비교용)
+      jun: { inq:[147,21,25,36,248,21], book:[123,19,21,28,239,21], rate:[84,90,84,78,96,100] }, // 8월(신규)
+      total_may: { inq:479, book:429, rate:90, existingPt:2947 },
+      total_jun: { inq:499, book:452, rate:91, existingPt:2640 },
+    },
+    analysis: {
+      phone: '전화 신규문의 479→499건으로 <b>4.2% 소폭 증가</b>했고, 예약도 429→452건으로 함께 늘어남. 예약률은 90%→91%(+1%p)로 소폭 개선.\n구환(기존 환자) 문의는 2,947→2,640건으로 10.4% 감소.\n<b>헤어 예약률 65%→90%(+25%p)로 가장 큰 폭으로 개선</b>됐으나, 문의 자체는 23→21건으로 줄어 표본이 작은 편이라 지속 관찰 필요.\n<b>치료는 문의 51→36건(−29.4%), 예약 43→28건(−34.9%)으로 두 지표 모두 감소</b>했고 예약률도 84%→78%(−6%p)로 낮아짐 — 원인은 별도 확인이 필요.\nSMP는 문의 19→25건(+31.6%)으로 늘었고 예약률은 84%로 동일하게 유지.\n검사는 221→248건(+12.2%)으로 증가하며 예약률 96%도 그대로 유지 — 6개 과목 중 가장 안정적.\n처방전은 28→21건으로 줄었으나 예약률은 100%로 변함없음.\n기타는 7월 0건→8월 1건으로 표본이 작아 별도 해석은 어려움(비교 참고용).',
+    },
+  },
+},
 /* ── WQ: 2026년 7~8월 상반기 현황 (주간) — 신규, 기존 보고서(7월 월간·6~7월 wq 등)와 완전 분리 ──
    기본 화면(index 0)으로 노출. 기존 wq(6~7월) 보고서의 렌더링 코드(renderWqReport 등)를 그대로 재사용하는 새 데이터 객체.
    현재는 wq-01(전화현황) p1/p2/p3 데이터만 확정됨 — 나머지 섹션은 데이터 도착 시 순서대로 추가 예정. */
@@ -2836,24 +2863,28 @@ function availableWqSections(r) {
 }
 
 // 보고서에 실제로 데이터가 채워진 섹션만 골라 네비게이션에 표시
+// num은 더 이상 항목마다 하드코딩하지 않고, 실제로 채워져서 목록에 들어간 순서대로 00부터 자동 채번한다.
+// (예: DB현황처럼 중간 항목이 빠지면 그 뒤 번호가 자동으로 하나씩 당겨짐 — 기존엔 하드코딩값이라 빈 번호가 남는 문제가 있었음)
 function availableMonthlySections(r) {
   const list = [];
-  const has = (cond, id, label, num) => { if (cond) list.push({id, label, num}); };
-  has(!!r.overviewExtra, 'ov00', '전체 종합 현황', '00');
+  let __navCounter = 0;
+  const nextNum = () => String(__navCounter++).padStart(2, '0');
+  const has = (cond, id, label) => { if (cond) list.push({id, label, num: nextNum()}); };
+  has(!!r.overviewExtra, 'ov00', '전체 종합 현황');
   has(r.section01 && r.section01.total, '00', '종합 현황');
   has(r.section01 && r.section01.phone, '01', (r.section01 && r.section01.sectionName) || '진료과목별 문의·예약');
   has((r.section01 && r.section01.naver) || !!(r.section02 && r.section02.kakao), '02', '채널별 문의·예약');
   has(!!r.section03db, '03', 'DB 현황');
   has(!!r.section03,   '04', '내원 현황');
-  has(!!r.dbCampaign, 'db03', 'DB 현황', '03');
-  has(!!r.dbCampaignFinal, 'dbf03', 'DB 현황 (마감)', '03');
-  has(!!r.visitStatus, 'v03', '내원 현황', '04');
-  has(!!r.closingStatus, 'cs04', '성사 현황', '05');
-  has(!!r.doctorStatus, 'ds05', '원장님 성사 현황', '06');
-  has(!!r.staffStatus, 'st06', '직원별 성사율', '07');
-  has(!!r.trafficStatus, 'tr07', '유입경로 분석', '08');
-  has(!!r.revenueStatus, 'rev08', '매출 현황', '09');
-  has(!!r.reviewStatus, 'rv09', '종합 리뷰', '10');
+  has(!!r.dbCampaign, 'db03', 'DB 현황');
+  has(!!r.dbCampaignFinal, 'dbf03', 'DB 현황 (마감)');
+  has(!!r.visitStatus, 'v03', '내원 현황');
+  has(!!r.closingStatus, 'cs04', '성사 현황');
+  has(!!r.doctorStatus, 'ds05', '원장님 성사 현황');
+  has(!!r.staffStatus, 'st06', '직원별 성사율');
+  has(!!r.trafficStatus, 'tr07', '유입경로 분석');
+  has(!!r.revenueStatus, 'rev08', '매출 현황');
+  has(!!r.reviewStatus, 'rv09', '종합 리뷰');
   has(!!r.section04,   '05', '성사 현황');
   has(!!r.section05,   '06', '원장님 성사율');
   has(!!r.section06,   '07', '직원별 성사율');
