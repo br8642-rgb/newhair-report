@@ -29,6 +29,19 @@
 .data-table tr.total-row td.col-jun-inq  { background: #93C5FD; }
 .data-table tr.total-row td.col-jun-book { background: #FCA5A5; }
 .data-table tr.total-row td.col-rate     { background: #F0F0F0; }
+/* ── 동적 fallback(3개월 회전 하드코딩 밖의 달) 전용 — prev(연함)/curr(진함) 2단계, apr/jun과 동일 색상 재사용 ── */
+.data-table th.col-prev-inq,
+.data-table td.col-prev-inq { background: #EFF6FF; }
+.data-table th.col-prev-book,
+.data-table td.col-prev-book { background: #FFF0F0; }
+.data-table th.col-curr-inq,
+.data-table td.col-curr-inq { background: #BFDBFE; }
+.data-table th.col-curr-book,
+.data-table td.col-curr-book { background: #FFCDD2; }
+.data-table tr.total-row td.col-prev-inq { background: #DBEAFE; }
+.data-table tr.total-row td.col-prev-book { background: #FFE4E4; }
+.data-table tr.total-row td.col-curr-inq { background: #93C5FD; }
+.data-table tr.total-row td.col-curr-book { background: #FCA5A5; }
 
 /* ── 섹션3(내원현황) 핵심지표 카드 — 글자 크게 ── */
 .v03-kpi .kpi-item-label { font-size: 16px; font-weight: 800; }
@@ -1679,6 +1692,15 @@ const ALL_REPORTS = [
       phone: '전화 신규문의 479→499건으로 <b>4.2% 소폭 증가</b>했고, 예약도 429→452건으로 함께 늘어남. 예약률은 90%→91%(+1%p)로 소폭 개선.\n구환(기존 환자) 문의는 2,947→2,640건으로 10.4% 감소.\n<b>헤어 예약률 65%→90%(+25%p)로 가장 큰 폭으로 개선</b>됐으나, 문의 자체는 23→21건으로 줄어 표본이 작은 편이라 지속 관찰 필요.\n<b>치료는 문의 51→36건(−29.4%), 예약 43→28건(−34.9%)으로 두 지표 모두 감소</b>했고 예약률도 84%→78%(−6%p)로 낮아짐 — 원인은 별도 확인이 필요.\nSMP는 문의 19→25건(+31.6%)으로 늘었고 예약률은 84%로 동일하게 유지.\n검사는 221→248건(+12.2%)으로 증가하며 예약률 96%도 그대로 유지 — 6개 과목 중 가장 안정적.\n처방전은 28→21건으로 줄었으나 예약률은 100%로 변함없음.\n기타는 7월 0건→8월 1건으로 표본이 작아 별도 해석은 어려움(비교 참고용).',
     },
   },
+  section02: {
+    kakao: {
+      cats: ['이식','헤어','SMP','치료','검사','처방전'], // 기타 제외(요청에 따라 — 이번엔 비교 언급도 없이 완전 제외)
+      may: { inq:[39,7,13,19,27,1], book:[16,4,5,8,23,1], rate:[41,57,38,42,85,100], overseas:[17,3,4,4,null,null] }, // 7월(비교용)
+      jun: { inq:[56,10,11,11,33,1], book:[22,5,6,3,26,0], rate:[39,50,55,27,79,0], overseas:[32,8,2,1,null,null] }, // 8월(신규, 기타 포함된 실제 합계 사용)
+      total_may: { inq:106, book:57, rate:54, overseas:28 },
+      total_jun: { inq:124, book:63, rate:51, overseas:43 },
+    },
+  },
 },
 /* ── WQ: 2026년 7~8월 상반기 현황 (주간) — 신규, 기존 보고서(7월 월간·6~7월 wq 등)와 완전 분리 ──
    기본 화면(index 0)으로 노출. 기존 wq(6~7월) 보고서의 렌더링 코드(renderWqReport 등)를 그대로 재사용하는 새 데이터 객체.
@@ -3105,6 +3127,28 @@ const COL_CLASS = {
   '6월 상담':'col-jun-inq',
 };
 
+// COL_CLASS는 '4월'/'5월'/'6월' 3개 라벨만 하드코딩되어 있어, 7월 이후 보고서는 매핑이 없어 표 색상이 비어있었음.
+// 아래 fallback은 COL_CLASS에 없는 헤더에 한해서만 동작 — 기존 매핑이 있는 헤더(4/5/6월)는 절대 안 건드림.
+// headers 배열에 실제 등장하는 순서로 서로 다른 그룹 라벨(예: '7월','8월') 두 개를 찾아, 앞쪽=prev(연한색)/뒤쪽=curr(진한색)로 분류.
+const COL_METRIC_SUFFIX = { '문의':'inq', '내원':'inq', '상담':'inq', '예약':'book', '체결':'book' };
+const COL_RATE_SUFFIX = ['예약률','체결률','부재','해외','이식수술'];
+function extractColGroupLabel(h) {
+  for (const suf of Object.keys(COL_METRIC_SUFFIX)) { if (h.endsWith(suf)) return h.slice(0, h.length - suf.length).trim(); }
+  for (const suf of COL_RATE_SUFFIX) { if (h.endsWith(suf)) return h.slice(0, h.length - suf.length).trim(); }
+  return null;
+}
+function fallbackColClass(h, headers) {
+  const label = extractColGroupLabel(h);
+  if (!label) return null;
+  const groups = [];
+  headers.forEach(hh => { const l = extractColGroupLabel(hh); if (l && !groups.includes(l)) groups.push(l); });
+  const idx = groups.indexOf(label);
+  if (idx !== 0 && idx !== 1) return null; // 그룹이 3개 이상인 예상 밖 케이스는 색 없이 안전하게 둠
+  const tier = idx === 0 ? 'prev' : 'curr';
+  for (const suf of Object.keys(COL_METRIC_SUFFIX)) { if (h.endsWith(suf)) return `col-${tier}-${COL_METRIC_SUFFIX[suf]}`; }
+  return 'col-rate';
+}
+
 function mkTable(id, headers, totalRow, rows) {
   const tbl = document.getElementById(id); if (!tbl) return;
   tbl.innerHTML = '';
@@ -3112,8 +3156,10 @@ function mkTable(id, headers, totalRow, rows) {
   headers.forEach(h => {
     const th = document.createElement('th');
     th.textContent = h;
-    if (COL_CLASS[h]) th.classList.add(COL_CLASS[h]);
+    const cls = COL_CLASS[h] || (!COL_CLASS[h] ? fallbackColClass(h, headers) : null);
+    if (cls) th.classList.add(cls);
     if (h.startsWith('5월') || h.startsWith('6월')) th.classList.add('sep');
+    else if (!COL_CLASS[h] && cls && cls.startsWith('col-curr')) th.classList.add('sep');
     hr.appendChild(th);
   });
   const tbody = tbl.createTBody();
@@ -3125,7 +3171,8 @@ function mkTable(id, headers, totalRow, rows) {
       td.innerHTML = v;
       if (i === 0) td.style.textAlign = 'left';
       const h = headers[i];
-      if (COL_CLASS[h]) td.classList.add(COL_CLASS[h]);
+      const cls = h ? (COL_CLASS[h] || fallbackColClass(h, headers)) : null;
+      if (cls) td.classList.add(cls);
       if (h && h.startsWith('5월')) td.classList.add('sep');
     });
   };
