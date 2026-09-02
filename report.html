@@ -5032,7 +5032,7 @@ function renderSectionOverview(r) {
     if (!tbc) return '—';
     const arr = tbc[month].byCat[cat];
     const idx = tbc.routes.map((route,i)=>({route,c:arr[i]})).sort((a,b)=>b.c-a.c)[0];
-    return idx.route + ' ' + idx.c + '건';
+    return idx.route;
   };
 
   const maxImprove = (names, mayRate, junRate) => {
