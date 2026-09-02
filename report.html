@@ -676,6 +676,11 @@
     </div>
     <div class="s02-section-label">다음달 포커스</div>
     <div id="srv09-focus" style="margin-bottom:28px;"></div>
+    <div class="s02-section-label" id="srv09-trend-label" style="display:none;">채널 추이</div>
+    <div class="card" id="srv09-trend-card" style="display:none;margin-bottom:16px;">
+      <div class="card-title" id="srv09-trend-title">📈 추이</div>
+      <div class="chart-wrap" style="height:280px;"><canvas id="chart-rv09-trend"></canvas></div>
+    </div>
     <div class="analysis-box" id="ana-box-rv09"><p id="ana-rv09"></p></div>
   </div>
 
@@ -1876,6 +1881,13 @@ const ALL_REPORTS = [
       { icon:'📱', title:'당일취소 추이 확인', desc:'오전 확인 문자 발송은 계속 유지하면서, 당일취소 건수 자체가 안정화되는지 지켜볼 예정입니다.' },
       { icon:'💇', title:'헤어라인 개선 흐름 유지', desc:'예약률·체결률이 모두 큰 폭으로 오른 만큼, 다음 달에도 이 흐름이 이어지는지 확인이 필요합니다.' },
     ],
+    // rv09 전용 신규 필드 — section02(채널별)의 왓츠앱 데이터와는 완전히 별개(요청에 따라 분리), 다른 보고서에는 없는 필드라 rv09 렌더러에서 있을 때만 표시
+    whatsappTrend: {
+      months: ['5월','6월','7월','8월'],
+      inq: [37,36,58,75],
+      book: [17,11,15,27],
+      surgery: [6,5,3,5],
+    },
     analysis: '이달은 문의·상담 규모보다 <b>전환 효율(예약률·체결률) 개선이 두드러진 한 달</b>입니다. 헤어라인 과목과 여러 원장님·직원이 큰 폭으로 개선되며 상담 역량이 고르게 좋아진 모습입니다.\n다만 매출은 문의·체결 증가와 반대로 감소했는데, 저단가 과목(검사) 비중이 늘고 고단가 과목(모발이식·헤어라인) 비중이 줄어든 영향으로 보입니다.\n다음 달은 <b>원장님별 성사 편차와 매출-문의 괴리 해소</b>가 핵심 과제로 보입니다.',
   },
 },
@@ -5194,6 +5206,34 @@ function renderSectionReview(r) {
           <div style="font-size:13.5px;color:#6b6b6b;line-height:1.7;">${f.desc}</div>
         </div>`).join('')}
     </div>`;
+
+  // 채널 추이 선그래프 — reviewStatus.whatsappTrend가 있는 보고서에서만 표시(다른 보고서는 카드 자체를 숨김, 기존 렌더링과 완전 분리된 신규 기능)
+  const trendCard = document.getElementById('srv09-trend-card');
+  const trendLabel = document.getElementById('srv09-trend-label');
+  if (rev.whatsappTrend) {
+    trendCard.style.display = ''; trendLabel.style.display = '';
+    document.getElementById('srv09-trend-title').textContent = '📈 왓츠앱 문의·예약·수술 추이';
+    const t = rev.whatsappTrend;
+    if (charts['rv09-trend']) { charts['rv09-trend'].destroy(); }
+    charts['rv09-trend'] = new Chart(document.getElementById('chart-rv09-trend'), {
+      type: 'line',
+      data: {
+        labels: t.months,
+        datasets: [
+          { label:'문의', data:t.inq, borderColor:'#1565C0', backgroundColor:'#1565C0', tension:0.3, pointRadius:4 },
+          { label:'예약', data:t.book, borderColor:'#C62828', backgroundColor:'#C62828', tension:0.3, pointRadius:4 },
+          { label:'수술', data:t.surgery, borderColor:'#2E7D32', backgroundColor:'#2E7D32', tension:0.3, pointRadius:4 },
+        ],
+      },
+      options: {
+        responsive:true, maintainAspectRatio:false,
+        plugins:{ legend:{ position:'top', labels:{ font:{ family:'Pretendard' } } } },
+        scales:{ y:{ beginAtZero:true, ticks:{ font:{ family:'Pretendard' } } }, x:{ ticks:{ font:{ family:'Pretendard' } } } },
+      },
+    });
+  } else if (trendCard) {
+    trendCard.style.display = 'none'; trendLabel.style.display = 'none';
+  }
 
   renderAnalysis('ana-rv09', rev.analysis, r);
 }
