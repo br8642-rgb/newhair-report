@@ -1447,7 +1447,7 @@
       <div class="table-collapsible"><div style="overflow-x:auto"><table class="data-table" id="tbl-wqcs-cats"></table></div></div>
     </div>
     <div class="card" style="margin-top:16px;margin-bottom:28px;">
-      <div class="card-title">과목별 체결률 비교 <span style="font-size:11px;color:#6b6b6b;font-weight:400;">(3기간)</span></div>
+      <div class="card-title">과목별 체결 건수 비교 <span style="font-size:11px;color:#6b6b6b;font-weight:400;">(3기간)</span></div>
       <div class="ch-legend-row" id="lg-wqcs-cats"></div>
       <div class="chart-wrap" style="height:240px"><canvas id="chart-wqcs-cats"></canvas></div>
     </div>
@@ -7398,7 +7398,7 @@ function renderWqReport(r) {
 
     chLegend('lg-wqcs-cats', PCC.map((c, i) => ([c, CL[i]])));
     mkChart('chart-wqcs-cats', cst.cats, cs.map((v, i) =>
-      mkDS(CL[i], v.by_cat_rate.map(x => x === '—' ? 0 : x), PCC[i])
+      mkDS(CL[i], v.by_cat_close, PCC[i])
     ));
 
     renderAnalysis('ana-wqcs', cst.analysis || '', r);
