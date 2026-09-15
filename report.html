@@ -1427,31 +1427,27 @@
       <div class="chart-wrap" style="height:240px"><canvas id="chart-wq03-cats"></canvas></div>
     </div>
     <div class="analysis-box" id="ana-box-wq03"><p id="ana-wq03"></p></div>
-  </div>
 
-  <!-- WQ-CS 성사 현황 -->
-  <div class="section-panel" id="section-wq-cs">
-    <div class="section-header">
-      <div class="section-tag">Section</div>
-      <div class="section-title">성사 현황</div>
-      <div class="section-subtitle" id="wqcs-subtitle"></div>
+    <!-- 성사현황(closingStatus) — 데이터 있는 보고서에서만 표시, 없으면 아래 블록 전체 숨김(다른 보고서 영향 없음) -->
+    <div id="wq03cs-wrap" style="display:none;">
+      <div class="s02-section-label" id="wq03cs-label">성사 현황</div>
+      <div class="kpi-table-wrap">
+        <div class="kpi-label">기간별 핵심 지표</div>
+        <div class="kpi-compare" id="wqcs-kpi"></div>
+      </div>
+      <div class="s02-section-label">과목별 성사 현황</div>
+      <div class="card">
+        <div class="card-title">과목별 상담·체결 상세</div>
+        <button class="table-toggle-btn" onclick="toggleTable(this)"><span class="toggle-arrow">▼</span> 표 펼치기</button>
+        <div class="table-collapsible"><div style="overflow-x:auto"><table class="data-table" id="tbl-wqcs-cats"></table></div></div>
+      </div>
+      <div class="card" style="margin-top:16px;margin-bottom:28px;">
+        <div class="card-title">과목별 체결 건수 비교 <span style="font-size:11px;color:#6b6b6b;font-weight:400;">(3기간)</span></div>
+        <div class="ch-legend-row" id="lg-wqcs-cats"></div>
+        <div class="chart-wrap" style="height:240px"><canvas id="chart-wqcs-cats"></canvas></div>
+      </div>
+      <div class="analysis-box" id="ana-box-wqcs"><p id="ana-wqcs"></p></div>
     </div>
-    <div class="kpi-table-wrap">
-      <div class="kpi-label">기간별 핵심 지표</div>
-      <div class="kpi-compare" id="wqcs-kpi"></div>
-    </div>
-    <div class="s02-section-label">과목별 성사 현황</div>
-    <div class="card">
-      <div class="card-title">과목별 상담·체결 상세</div>
-      <button class="table-toggle-btn" onclick="toggleTable(this)"><span class="toggle-arrow">▼</span> 표 펼치기</button>
-      <div class="table-collapsible"><div style="overflow-x:auto"><table class="data-table" id="tbl-wqcs-cats"></table></div></div>
-    </div>
-    <div class="card" style="margin-top:16px;margin-bottom:28px;">
-      <div class="card-title">과목별 체결 건수 비교 <span style="font-size:11px;color:#6b6b6b;font-weight:400;">(3기간)</span></div>
-      <div class="ch-legend-row" id="lg-wqcs-cats"></div>
-      <div class="chart-wrap" style="height:240px"><canvas id="chart-wqcs-cats"></canvas></div>
-    </div>
-    <div class="analysis-box" id="ana-box-wqcs"><p id="ana-wqcs"></p></div>
   </div>
 
   <!-- WQ-04 종합 리뷰 -->
@@ -3183,7 +3179,6 @@ function availableWqSections(r) {
   has(!!wq.phoneStatus,   'wq-01', '전화 현황');
   has(!!wq.channelStatus, 'wq-02', '채널별 현황');
   has(!!wq.visitStatus,   'wq-03', '내원 현황');
-  has(!!wq.closingStatus, 'wq-cs', '성사 현황');
   has(allReady && !!wq.review, 'wq-04', '종합 리뷰');
   return list;
 }
@@ -7320,7 +7315,9 @@ function renderWqReport(r) {
     );
   }
 
-  // ── WQ-CS 성사 현황
+  // ── 성사현황(closingStatus)을 내원현황(wq-03) 탭 안에 이어붙임 — 데이터 없는 보고서는 이 블록 자체가 숨겨진 채로 유지(다른 보고서 영향 없음)
+  const wq03csWrap = document.getElementById('wq03cs-wrap');
+  if (wq03csWrap) wq03csWrap.style.display = wq.closingStatus ? '' : 'none';
   if (wq.closingStatus) {
     const cst = wq.closingStatus;
     const CL = cst.periodLabels || wq.periodLabels || r.meta.periodLabels;
@@ -7329,8 +7326,8 @@ function renderWqReport(r) {
     const NPC = cs.length;
     const PCC = NPC >= 3 ? WC.slice(0, NPC) : WQC.slice(0, NPC);
 
-    document.getElementById('wqcs-subtitle').textContent =
-      CL.slice(0, NPC).join(' / ') + ' · 상담·체결 및 과목별 성사 현황';
+    const label = document.getElementById('wq03cs-label');
+    if (label) label.textContent = '성사 현황 · ' + CL.slice(0, NPC).join(' / ') + ' 상담·체결 및 과목별 성사 현황';
 
     const kpiWrapC = document.getElementById('wqcs-kpi');
     kpiWrapC.style.cssText = `display:grid;grid-template-columns:repeat(${NPC},1fr);gap:16px;`;
