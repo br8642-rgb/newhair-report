@@ -1426,7 +1426,6 @@
       <div class="ch-legend-row" id="lg-wq03-cats"></div>
       <div class="chart-wrap" style="height:240px"><canvas id="chart-wq03-cats"></canvas></div>
     </div>
-    <div class="analysis-box" id="ana-box-wq03"><p id="ana-wq03"></p></div>
 
     <!-- 성사현황(closingStatus) — 데이터 있는 보고서에서만 표시, 없으면 아래 블록 전체 숨김(다른 보고서 영향 없음) -->
     <div id="wq03cs-wrap" style="display:none;">
@@ -1446,8 +1445,8 @@
         <div class="ch-legend-row" id="lg-wqcs-cats"></div>
         <div class="chart-wrap" style="height:240px"><canvas id="chart-wqcs-cats"></canvas></div>
       </div>
-      <div class="analysis-box" id="ana-box-wqcs"><p id="ana-wqcs"></p></div>
     </div>
+    <div class="analysis-box" id="ana-box-wq03"><p id="ana-wq03"></p></div>
   </div>
 
   <!-- WQ-04 종합 리뷰 -->
@@ -7228,7 +7227,8 @@ function renderWqReport(r) {
     );
   }
 
-  // ── WQ-03 내원 현황
+  // ── WQ-03 내원 현황 (+ 데이터 있으면 성사현황까지 이어서, 분석문단은 맨 아래 하나로 합쳐서 표시)
+  let wq03CombinedAnalysis = null;
   if (wq.visitStatus) {
     const vst = wq.visitStatus;
     const VL = vst.periodLabels || wq.periodLabels || r.meta.periodLabels;
@@ -7308,11 +7308,8 @@ function renderWqReport(r) {
     chLegend('lg-wq03-cats', PC3.map((c, i) => ([c, VL[i]])));
     mkChart('chart-wq03-cats', vst.cats, vs.map((v, i) => mkDS(VL[i], v.by_cat, PC3[i])));
 
-    renderAnalysis('ana-wq03',
-      vst.analysis ||
-      `총 예약 <b>253→280→269건으로 6월 하반기 정점 이후 소폭 감소</b>했고, 내원도 209→242→220건으로 같은 흐름.\n<b>내원율 86%→91%→85%로 다시 하락</b>, <b>내원전 취소율도 3.6%→5.0%→3.3%로 개선</b>됐지만 내원율 자체는 첫 기간 수준으로 되돌아감.\n<b>최종내원율(총예약 기준) 83%→86%→82%</b>로 3기간 중 가장 낮은 수준.\n<b>당일취소 13→11→14건, 부도 22→13→26건으로 다시 증가</b> — 6월 하반기의 개선 흐름이 7월 들어 다소 꺾인 모습.\n과목별로는 <b>검사 71→105→89건으로 여전히 최다</b>지만 6월 하반기 대비 감소, <b>탈모치료 46→36→39건으로 소폭 회복.</b>`,
-      r
-    );
+    wq03CombinedAnalysis = vst.analysis ||
+      `총 예약 <b>253→280→269건으로 6월 하반기 정점 이후 소폭 감소</b>했고, 내원도 209→242→220건으로 같은 흐름.\n<b>내원율 86%→91%→85%로 다시 하락</b>, <b>내원전 취소율도 3.6%→5.0%→3.3%로 개선</b>됐지만 내원율 자체는 첫 기간 수준으로 되돌아감.\n<b>최종내원율(총예약 기준) 83%→86%→82%</b>로 3기간 중 가장 낮은 수준.\n<b>당일취소 13→11→14건, 부도 22→13→26건으로 다시 증가</b> — 6월 하반기의 개선 흐름이 7월 들어 다소 꺾인 모습.\n과목별로는 <b>검사 71→105→89건으로 여전히 최다</b>지만 6월 하반기 대비 감소, <b>탈모치료 46→36→39건으로 소폭 회복.</b>`;
   }
 
   // ── 성사현황(closingStatus)을 내원현황(wq-03) 탭 안에 이어붙임 — 데이터 없는 보고서는 이 블록 자체가 숨겨진 채로 유지(다른 보고서 영향 없음)
@@ -7398,7 +7395,12 @@ function renderWqReport(r) {
       mkDS(CL[i], v.by_cat_close, PCC[i])
     ));
 
-    renderAnalysis('ana-wqcs', cst.analysis || '', r);
+    if (cst.analysis) {
+      wq03CombinedAnalysis = (wq03CombinedAnalysis ? wq03CombinedAnalysis + '\n\n' : '') + cst.analysis;
+    }
+  }
+  if (wq03CombinedAnalysis !== null) {
+    renderAnalysis('ana-wq03', wq03CombinedAnalysis, r);
   }
 
   // ── WQ-04 종합 리뷰
