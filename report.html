@@ -3740,6 +3740,49 @@ function renderSection02Partial(r) {
       </div>`;
   });
 
+  // ── 채팅 채널(플친/왓츠앱/위챗/라인) 통합 온라인·방문 비중 — 도넛 카드 1개 추가
+  // 온라인/방문 데이터가 하나도 없는 보고서(7월 이전)는 cov가 null이라 카드 자체가 생성되지 않음 — 기존 화면 변화 없음
+  (function renderCombinedConsultDonut() {
+    const keys = ['kakao', 'whatsapp', 'wechat', 'line'];
+    let has = false;
+    const cov = { may: { online: 0, visit: 0 }, jun: { online: 0, visit: 0 } };
+    keys.forEach(k => {
+      const d = s02[k];
+      if (d && d.total_may && d.total_may.online !== undefined) {
+        has = true;
+        cov.may.online += d.total_may.online; cov.may.visit += d.total_may.visit;
+        cov.jun.online += d.total_jun.online; cov.jun.visit += d.total_jun.visit;
+      }
+    });
+    if (!has) return;
+    function donut(label, t) {
+      const sum = t.online + t.visit;
+      const visitPct = sum ? Math.round(t.visit / sum * 100) : 0;
+      const grad = sum ? `conic-gradient(#1565C0 0% ${visitPct}%, #F57C00 ${visitPct}% 100%)` : `conic-gradient(var(--gray-100) 0% 100%)`;
+      return `<div style="text-align:center;">
+        <div style="width:72px;height:72px;border-radius:50%;background:${grad};display:flex;align-items:center;justify-content:center;margin:0 auto;">
+          <div style="width:50px;height:50px;border-radius:50%;background:#fff;display:flex;flex-direction:column;align-items:center;justify-content:center;">
+            <div style="font-size:13px;font-weight:800;color:var(--gray-900);">${sum ? visitPct : 0}%</div>
+            <div style="font-size:8px;color:var(--gray-500);">방문</div>
+          </div>
+        </div>
+        <div style="font-size:11px;font-weight:700;color:var(--gray-700);margin-top:6px;">${label} (${sum}건)</div>
+      </div>`;
+    }
+    kpiGrid.innerHTML += `
+      <div class="ch-kpi-card">
+        <div class="ck-name"><span class="ck-emoji" style="line-height:1;">🔀</span>채팅 채널 통합</div>
+        <div style="display:flex;justify-content:space-around;gap:6px;">
+          ${donut(pl, cov.may)}
+          ${donut(cl, cov.jun)}
+        </div>
+        <div style="display:flex;justify-content:center;gap:14px;margin-top:12px;font-size:11px;color:var(--gray-500);font-weight:600;">
+          <span style="display:flex;align-items:center;gap:5px;"><span style="width:9px;height:9px;border-radius:2px;background:#1565C0;display:inline-block;"></span>방문</span>
+          <span style="display:flex;align-items:center;gap:5px;"><span style="width:9px;height:9px;border-radius:2px;background:#F57C00;display:inline-block;"></span>온라인</span>
+        </div>
+      </div>`;
+  })();
+
   // ── 채널별 상세 (플친 → 네이버 → 게시판 → 왓츠앱 → 위챗 → 라인), 데이터 있는 채널만 표시
   toggleS02Channel('kakao',    !!s02.kakao);
   toggleS02Channel('naver',    !!s02.naver);
@@ -3778,22 +3821,16 @@ function renderConsultTypeBar(elId, pl, cl, tp, tc) {
   const el = document.getElementById(elId);
   if (!el) return;
   if (tp.online === undefined || tp.visit === undefined) { el.style.display = 'none'; return; }
-  function row(label, online, visit) {
-    const total = online + visit;
-    const onlinePct = total ? Math.round(online / total * 100) : 0;
-    const visitPct = total ? 100 - onlinePct : 0;
-    let segs = '';
-    if (total === 0) {
-      segs = `<div class="ct-seg ct-seg-empty" style="width:100%">상담 없음</div>`;
-    } else {
-      if (visit > 0) segs += `<div class="ct-seg ct-seg-visit" style="width:${visitPct}%">방문 ${visit}</div>`;
-      if (online > 0) segs += `<div class="ct-seg ct-seg-online" style="width:${onlinePct}%">온라인 ${online}</div>`;
-    }
-    return `<div class="ct-period-row"><div class="ct-period-label">${label}</div><div class="consult-type-bar">${segs}</div></div>`;
+  function cell(periodLabel, typeLabel, val, typeClass) {
+    return `<div class="ct-stat-cell ${typeClass}"><div class="ct-stat-label">${periodLabel} · ${typeLabel}</div><div class="ct-stat-val">${val}</div></div>`;
   }
-  el.innerHTML = `<div class="ctw-title">상담유형 — 온라인 · 방문</div>`
-    + row(pl, tp.online, tp.visit) + row(cl, tc.online, tc.visit)
-    + `<div class="ct-legend"><span><span class="ct-legend-dot" style="background:#1565C0;"></span>방문상담</span><span><span class="ct-legend-dot" style="background:#F57C00;"></span>온라인상담</span></div>`;
+  el.innerHTML = `<div class="ctw-title">상담유형 — 온라인 · 방문</div>
+    <div class="ct-stat-grid">
+      ${cell(pl, '방문', tp.visit, 'ct-stat-visit')}
+      ${cell(pl, '온라인', tp.online, 'ct-stat-online')}
+      ${cell(cl, '방문', tc.visit, 'ct-stat-visit')}
+      ${cell(cl, '온라인', tc.online, 'ct-stat-online')}
+    </div>`;
   el.style.display = '';
 }
 
