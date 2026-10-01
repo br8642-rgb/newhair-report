@@ -54,11 +54,21 @@ body { font-family: var(--font); background: var(--bg); color: var(--gray-900); 
 .section-subtitle { font-size:14px; color:var(--gray-500); margin-top:6px; }
 
 /* KPI */
-.kpi-table-wrap { background:var(--card-bg); border-radius:var(--radius); border:0.5px solid var(--border); box-shadow:var(--shadow); padding:24px 28px; margin-bottom:32px; }
-.kpi-table-wrap .kpi-label { font-size:16px; font-weight:800; color:var(--gray-700); text-transform:uppercase; letter-spacing:0.06em; margin-bottom:18px; }
+.kpi-table-wrap { background:var(--card-bg); border-radius:var(--radius); border:1px solid var(--border); box-shadow:0 2px 10px rgba(0,0,0,0.07); padding:24px 28px; margin-bottom:32px; }
+.kpi-table-wrap .kpi-label { font-size:16px; font-weight:800; color:var(--gray-700); text-transform:uppercase; letter-spacing:0.06em; margin-bottom:16px; padding-bottom:14px; border-bottom:1px solid var(--border); }
 .kpi-compare { display:grid; grid-template-columns:repeat(3,1fr); gap:0; }
 .kpi-item { padding:16px 20px; border-right:0.5px solid var(--border); }
 .kpi-item:last-child { border-right:none; }
+/* 내원현황 "핵심 흐름 지표"(4개 항목)만 2x2로 배치 — 취소·부도 현황(3개 항목)은 기존 3열 그대로 */
+#sv03-kpi-flow { grid-template-columns: repeat(2,1fr); }
+#sv03-kpi-flow .kpi-item:nth-child(2) { border-right: none; }
+#sv03-kpi-flow .kpi-item:nth-child(-n+2) { border-bottom: 0.5px solid var(--border); padding-bottom: 16px; }
+#sv03-kpi-flow .kpi-item:nth-child(n+3) { padding-top: 16px; }
+/* 핵심 지표(내원·최종내원율) 강조 — 색 대신 크기로 (증감 화살표 빨강/파랑 규칙과 안 겹치게) */
+#sv03-kpi-flow .kpi-item:nth-child(2) .kpi-month-val, #sv03-kpi-flow .kpi-item:nth-child(4) .kpi-month-val { font-size:34px; }
+#sv03-kpi-flow .kpi-item:nth-child(2) .kpi-item-label, #sv03-kpi-flow .kpi-item:nth-child(4) .kpi-item-label { color:var(--gray-900); font-weight:800; }
+#sv03-kpi-flow .kpi-item:nth-child(1) .kpi-item-label, #sv03-kpi-flow .kpi-item:nth-child(3) .kpi-item-label { color:var(--gray-500); font-weight:600; }
+#sv03-kpi-flow .kpi-item:nth-child(1) .kpi-month-val, #sv03-kpi-flow .kpi-item:nth-child(3) .kpi-month-val { color:var(--gray-700); }
 .kpi-item-label { font-size:16px; color:var(--gray-700); font-weight:700; margin-bottom:12px; text-transform:uppercase; letter-spacing:0.04em; }
 .kpi-row { display:flex; align-items:baseline; gap:14px; flex-wrap:wrap; }
 .kpi-month { display:flex; flex-direction:column; }
