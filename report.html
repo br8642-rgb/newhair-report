@@ -307,6 +307,7 @@
     <div class="section-divider" data-channel="s02-kakao" style="display:none;"></div>
     <div class="channel-section" data-channel="s02-kakao" style="display:none;">
       <div class="channel-header"><div class="channel-name">플친</div><span class="badge badge-kakao">카카오채널</span></div>
+      <div class="consult-type-wrap" id="ctw-kakao" style="display:none;"></div>
       <div class="card"><div class="card-title">문의·예약 상세 현황 <span style="font-size:11px;color:#6b6b6b;font-weight:400;">(해외 포함)</span></div><button class="table-toggle-btn" onclick="toggleTable(this)"><span class="toggle-arrow">▼</span> 표 펼치기</button><div class="table-collapsible"><div style="overflow-x:auto"><table class="data-table" id="tbl-s02-kakao"></table></div></div></div>
       <div class="card"><div class="card-title">5월 vs 6월 비교 그래프</div><div class="chart-legend" id="lg-s02-kakao"></div><div class="chart-wrap" style="height:250px"><canvas id="chart-s02-kakao"></canvas></div></div>
     </div>
@@ -328,8 +329,25 @@
     <div class="section-divider" data-channel="s02-whatsapp" style="display:none;"></div>
     <div class="channel-section" data-channel="s02-whatsapp" style="display:none;">
       <div class="channel-header"><div class="channel-name">왓츠앱</div><span class="badge badge-whatsapp">해외 채널</span></div>
+      <div class="consult-type-wrap" id="ctw-whatsapp" style="display:none;"></div>
       <div class="card"><div class="card-title">문의·예약 상세 현황 <span style="font-size:11px;color:#6b6b6b;font-weight:400;">(이식 수술 확정 포함)</span></div><button class="table-toggle-btn" onclick="toggleTable(this)"><span class="toggle-arrow">▼</span> 표 펼치기</button><div class="table-collapsible"><div style="overflow-x:auto"><table class="data-table" id="tbl-s02-whatsapp"></table></div></div></div>
       <div class="card"><div class="card-title">5월 vs 6월 비교 그래프</div><div class="chart-legend" id="lg-s02-whatsapp"></div><div class="chart-wrap" style="height:210px"><canvas id="chart-s02-whatsapp"></canvas></div></div>
+    </div>
+
+    <div class="section-divider" data-channel="s02-wechat" style="display:none;"></div>
+    <div class="channel-section" data-channel="s02-wechat" style="display:none;">
+      <div class="channel-header"><div class="channel-name">위챗</div><span class="badge badge-whatsapp">해외 채널</span></div>
+      <div class="consult-type-wrap" id="ctw-wechat" style="display:none;"></div>
+      <div class="card"><div class="card-title">문의·예약 상세 현황</div><button class="table-toggle-btn" onclick="toggleTable(this)"><span class="toggle-arrow">▼</span> 표 펼치기</button><div class="table-collapsible"><div style="overflow-x:auto"><table class="data-table" id="tbl-s02-wechat"></table></div></div></div>
+      <div class="card"><div class="card-title">5월 vs 6월 비교 그래프</div><div class="chart-legend" id="lg-s02-wechat"></div><div class="chart-wrap" style="height:210px"><canvas id="chart-s02-wechat"></canvas></div></div>
+    </div>
+
+    <div class="section-divider" data-channel="s02-line" style="display:none;"></div>
+    <div class="channel-section" data-channel="s02-line" style="display:none;">
+      <div class="channel-header"><div class="channel-name">라인</div><span class="badge badge-whatsapp">해외 채널</span></div>
+      <div class="consult-type-wrap" id="ctw-line" style="display:none;"></div>
+      <div class="card"><div class="card-title">문의·예약 상세 현황</div><button class="table-toggle-btn" onclick="toggleTable(this)"><span class="toggle-arrow">▼</span> 표 펼치기</button><div class="table-collapsible"><div style="overflow-x:auto"><table class="data-table" id="tbl-s02-line"></table></div></div></div>
+      <div class="card"><div class="card-title">5월 vs 6월 비교 그래프</div><div class="chart-legend" id="lg-s02-line"></div><div class="chart-wrap" style="height:210px"><canvas id="chart-s02-line"></canvas></div></div>
     </div>
 
     <div class="section-divider" data-channel="s02-summary" style="display:none;"></div>
@@ -3643,19 +3661,22 @@ function setupTitleEdit() {
 function renderSection02Partial(r) {
   const s01 = r.section01, s02 = r.section02;
   const pl = r.meta.prevLabel || '5월', cl = r.meta.currLabel || '6월';
-  document.getElementById('s02-subtitle').textContent = r.meta.compare + ' · 전화·플친·네이버·게시판·왓츠앱 5개 채널의 문의·예약 현황과 채널별 상세 비교';
-
-  // 5월 보고서 전용(채널 간 비교 차트 / 진료과목별 분포) 블록은 숨김
-  document.querySelectorAll('[data-channel="s02-full"]').forEach(el => { el.style.display = 'none'; });
-
-  // ── 채널별 핵심 지표 (전화 → 플친 → 네이버 → 게시판 → 왓츠앱), 데이터 있는 채널만
+  // ── 채널별 핵심 지표 (전화 → 플친 → 네이버 → 게시판 → 왓츠앱 → 위챗 → 라인), 데이터 있는 채널만
   const CH2_META = [
     { key:'phone',    label:'전화',   emoji:'📞', data: s01.phone },
     { key:'kakao',    label:'플친',   emoji:'💬', data: s02.kakao },
     { key:'naver',    label:'네이버', emoji:'<span style="display:inline-flex;align-items:center;justify-content:center;width:22px;height:22px;background:#03C75A;border-radius:4px;font-size:13px;font-weight:900;color:#fff;font-family:sans-serif;line-height:1;flex-shrink:0;">N</span>', data: s02.naver },
     { key:'board',    label:'게시판', emoji:'📋', data: s02.board },
     { key:'whatsapp', label:'왓츠앱', emoji:'🌍', data: s02.whatsapp },
+    { key:'wechat',   label:'위챗',   emoji:'<span style="display:inline-flex;align-items:center;justify-content:center;width:22px;height:22px;background:#2DC100;border-radius:4px;font-size:12px;font-weight:900;color:#fff;font-family:sans-serif;line-height:1;flex-shrink:0;">微</span>', data: s02.wechat },
+    { key:'line',     label:'라인',   emoji:'<span style="display:inline-flex;align-items:center;justify-content:center;width:22px;height:22px;background:#00C300;border-radius:4px;font-size:11px;font-weight:900;color:#fff;font-family:sans-serif;line-height:1;flex-shrink:0;">L</span>', data: s02.line },
   ];
+  // 소제목은 실제 데이터가 있는 채널만 순서대로 나열 (전화 + CH2_META 중 kakao 이하) — 기존 보고서(5개 채널)는 문구 그대로 유지됨
+  const subtitleChannels = ['전화', ...CH2_META.filter(ch => ch.key !== 'phone' && ch.data).map(ch => ch.label)];
+  document.getElementById('s02-subtitle').textContent = r.meta.compare + ' · ' + subtitleChannels.join('·') + ' ' + subtitleChannels.length + '개 채널의 문의·예약 현황과 채널별 상세 비교';
+
+  // 5월 보고서 전용(채널 간 비교 차트 / 진료과목별 분포) 블록은 숨김
+  document.querySelectorAll('[data-channel="s02-full"]').forEach(el => { el.style.display = 'none'; });
   const kpiGrid = document.getElementById('s02-kpi');
   kpiGrid.innerHTML = '';
   function cls(d){ return d>0?'up':d<0?'down':'flat'; }
