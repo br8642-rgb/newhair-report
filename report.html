@@ -94,27 +94,27 @@
   padding: 16px 14px 14px; box-shadow: 0 1px 4px rgba(0,0,0,.05);
 }
 .ch-kpi-card .ck-name {
-  font-size: 16px; font-weight: 800; letter-spacing: -.01em;
-  margin-bottom: 12px; display: flex; align-items: center; gap: 7px;
+  font-size: 19px; font-weight: 800; letter-spacing: -.01em;
+  margin-bottom: 14px; display: flex; align-items: center; gap: 8px;
 }
-.ch-kpi-card .ck-emoji { font-size: 18px; line-height: 1; }
+.ch-kpi-card .ck-emoji { font-size: 21px; line-height: 1; }
 .ch-kpi-card .ck-dot { width: 8px; height: 8px; border-radius: 50%; display: inline-block; }
 .ch-kpi-card .ck-row {
   display: flex; justify-content: space-between; align-items: center;
-  font-size: 11px; color: #6b6b6b; margin-bottom: 4px;
+  font-size: 14px; color: #6b6b6b; font-weight: 600; margin-bottom: 6px;
 }
 .ch-kpi-card .ck-row .ck-vals {
-  display: flex; align-items: center; gap: 5px;
-  font-size: 13px; color: #1a1a1a; font-weight: 600;
+  display: flex; align-items: center; gap: 6px;
+  font-size: 17px; color: #1a1a1a; font-weight: 700;
 }
-.ch-kpi-card .ck-vals .arrow { color: #aaa; font-size: 11px; }
+.ch-kpi-card .ck-vals .arrow { color: #aaa; font-size: 13px; }
 .ch-kpi-card .ck-diff {
-  font-size: 11px; font-weight: 700; padding: 1px 5px; border-radius: 4px;
+  font-size: 13px; font-weight: 700; padding: 2px 7px; border-radius: 4px;
 }
 .ch-kpi-card .ck-diff.up   { color: #C62828; background: #FFEBEE; }
 .ch-kpi-card .ck-diff.down { color: #1565C0; background: #E3F2FD; }
 .ch-kpi-card .ck-diff.flat { color: #888;    background: #f0f0f0; }
-.ch-kpi-card .ck-divider { border: none; border-top: 1px solid #f0f0f0; margin: 8px 0; }
+.ch-kpi-card .ck-divider { border: none; border-top: 1px solid #f0f0f0; margin: 10px 0; }
 
 .dot-phone    { background: #5C6BC0; }
 .dot-kakao    { background: #F9A825; }
@@ -3793,7 +3793,7 @@ function renderConsultTypeBar(elId, pl, cl, tp, tc) {
   }
   el.innerHTML = `<div class="ctw-title">상담유형 — 온라인 · 방문</div>`
     + row(pl, tp.online, tp.visit) + row(cl, tc.online, tc.visit)
-    + `<div class="ct-legend"><span><span class="ct-legend-dot" style="background:#1565C0;"></span>방문상담</span><span><span class="ct-legend-dot" style="background:#26A69A;"></span>온라인상담</span></div>`;
+    + `<div class="ct-legend"><span><span class="ct-legend-dot" style="background:#1565C0;"></span>방문상담</span><span><span class="ct-legend-dot" style="background:#F57C00;"></span>온라인상담</span></div>`;
   el.style.display = '';
 }
 
