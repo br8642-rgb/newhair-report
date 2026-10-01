@@ -1736,6 +1736,50 @@ const ALL_REPORTS = [
       phone: '전화 신규문의 498→499건으로 거의 동일.\n예약률은 91%→88%로 전반적으로 소폭 낮아짐 — <b>타병원과 먼저 상담받고 비용을 비교해보려는 문의가 늘어난 영향</b>으로 보임.\n이식(84%→82%)·헤어(90%→73%)·SMP(84%→68%)·치료(80%→77%) 과목 모두 9월 들어 예약률이 낮아짐.\n검사(96%→97%)·처방전(100%→100%)은 안정적인 수준 유지.',
     },
   },
+  section02: {
+    kakao: { // 플친 — 온라인/방문 상담 구분 신설, 해외문의 포함
+      cats: ['이식','헤어','SMP','치료','검사','처방전'], // 기타·과목미확인 제외(참고용 데이터일 뿐, 요청에 따라)
+      may: { inq:[45,6,9,12,32,2], absent:[1,0,0,0,0,0], book:[21,4,4,3,25,0], rate:[47,67,44,25,78,0], overseas:[21,4,0,1,6,0], online:[0,0,0,0,0,0], visit:[21,4,4,3,25,0] }, // 8월(비교용)
+      jun: { inq:[47,4,3,12,32,1], absent:[2,0,0,2,2,0], book:[23,2,2,3,23,1], rate:[49,50,67,25,72,100], overseas:[26,3,1,3,4,0], online:[0,0,0,0,0,0], visit:[23,2,2,3,23,1] }, // 9월(신규)
+      total_may: { inq:106, absent:1, book:57, rate:54, overseas:32, online:0, visit:57 },
+      total_jun: { inq:99, absent:6, book:54, rate:55, overseas:37, online:0, visit:54 },
+    },
+    naver: {
+      cats: ['이식','헤어','SMP','치료','검사','처방전'], // 기타 제외(요청에 따라)
+      may: { inq:[41,4,5,5,131,3], absent:[0,0,0,0,1,0], book:[40,4,5,5,130,3], rate:[98,100,100,100,99,100] }, // 8월(비교용)
+      jun: { inq:[28,9,5,7,141,1], absent:[1,0,1,1,7,0], book:[24,9,5,7,135,1], rate:[86,100,100,100,96,100] }, // 9월(신규)
+      total_may: { inq:189, absent:2, book:187, rate:99 },
+      total_jun: { inq:192, absent:10, book:182, rate:95 },
+    },
+    board: {
+      cats: ['이식','헤어','SMP','치료','검사','처방전'], // 기타 0건 — 해당 없음
+      may: { inq:[29,7,11,16,36,5], absent:[2,0,3,2,2,0], book:[21,5,6,13,36,5], rate:[72,71,55,81,100,100] }, // 8월(비교용)
+      jun: { inq:[32,4,6,15,27,7], absent:[2,0,1,1,6,0], book:[28,3,4,13,25,6], rate:[88,75,67,87,93,86] }, // 9월(신규)
+      total_may: { inq:104, absent:9, book:86, rate:83 },
+      total_jun: { inq:91, absent:10, book:79, rate:87 },
+    },
+    whatsapp: { // 온라인/방문 상담 구분 신설, 이식수술(확정) 건수 포함
+      cats: ['이식','헤어','SMP','치료','검사','처방전'],
+      may: { inq:[45,3,4,14,10,1], absent:[0,0,1,0,0,0], book:[11,0,1,5,9,1], rate:[24,0,25,36,90,100], surgery:[3,0,0,2,0,0], online:[0,0,0,0,0,0], visit:[11,0,1,5,9,1] }, // 8월(비교용)
+      jun: { inq:[42,1,2,11,9,1], absent:[3,0,0,4,0,0], book:[15,0,2,1,6,1], rate:[36,0,100,9,67,100], surgery:[1,0,0,0,0,0], online:[2,0,0,0,0,0], visit:[13,0,2,1,6,1] }, // 9월(신규)
+      total_may: { inq:77, absent:1, book:27, rate:35, surgery:5, online:0, visit:27 },
+      total_jun: { inq:66, absent:7, book:25, rate:38, surgery:1, online:2, visit:23 },
+    },
+    wechat: { // 위챗 — 신규 채널, 왓츠앱과 동일한 온라인/방문 구분 적용
+      cats: ['이식','헤어','SMP','치료','검사','처방전'],
+      may: { inq:[6,2,2,0,0,0], absent:[0,0,0,0,0,0], book:[1,1,2,0,0,0], rate:[17,50,100,'—','—','—'], online:[0,0,0,0,0,0], visit:[0,1,2,0,0,0] }, // 8월(비교용)
+      jun: { inq:[5,0,0,0,1,0], absent:[0,0,0,0,0,0], book:[2,0,0,0,0,0], rate:[40,'—','—','—',0,'—'], online:[0,0,0,0,0,0], visit:[1,0,0,0,0,0] }, // 9월(신규)
+      total_may: { inq:10, absent:0, book:4, rate:40, online:0, visit:3 },
+      total_jun: { inq:6, absent:0, book:2, rate:33, online:0, visit:1 },
+    },
+    line: { // 라인 — 신규 채널, 왓츠앱과 동일한 온라인/방문 구분 적용
+      cats: ['이식','헤어','SMP','치료','검사','처방전'],
+      may: { inq:[4,3,0,0,1,0], absent:[0,0,0,0,0,0], book:[0,0,0,0,0,0], rate:[0,0,'—','—',0,'—'], online:[0,0,0,0,0,0], visit:[0,0,0,0,0,0] }, // 8월(비교용)
+      jun: { inq:[13,0,0,2,0,0], absent:[1,0,0,0,0,0], book:[3,0,0,0,0,0], rate:[23,'—','—',0,'—','—'], online:[2,0,0,0,0,0], visit:[0,0,0,0,0,0] }, // 9월(신규)
+      total_may: { inq:8, absent:0, book:0, rate:0, online:0, visit:0 },
+      total_jun: { inq:15, absent:1, book:3, rate:20, online:2, visit:0 },
+    },
+  },
 },
 /* ── WQ: 2026년 8/24~9/12 (주간) — 신규, 기존 보고서와 완전 분리 ──
    기본 화면(index 0)으로 노출. 기존 wq(7~8월) 보고서의 렌더링 코드(renderWqReport 등)를 그대로 재사용하는 새 데이터 객체.
@@ -3696,16 +3740,20 @@ function renderSection02Partial(r) {
       </div>`;
   });
 
-  // ── 채널별 상세 (플친 → 네이버 → 게시판 → 왓츠앱), 데이터 있는 채널만 표시
+  // ── 채널별 상세 (플친 → 네이버 → 게시판 → 왓츠앱 → 위챗 → 라인), 데이터 있는 채널만 표시
   toggleS02Channel('kakao',    !!s02.kakao);
   toggleS02Channel('naver',    !!s02.naver);
   toggleS02Channel('board',    !!s02.board);
   toggleS02Channel('whatsapp', !!s02.whatsapp);
+  toggleS02Channel('wechat',   !!s02.wechat);
+  toggleS02Channel('line',     !!s02.line);
 
   if (s02.kakao)    renderS02Kakao(s02.kakao, pl, cl);
   if (s02.naver)    renderS02Naver(s02.naver, pl, cl);
   if (s02.board)    renderS02Board(s02.board, pl, cl);
   if (s02.whatsapp) renderS02Whatsapp(s02.whatsapp, pl, cl);
+  if (s02.wechat)   renderS02Wechat(s02.wechat, pl, cl);
+  if (s02.line)     renderS02Line(s02.line, pl, cl);
 
   // ── 종합 분석 (5개 채널 비교)
   const summaryDivider = document.querySelector('[data-channel="s02-summary"].section-divider');
@@ -3724,8 +3772,34 @@ function toggleS02Channel(key, show) {
   document.querySelectorAll('[data-channel="s02-'+key+'"]').forEach(el => { el.style.display = show ? '' : 'none'; });
 }
 
+// 채팅 채널(플친/왓츠앱/위챗/라인) 전용 — 상담유형(온라인/방문) 비교 바
+// tp/tc(=total_may/total_jun)에 online·visit 필드가 없는 기존(7월 이전) 보고서는 그냥 숨김 처리 — 기존 화면 변화 없음
+function renderConsultTypeBar(elId, pl, cl, tp, tc) {
+  const el = document.getElementById(elId);
+  if (!el) return;
+  if (tp.online === undefined || tp.visit === undefined) { el.style.display = 'none'; return; }
+  function row(label, online, visit) {
+    const total = online + visit;
+    const onlinePct = total ? Math.round(online / total * 100) : 0;
+    const visitPct = total ? 100 - onlinePct : 0;
+    let segs = '';
+    if (total === 0) {
+      segs = `<div class="ct-seg ct-seg-empty" style="width:100%">상담 없음</div>`;
+    } else {
+      if (visit > 0) segs += `<div class="ct-seg ct-seg-visit" style="width:${visitPct}%">방문 ${visit}</div>`;
+      if (online > 0) segs += `<div class="ct-seg ct-seg-online" style="width:${onlinePct}%">온라인 ${online}</div>`;
+    }
+    return `<div class="ct-period-row"><div class="ct-period-label">${label}</div><div class="consult-type-bar">${segs}</div></div>`;
+  }
+  el.innerHTML = `<div class="ctw-title">상담유형 — 온라인 · 방문</div>`
+    + row(pl, tp.online, tp.visit) + row(cl, tc.online, tc.visit)
+    + `<div class="ct-legend"><span><span class="ct-legend-dot" style="background:#1565C0;"></span>방문상담</span><span><span class="ct-legend-dot" style="background:#26A69A;"></span>온라인상담</span></div>`;
+  el.style.display = '';
+}
+
 function renderS02Kakao(kk, pl, cl) {
   const kc = kk.cats;
+  renderConsultTypeBar('ctw-kakao', pl, cl, kk.total_may, kk.total_jun);
   mkTable('tbl-s02-kakao',['구분',pl+' 문의',pl+' 예약',pl+' 예약률',pl+' 해외',cl+' 문의',cl+' 예약',cl+' 예약률',cl+' 해외','증감'],
     ['합계',kk.total_may.inq,kk.total_may.book,pct(kk.total_may.rate),kk.total_may.overseas,kk.total_jun.inq,kk.total_jun.book,pct(kk.total_jun.rate),kk.total_jun.overseas,diff(kk.total_may.inq,kk.total_jun.inq)],
     kc.map((c,i)=>[c,kk.may.inq[i],kk.may.book[i],pct(kk.may.rate[i]),kk.may.overseas[i]||'—',kk.jun.inq[i],kk.jun.book[i],pct(kk.jun.rate[i]),kk.jun.overseas[i]||'—',diff(kk.may.inq[i],kk.jun.inq[i])]));
@@ -3753,11 +3827,32 @@ function renderS02Board(bd, pl, cl) {
 
 function renderS02Whatsapp(wa, pl, cl) {
   const wc = wa.cats;
+  renderConsultTypeBar('ctw-whatsapp', pl, cl, wa.total_may, wa.total_jun);
   mkTable('tbl-s02-whatsapp',['구분',pl+' 문의',pl+' 예약',pl+' 예약률',pl+' 이식수술',cl+' 문의',cl+' 예약',cl+' 예약률',cl+' 이식수술','증감'],
     ['합계',wa.total_may.inq,wa.total_may.book,pct(wa.total_may.rate),wa.total_may.surgery||'—',wa.total_jun.inq,wa.total_jun.book,pct(wa.total_jun.rate),wa.total_jun.surgery||'—',diff(wa.total_may.inq,wa.total_jun.inq)],
     wc.map((c,i)=>[c,wa.may.inq[i],wa.may.book[i],pct(wa.may.rate[i]),wa.may.surgery[i]||'—',wa.jun.inq[i],wa.jun.book[i],pct(wa.jun.rate[i]),wa.jun.surgery[i]||'—',diff(wa.may.inq[i],wa.jun.inq[i])]));
   legend('lg-s02-whatsapp',[[C.aprInq,pl+' 문의'],[C.aprBook,pl+' 예약'],[C.mayInq,cl+' 문의'],[C.mayBook,cl+' 예약']]);
   mkChart('chart-s02-whatsapp',wc,[mkDS(pl+' 문의',wa.may.inq,C.aprInq),mkDS(pl+' 예약',wa.may.book,C.aprBook),mkDS(cl+' 문의',wa.jun.inq,C.mayInq),mkDS(cl+' 예약',wa.jun.book,C.mayBook)]);
+}
+
+function renderS02Wechat(we, pl, cl) {
+  const wc = we.cats;
+  renderConsultTypeBar('ctw-wechat', pl, cl, we.total_may, we.total_jun);
+  mkTable('tbl-s02-wechat',['구분',pl+' 문의',pl+' 미응답',pl+' 예약',pl+' 예약률',cl+' 문의',cl+' 미응답',cl+' 예약',cl+' 예약률','증감'],
+    ['합계',we.total_may.inq,we.total_may.absent,we.total_may.book,pct(we.total_may.rate),we.total_jun.inq,we.total_jun.absent,we.total_jun.book,pct(we.total_jun.rate),diff(we.total_may.inq,we.total_jun.inq)],
+    wc.map((c,i)=>[c,we.may.inq[i],we.may.absent[i]||'—',we.may.book[i],pct(we.may.rate[i]),we.jun.inq[i],we.jun.absent[i]||'—',we.jun.book[i],pct(we.jun.rate[i]),diff(we.may.inq[i],we.jun.inq[i])]));
+  legend('lg-s02-wechat',[[C.aprInq,pl+' 문의'],[C.aprBook,pl+' 예약'],[C.mayInq,cl+' 문의'],[C.mayBook,cl+' 예약']]);
+  mkChart('chart-s02-wechat',wc,[mkDS(pl+' 문의',we.may.inq,C.aprInq),mkDS(pl+' 예약',we.may.book,C.aprBook),mkDS(cl+' 문의',we.jun.inq,C.mayInq),mkDS(cl+' 예약',we.jun.book,C.mayBook)]);
+}
+
+function renderS02Line(li, pl, cl) {
+  const lc = li.cats;
+  renderConsultTypeBar('ctw-line', pl, cl, li.total_may, li.total_jun);
+  mkTable('tbl-s02-line',['구분',pl+' 문의',pl+' 미응답',pl+' 예약',pl+' 예약률',cl+' 문의',cl+' 미응답',cl+' 예약',cl+' 예약률','증감'],
+    ['합계',li.total_may.inq,li.total_may.absent,li.total_may.book,pct(li.total_may.rate),li.total_jun.inq,li.total_jun.absent,li.total_jun.book,pct(li.total_jun.rate),diff(li.total_may.inq,li.total_jun.inq)],
+    lc.map((c,i)=>[c,li.may.inq[i],li.may.absent[i]||'—',li.may.book[i],pct(li.may.rate[i]),li.jun.inq[i],li.jun.absent[i]||'—',li.jun.book[i],pct(li.jun.rate[i]),diff(li.may.inq[i],li.jun.inq[i])]));
+  legend('lg-s02-line',[[C.aprInq,pl+' 문의'],[C.aprBook,pl+' 예약'],[C.mayInq,cl+' 문의'],[C.mayBook,cl+' 예약']]);
+  mkChart('chart-s02-line',lc,[mkDS(pl+' 문의',li.may.inq,C.aprInq),mkDS(pl+' 예약',li.may.book,C.aprBook),mkDS(cl+' 문의',li.jun.inq,C.mayInq),mkDS(cl+' 예약',li.jun.book,C.mayBook)]);
 }
 
 function renderSection02(r) {
