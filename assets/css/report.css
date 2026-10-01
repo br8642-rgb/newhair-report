@@ -115,16 +115,12 @@ body { font-family: var(--font); background: var(--bg); color: var(--gray-900); 
 .channel-name { font-size:20px; font-weight:700; color:var(--gray-900); }
 
 /* 상담유형(온라인·방문) 2x2 스탯 카드 — 채팅 채널(플친/왓츠앱/위챗/라인) 전용 */
-.consult-type-wrap { background:var(--card-bg); border-radius:var(--radius); border:0.5px solid var(--border); box-shadow:var(--shadow); padding:16px 18px; margin-bottom:16px; max-width:360px; }
-.ctw-title { font-size:12px; font-weight:700; color:var(--gray-500); text-transform:uppercase; letter-spacing:0.04em; margin-bottom:12px; }
-.ct-stat-grid { display:grid; grid-template-columns:1fr 1fr; gap:8px; }
-.ct-stat-cell { border-radius:8px; padding:10px 6px; text-align:center; }
-.ct-stat-label { font-size:11px; font-weight:700; margin-bottom:4px; }
-.ct-stat-val { font-size:22px; font-weight:800; line-height:1; }
-.ct-stat-visit { background:#E3F2FD; }
-.ct-stat-visit .ct-stat-label, .ct-stat-visit .ct-stat-val { color:#1565C0; }
-.ct-stat-online { background:#FFF3E0; }
-.ct-stat-online .ct-stat-label, .ct-stat-online .ct-stat-val { color:#E65100; }
+/* 상담유형(온라인·방문) 뱃지 — 채팅 채널(플친/왓츠앱/위챗/라인)의 "문의·예약 상세 현황" 제목 옆에 작게 표시 */
+.ctw-inline { display:inline-flex; align-items:center; gap:6px; margin-left:10px; font-size:11px; font-weight:600; color:var(--gray-600); background:var(--gray-50,#F5F6F7); border-radius:6px; padding:3px 9px; vertical-align:middle; }
+.ctw-inline b { font-weight:800; }
+.ctw-inline .ctw-visit { color:#1565C0; }
+.ctw-inline .ctw-online { color:#E65100; }
+.ctw-inline .ctw-sep { color:var(--gray-300,#ccc); }
 
 /* YOY NOTE */
 .yoy-note { font-size:13px; color:var(--gray-500); margin-top:10px; font-style:italic; }
