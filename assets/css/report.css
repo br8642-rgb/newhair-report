@@ -114,21 +114,17 @@ body { font-family: var(--font); background: var(--bg); color: var(--gray-900); 
 .channel-header { display:flex; align-items:center; gap:10px; margin-bottom:14px; padding:12px 0; border-bottom:1px solid var(--border); }
 .channel-name { font-size:20px; font-weight:700; color:var(--gray-900); }
 
-/* 상담유형(온라인·방문) 비교 바 — 채팅 채널(플친/왓츠앱/위챗/라인) 전용 */
-.consult-type-wrap { background:var(--card-bg); border-radius:var(--radius); border:0.5px solid var(--border); border-left:4px solid #1565C0; box-shadow:var(--shadow); padding:22px 26px; margin-bottom:20px; }
-.ctw-title { font-size:15px; font-weight:800; color:var(--gray-900); letter-spacing:-0.01em; margin-bottom:18px; display:flex; align-items:center; gap:8px; }
-.ctw-title::before { content:'💬'; font-size:16px; }
-.ct-period-row { display:flex; align-items:center; gap:14px; margin-bottom:14px; }
-.ct-period-row:last-child { margin-bottom:0; }
-.ct-period-label { font-size:15px; font-weight:800; color:var(--gray-900); width:40px; flex-shrink:0; }
-.consult-type-bar { flex:1; display:flex; height:40px; border-radius:8px; overflow:hidden; background:var(--gray-100); font-size:14px; font-weight:700; box-shadow:inset 0 0 0 1px var(--border); }
-.ct-seg { display:flex; align-items:center; justify-content:center; color:#fff; white-space:nowrap; overflow:hidden; transition:width 0.2s; }
-.ct-seg-visit { background:#1565C0; }
-.ct-seg-online { background:#F57C00; }
-.ct-seg-empty { background:transparent; color:var(--gray-500); font-weight:600; font-size:13px; }
-.ct-legend { display:flex; gap:20px; margin-top:16px; font-size:13px; color:var(--gray-700); font-weight:600; }
-.ct-legend span { display:flex; align-items:center; gap:7px; }
-.ct-legend-dot { width:12px; height:12px; border-radius:3px; display:inline-block; }
+/* 상담유형(온라인·방문) 2x2 스탯 카드 — 채팅 채널(플친/왓츠앱/위챗/라인) 전용 */
+.consult-type-wrap { background:var(--card-bg); border-radius:var(--radius); border:0.5px solid var(--border); box-shadow:var(--shadow); padding:16px 18px; margin-bottom:16px; max-width:360px; }
+.ctw-title { font-size:12px; font-weight:700; color:var(--gray-500); text-transform:uppercase; letter-spacing:0.04em; margin-bottom:12px; }
+.ct-stat-grid { display:grid; grid-template-columns:1fr 1fr; gap:8px; }
+.ct-stat-cell { border-radius:8px; padding:10px 6px; text-align:center; }
+.ct-stat-label { font-size:11px; font-weight:700; margin-bottom:4px; }
+.ct-stat-val { font-size:22px; font-weight:800; line-height:1; }
+.ct-stat-visit { background:#E3F2FD; }
+.ct-stat-visit .ct-stat-label, .ct-stat-visit .ct-stat-val { color:#1565C0; }
+.ct-stat-online { background:#FFF3E0; }
+.ct-stat-online .ct-stat-label, .ct-stat-online .ct-stat-val { color:#E65100; }
 
 /* YOY NOTE */
 .yoy-note { font-size:13px; color:var(--gray-500); margin-top:10px; font-style:italic; }
