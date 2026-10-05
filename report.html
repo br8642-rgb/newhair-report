@@ -6002,39 +6002,48 @@ function renderSectionOverview(r) {
 
   const ph = r.section01.phone, s02 = r.section02, vs = r.visitStatus, cs = r.closingStatus, ts = r.trafficStatus, rv = r.revenueStatus, mg = r.mergedInquiry, tbc = r.trafficByCat;
 
+  // 1위가 동률이면 공동 1위로 함께 표시(실장님 결정). names: 이름 배열, vals: 같은 순서의 값 배열(숫자 또는 '—')
+  const topTies = (names, vals) => {
+    const items = names.map((n,i)=>({n, v: (vals[i]==='—'||vals[i]==null) ? -Infinity : vals[i]}));
+    const max = Math.max(...items.map(x=>x.v));
+    const tops = items.filter(x=>x.v===max);
+    return { names: tops.map(x=>x.n), v: max, tie: tops.length>1 };
+  };
+  const tieTag = (t) => t.tie ? ' (공동)' : '';
   const drTop = (month) => {
     const d = r.doctorStatus[month].total;
-    const idx = d.rate.map((v,i)=>({v:v==='—'?-1:v,i})).sort((a,b)=>b.v-a.v)[0].i;
-    return r.doctorStatus.doctors[idx] + ' ' + d.rate[idx] + '%';
+    const t = topTies(r.doctorStatus.doctors, d.rate);
+    return t.names.join('·') + ' ' + t.v + '%' + tieTag(t);
   };
   const stTop = (month) => {
     const d = r.staffStatus[month].total;
-    const idx = d.rate.map((v,i)=>({v:v==='—'?-1:v,i})).sort((a,b)=>b.v-a.v)[0].i;
-    return r.staffStatus.staff[idx] + ' ' + d.rate[idx] + '%';
+    const t = topTies(r.staffStatus.staff, d.rate);
+    return t.names.join('·') + ' ' + t.v + '%' + tieTag(t);
   };
   const trTop = (arr) => {
-    const idx = ts.routes.map((n,i)=>({n,c:arr[i]})).sort((a,b)=>b.c-a.c)[0];
-    return idx.n + ' ' + idx.c + '건';
+    const t = topTies(ts.routes, arr);
+    return t.names.join('·') + ' ' + t.v + '건' + tieTag(t);
   };
   const revTop = (arr) => {
-    const idx = rv.cats.map((c,i)=>({c,v:arr[i]})).sort((a,b)=>b.v-a.v)[0];
-    return idx.c;
+    const t = topTies(rv.cats, arr);
+    return t.names.join('·') + tieTag(t);
   };
 
   const catTop = (cat, month) => {
     if (!tbc) return '—';
-    const arr = tbc[month].byCat[cat];
-    const idx = tbc.routes.map((route,i)=>({route,c:arr[i]})).sort((a,b)=>b.c-a.c)[0];
-    return idx.route;
+    const t = topTies(tbc.routes, tbc[month].byCat[cat]);
+    return t.names.join('·') + tieTag(t);
   };
 
   const maxImprove = (names, mayRate, junRate) => {
-    const diffs = names.map((name, i) => {
+    const all = names.map((name, i) => {
       const a = mayRate[i], b = junRate[i];
       const d = (a === '—' || b === '—') ? -Infinity : b - a;
       return { name, d };
-    }).sort((x, y) => y.d - x.d)[0];
-    return `${diffs.name} ${diffs.d >= 0 ? '+' : ''}${diffs.d}%p`;
+    });
+    const maxD = Math.max(...all.map(x => x.d));
+    const tops = all.filter(x => x.d === maxD);
+    return `${tops.map(x => x.name).join('·')} ${maxD >= 0 ? '+' : ''}${maxD}%p${tops.length > 1 ? ' (공동)' : ''}`;
   };
   const drMaxImprove = maxImprove(r.doctorStatus.doctors, r.doctorStatus.may.total.rate, r.doctorStatus.jun.total.rate);
   const stMaxImprove = maxImprove(r.staffStatus.staff, r.staffStatus.may.total.rate, r.staffStatus.jun.total.rate);
