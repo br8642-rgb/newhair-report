@@ -3895,6 +3895,40 @@ function exportReportPdf() {
     pg.body.style.width = (PW / best) + 'px'; pg.body.style.zoom = String(best);
     zs.push(Math.round(best * 100) / 100);
   });
+  // 같은 줄에 나란히 놓인 채널 카드(플친·네이버·게시판 등)는 표 카드, 그래프 카드 높이를 맞춰서 줄이 가지런하게 함
+  const eqEls = [];
+  const equalize = (pg) => {
+    pg.body.querySelectorAll('.section-panel').forEach(sl => {
+      const css = [...sl.children].filter(c => c.matches('.channel-section') && !c.classList.contains('pdf-wide'));
+      const rows = {};
+      css.forEach(c => { const k = Math.round(c.offsetTop / 4); (rows[k] = rows[k] || []).push(c); });
+      Object.values(rows).forEach(grp => {
+        if (grp.length < 2) return;
+        const kids = grp.map(c => [...c.children].filter(x => x.offsetParent !== null && !x.matches('.channel-header,.analysis-box,p')));
+        const n = Math.min(...kids.map(k => k.length));
+        const zz = parseFloat(pg.body.style.zoom) || 1;
+        for (let i = 0; i < n; i++) {
+          const mh = Math.max(...kids.map(k => k[i].getBoundingClientRect().height)) / zz;
+          kids.forEach(k => { k[i].style.minHeight = mh + 'px'; eqEls.push(k[i]); });
+        }
+      });
+    });
+  };
+  pages.forEach(pg => {
+    const before = eqEls.length;
+    equalize(pg);
+    if (eqEls.length === before) return;
+    const z0 = parseFloat(pg.body.style.zoom) || 1;
+    let z = z0;
+    // 높이를 맞추고 나서 쪽을 넘치면 그 쪽의 배율을 조금 낮춰서 다시 맞춤(최소 0.55)
+    while ((height(pg) > LIMIT - 4 || pg.body.scrollWidth > pg.body.clientWidth + 2) && z > 0.55) {
+      z -= 0.02; pg.body.style.width = (PW / z) + 'px'; pg.body.style.zoom = String(z);
+    }
+    if (height(pg) > LIMIT - 4 || pg.body.scrollWidth > pg.body.clientWidth + 2) {
+      eqEls.splice(before).forEach(e => { e.style.minHeight = ''; });
+      pg.body.style.width = (PW / z0) + 'px'; pg.body.style.zoom = String(z0);
+    }
+  });
   window.__pdfInfo = { counts, z: CANDS[zi], pages: pages.length, zs };
   pages.forEach((pg, i) => {
     const f = document.createElement('div'); f.className = 'pdf-foot';
@@ -3921,6 +3955,7 @@ function exportReportPdf() {
     chartImgs.forEach(({ img, canvas }) => { img.remove(); canvas.style.display = ''; });
     holders.forEach(([ph, el]) => { el.style.zoom = ''; el.style.width = ''; ph.replaceWith(el); });
     root.remove();
+    eqEls.forEach(e => { e.style.minHeight = ''; });
     tagged.forEach(([el, cls]) => el.classList.remove(cls));
     panels.forEach(p => { p.id = p.dataset.pdfid; delete p.dataset.pdfid; });
     document.body.classList.remove('pdf-mode');
