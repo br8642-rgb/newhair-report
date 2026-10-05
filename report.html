@@ -262,6 +262,10 @@ body.pdf-mode #section-tr07 .data-table .total-row td { font-size: 12px; }
 body.pdf-mode .ch-kpi-grid { grid-template-columns: repeat(5, 1fr) !important; }
 body.pdf-mode .s02-charts-grid { grid-template-columns: 1fr 1fr !important; }
 body.pdf-mode .cat-channel-grid, body.pdf-mode .s06-staff-grid { grid-template-columns: repeat(3, 1fr) !important; }
+body.pdf-mode .pdf-hide { display: none !important; }
+body.pdf-mode .pdf-single { grid-template-columns: 1fr !important; }
+body.pdf-mode .pdf-wide { grid-column: 1 / -1 !important; display: grid; grid-template-columns: 1fr 1fr; gap: 0 14px; align-items: start; }
+body.pdf-mode .pdf-wide > .channel-header, body.pdf-mode .pdf-wide > .analysis-box, body.pdf-mode .pdf-wide > p { grid-column: 1 / -1; }
 /* 자동 쪽 배치: #pdf-root 안의 .pdf-page 한 장이 A4 가로 한 쪽 */
 body.pdf-mode .page-wrapper { display: none !important; }
 body.pdf-mode #pdf-root button { display: none !important; }
@@ -3631,6 +3635,45 @@ function exportReportPdf() {
   // 섹션 패널의 id 는 CSS 규칙(#section-02 등)이 쓰고 있으므로, 쪽에 들어가는 조각(slice)에 같은 id 를 줌
   panels.forEach(p => { p.dataset.pdfid = p.id; p.id = p.id + '-orig'; });
 
+  // ── PDF 전용 정리(화면은 그대로): 월 탭으로 한 달씩만 보이는 블록·도넛 차트·0건 행을 PDF에서만 뺌
+  const tagged = [];
+  const tag = (el, cls) => { if (el && !el.classList.contains(cls)) { el.classList.add(cls); tagged.push([el, cls]); } };
+  panels.forEach(p => {
+    p.querySelectorAll('.s02-month-tabs').forEach(t => {
+      tag(t, 'pdf-hide');
+      if (t.parentElement === p) {   // 탭 + 앞의 소제목 + 탭으로 바뀌는 본문(카드 묶음·도넛 묶음)을 통째로 뺌
+        const prev = t.previousElementSibling;
+        if (prev && prev.classList.contains('s02-section-label')) tag(prev, 'pdf-hide');
+        const next = t.nextElementSibling;
+        if (next && !next.matches('.analysis-box,.s02-section-label,.section-header,.card,.kpi-table-wrap')) tag(next, 'pdf-hide');
+      }
+    });
+    p.querySelectorAll('canvas').forEach(cv => {   // 차트 묶음 안의 도넛(원형) 카드는 빼고 막대 그래프만 남김
+      const ch = window.Chart && Chart.getChart && Chart.getChart(cv);
+      const ty = ch && ch.config && ch.config.type;
+      if (ty === 'doughnut' || ty === 'pie') {
+        const card = cv.closest('.card'), grid = card && card.parentElement;
+        if (grid && grid.classList.contains('s02-charts-grid')) { tag(card, 'pdf-hide'); tag(grid, 'pdf-single'); }
+      }
+    });
+    p.querySelectorAll('.card').forEach(card => {   // 유입경로 상세 표: 건수가 전부 0인 행은 뺌
+      const title = ((card.querySelector('.card-title') || {}).textContent || '');
+      if (!/유입경로/.test(title)) return;
+      const tbl = card.querySelector('table'); if (!tbl) return;
+      const idx = [...tbl.querySelectorAll('thead th')].map((th, i) => /건수|응답수/.test(th.textContent) ? i : -1).filter(i => i >= 0);
+      if (!idx.length) return;
+      tbl.querySelectorAll('tbody tr').forEach(tr => {
+        if (tr.classList.contains('total-row')) return;
+        const tds = [...tr.children];
+        if (idx.every(i => { const v = ((tds[i] && tds[i].textContent) || '').replace(/[^0-9.\-]/g, ''); return v === '' || parseFloat(v) === 0; })) tag(tr, 'pdf-hide');
+      });
+    });
+    p.querySelectorAll('.channel-section').forEach(cs => {   // 전화 구간은 표와 그래프를 옆으로 나란히
+      const h = cs.querySelector('.channel-header');
+      if (h && /전화/.test(h.textContent)) tag(cs, 'pdf-wide');
+    });
+  });
+
   // 원래 자리 표시(placeholder)를 남기고 블록을 꺼냄 — 인쇄 후 그대로 되돌리기 위함
   const holders = [];
   const takeOut = (el) => { const ph = document.createComment('pdf'); el.replaceWith(ph); holders.push([ph, el]); };
@@ -3639,7 +3682,7 @@ function exportReportPdf() {
   if (hdr) units.push({ el: hdr, panel: null });
   panels.forEach(p => {
     [...p.children].forEach(c => {
-      if (c.nodeType !== 1 || c.classList.contains('section-divider')) return;
+      if (c.nodeType !== 1 || c.classList.contains('section-divider') || c.classList.contains('pdf-hide')) return;
       units.push({ el: c, panel: p });
     });
   });
@@ -3685,7 +3728,7 @@ function exportReportPdf() {
   })();
   const isHead = (u) => u.el.matches('.section-header,.channel-header,.s02-section-label') || u.lh < 60;
 
-  const rowsOf = (u) => u.rowsAll || [...u.el.querySelectorAll('tbody tr')];
+  const rowsOf = (u) => u.rowsAll || [...u.el.querySelectorAll('tbody tr')].filter(tr => !tr.classList.contains('pdf-hide'));
   const isBigTable = (u) => u.el.querySelectorAll('table').length === 1 && rowsOf(u).length >= 8;
   const piece = (u, a, b, withRest) => {
     const rows = rowsOf(u);
@@ -3763,11 +3806,57 @@ function exportReportPdf() {
   for (const i of cand) { if (counts[i] <= Math.ceil(minCount * 1.1)) { zi = i; break; } }
   if (window.__PDF_Z) zi = Math.max(0, CANDS.indexOf(window.__PDF_Z));
   units.forEach(u => { u.el.style.zoom = ''; u.el.style.width = ''; });
-  const pages = build(CANDS[zi]);
+  let pages = build(CANDS[zi]);
+  // 마지막 쪽에 내용이 조금만 남으면(고아 쪽) 글자 크기는 그대로 두고 차트 높이만 줄여서 앞 쪽에 채워 넣어 봄
+  for (let k = 0; k < 3 && pages.length > 1; k++) {
+    const lastPg = pages[pages.length - 1];
+    if (height(lastPg) > LIMIT * 0.45) break;
+    const saved = wraps.map(([w]) => w.style.height);
+    wraps.forEach(([w]) => { const h = parseFloat(w.style.height); if (h > 0) w.style.height = Math.max(90, Math.round(h * 0.88)) + 'px'; });
+    units.forEach(u => { u.el.style.zoom = ''; u.el.style.width = ''; });
+    const trial = build(CANDS[zi]);
+    if (trial.length < pages.length && !trial.wide) { pages = trial; }
+    else { wraps.forEach(([w], i) => { w.style.height = saved[i]; }); units.forEach(u => { u.el.style.zoom = ''; u.el.style.width = ''; }); pages = build(CANDS[zi]); break; }
+  }
+  // 마지막 쪽에 아주 조금만 남으면 앞 쪽에 합치고, 그 쪽만 배율을 조금 낮춰서(최소 0.52) 맞춤
+  if (pages.length > 1) {
+    const lastPg = pages[pages.length - 1], prev = pages[pages.length - 2];
+    if (height(lastPg) <= LIMIT * 0.4) {
+      const z0 = CANDS[zi];
+      const prevLast = prev.body.lastElementChild;
+      const log = [...lastPg.body.children].map(sl => {
+        const merged = !!(prevLast && sl.id && sl.id === prevLast.id);
+        const kids = [...sl.children];
+        if (merged) kids.forEach(c => prevLast.appendChild(c)); else prev.body.appendChild(sl);
+        return { sl, merged, kids };
+      });
+      let okZ = null;
+      for (let z = z0; z >= 0.52 - 1e-9; z -= 0.02) {
+        prev.body.style.width = (PW / z) + 'px'; prev.body.style.zoom = String(z);
+        if (height(prev) <= LIMIT - 4 && prev.body.scrollWidth <= prev.body.clientWidth + 2) { okZ = z; break; }
+      }
+      if (okZ) { lastPg.pg.remove(); pages.pop(); prev.z = okZ; }
+      else {
+        log.forEach(({ sl, merged, kids }) => { if (merged) kids.forEach(c => sl.appendChild(c)); else lastPg.body.appendChild(sl); });
+        prev.body.style.width = (PW / z0) + 'px'; prev.body.style.zoom = String(z0);
+        // 합치기 어려우면, 앞 쪽의 마지막 카드 하나를 마지막 쪽으로 넘겨서 마지막 쪽이 글상자 하나만 덩그러니 남지 않게 균형을 맞춤
+        const pl = prev.body.lastElementChild, ll = lastPg.body.firstElementChild;
+        if (pl && ll && pl.children.length > 1 && pl.id && pl.id === ll.id) {
+          const mvs = [pl.lastElementChild];
+          let pe = mvs[0].previousElementSibling;   // 카드 바로 앞의 소제목도 같이 넘김
+          while (pe && pe.matches('.s02-section-label,.channel-header,.section-header')) { mvs.unshift(pe); pe = pe.previousElementSibling; }
+          const ref = ll.firstChild;
+          mvs.forEach(m => ll.insertBefore(m, ref));
+          const ok1 = height(lastPg) <= LIMIT - 4 && lastPg.body.scrollWidth <= lastPg.body.clientWidth + 2;
+          if (!ok1) mvs.forEach(m => pl.appendChild(m));
+        }
+      }
+    }
+  }
   // 쪽마다 남는 세로 공간이 있으면 그 쪽의 배율을 키워서(글자도 함께 커짐) 빈칸을 채움
   const zs = [];
   pages.forEach(pg => {
-    const z0 = CANDS[zi];
+    const z0 = pg.z || CANDS[zi];
     let best = z0;
     for (let z = Math.min(1, z0 * 1.5); z > z0 + 1e-9; z -= 0.02) {
       pg.body.style.width = (PW / z) + 'px'; pg.body.style.zoom = String(z);
@@ -3802,6 +3891,7 @@ function exportReportPdf() {
     chartImgs.forEach(({ img, canvas }) => { img.remove(); canvas.style.display = ''; });
     holders.forEach(([ph, el]) => { el.style.zoom = ''; el.style.width = ''; ph.replaceWith(el); });
     root.remove();
+    tagged.forEach(([el, cls]) => el.classList.remove(cls));
     panels.forEach(p => { p.id = p.dataset.pdfid; delete p.dataset.pdfid; });
     document.body.classList.remove('pdf-mode');
     wraps.forEach(([w, h]) => { w.style.height = h; });
