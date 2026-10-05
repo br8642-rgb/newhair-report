@@ -3668,6 +3668,10 @@ function exportReportPdf() {
         if (idx.every(i => { const v = ((tds[i] && tds[i].textContent) || '').replace(/[^0-9.\-]/g, ''); return v === '' || parseFloat(v) === 0; })) tag(tr, 'pdf-hide');
       });
     });
+    p.querySelectorAll('.card').forEach(card => {   // 당일취소·부도 비교 그래프는 위 '취소·부도 현황' 지표와 같은 숫자라 PDF에서는 뺌
+      const title = ((card.querySelector('.card-title') || {}).textContent || '');
+      if (/당일취소/.test(title) && /부도/.test(title) && card.querySelector('canvas')) tag(card, 'pdf-hide');
+    });
     p.querySelectorAll('.channel-section').forEach(cs => {   // 전화 구간은 표와 그래프를 옆으로 나란히
       const h = cs.querySelector('.channel-header');
       if (h && /전화/.test(h.textContent)) tag(cs, 'pdf-wide');
@@ -3687,6 +3691,8 @@ function exportReportPdf() {
     });
   });
   units.forEach(u => takeOut(u.el));
+  const seenPanels = new Set();
+  units.forEach(u => { if (u.panel && !seenPanels.has(u.panel)) { seenPanels.add(u.panel); u.firstOfPanel = true; } });
 
   const mkPage = (z) => {
     const pg = document.createElement('div'); pg.className = 'pdf-page';
@@ -3735,7 +3741,7 @@ function exportReportPdf() {
     const c = u.el.cloneNode(true);
     const tb = c.querySelector('tbody'); tb.innerHTML = '';
     rows.slice(a, b).forEach(tr => tb.appendChild(tr.cloneNode(true)));
-    return { el: c, panel: u.panel, rowsAll: withRest ? rows.slice(a) : null, lh: 100 };
+    return { el: c, panel: u.panel, rowsAll: withRest ? rows.slice(a) : null, lh: 100, isPiece: true };
   };
   // 표를 위에서부터 몇 행까지 page 에 넣을 수 있는지(이진 탐색)
   const maxRows = (page, u) => {
@@ -3748,16 +3754,39 @@ function exportReportPdf() {
     return lo;
   };
 
+  const fitsAlone = (set, z) => {
+    const t = mkPage(z); root.appendChild(t.pg);
+    set.forEach(u => place(t, u));
+    const ok = height(t) <= LIMIT - 4 && t.body.scrollWidth <= t.body.clientWidth + 2;
+    set.forEach(u => u.el.remove());
+    t.pg.remove();
+    return ok;
+  };
   const build = (z) => {
     root.innerHTML = '';
+    units.forEach(u => { u.el.style.zoom = ''; u.el.style.width = ''; u.solo = false; });
     const pages = [];
     const addPage = () => { const pg = mkPage(z); root.appendChild(pg.pg); pages.push(pg); return pg; };
     let cur = addPage();
     const queue = units.slice();
     const isEmpty = (pg) => !pg.body.children.length;
     while (queue.length) {
-      const group = [queue.shift()];
-      while (isHead(group[group.length - 1]) && queue.length) group.push(queue.shift());
+      const first = queue.shift();
+      let group = [first];
+      if (!first.solo) {
+        let atomic = false;
+        // 한 쪽에 다 들어가는 작은 섹션은 쪽 중간에서 시작하지 않고 통째로 한 쪽에 둠
+        if (first.firstOfPanel && first.panel) {
+          const set = [first]; let k = 0;
+          while (k < queue.length && queue[k].panel === first.panel && !queue[k].isPiece) { set.push(queue[k]); k++; }
+          if (fitsAlone(set, z)) { queue.splice(0, k); group = set; atomic = true; }
+        }
+        if (!atomic) {
+          while (isHead(group[group.length - 1]) && queue.length && !queue[0].solo) group.push(queue.shift());
+          // 분석 글상자는 바로 앞 카드와 같은 쪽에 둠(분석만 다음 쪽으로 밀리지 않게)
+          while (queue.length && queue[0].el.matches('.analysis-box') && queue[0].panel === group[group.length - 1].panel && !queue[0].solo) group.push(queue.shift());
+        }
+      }
       if (attempt(cur, group)) continue;
       const last = group[group.length - 1];
       // 큰 표는 남은 자리에 먼저 일부를 넣고 나머지를 다음 쪽으로(머리글 반복)
@@ -3776,6 +3805,7 @@ function exportReportPdf() {
       }
       if (!isEmpty(cur)) cur = addPage();
       if (attempt(cur, group)) continue;
+      if (group.length > 1) { group.forEach(u => { u.solo = true; }); queue.unshift(...group); continue; }   // 묶음이 한 쪽보다 크면 낱개로 배치
       // 한 쪽보다 큰 블록: 표면 나누고, 아니면 배율을 줄여서 한 쪽에 맞춤
       if (isBigTable(last)) {
         group.slice(0, -1).forEach(h => place(cur, h));
