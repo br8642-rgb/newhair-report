@@ -195,6 +195,87 @@
 .s06-rate-up   { background: #FFEBEE; color: #C62828; }
 .s06-rate-down { background: #E3F2FD; color: #1565C0; }
 .s06-rate-flat { background: #f0f0f0; color: #888; }
+
+/* ══ PDF 저장 (브라우저 인쇄 → PDF) ══
+   body.pdf-mode 는 "PDF 저장" 버튼을 누른 동안에만 붙음 — 평소 화면에는 영향 없음.
+   현재 보고서의 섹션 전체를 한 번에 펼쳐서 A4 가로로 출력하고, 섹션마다 새 페이지에서 시작. */
+.pdf-btn { font-family: Pretendard, sans-serif; font-size: 14px; font-weight: 600; padding: 9px 16px; border: 1px solid #ddd; border-radius: 8px; background: #fff; color: #1a1a1a; cursor: pointer; }
+.pdf-btn:hover { background: #f5f5f5; }
+@page { size: A4 landscape; margin: 10mm; }
+body.pdf-mode { background: #fff; -webkit-print-color-adjust: exact; print-color-adjust: exact; }
+body.pdf-mode #top-nav,
+body.pdf-mode .report-bar,
+body.pdf-mode .edit-hint,
+body.pdf-mode .table-toggle-btn,
+body.pdf-mode .page-wrapper button { display: none !important; }
+/* 페이지(A4 가로) 안쪽 폭 1047px. 각 섹션은 JS가 섹션별로 배율(zoom)과 폭을 정해서 1~2쪽에 맞춤 */
+body.pdf-mode .page-wrapper { max-width: none; width: 1047px; margin: 0; padding: 0; }
+body.pdf-mode .dash-header { padding: 0 0 20px; margin-bottom: 24px; }
+body.pdf-mode .table-collapsible { display: block !important; }
+body.pdf-mode .section-panel.pdf-show { display: block; }
+body.pdf-mode .section-header + *, body.pdf-mode .channel-header + *, body.pdf-mode .s02-section-label + * { break-before: avoid; }
+body.pdf-mode .section-panel.pdf-show:not(.pdf-first) { break-before: page; }
+body.pdf-mode .card,
+body.pdf-mode .kpi-table-wrap,
+body.pdf-mode .analysis-box,
+body.pdf-mode .ch-kpi-card,
+body.pdf-mode .cat-channel-card { break-inside: avoid; }
+body.pdf-mode .section-header,
+body.pdf-mode .channel-header { break-after: avoid; }
+/* 인쇄용으로 여백·표 행 높이를 줄여 한 섹션이 1~2쪽에 들어오게 함 */
+body.pdf-mode .card { padding: 12px 16px; margin-bottom: 10px; }
+body.pdf-mode .kpi-table-wrap { padding: 12px 16px; margin-bottom: 10px; }
+body.pdf-mode .kpi-table-wrap .kpi-label { margin-bottom: 8px; padding-bottom: 8px; }
+body.pdf-mode .card-title { margin-bottom: 8px; }
+body.pdf-mode .section-header { margin-bottom: 12px; padding-bottom: 8px; }
+body.pdf-mode .section-divider { display: none; }
+body.pdf-mode .channel-header { margin-bottom: 6px; padding: 6px 0; }
+body.pdf-mode .analysis-box { margin-bottom: 10px; padding: 10px 16px; }
+body.pdf-mode .data-table th { padding: 6px 8px; }
+body.pdf-mode .data-table td { padding: 6px 8px; font-size: 13px; }
+body.pdf-mode .data-table .total-row td { font-size: 13px; }
+body.pdf-mode .kpi-item { padding: 10px 16px; }
+body.pdf-mode .kpi-item-label { margin-bottom: 6px; }
+body.pdf-mode .kpi-month-val { font-size: 28px; }
+body.pdf-mode .s02-section-label { margin: 10px 0 8px; }
+body.pdf-mode .channel-section { break-inside: avoid; }
+/* 월간 보고서 02(채널별): 채널 상세를 2열로 배치 */
+body.pdf-mode #section-02.pdf-show { display: grid; grid-template-columns: repeat(3, 1fr); gap: 0 14px; align-items: start; }
+body.pdf-mode #section-02 > .section-header,
+body.pdf-mode #section-02 > .kpi-table-wrap,
+body.pdf-mode #section-02 > .analysis-box,
+body.pdf-mode #section-02 > .cat-channel-grid,
+body.pdf-mode #section-02 > .s02-section-label { grid-column: 1 / -1; }
+/* 유입경로(08): 과목별 도넛 6개를 한 줄로, 42행 표는 행 높이를 더 줄임 */
+body.pdf-mode .section-panel.pdf-show:has(> .channel-section) { display: grid; grid-template-columns: repeat(3, 1fr); gap: 0 14px; align-items: start; }
+body.pdf-mode .section-panel.pdf-show:has(> .channel-section) > .section-header,
+body.pdf-mode .section-panel.pdf-show:has(> .channel-section) > .kpi-table-wrap,
+body.pdf-mode .section-panel.pdf-show:has(> .channel-section) > .analysis-box { grid-column: 1 / -1; }
+body.pdf-mode #section-tr07 div[style*="repeat(3,1fr)"] { grid-template-columns: repeat(6, 1fr) !important; }
+body.pdf-mode #section-tr07 .card:has(.data-table) { break-inside: auto; }
+body.pdf-mode .data-table tr { break-inside: avoid; }
+body.pdf-mode .data-table thead { display: table-header-group; }
+body.pdf-mode #section-tr07 .data-table th { padding: 4px 8px; }
+body.pdf-mode #section-tr07 .data-table td { padding: 3px 8px; font-size: 12px; }
+body.pdf-mode #section-tr07 .data-table .total-row td { font-size: 12px; }
+/* 인쇄 때는 화면 폭 기준(미디어쿼리)이 달라져 열 수가 바뀌므로, PDF 모드에서는 데스크톱 배치로 고정 */
+body.pdf-mode .ch-kpi-grid { grid-template-columns: repeat(5, 1fr) !important; }
+body.pdf-mode .s02-charts-grid { grid-template-columns: 1fr 1fr !important; }
+body.pdf-mode .cat-channel-grid, body.pdf-mode .s06-staff-grid { grid-template-columns: repeat(3, 1fr) !important; }
+/* 자동 쪽 배치: #pdf-root 안의 .pdf-page 한 장이 A4 가로 한 쪽 */
+body.pdf-mode .page-wrapper { display: none !important; }
+body.pdf-mode #pdf-root button { display: none !important; }
+#pdf-root { display: none; }
+body.pdf-mode #pdf-root { display: block; }
+.pdf-page { position: relative; width: 1044px; height: 714px; overflow: hidden; box-sizing: border-box; break-after: page; background: #fff; }
+.pdf-page:last-child { break-after: auto; }
+.pdf-page-body { box-sizing: border-box; }
+.pdf-foot { position: absolute; left: 0; right: 0; bottom: 0; height: 22px; display: flex; justify-content: space-between; align-items: flex-end; border-top: 1px solid #ddd; padding-top: 4px; font-size: 11px; color: #888; font-family: Pretendard, sans-serif; }
+/* 섹션 순서를 DOM 순서가 아니라 상단 메뉴 순서로 맞추기 위해 flex 컬럼으로 전환(order는 JS에서 지정) */
+body.pdf-mode .page-wrapper { display: flex; flex-direction: column; }
+body.pdf-mode .dash-header { order: -1; }
+/* 차트는 인쇄 직전에 이미지로 바꿔서 넣음(인쇄 중 캔버스가 비어 보이는 문제 방지) */
+.pdf-chart-img { display: block; max-width: 100%; }
 </style>
 </head>
 <body style="display:none">
@@ -213,6 +294,7 @@
 
   <div class="report-bar">
     <select id="report-select"></select>
+    <button type="button" class="pdf-btn" id="pdf-btn" onclick="exportReportPdf()">PDF로 저장</button>
   </div>
 
   <!-- 섹션 01 -->
@@ -3517,6 +3599,239 @@ function switchSection(id) {
   if (p) p.classList.add('active');
   document.querySelectorAll('#top-nav a[data-sid]').forEach(a => a.classList.toggle('active', a.dataset.sid === id));
   window.scrollTo({top:0, behavior:'smooth'});
+}
+
+// 현재 보고서를 PDF로 저장 — 상단 메뉴에 있는 섹션 전체를 펼쳐서 브라우저 인쇄창을 띄움(대상: "PDF로 저장").
+// 파일명 기본값은 문서 제목을 따라가므로 인쇄하는 동안만 "뉴헤어_보고서이름"으로 바꿨다가 되돌림.
+function exportReportPdf() {
+  const r = currentReport;
+  if (!r) return;
+  const ids = [...document.querySelectorAll('#top-nav a[data-sid]')].map(a => a.dataset.sid);
+  const panels = ids.map(id => document.getElementById('section-' + id)).filter(Boolean);
+  if (!panels.length) return;
+  const prevTitle = document.title;
+  const prevScroll = window.scrollY;
+  const chartImgs = [];
+  document.body.classList.add('pdf-mode');
+  document.title = '뉴헤어_' + r.meta.label;
+
+  // ── 1) 차트 높이를 조금 줄임(복원용으로 원래 값 기억)
+  const wraps = [];
+  panels.forEach(p => p.querySelectorAll('.chart-wrap').forEach(w => {
+    const h = parseFloat(w.style.height);
+    if (h > 0) { wraps.push([w, w.style.height]); w.style.height = Math.max(120, Math.round(h * 0.8)) + 'px'; }
+  }));
+
+  // ── 2) 자동 쪽 배치: 카드(블록) 단위로 A4 가로 쪽에 순서대로 채워 넣음. 카드는 쪽 사이에서 자르지 않음.
+  const PW = 1044, PH = 714, FOOT = 32, LIMIT = PH - FOOT;
+  const root = document.createElement('div');
+  root.id = 'pdf-root';
+  document.body.appendChild(root);
+
+  // 섹션 패널의 id 는 CSS 규칙(#section-02 등)이 쓰고 있으므로, 쪽에 들어가는 조각(slice)에 같은 id 를 줌
+  panels.forEach(p => { p.dataset.pdfid = p.id; p.id = p.id + '-orig'; });
+
+  // 원래 자리 표시(placeholder)를 남기고 블록을 꺼냄 — 인쇄 후 그대로 되돌리기 위함
+  const holders = [];
+  const takeOut = (el) => { const ph = document.createComment('pdf'); el.replaceWith(ph); holders.push([ph, el]); };
+  const units = [];
+  const hdr = document.querySelector('.dash-header');
+  if (hdr) units.push({ el: hdr, panel: null });
+  panels.forEach(p => {
+    [...p.children].forEach(c => {
+      if (c.nodeType !== 1 || c.classList.contains('section-divider')) return;
+      units.push({ el: c, panel: p });
+    });
+  });
+  units.forEach(u => takeOut(u.el));
+
+  const mkPage = (z) => {
+    const pg = document.createElement('div'); pg.className = 'pdf-page';
+    const body = document.createElement('div'); body.className = 'pdf-page-body';
+    body.style.width = (PW / z) + 'px'; body.style.zoom = String(z);
+    pg.appendChild(body);
+    return { pg, body, last: null };
+  };
+  const place = (page, u) => {
+    let sl;
+    if (page.last && page.last.panel === u.panel && page.last.el.parentNode === page.body) sl = page.last.el;
+    else {
+      sl = document.createElement('div');
+      if (u.panel) { sl.className = 'section-panel pdf-show active'; sl.id = u.panel.dataset.pdfid; }
+      page.body.appendChild(sl);
+      page.last = { panel: u.panel, el: sl };
+    }
+    sl.appendChild(u.el);
+  };
+  const height = (page) => page.body.getBoundingClientRect().height + 10;   // 마지막 카드 아래 여백(밖으로 빠져나가는 margin) 포함
+  const cleanup = (page) => {
+    [...page.body.children].forEach(c => { if (!c.children.length) c.remove(); });
+    const lc = page.body.lastElementChild;
+    page.last = lc ? { panel: lc.id ? (panels.find(p => p.dataset.pdfid === lc.id) || null) : null, el: lc } : null;
+  };
+  const attempt = (page, group) => {
+    group.forEach(u => place(page, u));
+    if (height(page) <= LIMIT) return true;
+    group.forEach(u => u.el.remove());
+    cleanup(page);
+    return false;
+  };
+
+  // 높이가 작은 블록(소제목·라벨)은 다음 블록과 항상 같은 쪽에 두기 위해 미리 높이를 잼
+  (() => {
+    const t = mkPage(1); t.body.style.width = '1044px'; root.appendChild(t.pg);
+    units.forEach(u => { t.body.appendChild(u.el); u.lh = u.el.offsetHeight; u.el.remove(); });
+    t.pg.remove();
+  })();
+  const isHead = (u) => u.el.matches('.section-header,.channel-header,.s02-section-label') || u.lh < 60;
+
+  const rowsOf = (u) => u.rowsAll || [...u.el.querySelectorAll('tbody tr')];
+  const isBigTable = (u) => u.el.querySelectorAll('table').length === 1 && rowsOf(u).length >= 8;
+  const piece = (u, a, b, withRest) => {
+    const rows = rowsOf(u);
+    const c = u.el.cloneNode(true);
+    const tb = c.querySelector('tbody'); tb.innerHTML = '';
+    rows.slice(a, b).forEach(tr => tb.appendChild(tr.cloneNode(true)));
+    return { el: c, panel: u.panel, rowsAll: withRest ? rows.slice(a) : null, lh: 100 };
+  };
+  // 표를 위에서부터 몇 행까지 page 에 넣을 수 있는지(이진 탐색)
+  const maxRows = (page, u) => {
+    const rows = rowsOf(u); let lo = 0, hi = rows.length - 1;
+    while (lo < hi) {
+      const mid = (lo + hi + 1) >> 1;
+      const p = piece(u, 0, mid, false);
+      if (attempt(page, [p])) { p.el.remove(); cleanup(page); lo = mid; } else hi = mid - 1;
+    }
+    return lo;
+  };
+
+  const build = (z) => {
+    root.innerHTML = '';
+    const pages = [];
+    const addPage = () => { const pg = mkPage(z); root.appendChild(pg.pg); pages.push(pg); return pg; };
+    let cur = addPage();
+    const queue = units.slice();
+    const isEmpty = (pg) => !pg.body.children.length;
+    while (queue.length) {
+      const group = [queue.shift()];
+      while (isHead(group[group.length - 1]) && queue.length) group.push(queue.shift());
+      if (attempt(cur, group)) continue;
+      const last = group[group.length - 1];
+      // 큰 표는 남은 자리에 먼저 일부를 넣고 나머지를 다음 쪽으로(머리글 반복)
+      if (isBigTable(last) && !isEmpty(cur)) {
+        const head = group.slice(0, -1);
+        if (attempt(cur, head)) {
+          const n = maxRows(cur, last);
+          if (n >= 5) {
+            attempt(cur, [piece(last, 0, n, false)]);
+            queue.unshift(piece(last, n, rowsOf(last).length, true));
+            cur = addPage();
+            continue;
+          }
+          head.forEach(h => h.el.remove()); cleanup(cur);
+        }
+      }
+      if (!isEmpty(cur)) cur = addPage();
+      if (attempt(cur, group)) continue;
+      // 한 쪽보다 큰 블록: 표면 나누고, 아니면 배율을 줄여서 한 쪽에 맞춤
+      if (isBigTable(last)) {
+        group.slice(0, -1).forEach(h => place(cur, h));
+        const n = Math.max(1, maxRows(cur, last));
+        attempt(cur, [piece(last, 0, n, false)]);
+        queue.unshift(piece(last, n, rowsOf(last).length, true));
+        cur = addPage();
+      } else {
+        group.forEach(u => place(cur, u));
+        let f = 1;
+        while (height(cur) > LIMIT && f > 0.5) { f -= 0.05; last.el.style.zoom = String(f); last.el.style.width = (100 / f) + '%'; }
+        cur = addPage();
+      }
+    }
+    if (isEmpty(cur) && pages.length > 1) { cur.pg.remove(); pages.pop(); }
+    pages.wide = pages.some(p => p.body.scrollWidth > p.body.clientWidth + 2);
+    return pages;
+  };
+
+  // 배율 후보 중 쪽수가 너무 늘지 않는 가장 큰 배율(= 가장 읽기 편한 글자 크기)을 고름
+  const CANDS = [0.8, 0.75, 0.7, 0.65, 0.6];
+  const res = CANDS.map(z => { const pg = build(z); return { n: pg.length, wide: pg.wide }; });   // wide: 내용이 쪽 폭을 넘치는 배율은 제외
+  const counts = res.map(x => x.n);
+  const okIdx = res.map((x, i) => i).filter(i => !res[i].wide);
+  const cand = okIdx.length ? okIdx : [CANDS.length - 1];
+  const minCount = Math.min(...cand.map(i => counts[i]));
+  let zi = cand[cand.length - 1];
+  for (const i of cand) { if (counts[i] <= Math.ceil(minCount * 1.1)) { zi = i; break; } }
+  if (window.__PDF_Z) zi = Math.max(0, CANDS.indexOf(window.__PDF_Z));
+  units.forEach(u => { u.el.style.zoom = ''; u.el.style.width = ''; });
+  const pages = build(CANDS[zi]);
+  // 쪽마다 남는 세로 공간이 있으면 그 쪽의 배율을 키워서(글자도 함께 커짐) 빈칸을 채움
+  const zs = [];
+  pages.forEach(pg => {
+    const z0 = CANDS[zi];
+    let best = z0;
+    for (let z = Math.min(1, z0 * 1.5); z > z0 + 1e-9; z -= 0.02) {
+      pg.body.style.width = (PW / z) + 'px'; pg.body.style.zoom = String(z);
+      if (height(pg) <= LIMIT - 4 && pg.body.scrollWidth <= pg.body.clientWidth + 2) { best = z; break; }
+    }
+    pg.body.style.width = (PW / best) + 'px'; pg.body.style.zoom = String(best);
+    zs.push(Math.round(best * 100) / 100);
+  });
+  window.__pdfInfo = { counts, z: CANDS[zi], pages: pages.length, zs };
+  pages.forEach((pg, i) => {
+    const f = document.createElement('div'); f.className = 'pdf-foot';
+    f.innerHTML = '<span>뉴헤어모발성형외과의원 · ' + r.meta.label + '</span><span>' + (i + 1) + ' / ' + pages.length + '</span>';
+    pg.pg.appendChild(f);
+  });
+
+  // ── 3) 차트를 새 크기에 맞춰 다시 그리고, 캔버스를 이미지로 바꿔서 인쇄(인쇄 중 캔버스가 비는 것 방지)
+  const resizeCharts = (explicit, dpr) => {
+    if (!(window.Chart && Chart.instances)) return;
+    Object.values(Chart.instances).forEach(c => {
+      try {
+        if (dpr) c.options.devicePixelRatio = dpr; else delete c.options.devicePixelRatio;
+        const par = c.canvas && c.canvas.parentElement;
+        if (explicit && par && par.clientWidth) c.resize(par.clientWidth, par.clientHeight || undefined);
+        else c.resize();
+      } catch (e) {}
+    });
+  };
+  let restored = false;
+  const restore = () => {
+    if (restored) return;
+    restored = true;
+    chartImgs.forEach(({ img, canvas }) => { img.remove(); canvas.style.display = ''; });
+    holders.forEach(([ph, el]) => { el.style.zoom = ''; el.style.width = ''; ph.replaceWith(el); });
+    root.remove();
+    panels.forEach(p => { p.id = p.dataset.pdfid; delete p.dataset.pdfid; });
+    document.body.classList.remove('pdf-mode');
+    wraps.forEach(([w, h]) => { w.style.height = h; });
+    document.title = prevTitle;
+    window.scrollTo(0, prevScroll);
+    resizeCharts();
+  };
+  window.addEventListener('afterprint', restore, { once: true });
+  requestAnimationFrame(() => requestAnimationFrame(() => {
+    resizeCharts(true, 2);
+    setTimeout(() => resizeCharts(true, 2), 300);
+    setTimeout(() => {
+      const decodes = [];
+      root.querySelectorAll('canvas').forEach(canvas => {
+        if (!canvas.clientWidth || !canvas.clientHeight) return;
+        try {
+          const img = new Image();
+          img.className = 'pdf-chart-img';
+          img.src = canvas.toDataURL('image/png');
+          img.style.width = canvas.clientWidth + 'px';
+          img.style.height = canvas.clientHeight + 'px';
+          canvas.style.display = 'none';
+          canvas.insertAdjacentElement('afterend', img);
+          chartImgs.push({ img, canvas });
+          if (img.decode) decodes.push(img.decode().catch(() => {}));
+        } catch (e) { /* 이미지 변환 실패 시 캔버스 그대로 둠 */ }
+      });
+      Promise.all(decodes).then(() => setTimeout(() => window.print(), 100));
+    }, 900);
+  }));
 }
 
 function buildSelector() {
