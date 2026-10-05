@@ -4047,6 +4047,25 @@ function refreshEditableContentFor(r) {
 
 // 보고서 전환 진입점 — 레거시(5월/5~6월 주간)는 편집이 꺼져있어 Sheets를 아예 안 부름.
 // 이미 이번 세션에 한 번 불러온 보고서는 재요청 없이 캐시 그대로 반영. 처음 보는 보고서만 그 순간 불러옴.
+// 6월 보고서 때 만든 고정 문구("5월 vs 6월", "5월→6월")가 7·8·9월 보고서에도 그대로 남지 않도록,
+// 보고서의 이전 달/이번 달(prevLabel/currLabel)로 바꿔 줌. 다른 보고서로 바꿀 때 되돌릴 수 있게 원문을 기억해 둠.
+const PERIOD_TEXT_NODES = [];
+function fixStaticPeriodText(r) {
+  const pl = r.meta.prevLabel || '5월', cl = r.meta.currLabel || '6월';
+  const known = new Set(PERIOD_TEXT_NODES.map(x => x.node));
+  const rx = /5월(\s*vs\s*|→)6월/;
+  document.querySelectorAll('.section-panel').forEach(p => {
+    const w = document.createTreeWalker(p, NodeFilter.SHOW_TEXT);
+    let n;
+    while ((n = w.nextNode())) {
+      if (!known.has(n) && rx.test(n.textContent)) { PERIOD_TEXT_NODES.push({ node: n, orig: n.textContent }); known.add(n); }
+    }
+  });
+  PERIOD_TEXT_NODES.forEach(x => {
+    x.node.textContent = x.orig.replace(/5월(\s*vs\s*|→)6월/g, (m, sep) => pl + sep + cl);
+  });
+}
+
 function switchToReport(r) {
   const isLegacy = !!LEGACY_REPORT_LABELS[r.meta.label];
   const alreadyLoaded = isLegacy || loadedReportLabels.has(r.meta.label);
@@ -4054,6 +4073,7 @@ function switchToReport(r) {
   // 지금 렌더링할 이 보고서 기준으로 정확히 맞춰둬야 기존 깜빡임 방지 로직이 제대로 동작함
   sheetsLoaded = alreadyLoaded;
   renderReport(r);
+  fixStaticPeriodText(r);
   if (isLegacy) return; // 편집 자체가 없으니 Sheets 조회 불필요
   if (alreadyLoaded) {
     refreshEditableContentFor(r);
