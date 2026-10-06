@@ -239,15 +239,18 @@ body.pdf-mode .kpi-item-label { margin-bottom: 6px; }
 body.pdf-mode .kpi-month-val { font-size: 28px; }
 body.pdf-mode .s02-section-label { margin: 10px 0 8px; }
 body.pdf-mode .channel-section { break-inside: avoid; }
+/* 같은 줄 채널 카드: 표 카드가 남는 높이를 채우고 그래프 카드는 아래에 붙여서 줄이 맞도록(JS 측정에 의존하지 않음) */
+body.pdf-mode .channel-section:not(.pdf-wide) { display: flex; flex-direction: column; }
+body.pdf-mode .channel-section:not(.pdf-wide) > .card:has(+ .card) { flex: 1 1 auto; }
 /* 월간 보고서 02(채널별): 채널 상세를 2열로 배치 */
-body.pdf-mode #section-02.pdf-show { display: grid; grid-template-columns: repeat(3, 1fr); gap: 0 14px; align-items: start; }
+body.pdf-mode #section-02.pdf-show { display: grid; grid-template-columns: repeat(3, 1fr); gap: 0 14px; align-items: stretch; }
 body.pdf-mode #section-02 > .section-header,
 body.pdf-mode #section-02 > .kpi-table-wrap,
 body.pdf-mode #section-02 > .analysis-box,
 body.pdf-mode #section-02 > .cat-channel-grid,
 body.pdf-mode #section-02 > .s02-section-label { grid-column: 1 / -1; }
 /* 유입경로(08): 과목별 도넛 6개를 한 줄로, 42행 표는 행 높이를 더 줄임 */
-body.pdf-mode .section-panel.pdf-show:has(> .channel-section) { display: grid; grid-template-columns: repeat(3, 1fr); gap: 0 14px; align-items: start; }
+body.pdf-mode .section-panel.pdf-show:has(> .channel-section) { display: grid; grid-template-columns: repeat(3, 1fr); gap: 0 14px; align-items: stretch; }
 body.pdf-mode .section-panel.pdf-show:has(> .channel-section) > .section-header,
 body.pdf-mode .section-panel.pdf-show:has(> .channel-section) > .kpi-table-wrap,
 body.pdf-mode .section-panel.pdf-show:has(> .channel-section) > .analysis-box { grid-column: 1 / -1; }
