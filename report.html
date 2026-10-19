@@ -3923,11 +3923,12 @@ function exportReportPdf() {
         for (; zz >= 0.5 - 1e-9; zz -= 0.02) {
           cur.body.style.width = (PW / zz) + 'px'; cur.body.style.zoom = String(zz);
           if (attempt(cur, set)) {
-            if (cur.body.scrollWidth <= cur.body.clientWidth + 2) { ok = true; break; }
+            // 사용자 PC 폰트는 글줄이 더 길어질 수 있어 약 12% 여유를 둠
+            if (cur.body.scrollWidth <= cur.body.clientWidth + 2 && height(cur) <= LIMIT * 0.88) { ok = true; break; }
             set.forEach(u => u.el.remove()); cleanup(cur);
           }
         }
-        if (ok) { cur.z = zz; cur = addPage(); continue; }
+        if (ok) { cur.z = zz; cur.fixZ = true; cur = addPage(); continue; }
         cur.body.style.width = (PW / z) + 'px'; cur.body.style.zoom = String(z);
         set.forEach(u => { u.noBrk = true; });
         queue.unshift(...set);
@@ -3957,7 +3958,7 @@ function exportReportPdf() {
         for (let zz = zc - 0.02; zz >= 0.55 - 1e-9 && !kept; zz -= 0.02) {
           cur.body.style.width = (PW / zz) + 'px'; cur.body.style.zoom = String(zz);
           if (attempt(cur, group)) {
-            if (cur.body.scrollWidth <= cur.body.clientWidth + 2) { cur.z = zz; kept = true; }
+            if (cur.body.scrollWidth <= cur.body.clientWidth + 2 && (!PLAN || height(cur) <= LIMIT * 0.9)) { cur.z = zz; if (PLAN) cur.fixZ = true; kept = true; }
             else { group.forEach(u => u.el.remove()); cleanup(cur); }
           }
         }
@@ -4064,6 +4065,7 @@ function exportReportPdf() {
   pages.forEach(pg => {
     const z0 = pg.z || CANDS[zi];
     let best = z0;
+    if (pg.fixZ) { zs.push(Math.round(z0 * 100) / 100); return; }   // 지정 쪽은 여유를 남기려고 배율을 다시 키우지 않음
     for (let z = Math.min(1, z0 * 1.5); z > z0 + 1e-9; z -= 0.02) {
       pg.body.style.width = (PW / z) + 'px'; pg.body.style.zoom = String(z);
       if (height(pg) <= LIMIT - 4 && pg.body.scrollWidth <= pg.body.clientWidth + 2) { best = z; break; }
