@@ -1819,6 +1819,9 @@ const ALL_REPORTS = [
     periods: ['9/28~10/3', '10/5~10/10', '10/12~10/17'],
     periodLabels: ['9월 5주차~10월 1주차', '10월 2주차', '10월 3주차'],
     periodNote: '※ 세 기간 모두 일요일 제외 영업일 기준 비교',
+    pdfKeepSmallTables: true, // PDF: 내원 표 등 9~12행 표를 쪽 끝에서 나누지 않고 통째로 배치(이 보고서만)
+    pdfBaseZ: 0.65, // PDF 기본 글자 배율 고정(이 보고서만)
+    pdfPlan: true, // PDF: 10쪽 내원 표 / 11쪽 성사 지표 / 12쪽 성사 표·그래프·분석 / 13쪽 종합 리뷰만(이 보고서만)
     ppAsPercent: true, // 비율 증감도 %p 대신 %로 표기(실장님 결정). 새 보고서에도 같은 값을 넣는다. 이전 보고서는 그대로 %p.
   },
   wqData: {
@@ -3756,6 +3759,8 @@ function exportReportPdf() {
 
   // ── 2) 자동 쪽 배치: 카드(블록) 단위로 A4 가로 쪽에 순서대로 채워 넣음. 카드는 쪽 사이에서 자르지 않음.
   const PW = 1044, PH = 714, FOOT = 32, LIMIT = PH - FOOT;
+  const KEEP_SMALL_TABLES = !!(r.meta && r.meta.pdfKeepSmallTables);
+  const PLAN = !!(r.meta && r.meta.pdfPlan);   // 새 보고서만: 쪽 나눔 지정(내원·성사·종합 리뷰)
   const root = document.createElement('div');
   root.id = 'pdf-root';
   document.body.appendChild(root);
@@ -3815,8 +3820,18 @@ function exportReportPdf() {
   panels.forEach(p => {
     [...p.children].forEach(c => {
       if (c.nodeType !== 1 || c.classList.contains('section-divider') || c.classList.contains('pdf-hide')) return;
+      if (PLAN && c.id === 'wq03cs-wrap') {   // 성사 현황 묶음은 낱개 블록으로 풀어서 쪽을 나눌 수 있게 함
+        [...c.children].forEach(cc => { if (cc.nodeType === 1 && !cc.classList.contains('pdf-hide')) units.push({ el: cc, panel: p }); });
+        return;
+      }
       units.push({ el: c, panel: p });
     });
+  });
+  if (PLAN) units.forEach(u => {   // 새 쪽을 시작하는 블록 표시
+    const e = u.el, pid = u.panel && u.panel.dataset.pdfid;
+    if (e.querySelector('#chart-wq03-cats')) u.brk = true;
+    if (e.classList.contains('s02-section-label') && /^과목별 성사/.test(e.textContent.trim())) u.brk = true;
+    if (pid === 'section-wq-04' && e.classList.contains('section-header')) u.brk = true;
   });
   units.forEach(u => takeOut(u.el));
   const seenPanels = new Set();
@@ -3892,7 +3907,7 @@ function exportReportPdf() {
   };
   const build = (z) => {
     root.innerHTML = '';
-    units.forEach(u => { u.el.style.zoom = ''; u.el.style.width = ''; u.solo = false; });
+    units.forEach(u => { u.el.style.zoom = ''; u.el.style.width = ''; u.solo = false; u.noBrk = false; });
     const pages = [];
     const addPage = () => { const pg = mkPage(z); root.appendChild(pg.pg); pages.push(pg); return pg; };
     let cur = addPage();
@@ -3900,6 +3915,24 @@ function exportReportPdf() {
     const isEmpty = (pg) => !pg.body.children.length;
     while (queue.length) {
       const first = queue.shift();
+      if (PLAN && first.brk && !first.noBrk) {   // 지정한 쪽: 이 블록부터 다음 지정 블록 전까지를 한 쪽에 모으고, 안 들어가면 그 쪽 배율을 낮춤(최소 0.5)
+        const set = [first];
+        while (queue.length && !queue[0].brk && queue[0].panel === first.panel && !queue[0].isPiece) set.push(queue.shift());
+        if (!isEmpty(cur)) cur = addPage();
+        let ok = false, zz = z;
+        for (; zz >= 0.5 - 1e-9; zz -= 0.02) {
+          cur.body.style.width = (PW / zz) + 'px'; cur.body.style.zoom = String(zz);
+          if (attempt(cur, set)) {
+            if (cur.body.scrollWidth <= cur.body.clientWidth + 2) { ok = true; break; }
+            set.forEach(u => u.el.remove()); cleanup(cur);
+          }
+        }
+        if (ok) { cur.z = zz; cur = addPage(); continue; }
+        cur.body.style.width = (PW / z) + 'px'; cur.body.style.zoom = String(z);
+        set.forEach(u => { u.noBrk = true; });
+        queue.unshift(...set);
+        continue;
+      }
       let group = [first];
       if (!first.solo) {
         let atomic = false;
@@ -3917,6 +3950,20 @@ function exportReportPdf() {
       }
       if (attempt(cur, group)) continue;
       const last = group[group.length - 1];
+      // 새 보고서(meta.pdfKeepSmallTables)만: 9~12행짜리 표는 나누지 않고, 그 쪽의 배율을 조금 낮춰(최소 0.55) 통째로 넣음 — 이전 보고서 쪽 배치는 그대로
+      if (KEEP_SMALL_TABLES && isBigTable(last) && rowsOf(last).length <= 12 && !isEmpty(cur)) {
+        const zc = parseFloat(cur.body.style.zoom) || z;
+        let kept = false;
+        for (let zz = zc - 0.02; zz >= 0.55 - 1e-9 && !kept; zz -= 0.02) {
+          cur.body.style.width = (PW / zz) + 'px'; cur.body.style.zoom = String(zz);
+          if (attempt(cur, group)) {
+            if (cur.body.scrollWidth <= cur.body.clientWidth + 2) { cur.z = zz; kept = true; }
+            else { group.forEach(u => u.el.remove()); cleanup(cur); }
+          }
+        }
+        if (kept) continue;
+        cur.body.style.width = (PW / zc) + 'px'; cur.body.style.zoom = String(zc);
+      }
       // 큰 표는 남은 자리에 먼저 일부를 넣고 나머지를 다음 쪽으로(머리글 반복)
       if (isBigTable(last) && !isEmpty(cur)) {
         const head = group.slice(0, -1);
@@ -3963,6 +4010,7 @@ function exportReportPdf() {
   let zi = cand[cand.length - 1];
   for (const i of cand) { if (counts[i] <= Math.ceil(minCount * 1.1)) { zi = i; break; } }
   if (window.__PDF_Z) zi = Math.max(0, CANDS.indexOf(window.__PDF_Z));
+  if (PLAN && r.meta.pdfBaseZ && CANDS.indexOf(r.meta.pdfBaseZ) >= 0) zi = CANDS.indexOf(r.meta.pdfBaseZ);   // 새 보고서만: 기본 배율 고정
   units.forEach(u => { u.el.style.zoom = ''; u.el.style.width = ''; });
   let pages = build(CANDS[zi]);
   // 마지막 쪽에 내용이 조금만 남으면(고아 쪽) 글자 크기는 그대로 두고 차트 높이만 줄여서 앞 쪽에 채워 넣어 봄
@@ -7898,6 +7946,7 @@ function renderWqReport(r) {
       const dBook = prevA ? a.book - prevA.book : null;
       const dRate = prevA ? a.rate - prevA.rate : null;
       const dVis = prevV ? v.visit - prevV.visit : null;
+      const dVisR = (prevV && r.meta && r.meta.ppAsPercent) ? v.visit_rate - prevV.visit_rate : null;   // 새 보고서만: 내원율 증감도 표시(내원 현황 KPI와 동일)
       function row(label, val, bdg) {
         return `<div style="display:flex;justify-content:space-between;align-items:center;padding:6px 0;border-bottom:1px solid #f5f5f5;">
           <span style="font-size:14px;color:#666;">${label}</span>
@@ -7915,7 +7964,7 @@ function renderWqReport(r) {
 
         <div style="font-size:13px;font-weight:700;color:#C62828;margin:14px 0 8px;">🏥 내원</div>
         ${row('내원', v.visit + '건', dVis !== null ? badge(dVis) : '')}
-        ${row('내원율', v.visit_rate + '%')}
+        ${row('내원율', v.visit_rate + '%', dVisR !== null ? badge(dVisR, '%p') : '')}
         ${row('당일취소·부도', v.same_day + '·' + v.noshow + '건')}
       </div>`;
     }).join('');
@@ -8276,6 +8325,8 @@ function renderWqReport(r) {
       function dS(d, s = '') {
         if (!prev) return '';
         const cls = d > 0 ? 'up' : d < 0 ? 'down' : 'flat';
+        // 증감 0은 "— 0"(월간 규칙·종합 현황과 동일) — ppAsPercent 가 켜진 새 보고서만 적용, 이전 보고서 표시는 그대로
+        if (d === 0 && r.meta && r.meta.ppAsPercent) return `<span class="kpi-diff flat" style="font-size:12px;">— 0</span>`;
         return `<span class="kpi-diff ${cls}" style="font-size:12px;">${d > 0 ? '▲' : '▼'} ${Math.abs(d)}${s && d !== 0 ? s : ''}</span>`;
       }
       function row(label, val, badge = '') {
@@ -8361,6 +8412,8 @@ function renderWqReport(r) {
       function dS(d, s = '') {
         if (!prev) return '';
         const cls = d > 0 ? 'up' : d < 0 ? 'down' : 'flat';
+        // 증감 0은 "— 0"(월간 규칙·종합 현황과 동일) — ppAsPercent 가 켜진 새 보고서만 적용, 이전 보고서 표시는 그대로
+        if (d === 0 && r.meta && r.meta.ppAsPercent) return `<span class="kpi-diff flat" style="font-size:12px;">— 0</span>`;
         return `<span class="kpi-diff ${cls}" style="font-size:12px;">${d > 0 ? '▲' : '▼'} ${Math.abs(d)}${s && d !== 0 ? s : ''}</span>`;
       }
       function row(label, val, badge = '') {
