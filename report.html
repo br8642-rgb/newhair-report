@@ -1506,7 +1506,7 @@ body.pdf-mode .dash-header { order: -1; }
     <div id="wq02-block-whatsapp">
     <div class="s02-section-label">왓츠앱</div>
     <div class="card">
-      <div class="card-title">왓츠앱 문의·예약 상세</div>
+      <div class="card-title">왓츠앱 문의·예약 상세 <span id="wq02-wa-vo" style="font-size:11px;color:#6b6b6b;font-weight:400;"></span></div>
       <button class="table-toggle-btn" onclick="toggleTable(this)"><span class="toggle-arrow">▼</span> 표 펼치기</button>
       <div class="table-collapsible"><div style="overflow-x:auto"><table class="data-table" id="tbl-wq02-wa"></table></div></div>
     </div>
@@ -8418,6 +8418,8 @@ function renderWqReport(r) {
     if (ch.whatsapp) {
       showBlock('wq02-block-whatsapp', true);
       renderChWqTable('tbl-wq02-wa', ch.whatsapp, (ch.whatsapp.p1 && ch.whatsapp.p1.visitOnline) ? '방문/온라인+수술' : '수술');
+      const wavo = document.getElementById('wq02-wa-vo');
+      if (wavo) { const wat = [ch.whatsapp.p1, ch.whatsapp.p2, ch.whatsapp.p3].filter(Boolean).map(p => p.total); wavo.textContent = (wat[0] && wat[0].visit != null) ? '(방문 ' + wat.map(t => t.visit).join('→') + ' · 온라인 ' + wat.map(t => t.online).join('→') + ')' : ''; }
       chLegend('lg-wq02-wa', PL2.flatMap((l, i) => ([[ch2Colors[i], l + ' 문의'], [PC2[i], l + ' 예약']])));
       renderChWqChart('chart-wq02-wa', ch.whatsapp);
     } else showBlock('wq02-block-whatsapp', false);
