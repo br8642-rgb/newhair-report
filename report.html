@@ -4923,6 +4923,8 @@ function renderReport(r) {
     const wqSections = availableWqSections(r);
     const firstWq = wqSections[0] ? wqSections[0].id : 'wq-01';
     buildNav(firstWq, 'wq', wqSections);
+    // 해외 섹션이 있는 새 보고서만: 패널 안 Section 번호를 상단 메뉴 번호와 맞춤(이전 보고서는 그대로)
+    if (wqSections.some(x => x.id === 'wq-ov')) wqSections.forEach(sec => { const t = document.querySelector('#section-' + sec.id + ' .section-tag'); if (t) t.textContent = 'Section ' + sec.num; });
     document.querySelectorAll('.section-panel').forEach(p => p.classList.remove('active'));
     const fq = document.getElementById('section-' + firstWq);
     if (fq) fq.classList.add('active');
