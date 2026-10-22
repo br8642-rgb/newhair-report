@@ -1925,9 +1925,9 @@ const ALL_REPORTS = [
         p3: { inq:[9,1,1,5,11,0],  book:[5,0,0,1,10,0], rate:[56,0,0,20,91,'—'],     overseas:[5,0,0,1,1,0], total:{inq:27,book:16,rate:59,overseas:7} },
       },
       whatsapp: {
-        p1: { inq:[13,0,0,3,3,1], book:[4,0,0,0,3,1], rate:[31,'—','—',0,100,100], surgery:[0,0,0,0,0,0], total:{inq:20,book:8,rate:40} },
-        p2: { inq:[7,2,1,0,8,0],  book:[3,0,0,0,6,0], rate:[43,0,0,'—',75,'—'],    surgery:[1,0,0,0,0,0], total:{inq:18,book:9,rate:50} },
-        p3: { inq:[4,0,1,4,2,0],  book:[2,0,0,0,1,0], rate:[50,'—',0,0,50,'—'],    surgery:[1,0,0,0,0,0], total:{inq:11,book:3,rate:27} },
+        p1: { inq:[13,0,0,3,3,1], book:[4,0,0,0,3,1], rate:[31,'—','—',0,100,100], surgery:[0,0,0,0,0,0], visitOnline:[[3,1],[0,0],[0,0],[0,0],[3,0],[1,0]], total:{inq:20,book:8,rate:40,visit:7,online:1} },
+        p2: { inq:[7,2,1,0,8,0],  book:[3,0,0,0,6,0], rate:[43,0,0,'—',75,'—'],    surgery:[1,0,0,0,0,0], visitOnline:[[2,1],[0,0],[0,0],[0,0],[6,0],[0,0]], total:{inq:18,book:9,rate:50,visit:8,online:1} },
+        p3: { inq:[4,0,1,4,2,0],  book:[2,0,0,0,1,0], rate:[50,'—',0,0,50,'—'],    surgery:[1,0,0,0,0,0], visitOnline:[[2,0],[0,0],[0,0],[0,0],[1,0],[0,0]], total:{inq:11,book:3,rate:27,visit:3,online:0} },
       },
       // 위챗: 엑셀 '위챗' 시트·종합현황 위챗 표(문의=총문의, 합계=기타·과목미확인 제외; 과목미확인 1·0·4건은 참고). visitOnline=[방문,온라인]
       wechat: {
@@ -8305,7 +8305,9 @@ function renderWqReport(r) {
       const tbl = document.getElementById(tblId); if(!tbl) return;
       const BGSETS = [['#EFF6FF','#DBEAFE'],['#E3EEFC','#C6DEF7'],['#FFF1F2','#FFE4E4']];
       const BG = NP2 === 2 ? [BGSETS[0], BGSETS[2]] : BGSETS.slice(0, NP2);
-      const colPer = extraCol ? 4 : 3;
+      // 새 보고서의 왓츠앱·위챗·라인: 예약 바로 옆에 방문/온라인 열(문의·예약·방문/온라인·예약률). 왓츠앱은 수술 열을 맨 끝에 함께 표시
+      const VOS = extraCol === '방문/온라인+수술', VO = VOS || extraCol === '방문/온라인';
+      const colPer = VOS ? 5 : (extraCol ? 4 : 3);
       const ps2 = [chData.p1, chData.p2, chData.p3].filter(Boolean);
       tbl.innerHTML = '';
       const thead = tbl.createTHead();
@@ -8322,6 +8324,7 @@ function renderWqReport(r) {
       });
       const dr = thead.insertRow();
       ['',...ps2.flatMap(() => {
+        if(VO) return VOS ? [['문의'],['예약'],['방문/온라인'],['예약률'],['수술']] : [['문의'],['예약'],['방문/온라인'],['예약률']];
         const base=[['문의'],['예약'],['예약률']];
         if(extraCol) base.push([extraCol]); return base;
       })].forEach(([label],ci)=>{
@@ -8335,11 +8338,11 @@ function renderWqReport(r) {
       const tbody=tbl.createTBody();
       const tot=tbody.insertRow(); tot.className='total-row';
       const tc=['합계']; ps2.forEach((p)=>{
-        tc.push(p.total.inq,p.total.book,pct(p.total.rate));
+        if(VO) { tc.push(p.total.inq,p.total.book,(p.total.visit||p.total.online) ? (p.total.visit+'/'+p.total.online) : '—',pct(p.total.rate)); if(VOS) { const sv2 = p.surgery ? p.surgery.reduce((a,b)=>a+b,0) : 0; tc.push(sv2 ? sv2 : '—'); } }
+        else tc.push(p.total.inq,p.total.book,pct(p.total.rate));
         if(extraCol==='해외') tc.push(p.total.overseas!=null?p.total.overseas:'—');
         if(extraCol==='부재') tc.push(p.total.absent!=null?p.total.absent:'—');
         if(extraCol==='수술') { const sv = (r.meta && r.meta.ppAsPercent && p.surgery) ? p.surgery.reduce((a,b)=>a+b,0) : 0; tc.push(sv ? sv : '—'); }
-        if(extraCol==='방문/온라인') tc.push((p.total.visit||p.total.online) ? (p.total.visit+'/'+p.total.online) : '—');
       });
       tc.forEach((v,ci)=>{
         const td=tot.insertCell(); td.innerHTML=v;
@@ -8351,11 +8354,11 @@ function renderWqReport(r) {
       ch.cats.forEach((cat,ci2)=>{
         const tr=tbody.insertRow();
         const cells=[cat]; ps2.forEach((p)=>{
-          cells.push(p.inq[ci2],p.book[ci2],pct(p.rate[ci2]));
+          if(VO) { const vo = p.visitOnline && p.visitOnline[ci2]; cells.push(p.inq[ci2],p.book[ci2],(vo && (vo[0]||vo[1]) ? (vo[0]+'/'+vo[1]) : '—'),pct(p.rate[ci2])); if(VOS) cells.push(p.surgery&&p.surgery[ci2]!=null?(p.surgery[ci2]||'—'):'—'); }
+          else cells.push(p.inq[ci2],p.book[ci2],pct(p.rate[ci2]));
           if(extraCol==='해외') cells.push(p.overseas&&p.overseas[ci2]!=null?(p.overseas[ci2]||'—'):'—');
           if(extraCol==='부재') cells.push(p.absent&&p.absent[ci2]!=null?(p.absent[ci2]||'—'):'—');
           if(extraCol==='수술') cells.push(p.surgery&&p.surgery[ci2]!=null?(p.surgery[ci2]||'—'):'—');
-          if(extraCol==='방문/온라인') { const vo = p.visitOnline && p.visitOnline[ci2]; cells.push(vo && (vo[0]||vo[1]) ? (vo[0]+'/'+vo[1]) : '—'); }
         });
         cells.forEach((v,ci)=>{
           const td=tr.insertCell(); td.innerHTML=v;
@@ -8414,7 +8417,7 @@ function renderWqReport(r) {
 
     if (ch.whatsapp) {
       showBlock('wq02-block-whatsapp', true);
-      renderChWqTable('tbl-wq02-wa', ch.whatsapp, '수술');
+      renderChWqTable('tbl-wq02-wa', ch.whatsapp, (ch.whatsapp.p1 && ch.whatsapp.p1.visitOnline) ? '방문/온라인+수술' : '수술');
       chLegend('lg-wq02-wa', PL2.flatMap((l, i) => ([[ch2Colors[i], l + ' 문의'], [PC2[i], l + ' 예약']])));
       renderChWqChart('chart-wq02-wa', ch.whatsapp);
     } else showBlock('wq02-block-whatsapp', false);
@@ -8424,7 +8427,7 @@ function renderWqReport(r) {
       renderChWqTable('tbl-wq02-wechat', ch.wechat, '방문/온라인');
       const wt = [ch.wechat.p1, ch.wechat.p2, ch.wechat.p3].filter(Boolean).map(p => p.total);
       const wvo = document.getElementById('wq02-wechat-vo');
-      if (wvo) wvo.textContent = '(방문 ' + wt.map(t => t.visit).join('→') + ' · 온라인 ' + wt.map(t => t.online).join('→') + ' / 표의 방문/온라인 열은 예약 건수)';
+      if (wvo) wvo.textContent = '(방문 ' + wt.map(t => t.visit).join('→') + ' · 온라인 ' + wt.map(t => t.online).join('→') + ')';
       chLegend('lg-wq02-wechat', PL2.flatMap((l, i) => ([[ch2Colors[i], l + ' 문의'], [PC2[i], l + ' 예약']])));
       renderChWqChart('chart-wq02-wechat', ch.wechat);
     } else showBlock('wq02-block-wechat', false);
@@ -8434,7 +8437,7 @@ function renderWqReport(r) {
       renderChWqTable('tbl-wq02-line', ch.line, '방문/온라인');
       const lt = [ch.line.p1, ch.line.p2, ch.line.p3].filter(Boolean).map(p => p.total);
       const vo = document.getElementById('wq02-line-vo');
-      if (vo) vo.textContent = '(방문 ' + lt.map(t => t.visit).join('→') + ' · 온라인 ' + lt.map(t => t.online).join('→') + ' / 표의 방문/온라인 열은 예약 건수)';
+      if (vo) vo.textContent = '(방문 ' + lt.map(t => t.visit).join('→') + ' · 온라인 ' + lt.map(t => t.online).join('→') + ')';
       chLegend('lg-wq02-line', PL2.flatMap((l, i) => ([[ch2Colors[i], l + ' 문의'], [PC2[i], l + ' 예약']])));
       renderChWqChart('chart-wq02-line', ch.line);
     } else showBlock('wq02-block-line', false);
