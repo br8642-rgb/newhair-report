@@ -1516,6 +1516,20 @@ body.pdf-mode .dash-header { order: -1; }
       <div class="chart-wrap" style="height:220px"><canvas id="chart-wq02-wa"></canvas></div>
     </div>
     </div>
+    <!-- 위챗 -->
+    <div id="wq02-block-wechat" style="display:none;">
+    <div class="s02-section-label">위챗</div>
+    <div class="card">
+      <div class="card-title">위챗 문의·예약 상세 <span id="wq02-wechat-vo" style="font-size:11px;color:#6b6b6b;font-weight:400;"></span></div>
+      <button class="table-toggle-btn" onclick="toggleTable(this)"><span class="toggle-arrow">▼</span> 표 펼치기</button>
+      <div class="table-collapsible"><div style="overflow-x:auto"><table class="data-table" id="tbl-wq02-wechat"></table></div></div>
+    </div>
+    <div class="card" style="margin-top:16px;margin-bottom:28px;">
+      <div class="card-title">위챗 문의·예약 추이 <span style="font-size:11px;color:#6b6b6b;font-weight:400;">(3기간)</span></div>
+      <div class="ch-legend-row" id="lg-wq02-wechat"></div>
+      <div class="chart-wrap" style="height:220px"><canvas id="chart-wq02-wechat"></canvas></div>
+    </div>
+    </div>
     <!-- 라인 -->
     <div id="wq02-block-line" style="display:none;">
     <div class="s02-section-label">라인</div>
@@ -1915,6 +1929,12 @@ const ALL_REPORTS = [
         p2: { inq:[7,2,1,0,8,0],  book:[3,0,0,0,6,0], rate:[43,0,0,'—',75,'—'],    surgery:[1,0,0,0,0,0], total:{inq:18,book:9,rate:50} },
         p3: { inq:[4,0,1,4,2,0],  book:[2,0,0,0,1,0], rate:[50,'—',0,0,50,'—'],    surgery:[1,0,0,0,0,0], total:{inq:11,book:3,rate:27} },
       },
+      // 위챗: 엑셀 '위챗' 시트·종합현황 위챗 표(문의=총문의, 합계=기타·과목미확인 제외; 과목미확인 1·0·4건은 참고). visitOnline=[방문,온라인]
+      wechat: {
+        p1: { inq:[2,0,0,0,0,0], book:[2,0,0,0,0,0], rate:[100,'—','—','—','—','—'], visitOnline:[[1,1],[0,0],[0,0],[0,0],[0,0],[0,0]], total:{inq:2,book:2,rate:100,visit:1,online:1} },
+        p2: { inq:[1,0,0,2,0,0], book:[0,0,0,0,0,0], rate:[0,'—','—',0,'—','—'], visitOnline:[[0,0],[0,0],[0,0],[0,0],[0,0],[0,0]], total:{inq:3,book:0,rate:0,visit:0,online:0} },
+        p3: { inq:[1,0,0,0,0,0], book:[0,0,0,0,0,0], rate:[0,'—','—','—','—','—'], visitOnline:[[0,0],[0,0],[0,0],[0,0],[0,0],[0,0]], total:{inq:1,book:0,rate:0,visit:0,online:0} },
+      },
       // 라인: 엑셀 '라인' 시트·종합현황 라인 표(문의=총문의, 합계=기타·과목미확인 제외). 수술 칸은 방문상담으로 보지 않고, 방문상담·온라인상담 칸을 그대로 사용. visitOnline=[방문,온라인]
       line: {
         p1: { inq:[3,0,0,0,0,0], book:[0,0,0,0,0,0], rate:[0,'—','—','—','—','—'], visitOnline:[[0,0],[0,0],[0,0],[0,0],[0,0],[0,0]], total:{inq:3,book:0,rate:0,visit:0,online:0} },
@@ -1931,7 +1951,7 @@ const ALL_REPORTS = [
         p2: { inq:[7,3,0,3,9,1],  absent:[2,0,2,2,1,2], book:[7,3,0,2,9,1],  rate:[100,100,'—',67,100,100], total:{inq:23,absent:9,book:22,rate:96} },
         p3: { inq:[6,0,1,3,7,0],  absent:[2,0,0,0,1,0], book:[5,0,1,3,7,0],  rate:[83,'—',100,100,100,'—'], total:{inq:17,absent:3,book:16,rate:94} },
       },
-      analysis: '<b>5개 채널 중 문의가 가장 크게 줄어든 채널은 네이버 68→42건(−26건)이고, 게시판 30→17건(−13건)·왓츠앱 20→11건(−9건)도 구간마다 줄었음. 플친은 26→28→27건으로 거의 같은 수준.</b> 네이버는 검사 45→27건(−18건)이 가장 크게 줄었음.\n예약률은 네이버 94%→100%→100%, 게시판 80%→96%→94%로 높은 수준이고, 플친은 54%→50%→59%, 왓츠앱은 40%→50%→27%, 라인은 0%→17%→29%로 낮은 편. 3구간 예약률은 네이버 100% > 게시판 94% > 플친 59% > 라인 29% > 왓츠앱 27% 순.\n왓츠앱은 3구간 문의 11건 중 예약이 3건뿐이라 예약률이 가장 낮고, 치료 문의 4건은 예약이 없었음.\n라인은 문의 3→6→7건, 예약 0→1→2건으로 구간마다 늘었고 문의는 모두 이식 과목임. 예약은 2구간 온라인상담 1건, 3구간 온라인상담 1건·방문상담 1건.\n이식 문의는 전화 51→26건·네이버 15→4건·게시판 14→6건·왓츠앱 13→4건으로 1구간보다 3구간에 줄었고, 플친은 12→15→9건으로 2구간에 늘었다가 줄었고, 라인은 3→6→7건으로 늘었음(이식 감소 원인은 확인 필요).\n<span style="color:#888;">※ 네이버 표에서 제외한 \'기타\' 과목(문의·예약: 3구간 1·1건) 때문에 3구간 과목별 합계가 전체보다 적음(문의·예약 각 41건).</span>\n<span style="color:#888;">※ 플친·왓츠앱의 \'기타\'와 \'과목미확인\'은 참고용이라 표에서 제외했습니다. 합계는 표의 과목별 수치와 같습니다.</span>',
+      analysis: '<b>6개 채널 중 문의가 가장 크게 줄어든 채널은 네이버 68→42건(−26건)이고, 게시판 30→17건(−13건)·왓츠앱 20→11건(−9건)도 구간마다 줄었음. 플친은 26→28→27건으로 거의 같은 수준.</b> 네이버는 검사 45→27건(−18건)이 가장 크게 줄었음.\n예약률은 네이버 94%→100%→100%, 게시판 80%→96%→94%로 높은 수준이고, 플친은 54%→50%→59%, 왓츠앱은 40%→50%→27%, 라인은 0%→17%→29%로 낮은 편. 3구간 예약률은 네이버 100% > 게시판 94% > 플친 59% > 라인 29% > 왓츠앱 27% > 위챗 0%(문의 1건) 순.\n왓츠앱은 3구간 문의 11건 중 예약이 3건뿐이라 문의가 10건 이상인 채널 중 예약률이 가장 낮고, 치료 문의 4건은 예약이 없었음.\n라인은 문의 3→6→7건, 예약 0→1→2건으로 구간마다 늘었고 문의는 모두 이식 과목임. 예약은 2구간 온라인상담 1건, 3구간 온라인상담 1건·방문상담 1건.\n위챗은 문의 2→3→1건, 예약 2→0→0건으로 건수가 적어 예약률(100%→0%→0%)이 크게 움직이며, 예약률이 낮아도 현재는 큰 이슈가 아님(현장 확인 내용). 1구간 예약 2건은 이식(방문 1건·온라인 1건).\n이식 문의는 전화 51→26건·네이버 15→4건·게시판 14→6건·왓츠앱 13→4건으로 1구간보다 3구간에 줄었고, 플친은 12→15→9건으로 2구간에 늘었다가 줄었고, 라인은 3→6→7건으로 늘었음(이식 감소 원인은 확인 필요).\n<span style="color:#888;">※ 네이버 표에서 제외한 \'기타\' 과목(문의·예약: 3구간 1·1건) 때문에 3구간 과목별 합계가 전체보다 적음(문의·예약 각 41건).</span>\n<span style="color:#888;">※ 플친·왓츠앱·위챗의 \'기타\'와 \'과목미확인\'은 참고용이라 표에서 제외했습니다. 합계는 표의 과목별 수치와 같습니다.</span>',
     },
     // 해외 고객: 엑셀 값(채팅 채널 종합현황 '해외문의·해외예약'+왓츠앱·위챗·라인 전체, 네이버·게시판 3.현황 해외 칸). 전화는 해외 구분 없음.
     // ch = 채널별 [해외 문의, 해외 예약], vo = 해외 예약의 [방문, 온라인](채팅 채널), nb = 네이버·게시판 해외 예약(방문/온라인 구분 없음)
@@ -1973,25 +1993,25 @@ const ALL_REPORTS = [
     overview: {
       periodLabels: ['9월 5주차~10월 1주차', '10월 2주차', '10월 3주차'],
       periods: ['9/28~10/3', '10/5~10/10', '10/12~10/17'],
-      analysis: '<b>전화·플친·왓츠앱 합산 신규 문의는 216→158→155건으로 2구간에 크게 줄어든 뒤 비슷한 수준</b>, 예약은 171→126→128건. 합산 예약률은 79%→80%→83%로 구간마다 높아짐.\n과목별 문의는 이식 76→52→39건(−37건), 검사 96→65→67건(−29건)이 크게 줄었음(이식 감소 원인은 확인 필요).\n내원은 142→121→121건, 내원율은 86%→86%→90%. 당일취소는 13→11→9건, 부도는 10→9→4건으로 줄었음.\n성사현황 기준 상담 77→61→58건, 체결은 48→29→30건으로 체결률 62%→48%→52%.',
+      analysis: '<b>전화·플친·왓츠앱·위챗·라인 합산 신규 문의는 221→167→163건으로 2구간에 크게 줄어든 뒤 비슷한 수준</b>, 예약은 173→127→130건. 합산 예약률은 78%→76%→80%로 2구간에 소폭 낮아졌다가 3구간에 높아짐.\n과목별 문의는 이식 81→59→47건(−34건), 검사 96→65→67건(−29건)이 크게 줄었음(이식 감소 원인은 확인 필요).\n내원은 142→121→121건, 내원율은 86%→86%→90%. 당일취소는 13→11→9건, 부도는 10→9→4건으로 줄었음.\n성사현황 기준 상담 77→61→58건, 체결은 48→29→30건으로 체결률 62%→48%→52%.',
     },
     // wq-04 종합리뷰 — 체결률·이식 감소 과제(1·2번)는 회의에서 원인 확인 후 문구 변경 예정(실장님 확인)
     review: {
       periodLabels: ['9월 5주차~10월 1주차', '10월 2주차', '10월 3주차'],
       periods: ['9/28~10/3', '10/5~10/10', '10/12~10/17'],
       wins: [
-        '합산 예약률 79%→80%→83%로 구간마다 상승',
+        '합산 예약률 78%→76%→80%로 2구간에 낮아졌다가 3구간에 1구간보다 높아짐',
         '내원율 86%→86%→90%로 상승, 부도 10→9→4건·당일취소 13→11→9건으로 감소',
         '네이버 예약률 94%→100%→100%로 채널 중 최고 수준 유지',
         '전화 검사 예약률 99%→94%→98%로 높은 수준 유지',
       ],
       tasks: [
         '체결률 62%→48%→52%로 1구간보다 낮음. 모발이식 체결률 48%→19%→34%(체결 14→5→10건) — 원인 확인 필요',
-        '이식 문의 감소(전화·플친·왓츠앱 합산 76→52→39건) — 원인 확인 필요',
+        '이식 문의 감소(전화·플친·왓츠앱·위챗·라인 합산 81→59→47건) — 원인 확인 필요',
         '내원전 취소 3→8→10건(취소율 1.8%→5.4%→6.9%)으로 증가. 사유는 타 병원에 들렀다가 내원하지 않는 경우, 시간이 맞지 않는 경우, 사유 없이 취소하는 경우 등(현장 확인 내용)',
         '왓츠앱 예약률 40%→50%→27%(3구간 문의 11건 중 예약 3건). 해외 고객은 한국에 없으면 내원이 어려워 예약률이 낮은 것은 이전과 같은 이유(현장 확인 내용)이지만, 이식 문의 비중이 65%→39%→36%로 줄고 검사·치료 문의 비중이 30%→44%→55%로 커져 문의 구성이 달라진 점은 계속 지켜볼 필요',
       ],
-      analysis: '합산 신규 문의는 216→158→155건으로 줄었지만 예약률은 79%→80%→83%로 높아졌고, 내원율도 86%→86%→90%로 개선되며 부도(10→9→4건)·당일취소(13→11→9건)도 줄었습니다.\n반면 체결률은 62%→48%→52%로 1구간보다 낮고, 이식 문의 감소는 원인 확인이 필요하며, 내원전 취소 증가(3→8→10건)는 사유가 타 병원 방문·시간 문제 등입니다(현장 확인 내용).',
+      analysis: '합산 신규 문의는 221→167→163건으로 줄었지만 예약률은 78%→76%→80%로 3구간에 높아졌고, 내원율도 86%→86%→90%로 개선되며 부도(10→9→4건)·당일취소(13→11→9건)도 줄었습니다.\n반면 체결률은 62%→48%→52%로 1구간보다 낮고, 이식 문의 감소는 원인 확인이 필요하며, 내원전 취소 증가(3→8→10건)는 사유가 타 병원 방문·시간 문제 등입니다(현장 확인 내용).',
     },
   },
 },
@@ -3906,7 +3926,7 @@ function exportReportPdf() {
     if (e.querySelector('#chart-wq03-cats')) u.brk = true;
     if (e.classList.contains('s02-section-label') && /^과목별 성사/.test(e.textContent.trim())) u.brk = true;
     if (pid === 'section-wq-04' && e.classList.contains('section-header')) u.brk = true;
-    if (pid === 'section-wq-02' && e.classList.contains('section-header')) { u.brk = true; u.chunkLen = 2; u.chunkMargin = 0.95; }   // 채널별 제목 + 핵심 지표 5카드를 한 쪽에(제목만 따로 남지 않게)
+    if (pid === 'section-wq-02' && e.classList.contains('section-header')) { u.brk = true; u.chunkLen = 2; u.chunkMargin = 0.95; }   // 채널별 제목 + 핵심 지표 카드를 한 쪽에(제목만 따로 남지 않게)
   });
   units.forEach(u => takeOut(u.el));
   const seenPanels = new Set();
@@ -7996,22 +8016,26 @@ function renderWqReport(r) {
     const PC0 = NP0 >= 3 ? WC.slice(0, NP0) : WQC.slice(0, NP0);
 
     const ph0 = wq.phoneStatus, ka0 = wq.channelStatus.kakao, wa0 = wq.channelStatus.whatsapp;
+    // 새 보고서부터 위챗·라인도 합산(데이터가 있을 때만 — 이전 보고서는 그대로 전화+플친+왓츠앱)
+    const ex0 = [wq.channelStatus.wechat, wq.channelStatus.line].filter(Boolean);
+    const exT0 = (pk, f) => ex0.reduce((a, c) => a + c[pk].total[f], 0);
+    const exC0 = (pk, f, ci) => ex0.reduce((a, c) => a + c[pk][f][ci], 0);
     const cats0 = ph0.cats; // 전화·플친·왓츠앱 모두 동일한 6개 과목 체계 사용
     const periods0 = ['p1', 'p2', 'p3'].slice(0, NP0);
     // 기간별 합산(전화+플친+왓츠앱) — 이미 검산된 원본 수치를 그대로 더한 값이라 별도 데이터로 저장하지 않고 매번 계산
     const allTot = periods0.map(pk => {
-      const inq = ph0[pk].total.inq + ka0[pk].total.inq + wa0[pk].total.inq;
-      const book = ph0[pk].total.book + ka0[pk].total.book + wa0[pk].total.book;
+      const inq = ph0[pk].total.inq + ka0[pk].total.inq + wa0[pk].total.inq + exT0(pk, 'inq');
+      const book = ph0[pk].total.book + ka0[pk].total.book + wa0[pk].total.book + exT0(pk, 'book');
       return { inq, book, rate: Math.round(book / inq * 100) };
     });
     const allByCat = periods0.map(pk => cats0.map((c, ci) =>
-      ({ inq: ph0[pk].inq[ci] + ka0[pk].inq[ci] + wa0[pk].inq[ci],
-         book: ph0[pk].book[ci] + ka0[pk].book[ci] + wa0[pk].book[ci] })
+      ({ inq: ph0[pk].inq[ci] + ka0[pk].inq[ci] + wa0[pk].inq[ci] + exC0(pk, 'inq', ci),
+         book: ph0[pk].book[ci] + ka0[pk].book[ci] + wa0[pk].book[ci] + exC0(pk, 'book', ci) })
     ));
     const vs0 = periods0.map(pk => wq.visitStatus[pk]);
 
     document.getElementById('wq00-subtitle').textContent =
-      OL.join(' / ') + ' · 전화·플친·왓츠앱 합산 문의 + 내원 통합 현황';
+      OL.join(' / ') + (ex0.length ? ' · 전화·플친·왓츠앱·위챗·라인 합산 문의 + 내원 통합 현황' : ' · 전화·플친·왓츠앱 합산 문의 + 내원 통합 현황');
 
     document.getElementById('wq00-kpi').innerHTML = allTot.map((a, i) => {
       const v = vs0[i];
@@ -8036,7 +8060,7 @@ function renderWqReport(r) {
         <div style="font-size:20px;font-weight:800;color:${PC0[i]};margin-bottom:4px;">${OL[i]}</div>
         <div style="font-size:14px;color:#888;font-weight:600;margin-bottom:16px;">${OD[i]}</div>
 
-        <div style="font-size:13px;font-weight:700;color:#1565C0;margin-bottom:8px;">📞 신규 문의·예약 <span style="font-size:11px;color:#bbb;font-weight:400;">(전화+플친+왓츠앱)</span></div>
+        <div style="font-size:13px;font-weight:700;color:#1565C0;margin-bottom:8px;">📞 신규 문의·예약 <span style="font-size:11px;color:#bbb;font-weight:400;">(${ex0.length ? '전화+플친+왓츠앱+위챗+라인' : '전화+플친+왓츠앱'})</span></div>
         ${row('신규 문의', a.inq + '건', dInq !== null ? badge(dInq) : '')}
         ${row('예약', a.book + '건', dBook !== null ? badge(dBook) : '')}
         ${row('예약률', a.rate + '%', dRate !== null ? badge(dRate, '%p') : '')}
@@ -8198,7 +8222,7 @@ function renderWqReport(r) {
     const PC2 = NP2 >= 3 ? WC.slice(0, NP2) : WQC.slice(0, NP2);
 
     document.getElementById('wq02-subtitle').textContent =
-      PL2.join(' / ') + ' · ' + [ch.kakao&&'플친', ch.naver&&'네이버', ch.board&&'게시판', ch.whatsapp&&'왓츠앱', ch.line&&'라인'].filter(Boolean).join(' · ');
+      PL2.join(' / ') + ' · ' + [ch.kakao&&'플친', ch.naver&&'네이버', ch.board&&'게시판', ch.whatsapp&&'왓츠앱', ch.wechat&&'위챗', ch.line&&'라인'].filter(Boolean).join(' · ');
 
     // 채널 KPI 카드 (기간 수만큼 값 체인으로 연결) — 데이터 있는 채널만 포함
     const chKpiData = [
@@ -8210,13 +8234,16 @@ function renderWqReport(r) {
         totals: [ch.board.p1.total, ch.board.p2.total, ch.board.p3 && ch.board.p3.total].filter(Boolean) },
       ch.whatsapp && { label:'왓츠앱', color:'#43A047', emoji:'🌍',
         totals: [ch.whatsapp.p1.total, ch.whatsapp.p2.total, ch.whatsapp.p3 && ch.whatsapp.p3.total].filter(Boolean) },
+      // 위챗(새 보고서부터): 라인 앞에 표시
+      ch.wechat && { label:'위챗', color:'#2DC100', emoji:'<span style="display:inline-flex;align-items:center;justify-content:center;width:22px;height:22px;background:#2DC100;border-radius:4px;font-size:12px;font-weight:900;color:#fff;font-family:sans-serif;line-height:1;flex-shrink:0;">微</span>',
+        totals: [ch.wechat.p1.total, ch.wechat.p2.total, ch.wechat.p3 && ch.wechat.p3.total].filter(Boolean) },
       // 라인(새 보고서부터): 5번째 카드 — 2열 격자에서 혼자 남지 않도록 한 줄 전체 폭으로 펼쳐 표시(wide)
-      ch.line && { label:'라인', color:'#06C755', wide:true, emoji:'<span style="display:inline-flex;align-items:center;justify-content:center;width:22px;height:22px;background:#06C755;border-radius:6px;font-size:13px;font-weight:900;color:#fff;font-family:sans-serif;line-height:1;flex-shrink:0;">L</span>',
+      ch.line && { label:'라인', color:'#06C755', wide:!ch.wechat, emoji:'<span style="display:inline-flex;align-items:center;justify-content:center;width:22px;height:22px;background:#06C755;border-radius:6px;font-size:13px;font-weight:900;color:#fff;font-family:sans-serif;line-height:1;flex-shrink:0;">L</span>',
         totals: [ch.line.p1.total, ch.line.p2.total, ch.line.p3 && ch.line.p3.total].filter(Boolean) },
     ].filter(Boolean);
 
     const kpiWrap2 = document.getElementById('wq02-kpi');
-    kpiWrap2.style.cssText = 'display:grid;grid-template-columns:repeat(2,1fr);gap:16px;margin-bottom:28px;';
+    kpiWrap2.style.cssText = 'display:grid;grid-template-columns:repeat(' + (chKpiData.length >= 6 ? 3 : 2) + ',1fr);gap:16px;margin-bottom:28px;';   // 6채널(새 보고서)은 3열×2줄, 그 외는 2열
     kpiWrap2.innerHTML = chKpiData.map(chd => {
       const getVal = (t, ri) => ri===0 ? t.inq : ri===1 ? t.book : t.rate;
       const rows = [
@@ -8310,7 +8337,7 @@ function renderWqReport(r) {
         tc.push(p.total.inq,p.total.book,pct(p.total.rate));
         if(extraCol==='해외') tc.push(p.total.overseas!=null?p.total.overseas:'—');
         if(extraCol==='부재') tc.push(p.total.absent!=null?p.total.absent:'—');
-        if(extraCol==='수술') tc.push('—');
+        if(extraCol==='수술') { const sv = (r.meta && r.meta.ppAsPercent && p.surgery) ? p.surgery.reduce((a,b)=>a+b,0) : 0; tc.push(sv ? sv : '—'); }
         if(extraCol==='방문/온라인') tc.push((p.total.visit||p.total.online) ? (p.total.visit+'/'+p.total.online) : '—');
       });
       tc.forEach((v,ci)=>{
@@ -8390,6 +8417,16 @@ function renderWqReport(r) {
       chLegend('lg-wq02-wa', PL2.flatMap((l, i) => ([[ch2Colors[i], l + ' 문의'], [PC2[i], l + ' 예약']])));
       renderChWqChart('chart-wq02-wa', ch.whatsapp);
     } else showBlock('wq02-block-whatsapp', false);
+
+    if (ch.wechat) {
+      showBlock('wq02-block-wechat', true);
+      renderChWqTable('tbl-wq02-wechat', ch.wechat, '방문/온라인');
+      const wt = [ch.wechat.p1, ch.wechat.p2, ch.wechat.p3].filter(Boolean).map(p => p.total);
+      const wvo = document.getElementById('wq02-wechat-vo');
+      if (wvo) wvo.textContent = '(방문 ' + wt.map(t => t.visit).join('→') + ' · 온라인 ' + wt.map(t => t.online).join('→') + ' / 표의 방문/온라인 열은 예약 건수)';
+      chLegend('lg-wq02-wechat', PL2.flatMap((l, i) => ([[ch2Colors[i], l + ' 문의'], [PC2[i], l + ' 예약']])));
+      renderChWqChart('chart-wq02-wechat', ch.wechat);
+    } else showBlock('wq02-block-wechat', false);
 
     if (ch.line) {
       showBlock('wq02-block-line', true);
@@ -8710,14 +8747,16 @@ function renderWqReport(r) {
   // ── WQ-04 종합 리뷰
   if (wq.review && wq.phoneStatus && wq.channelStatus && wq.visitStatus) {
     const ph4 = wq.phoneStatus, ka4 = wq.channelStatus.kakao, wa4 = wq.channelStatus.whatsapp;
+    const ex4 = [wq.channelStatus.wechat, wq.channelStatus.line].filter(Boolean);   // 새 보고서부터 위챗·라인 합산
+    const exT4 = (pk, f) => ex4.reduce((a, c) => a + c[pk].total[f], 0);
     const RL = wq.review.periodLabels || wq.periodLabels || r.meta.periodLabels;
     const RD = wq.review.periods || wq.periods || r.meta.periods;
     const NP4 = RL.length;
     const PC4 = NP4 >= 3 ? WC.slice(0, NP4) : WQC.slice(0, NP4);
     const periods4 = ['p1', 'p2', 'p3'].slice(0, NP4);
     const allTot4 = periods4.map(pk => {
-      const inq = ph4[pk].total.inq + ka4[pk].total.inq + wa4[pk].total.inq;
-      const book = ph4[pk].total.book + ka4[pk].total.book + wa4[pk].total.book;
+      const inq = ph4[pk].total.inq + ka4[pk].total.inq + wa4[pk].total.inq + exT4(pk, 'inq');
+      const book = ph4[pk].total.book + ka4[pk].total.book + wa4[pk].total.book + exT4(pk, 'book');
       return { inq, book, rate: Math.round(book / inq * 100) };
     });
     const vs4 = periods4.map(pk => wq.visitStatus[pk]);
@@ -8729,7 +8768,7 @@ function renderWqReport(r) {
       const v = vs4[i];
       const rows = [
         { label:'신규 문의', val: a.inq+'건',   sub: '예약률 '+a.rate+'%' },
-        { label:'예약',      val: a.book+'건',  sub: '전화+플친+왓츠앱 합산' },
+        { label:'예약',      val: a.book+'건',  sub: ex4.length ? '전화+플친+왓츠앱+위챗+라인 합산' : '전화+플친+왓츠앱 합산' },
         { label:'내원',      val: v.visit+'건', sub: '내원율 '+v.visit_rate+'%' },
         { label:'당일취소·부도', val: v.same_day+'·'+v.noshow+'건', sub:'', isNeg:true },
       ];
