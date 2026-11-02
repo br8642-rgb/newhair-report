@@ -425,6 +425,13 @@ body.pdf-mode .dash-header { order: -1; }
       <div class="card"><div class="card-title">5월 vs 6월 비교 그래프</div><div class="chart-legend" id="lg-s02-kakao"></div><div class="chart-wrap" style="height:250px"><canvas id="chart-s02-kakao"></canvas></div></div>
     </div>
 
+    <div class="section-divider" data-channel="s02-email" style="display:none;"></div>
+    <div class="channel-section" data-channel="s02-email" style="display:none;">
+      <div class="channel-header"><div class="channel-name">이메일</div><span class="badge badge-kakao">해외 문의</span></div>
+      <div class="card"><div class="card-title">문의·예약 상세 현황 <span style="font-size:11px;color:#6b6b6b;font-weight:400;">(해외 포함)</span><span class="ctw-inline" id="ctw-email" style="display:none;"></span></div><button class="table-toggle-btn" onclick="toggleTable(this)"><span class="toggle-arrow">▼</span> 표 펼치기</button><div class="table-collapsible"><div style="overflow-x:auto"><table class="data-table" id="tbl-s02-email"></table></div></div></div>
+      <div class="card"><div class="card-title">5월 vs 6월 비교 그래프</div><div class="chart-legend" id="lg-s02-email"></div><div class="chart-wrap" style="height:210px"><canvas id="chart-s02-email"></canvas></div></div>
+    </div>
+
     <div class="section-divider" data-channel="s02-naver" style="display:none;"></div>
     <div class="channel-section" data-channel="s02-naver" style="display:none;">
       <div class="channel-header"><div class="channel-name">네이버</div><span class="badge badge-naver">신규 문의</span></div>
@@ -1912,6 +1919,18 @@ const ALL_REPORTS = [
     analysis: {
       phone: `<div class="mq-row"><b>전화 신규문의는 499→511건<span class="a-up">(+12건)</span>으로 늘었지만, 일평균은 21.7→18.9건<span class="a-down">(−2.8건)</span>으로 줄었음.</b></div><div class="mq-row"><span class="mq-tag">영업일</span>23일→27일로 늘어 문의 합계가 늘었음. 일요일 제외, 문의 기록이 있는 날 기준이며 9월은 추석 연휴(9/24~26)에 기록이 없음.<div class="mq-chips"><div class="mq-chip"><small>9월 · 영업일 23일</small><b>일평균 21.7건</b></div><span class="mq-arrow">→</span><div class="mq-chip mq-hl"><small>10월 · 영업일 27일</small><b>일평균 18.9건</b></div></div></div><div class="mq-row"><span class="mq-tag">예약</span>439→468건<span class="a-up">(+29건)</span>, 예약률 88%→92%<span class="a-up">(+4%)</span>로 높아짐.</div><div class="mq-row"><span class="mq-tag">주간</span>첫 구간만 많았고(추석 연휴 직후라 문의가 많았던 영향, 현장 확인 내용) 이후는 101~117건 범위임.<div class="mq-chips"><div class="mq-chip mq-hl"><small>9/28~10/3</small><b>170건</b></div><span class="mq-arrow">→</span><div class="mq-chip"><small>10/5~10/10</small><b>112건</b></div><span class="mq-arrow">→</span><div class="mq-chip"><small>10/12~10/17</small><b>117건</b></div><span class="mq-arrow">→</span><div class="mq-chip"><small>10/19~10/24</small><b>101건</b></div><span class="mq-arrow">→</span><div class="mq-chip"><small>10/26~10/31</small><b>109건</b></div></div></div><div class="mq-row"><span class="mq-tag">과목별 예약률</span>헤어 73%→96%<span class="a-up">(+23%)</span>·SMP 68%→95%<span class="a-up">(+27%)</span>·치료 77%→82%<span class="a-up">(+5%)</span>로 높아짐. 이식 82%→82%·검사 97%→97%·처방전 100%→100%는 같은 수준.</div><div class="mq-row"><span class="mq-tag">과목별 문의</span>이식은 8·9·10월 146→157→134건으로 10월에 줄었고(9월 대비 <span class="a-down">−23건</span>), 치료는 35→35→61건으로 10월에 늘었음<span class="a-up">(+26건)</span>. 두 과목 모두 원인 확인 필요.<div class="mq-chips"><span class="mq-chipname">이식 문의</span><div class="mq-chip"><small>8월</small><b>146건</b></div><span class="mq-arrow">→</span><div class="mq-chip"><small>9월</small><b>157건</b></div><span class="mq-arrow">→</span><div class="mq-chip mq-hl"><small>10월</small><b>134건</b></div></div><div class="mq-chips"><span class="mq-chipname">치료 문의</span><div class="mq-chip"><small>8월</small><b>35건</b></div><span class="mq-arrow">→</span><div class="mq-chip"><small>9월</small><b>35건</b></div><span class="mq-arrow">→</span><div class="mq-chip mq-hl"><small>10월</small><b>61건</b></div></div></div><div class="mq-note">※ 과목별 합계는 표에서 제외한 '기타' 과목(전화 9월 1건·10월 4건) 때문에 전체 수치보다 9월 1건·10월 4건 적음.</div>`,
     },
+  },
+  section02: {
+    layout: 'v10', // 10월 월간부터: 채팅 채널 표에 방문/온라인·수술 열, 이메일 채널 추가, 카드 3열 배치(이전 보고서는 이 값이 없어 기존 표시 그대로)
+    // 채팅 채널(플친·이메일·왓츠앱·위챗·라인): 엑셀 3.채팅 채널 '종합현황' 값(문의=총문의, 합계=기타·과목미확인 제외, 수술=예약 중 수술일 입력 건). 네이버·게시판: 엑셀 2.네이버·게시판 '3.현황'.
+    kakao: { cats:['이식','헤어','SMP','치료','검사','처방전'], may:{"inq":[42,4,2,11,32,1],"book":[22,2,2,3,23,1],"rate":[52,50,100,27,72,100],"absent":[2,0,0,1,2,0],"overseas":[21,3,0,3,4,0],"online":[0,0,0,0,0,0],"visit":[22,2,2,3,23,1],"surgery":[0,0,0,0,0,0]}, jun:{"inq":[42,2,8,15,29,2],"book":[22,0,5,4,24,0],"rate":[52,0,63,27,83,0],"absent":[5,1,1,5,2,0],"overseas":[21,1,2,5,2,0],"online":[1,0,0,0,0,0],"visit":[21,0,5,4,24,0],"surgery":[3,0,1,0,0,0]}, total_may:{"inq":92,"book":53,"rate":58,"overseas":31,"online":0,"visit":53,"surgery":0}, total_jun:{"inq":98,"book":55,"rate":56,"overseas":31,"online":1,"visit":54,"surgery":4} },
+    email: { cats:['이식','헤어','SMP','치료','검사','처방전'], may:{"inq":[5,0,1,0,0,0],"book":[1,0,0,0,0,0],"rate":[20,"—",0,"—","—","—"],"overseas":[5,0,1,0,0,0],"online":[0,0,0,0,0,0],"visit":[1,0,0,0,0,0],"surgery":[0,0,0,0,0,0]}, jun:{"inq":[7,0,0,0,0,0],"book":[0,0,0,0,0,0],"rate":[0,"—","—","—","—","—"],"overseas":[5,0,0,0,0,0],"online":[0,0,0,0,0,0],"visit":[0,0,0,0,0,0],"surgery":[0,0,0,0,0,0]}, total_may:{"inq":6,"book":1,"rate":17,"overseas":6,"online":0,"visit":1,"surgery":0}, total_jun:{"inq":7,"book":0,"rate":0,"overseas":5,"online":0,"visit":0,"surgery":0} },
+    naver: { cats:['이식','헤어','SMP','치료','검사','처방전'], may:{"inq":[28,9,5,7,142,1],"absent":[1,0,1,1,6,0],"book":[24,9,5,7,136,1],"rate":[86,100,100,100,96,100]}, jun:{"inq":[30,4,5,11,127,2],"absent":[3,0,0,0,5,0],"book":[29,4,5,11,127,2],"rate":[97,100,100,100,100,100]}, total_may:{"inq":193,"absent":9,"book":183,"rate":95}, total_jun:{"inq":180,"absent":8,"book":179,"rate":99} },
+    board: { cats:['이식','헤어','SMP','치료','검사','처방전'], may:{"inq":[32,4,7,15,28,7],"absent":[1,0,1,1,5,0],"book":[28,3,4,13,26,6],"rate":[88,75,57,87,93,86]}, jun:{"inq":[31,5,5,14,30,2],"absent":[5,1,3,2,4,1],"book":[27,5,5,12,30,2],"rate":[87,100,100,86,100,100]}, total_may:{"inq":93,"absent":8,"book":80,"rate":86}, total_jun:{"inq":87,"absent":16,"book":81,"rate":93} },
+    whatsapp: { cats:['이식','헤어','SMP','치료','검사','처방전'], may:{"inq":[42,1,2,11,9,1],"book":[15,0,2,1,6,1],"rate":[36,0,100,9,67,100],"online":[2,0,0,0,0,0],"visit":[13,0,2,1,6,1],"surgery":[1,0,0,0,0,0]}, jun:{"inq":[38,2,5,9,19,0],"book":[11,0,0,3,12,0],"rate":[29,0,0,33,63,"—"],"online":[2,0,0,0,0,0],"visit":[9,0,0,3,12,0],"surgery":[4,0,0,0,0,0]}, total_may:{"inq":66,"book":25,"rate":38,"online":2,"visit":23,"surgery":1}, total_jun:{"inq":73,"book":26,"rate":36,"online":2,"visit":24,"surgery":4} },
+    wechat: { cats:['이식','헤어','SMP','치료','검사','처방전'], may:{"inq":[3,0,0,0,1,0],"book":[2,0,0,0,0,0],"rate":[67,"—","—","—",0,"—"],"online":[1,0,0,0,0,0],"visit":[1,0,0,0,0,0],"surgery":[0,0,0,0,0,0]}, jun:{"inq":[8,0,0,3,0,0],"book":[3,0,0,1,0,0],"rate":[38,"—","—",33,"—","—"],"online":[1,0,0,0,0,0],"visit":[2,0,0,1,0,0],"surgery":[1,0,0,0,0,0]}, total_may:{"inq":4,"book":2,"rate":50,"online":1,"visit":1,"surgery":0}, total_jun:{"inq":11,"book":4,"rate":36,"online":1,"visit":3,"surgery":1} },
+    line: { cats:['이식','헤어','SMP','치료','검사','처방전'], may:{"inq":[13,0,0,2,0,0],"book":[3,0,0,0,0,0],"rate":[23,"—","—",0,"—","—"],"online":[2,0,0,0,0,0],"visit":[1,0,0,0,0,0],"surgery":[1,0,0,0,0,0]}, jun:{"inq":[21,0,0,2,0,0],"book":[6,0,0,0,0,0],"rate":[29,"—","—",0,"—","—"],"online":[4,0,0,0,0,0],"visit":[2,0,0,0,0,0],"surgery":[0,0,0,0,0,0]}, total_may:{"inq":15,"book":3,"rate":20,"online":2,"visit":1,"surgery":1}, total_jun:{"inq":23,"book":6,"rate":26,"online":4,"visit":2,"surgery":0} },
+    analysis: `<div class="mq-row"><b>채널별 신규 문의는 전화·라인·왓츠앱·위챗·플친·이메일은 늘고, 네이버·게시판은 줄었음.</b></div><div class="mq-row"><span class="mq-tag">문의</span>전화가 가장 크게 늘었고(499→511건, <span class="a-up">+12건</span>), 네이버가 가장 크게 줄었음(193→180건, <span class="a-down">−13건</span>).</div><div class="mq-row"><span class="mq-tag">예약률</span>게시판이 가장 크게 높아졌고(86%→93%, <span class="a-up">+7%</span>), 플친·왓츠앱은 각 <span class="a-down">−2%</span> 낮아졌음.</div><div class="mq-row"><span class="mq-tag">문의가 적은 채널</span>위챗(50%→36%)·이메일(17%→0%)은 문의 건수가 적어 예약률 변동이 큼.</div><div class="mq-row"><span class="mq-tag">게시판</span>부재는 8→16건으로 늘었음.</div><div class="mq-row"><span class="mq-tag">9월 비교값</span>플친(98→92건)·위챗(5→4건)·게시판(91→93건)은 9월 보고서와 9월 문의 수가 다름. 플친은 이메일 분리, 위챗은 10월 예약 시 9월 문의 삭제, 게시판은 9월 문의 고객의 이후 예약 때문임(현장 확인 내용).</div><div class="mq-note">※ 표에서 제외한 '기타' 과목: 네이버 9·10월 각 1건, 플친 9월 5건·10월 3건, 이메일 10월 1건, 왓츠앱 10월 1건, 위챗 9월 1건. 채팅 채널 합계는 '기타'·과목미확인(플친 9월·10월 각 6건, 왓츠앱 9월 4건·10월 2건, 위챗 9월 2건·10월 4건) 제외 값. 수술 열은 예약 중 수술일이 입력된 건수.</div>`,
   },
 },
 /* ── WQ: 2026년 9/28~10/17 (주간) — 신규, 기존 보고서와 완전 분리 ──
@@ -4697,6 +4716,7 @@ function renderSection02Partial(r) {
   const CH2_META = [
     { key:'phone',    label:'전화',   emoji:'📞', data: s01.phone },
     { key:'kakao',    label:'플친',   emoji:'💬', data: s02.kakao },
+    { key:'email',    label:'이메일', emoji:'✉️', data: s02.email },
     { key:'naver',    label:'네이버', emoji:'<span style="display:inline-flex;align-items:center;justify-content:center;width:22px;height:22px;background:#03C75A;border-radius:4px;font-size:13px;font-weight:900;color:#fff;font-family:sans-serif;line-height:1;flex-shrink:0;">N</span>', data: s02.naver },
     { key:'board',    label:'게시판', emoji:'📋', data: s02.board },
     { key:'whatsapp', label:'왓츠앱', emoji:'🌍', data: s02.whatsapp },
@@ -4714,7 +4734,7 @@ function renderSection02Partial(r) {
   // 채팅 채널(플친/왓츠앱/위챗/라인) 중 온라인·방문 데이터가 있는 보고서(9월~)만 4열(2행) 레이아웃 사용,
   // 그 데이터가 없는 이전 보고서(6/7/8월, 5개 카드)는 기존 5열 기본값(CSS .ch-kpi-grid) 그대로 유지
   const hasChatSplit = CH2_META.some(ch => ch.data && ch.data.total_jun && ch.data.total_jun.online !== undefined);
-  kpiGrid.style.gridTemplateColumns = hasChatSplit ? 'repeat(4,1fr)' : '';
+  kpiGrid.style.gridTemplateColumns = s02.layout === 'v10' ? 'repeat(3,1fr)' : (hasChatSplit ? 'repeat(4,1fr)' : '');
   function cls(d){ return d>0?'up':d<0?'down':'flat'; }
   function arrow(d){ return d>0?`▲ ${d}`:d<0?`▼ ${Math.abs(d)}`:'— 0'; }
   CH2_META.forEach(ch => {
@@ -4735,7 +4755,7 @@ function renderSection02Partial(r) {
   // ── 채팅 채널(플친/왓츠앱/위챗/라인) 통합 온라인·방문 비중 — 도넛 카드 1개 추가
   // 온라인/방문 데이터가 하나도 없는 보고서(7월 이전)는 cov가 null이라 카드 자체가 생성되지 않음 — 기존 화면 변화 없음
   (function renderCombinedConsultDonut() {
-    const keys = ['kakao', 'whatsapp', 'wechat', 'line'];
+    const keys = ['kakao', 'email', 'whatsapp', 'wechat', 'line'];
     let has = false;
     const cov = { may: { online: 0, visit: 0 }, jun: { online: 0, visit: 0 } };
     keys.forEach(k => {
@@ -4778,6 +4798,7 @@ function renderSection02Partial(r) {
 
   // ── 채널별 상세 (플친 → 네이버 → 게시판 → 왓츠앱 → 위챗 → 라인), 데이터 있는 채널만 표시
   toggleS02Channel('kakao',    !!s02.kakao);
+  toggleS02Channel('email',    !!s02.email);
   toggleS02Channel('naver',    !!s02.naver);
   toggleS02Channel('board',    !!s02.board);
   toggleS02Channel('whatsapp', !!s02.whatsapp);
@@ -4785,11 +4806,14 @@ function renderSection02Partial(r) {
   toggleS02Channel('line',     !!s02.line);
 
   if (s02.kakao)    renderS02Kakao(s02.kakao, pl, cl);
+  if (s02.email)    renderS02Email(s02.email, pl, cl);
   if (s02.naver)    renderS02Naver(s02.naver, pl, cl);
   if (s02.board)    renderS02Board(s02.board, pl, cl);
   if (s02.whatsapp) renderS02Whatsapp(s02.whatsapp, pl, cl);
   if (s02.wechat)   renderS02Wechat(s02.wechat, pl, cl);
   if (s02.line)     renderS02Line(s02.line, pl, cl);
+  // 10월 월간부터: 채팅 채널 표를 '문의·예약·방문/온라인·예약률(·해외)·수술' 묶음 헤더 표로 교체 (이전 보고서는 layout 값이 없어 그대로)
+  if (s02.layout === 'v10') ['kakao','email','whatsapp','wechat','line'].forEach(k => { if (s02[k]) renderS02ChatV10(k, s02[k], pl, cl); });
 
   // ── 종합 분석 (5개 채널 비교)
   const summaryDivider = document.querySelector('[data-channel="s02-summary"].section-divider');
@@ -4861,7 +4885,7 @@ function renderS02Wechat(we, pl, cl) {
   renderConsultTypeBar('ctw-wechat', pl, cl, we.total_may, we.total_jun);
   mkTable('tbl-s02-wechat',['구분',pl+' 문의',pl+' 미응답',pl+' 예약',pl+' 예약률',cl+' 문의',cl+' 미응답',cl+' 예약',cl+' 예약률','증감'],
     ['합계',we.total_may.inq,we.total_may.absent,we.total_may.book,pct(we.total_may.rate),we.total_jun.inq,we.total_jun.absent,we.total_jun.book,pct(we.total_jun.rate),diff(we.total_may.inq,we.total_jun.inq)],
-    wc.map((c,i)=>[c,we.may.inq[i],we.may.absent[i]||'—',we.may.book[i],pct(we.may.rate[i]),we.jun.inq[i],we.jun.absent[i]||'—',we.jun.book[i],pct(we.jun.rate[i]),diff(we.may.inq[i],we.jun.inq[i])]));
+    wc.map((c,i)=>[c,we.may.inq[i],(we.may.absent||[])[i]||'—',we.may.book[i],pct(we.may.rate[i]),we.jun.inq[i],(we.jun.absent||[])[i]||'—',we.jun.book[i],pct(we.jun.rate[i]),diff(we.may.inq[i],we.jun.inq[i])]));
   legend('lg-s02-wechat',[[C.aprInq,pl+' 문의'],[C.aprBook,pl+' 예약'],[C.mayInq,cl+' 문의'],[C.mayBook,cl+' 예약']]);
   mkChart('chart-s02-wechat',wc,[mkDS(pl+' 문의',we.may.inq,C.aprInq),mkDS(pl+' 예약',we.may.book,C.aprBook),mkDS(cl+' 문의',we.jun.inq,C.mayInq),mkDS(cl+' 예약',we.jun.book,C.mayBook)]);
 }
@@ -4871,9 +4895,64 @@ function renderS02Line(li, pl, cl) {
   renderConsultTypeBar('ctw-line', pl, cl, li.total_may, li.total_jun);
   mkTable('tbl-s02-line',['구분',pl+' 문의',pl+' 미응답',pl+' 예약',pl+' 예약률',cl+' 문의',cl+' 미응답',cl+' 예약',cl+' 예약률','증감'],
     ['합계',li.total_may.inq,li.total_may.absent,li.total_may.book,pct(li.total_may.rate),li.total_jun.inq,li.total_jun.absent,li.total_jun.book,pct(li.total_jun.rate),diff(li.total_may.inq,li.total_jun.inq)],
-    lc.map((c,i)=>[c,li.may.inq[i],li.may.absent[i]||'—',li.may.book[i],pct(li.may.rate[i]),li.jun.inq[i],li.jun.absent[i]||'—',li.jun.book[i],pct(li.jun.rate[i]),diff(li.may.inq[i],li.jun.inq[i])]));
+    lc.map((c,i)=>[c,li.may.inq[i],(li.may.absent||[])[i]||'—',li.may.book[i],pct(li.may.rate[i]),li.jun.inq[i],(li.jun.absent||[])[i]||'—',li.jun.book[i],pct(li.jun.rate[i]),diff(li.may.inq[i],li.jun.inq[i])]));
   legend('lg-s02-line',[[C.aprInq,pl+' 문의'],[C.aprBook,pl+' 예약'],[C.mayInq,cl+' 문의'],[C.mayBook,cl+' 예약']]);
   mkChart('chart-s02-line',lc,[mkDS(pl+' 문의',li.may.inq,C.aprInq),mkDS(pl+' 예약',li.may.book,C.aprBook),mkDS(cl+' 문의',li.jun.inq,C.mayInq),mkDS(cl+' 예약',li.jun.book,C.mayBook)]);
+}
+
+function renderS02Email(em, pl, cl) {
+  const ec = em.cats;
+  renderConsultTypeBar('ctw-email', pl, cl, em.total_may, em.total_jun);
+  mkTable('tbl-s02-email',['구분',pl+' 문의',pl+' 예약',pl+' 예약률',pl+' 해외',cl+' 문의',cl+' 예약',cl+' 예약률',cl+' 해외','증감'],
+    ['합계',em.total_may.inq,em.total_may.book,pct(em.total_may.rate),em.total_may.overseas,em.total_jun.inq,em.total_jun.book,pct(em.total_jun.rate),em.total_jun.overseas,diff(em.total_may.inq,em.total_jun.inq)],
+    ec.map((c,i)=>[c,em.may.inq[i],em.may.book[i],pct(em.may.rate[i]),em.may.overseas[i]||'—',em.jun.inq[i],em.jun.book[i],pct(em.jun.rate[i]),em.jun.overseas[i]||'—',diff(em.may.inq[i],em.jun.inq[i])]));
+  legend('lg-s02-email',[[C.aprInq,pl+' 문의'],[C.aprBook,pl+' 예약'],[C.mayInq,cl+' 문의'],[C.mayBook,cl+' 예약']]);
+  mkChart('chart-s02-email',ec,[mkDS(pl+' 문의',em.may.inq,C.aprInq),mkDS(pl+' 예약',em.may.book,C.aprBook),mkDS(cl+' 문의',em.jun.inq,C.mayInq),mkDS(cl+' 예약',em.jun.book,C.mayBook)]);
+}
+
+// 10월 월간 전용: 채팅 채널 표 — 이전월/이번월 묶음 헤더, 열 = 문의·예약·방문/온라인·예약률(·해외)·수술
+function renderS02ChatV10(key, d, pl, cl) {
+  const tbl = document.getElementById('tbl-s02-' + key); if (!tbl) return;
+  const hasOs = d.total_jun.overseas !== undefined;
+  const per = hasOs ? 6 : 5;
+  const BG = [['#EFF6FF','#DBEAFE'], ['#FFF1F2','#FFE4E4']];
+  const labels = ['문의','예약','방문/온라인','예약률'].concat(hasOs ? ['해외'] : [], ['수술']);
+  tbl.innerHTML = '';
+  const thead = tbl.createTHead(), gr = thead.insertRow();
+  [['구분',1,''],[pl,per,BG[0][1]],[cl,per,BG[1][1]],['증감',1,'']].forEach(([txt,span,bg]) => {
+    const th = document.createElement('th'); th.colSpan = span; th.textContent = txt;
+    if (bg) th.style.cssText = `background:${bg};text-align:center;`;
+    gr.appendChild(th);
+  });
+  const dr = thead.insertRow();
+  ['', ...labels, ...labels, '문의'].forEach((t, ci) => {
+    const th = document.createElement('th'); th.textContent = t;
+    const gi = ci === 0 ? -1 : (ci - 1) < per ? 0 : (ci - 1) < per * 2 ? 1 : -1;
+    if (gi >= 0) th.style.background = BG[gi][0];
+    if (ci > 0 && ((ci - 1) % per === 0 || ci === per * 2 + 1)) th.style.borderLeft = '2px solid #cbd5e1';
+    dr.appendChild(th);
+  });
+  const dash = v => (v ? v : '—');
+  const vo = (v, o) => ((v || o) ? v + '/' + o : '—');
+  const rowOf = (name, m, mt, c, ct, i) => {
+    const pick = (x, t) => i == null
+      ? [t.inq, t.book, vo(t.visit, t.online), pct(t.rate)].concat(hasOs ? [dash(t.overseas)] : [], [dash(t.surgery)])
+      : [x.inq[i], x.book[i], vo(x.visit[i], x.online[i]), pct(x.rate[i])].concat(hasOs ? [dash(x.overseas[i])] : [], [dash(x.surgery[i])]);
+    return [name, ...pick(m, mt), ...pick(c, ct), i == null ? diff(mt.inq, ct.inq) : diff(m.inq[i], c.inq[i])];
+  };
+  const tbody = tbl.createTBody();
+  const addRow = (cells, isTotal) => {
+    const tr = tbody.insertRow(); if (isTotal) tr.className = 'total-row';
+    cells.forEach((v, ci) => {
+      const td = tr.insertCell(); td.innerHTML = v;
+      const gi = ci === 0 ? -1 : (ci - 1) < per ? 0 : (ci - 1) < per * 2 ? 1 : -1;
+      if (gi >= 0) td.style.background = isTotal ? BG[gi][1] : BG[gi][0];
+      if (ci > 0 && ((ci - 1) % per === 0 || ci === per * 2 + 1)) td.style.borderLeft = '2px solid #cbd5e1';
+      if (ci === 0) td.style.textAlign = 'left';
+    });
+  };
+  addRow(rowOf('합계', d.may, d.total_may, d.jun, d.total_jun, null), true);
+  d.cats.forEach((c, i) => addRow(rowOf(c, d.may, d.total_may, d.jun, d.total_jun, i), false));
 }
 
 function renderSection02(r) {
