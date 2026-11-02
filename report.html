@@ -1957,6 +1957,7 @@ const ALL_REPORTS = [
     compare: '2026년 9월 vs 10월',
     prevLabel: '9월', currLabel: '10월',
     ppAsPercent: true, // 비율 증감도 %p 대신 %로 표기(실장님 결정).
+    pdfCompact: true, // PDF: 빈칸 큰 쪽을 줄이려고 쪽 배율을 낮춰 더 채움(이 보고서만)
   },
   section01: {
     sectionName: '전화 현황',
@@ -4084,6 +4085,7 @@ function exportReportPdf() {
   // ── 2) 자동 쪽 배치: 카드(블록) 단위로 A4 가로 쪽에 순서대로 채워 넣음. 카드는 쪽 사이에서 자르지 않음.
   const PW = 1044, PH = 714, FOOT = 32, LIMIT = PH - FOOT;
   const KEEP_SMALL_TABLES = !!(r.meta && r.meta.pdfKeepSmallTables);
+  const COMPACT = !!(r.meta && r.meta.pdfCompact);   // 10월 월간만: 빈칸이 큰 쪽은 배율을 낮춰 더 넣음
   const PLAN = !!(r.meta && r.meta.pdfPlan);   // 새 보고서만: 쪽 나눔 지정(내원·성사·종합 리뷰)
   const root = document.createElement('div');
   root.id = 'pdf-root';
@@ -4280,10 +4282,10 @@ function exportReportPdf() {
       if (attempt(cur, group)) continue;
       const last = group[group.length - 1];
       // 새 보고서(meta.pdfKeepSmallTables)만: 9~12행짜리 표는 나누지 않고, 그 쪽의 배율을 조금 낮춰(최소 0.55) 통째로 넣음 — 이전 보고서 쪽 배치는 그대로
-      if (KEEP_SMALL_TABLES && isBigTable(last) && rowsOf(last).length <= 12 && !isEmpty(cur)) {
+      if ((KEEP_SMALL_TABLES ? (isBigTable(last) && rowsOf(last).length <= 12) : (COMPACT && !(isBigTable(last) && rowsOf(last).length > 14))) && !isEmpty(cur)) {
         const zc = parseFloat(cur.body.style.zoom) || z;
         let kept = false;
-        for (let zz = zc - 0.02; zz >= 0.55 - 1e-9 && !kept; zz -= 0.02) {
+        for (let zz = zc - 0.02; zz >= (COMPACT ? 0.55 : 0.55) - 1e-9 && !kept; zz -= 0.02) {
           cur.body.style.width = (PW / zz) + 'px'; cur.body.style.zoom = String(zz);
           if (attempt(cur, group)) {
             if (cur.body.scrollWidth <= cur.body.clientWidth + 2 && (!PLAN || height(cur) <= LIMIT * 0.9)) { cur.z = zz; if (PLAN) cur.fixZ = true; kept = true; }
