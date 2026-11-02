@@ -1567,6 +1567,43 @@ body.pdf-mode .dash-header { order: -1; }
     <div class="analysis-box" id="ana-box-wq02"><p id="ana-wq02"></p></div>
   </div>
 
+  <!-- OVM 해외 고객 현황 (10월 월간부터) -->
+  <div class="section-panel" id="section-ovm">
+    <div class="section-header">
+      <div class="section-tag">Section 03</div>
+      <div class="section-title">해외 고객 현황</div>
+      <div class="section-subtitle" id="ovm-subtitle"></div>
+    </div>
+    <div class="kpi-table-wrap">
+      <div class="kpi-label">월별 해외 신규 문의·예약</div>
+      <div class="kpi-compare" id="ovm-kpi" style="display:grid;grid-template-columns:repeat(2,1fr);gap:16px;"></div>
+    </div>
+    <div class="s02-section-label">채널별 해외 문의·예약</div>
+    <div class="card">
+      <div class="card-title">채널별 해외 문의·예약 상세</div>
+      <button class="table-toggle-btn" onclick="toggleTable(this)"><span class="toggle-arrow">▼</span> 표 펼치기</button>
+      <div class="table-collapsible"><div style="overflow-x:auto"><table class="data-table" id="tbl-ovm-ch"></table></div></div>
+    </div>
+    <div class="s02-section-label">과목별 해외 문의·예약</div>
+    <div class="card">
+      <div class="card-title">과목별 해외 문의·예약 상세</div>
+      <button class="table-toggle-btn" onclick="toggleTable(this)"><span class="toggle-arrow">▼</span> 표 펼치기</button>
+      <div class="table-collapsible"><div style="overflow-x:auto"><table class="data-table" id="tbl-ovm-cat"></table></div></div>
+    </div>
+    <div class="card" style="margin-top:16px;margin-bottom:28px;">
+      <div class="card-title" id="ovm-cat-chart-title">과목별 해외 문의·예약 비교 그래프</div>
+      <div class="ch-legend-row" id="lg-ovm-cat"></div>
+      <div class="chart-wrap" style="height:220px"><canvas id="chart-ovm-cat"></canvas></div>
+    </div>
+    <div class="s02-section-label">해외 예약 방문/온라인 (채팅 채널 기준)</div>
+    <div class="card">
+      <div class="card-title">해외 예약 방문/온라인 상세 <span style="font-size:11px;color:#6b6b6b;font-weight:400;">(네이버·게시판은 구분 없음)</span></div>
+      <button class="table-toggle-btn" onclick="toggleTable(this)"><span class="toggle-arrow">▼</span> 표 펼치기</button>
+      <div class="table-collapsible"><div style="overflow-x:auto"><table class="data-table" id="tbl-ovm-vo"></table></div></div>
+    </div>
+    <div class="analysis-box" id="ana-box-ovm"><p id="ana-ovm"></p></div>
+  </div>
+
   <!-- WQ-OV 해외 고객 현황 (새 주간 보고서부터) -->
   <div class="section-panel" id="section-wq-ov">
     <div class="section-header">
@@ -1920,6 +1957,9 @@ const ALL_REPORTS = [
       phone: `<div class="mq-row"><b>전화 신규문의는 499→511건<span class="a-up">(+12건)</span>으로 늘었지만, 일평균은 21.7→18.9건<span class="a-down">(−2.8건)</span>으로 줄었음.</b></div><div class="mq-row"><span class="mq-tag">영업일</span>23일→27일로 늘어 문의 합계가 늘었음. 일요일 제외, 문의 기록이 있는 날 기준이며 9월은 추석 연휴(9/24~26)에 기록이 없음.<div class="mq-chips"><div class="mq-chip"><small>9월 · 영업일 23일</small><b>일평균 21.7건</b></div><span class="mq-arrow">→</span><div class="mq-chip mq-hl"><small>10월 · 영업일 27일</small><b>일평균 18.9건</b></div></div></div><div class="mq-row"><span class="mq-tag">예약</span>439→468건<span class="a-up">(+29건)</span>, 예약률 88%→92%<span class="a-up">(+4%)</span>로 높아짐.</div><div class="mq-row"><span class="mq-tag">주간</span>첫 구간만 많았고(추석 연휴 직후라 문의가 많았던 영향, 현장 확인 내용) 이후는 101~117건 범위임.<div class="mq-chips"><div class="mq-chip mq-hl"><small>9/28~10/3</small><b>170건</b></div><span class="mq-arrow">→</span><div class="mq-chip"><small>10/5~10/10</small><b>112건</b></div><span class="mq-arrow">→</span><div class="mq-chip"><small>10/12~10/17</small><b>117건</b></div><span class="mq-arrow">→</span><div class="mq-chip"><small>10/19~10/24</small><b>101건</b></div><span class="mq-arrow">→</span><div class="mq-chip"><small>10/26~10/31</small><b>109건</b></div></div></div><div class="mq-row"><span class="mq-tag">과목별 예약률</span>헤어 73%→96%<span class="a-up">(+23%)</span>·SMP 68%→95%<span class="a-up">(+27%)</span>·치료 77%→82%<span class="a-up">(+5%)</span>로 높아짐. 이식 82%→82%·검사 97%→97%·처방전 100%→100%는 같은 수준.</div><div class="mq-row"><span class="mq-tag">과목별 문의</span>이식은 8·9·10월 146→157→134건으로 10월에 줄었고(9월 대비 <span class="a-down">−23건</span>), 치료는 35→35→61건으로 10월에 늘었음<span class="a-up">(+26건)</span>. 두 과목 모두 원인 확인 필요.<div class="mq-chips"><span class="mq-chipname">이식 문의</span><div class="mq-chip"><small>8월</small><b>146건</b></div><span class="mq-arrow">→</span><div class="mq-chip"><small>9월</small><b>157건</b></div><span class="mq-arrow">→</span><div class="mq-chip mq-hl"><small>10월</small><b>134건</b></div></div><div class="mq-chips"><span class="mq-chipname">치료 문의</span><div class="mq-chip"><small>8월</small><b>35건</b></div><span class="mq-arrow">→</span><div class="mq-chip"><small>9월</small><b>35건</b></div><span class="mq-arrow">→</span><div class="mq-chip mq-hl"><small>10월</small><b>61건</b></div></div></div><div class="mq-note">※ 과목별 합계는 표에서 제외한 '기타' 과목(전화 9월 1건·10월 4건) 때문에 전체 수치보다 9월 1건·10월 4건 적음.</div>`,
     },
   },
+  // 해외 고객 현황(월간 신규): 플친·이메일=해외 고객만(입력 시트 국내·해외 열로 집계, 엑셀 해외문의/해외예약과 일치), 왓츠앱·위챗·라인=전체 해외, 네이버·게시판=3.현황 해외 칸
+  // 해외 내원(내원현황 AB~AL열)은 내원현황 엑셀 도착 후 추가 예정
+  overseasStatus: { cats:['이식','헤어','SMP','치료','검사','처방전'], may:{"inq":[84,4,3,16,14,1],"book":[27,2,2,3,10,1],"total":{"inq":122,"book":45},"ch":{"kakao":[31,14],"email":[6,1],"naver":[0,0],"board":[0,0],"whatsapp":[66,25],"wechat":[4,2],"line":[15,3]},"vo":{"kakao":[14,0],"email":[1,0],"whatsapp":[23,2],"wechat":[1,1],"line":[1,2]},"nb":0}, jun:{"inq":[94,3,7,20,22,0],"book":[30,0,1,7,13,0],"total":{"inq":146,"book":51},"ch":{"kakao":[31,13],"email":[5,0],"naver":[0,0],"board":[3,2],"whatsapp":[73,26],"wechat":[11,4],"line":[23,6]},"vo":{"kakao":[12,1],"email":[0,0],"whatsapp":[24,2],"wechat":[3,1],"line":[2,4]},"nb":2}, analysis: `<div class="mq-row"><b>해외 신규 문의는 122→146건(<span class="a-up">+24건</span>), 예약은 45→51건(<span class="a-up">+6건</span>)으로 늘었지만 예약률은 37%→35%(<span class="a-down">−2%</span>)로 낮아졌음.</b></div><div class="mq-row"><span class="mq-tag">채널</span>라인 15→23건(<span class="a-up">+8건</span>)·왓츠앱 66→73건(<span class="a-up">+7건</span>)·위챗 4→11건(<span class="a-up">+7건</span>)·게시판 0→3건(<span class="a-up">+3건</span>)은 늘었고, 이메일 6→5건(<span class="a-down">−1건</span>)은 줄었음. 플친은 31→31건으로 같음.</div><div class="mq-row"><span class="mq-tag">과목</span>이식 84→94건(<span class="a-up">+10건</span>)·검사 14→22건(<span class="a-up">+8건</span>)·치료 16→20건(<span class="a-up">+4건</span>)·SMP 3→7건(<span class="a-up">+4건</span>)은 늘었고, 헤어 4→3건(<span class="a-down">−1건</span>)·처방전 1→0건(<span class="a-down">−1건</span>)은 줄었음.</div><div class="mq-row"><span class="mq-tag">예약률</span>라인 20%→26%(<span class="a-up">+6%</span>)는 높아졌고, 플친 45%→42%(<span class="a-down">−3%</span>)·왓츠앱 38%→36%(<span class="a-down">−2%</span>)·위챗 50%→36%(<span class="a-down">−14%</span>)·이메일 17%→0%(<span class="a-down">−17%</span>)는 낮아졌음. 위챗·이메일은 문의가 적음(위챗 4→11건, 이메일 6→5건).</div><div class="mq-row"><span class="mq-tag">방문/온라인</span>해외 예약 중 온라인은 5→8건(<span class="a-up">+3건</span>)으로 늘었고(라인 2→4건), 방문은 40→41건(<span class="a-up">+1건</span>)임. 게시판 해외 예약 2건은 방문/온라인 구분이 없음.</div><div class="mq-note">※ 해외 문의·예약은 플친·이메일의 해외 고객, 왓츠앱·위챗·라인 전체, 네이버·게시판의 해외 칸 기준(전화는 해외 구분이 없어 제외). 표에서 제외한 플친 해외 '기타' 9월 3건, 과목미확인 9월 1건·10월 1건. 해외 문의(채널 기준)는 해외 내원(내원현황 기준)과 정의가 달라 숫자를 맞추지 않고 따로 씀.</div>` },
   section02: {
     layout: 'v10', // 10월 월간부터: 채팅 채널 표에 방문/온라인·수술 열, 이메일 채널 추가, 카드 3열 배치(이전 보고서는 이 값이 없어 기존 표시 그대로)
     // 채팅 채널(플친·이메일·왓츠앱·위챗·라인): 엑셀 3.채팅 채널 '종합현황' 값(문의=총문의, 합계=기타·과목미확인 제외, 수술=예약 중 수술일 입력 건). 네이버·게시판: 엑셀 2.네이버·게시판 '3.현황'.
@@ -3830,6 +3870,7 @@ function availableMonthlySections(r) {
   has(r.section01 && r.section01.total, '00', '종합 현황');
   has(r.section01 && r.section01.phone, '01', (r.section01 && r.section01.sectionName) || '진료과목별 문의·예약');
   has((r.section01 && r.section01.naver) || !!(r.section02 && r.section02.kakao), '02', '채널별 문의·예약');
+  has(!!r.overseasStatus, 'ovm', '해외 고객 현황');   // 10월 월간부터(데이터 있을 때만)
   has(!!r.section03db, '03', 'DB 현황');
   has(!!r.section03,   '04', '내원 현황');
   has(!!r.dbCampaign, 'db03', 'DB 현황');
@@ -4955,6 +4996,103 @@ function renderS02ChatV10(key, d, pl, cl) {
   d.cats.forEach((c, i) => addRow(rowOf(c, d.may, d.total_may, d.jun, d.total_jun, i), false));
 }
 
+// 10월 월간부터: 해외 고객 현황(2개 월 비교). 주간 해외 섹션(wq-ov)과 같은 구성
+function renderSectionOverseasM(r) {
+  const os = r.overseasStatus;
+  const pl = r.meta.prevLabel || '9월', cl = r.meta.currLabel || '10월';
+  const A = os.may, B = os.jun;
+  const PC = [WC[0], WC[1]];
+  const BGv = [['#EFF6FF','#DBEAFE'], ['#FFF1F2','#FFE4E4']];
+  const rate = (b, i) => i > 0 ? Math.round(b / i * 100) : null;
+  const rt = (b, i) => i > 0 ? rate(b, i) + '%' : '—';
+  document.getElementById('ovm-subtitle').textContent = r.meta.compare + ' · 신규 문의·예약 중 해외 고객(플친·이메일·네이버·게시판·왓츠앱·위챗·라인)';
+  document.getElementById('ovm-cat-chart-title').textContent = '과목별 해외 문의·예약 ' + pl + ' vs ' + cl + ' 비교 그래프';
+
+  // KPI 카드
+  const rr = [rate(A.total.book, A.total.inq), rate(B.total.book, B.total.inq)];
+  function badge(d, suffix) {
+    if (d === 0) return '<span class="ck-diff flat" style="font-size:11px;">— 0</span>';
+    return '<span class="ck-diff ' + (d > 0 ? 'up' : 'down') + '" style="font-size:11px;">' + (d > 0 ? '▲' : '▼') + ' ' + Math.abs(d) + (suffix || '') + '</span>';
+  }
+  function row(label, val, bdg) {
+    return '<div style="display:flex;justify-content:space-between;align-items:center;padding:6px 0;border-bottom:1px solid #f5f5f5;"><span style="font-size:14px;color:#666;">' + label + '</span><span style="font-size:22px;font-weight:800;color:#1a1a1a;">' + val + (bdg ? ' ' + bdg : '') + '</span></div>';
+  }
+  document.getElementById('ovm-kpi').innerHTML = [[pl, A, null, 0], [cl, B, A, 1]].map(([lab, o, prev, i]) =>
+    '<div class="kpi-item" style="border:1px solid #e8eaed;border-radius:12px;padding:18px;box-shadow:0 1px 4px rgba(0,0,0,.05);">'
+    + '<div style="font-size:20px;font-weight:800;color:' + PC[i] + ';margin-bottom:16px;">' + lab + '</div>'
+    + '<div style="font-size:13px;font-weight:700;color:#1565C0;margin-bottom:8px;">🌍 해외 신규 문의·예약</div>'
+    + row('해외 문의', o.total.inq + '건', prev ? badge(o.total.inq - prev.total.inq) : '')
+    + row('해외 예약', o.total.book + '건', prev ? badge(o.total.book - prev.total.book) : '')
+    + row('해외 예약률', rr[i] === null ? '—' : rr[i] + '%', prev && rr[0] !== null && rr[1] !== null ? badge(rr[1] - rr[0], '%') : '')
+    + '</div>').join('');
+
+  // 공통 표: 월별 열 묶음(subCols) + 증감 열
+  function ovTable(id, subCols, rows, totalRow, withDiff) {
+    const tbl = document.getElementById(id); if (!tbl) return;
+    tbl.innerHTML = '';
+    const n = subCols.length;
+    const th0 = tbl.createTHead(), g = th0.insertRow();
+    [['구분', 1, ''], [pl, n, BGv[0][1]], [cl, n, BGv[1][1]]].concat(withDiff ? [['증감', 1, '']] : []).forEach(([txt, span, bg]) => {
+      const th = document.createElement('th'); th.colSpan = span; th.textContent = txt;
+      if (bg) th.style.cssText = 'background:' + bg + ';text-align:center;';
+      g.appendChild(th);
+    });
+    const d = th0.insertRow();
+    [''].concat(subCols, subCols, withDiff ? ['문의'] : []).forEach((label, ci) => {
+      const th = document.createElement('th'); th.textContent = label;
+      const gi = ci === 0 ? -1 : (ci - 1) < n ? 0 : (ci - 1) < n * 2 ? 1 : -1;
+      if (gi >= 0) th.style.background = BGv[gi][0];
+      if (ci > 0 && ((ci - 1) % n === 0 || ci === n * 2 + 1)) th.style.borderLeft = '2px solid #cbd5e1';
+      d.appendChild(th);
+    });
+    const tb = tbl.createTBody();
+    const addRow = (cells, isTotal) => {
+      const tr = tb.insertRow(); if (isTotal) tr.className = 'total-row';
+      cells.forEach((v, ci) => {
+        const td = tr.insertCell(); td.innerHTML = v;
+        const gi = ci === 0 ? -1 : (ci - 1) < n ? 0 : (ci - 1) < n * 2 ? 1 : -1;
+        if (gi >= 0) td.style.background = isTotal ? BGv[gi][1] : BGv[gi][0];
+        if (ci > 0 && ((ci - 1) % n === 0 || ci === n * 2 + 1)) td.style.borderLeft = '2px solid #cbd5e1';
+        if (ci === 0) td.style.textAlign = 'left';
+      });
+    };
+    if (totalRow) addRow(totalRow, true);
+    rows.forEach(x => addRow(x, false));
+  }
+
+  // ② 채널별
+  const CHN = [['kakao','플친'],['email','이메일'],['naver','네이버'],['board','게시판'],['whatsapp','왓츠앱'],['wechat','위챗'],['line','라인']];
+  const chRow = (nm, a, b) => [nm, a[0], a[1], rt(a[1], a[0]), b[0], b[1], rt(b[1], b[0]), diff(a[0], b[0])];
+  ovTable('tbl-ovm-ch', ['문의','예약','예약률'],
+    CHN.map(([k, nm]) => chRow(nm, A.ch[k], B.ch[k])),
+    chRow('합계', [A.total.inq, A.total.book], [B.total.inq, B.total.book]), true);
+
+  // ③ 과목별 (+ 그래프)
+  const catRow = (c, i) => [c, A.inq[i], A.book[i], rt(A.book[i], A.inq[i]), B.inq[i], B.book[i], rt(B.book[i], B.inq[i]), diff(A.inq[i], B.inq[i])];
+  ovTable('tbl-ovm-cat', ['문의','예약','예약률'],
+    os.cats.map((c, i) => catRow(c, i)),
+    chRow('합계', [A.total.inq, A.total.book], [B.total.inq, B.total.book]), true);
+  const ovColors = PC.map(c => lightenColor(c, 0.55));
+  chLegend('lg-ovm-cat', [[ovColors[0], pl + ' 문의'], [PC[0], pl + ' 예약'], [ovColors[1], cl + ' 문의'], [PC[1], cl + ' 예약']]);
+  if (charts['chart-ovm-cat']) charts['chart-ovm-cat'].destroy();
+  charts['chart-ovm-cat'] = new Chart(document.getElementById('chart-ovm-cat'), {
+    type: 'bar',
+    data: { labels: os.cats, datasets: [mkDS(pl + ' 문의', A.inq, ovColors[0]), mkDS(pl + ' 예약', A.book, PC[0]), mkDS(cl + ' 문의', B.inq, ovColors[1]), mkDS(cl + ' 예약', B.book, PC[1])] },
+    options: BASE,
+  });
+
+  // ④ 해외 예약 방문/온라인 (채팅 채널) — 네이버·게시판 해외 예약은 구분 없음
+  const VOC = [['kakao','플친'],['email','이메일'],['whatsapp','왓츠앱'],['wechat','위챗'],['line','라인']];
+  const sumV = (o, ix) => VOC.reduce((a, [k]) => a + o.vo[k][ix], 0);
+  const voRow = (nm, a, b, an, bn) => [nm, a[0], a[1], an, b[0], b[1], bn];
+  ovTable('tbl-ovm-vo', ['방문','온라인','구분 없음'],
+    VOC.map(([k, nm]) => voRow(nm, A.vo[k], B.vo[k], '—', '—'))
+      .concat([['네이버·게시판', '—', '—', A.nb || '—', '—', '—', B.nb || '—']]),
+    ['합계', sumV(A, 0), sumV(A, 1), A.nb, sumV(B, 0), sumV(B, 1), B.nb], false);
+
+  renderAnalysis('ana-ovm', os.analysis || '', r);
+}
+
 function renderSection02(r) {
   if (r.section02 && r.section02.kakao) { renderSection02Partial(r); return; }
   // 이전에 6월(부분) 보고서를 봤을 때 숨겨졌을 수 있는 5월 전용 블록들을 복원
@@ -5143,6 +5281,7 @@ function renderReport(r) {
     }
     renderAnalysis('ana-phone', phoneAnalysis, r);
     if (r.section02) { try { renderSection02(r); } catch(e) { console.warn('section02 렌더링 보류:', e); } }
+    if (r.overseasStatus) { try { renderSectionOverseasM(r); } catch(e) { console.warn('해외 고객 현황(ovm) 렌더링 보류:', e); } }
     if (r.dbCampaign) { try { renderSectionDbCampaign(r); } catch(e) { console.warn('DB현황(db03) 렌더링 보류:', e); } }
     if (r.dbCampaignFinal) { try { renderSectionDbCampaignFinal(r); } catch(e) { console.warn('DB현황(마감,dbf03) 렌더링 보류:', e); } }
     if (r.visitStatus) { try { renderSectionVisit(r); } catch(e) { console.warn('내원현황(v03) 렌더링 보류:', e); } }
