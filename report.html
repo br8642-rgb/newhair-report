@@ -564,11 +564,26 @@ body.pdf-mode .dash-header { order: -1; }
       <div class="card-title">과목별 내원 상세</div>
       <button class="table-toggle-btn" onclick="toggleTable(this)"><span class="toggle-arrow">▼</span> 표 펼치기</button>
       <div class="table-collapsible"><div style="overflow-x:auto"><table class="data-table" id="tbl-v03-cats"></table></div></div>
+      <div class="mq-note" id="v03-cats-note" style="display:none;"></div>
     </div>
     <div class="card" style="margin-bottom:28px;">
       <div class="card-title">과목별 내원 비교</div>
       <div class="chart-legend" id="lg-v03-cats"></div>
       <div class="chart-wrap" style="height:250px"><canvas id="chart-v03-cats"></canvas></div>
+    </div>
+    <div id="ovm-visit-block" style="display:none;">
+      <div class="s02-section-label">해외 고객 내원</div>
+      <div class="card">
+        <div class="card-title">과목별 해외 고객 내원 상세 <span style="font-size:11px;color:#6b6b6b;font-weight:400;">(상담 내원)</span></div>
+        <button class="table-toggle-btn" onclick="toggleTable(this)"><span class="toggle-arrow">▼</span> 표 펼치기</button>
+        <div class="table-collapsible"><div style="overflow-x:auto"><table class="data-table" id="tbl-ovm-visit"></table></div></div>
+      </div>
+      <div class="card" style="margin-top:16px;margin-bottom:28px;">
+        <div class="card-title" id="ovm-visit-chart-title">과목별 해외 고객 내원 비교 그래프</div>
+        <div class="ch-legend-row" id="lg-ovm-visit"></div>
+        <div class="chart-wrap" style="height:200px"><canvas id="chart-ovm-visit"></canvas></div>
+      </div>
+      <div class="mq-note" style="margin-top:-12px;margin-bottom:24px;">※ 해외 내원은 해외 문의·예약 고객 중 해당 월에 실제 내원한 건수이며, 이전 달에 예약한 고객이 포함될 수 있음(현장 확인 내용). 기타는 기타이식·키오머·흉터 재봉합·기타 합계임.</div>
     </div>
     <div class="analysis-box" id="ana-box-v03"><p id="ana-v03"></p></div>
   </div>
@@ -1957,9 +1972,48 @@ const ALL_REPORTS = [
       phone: `<div class="mq-row"><b>전화 신규문의는 499→511건<span class="a-up">(+12건)</span>으로 늘었지만, 일평균은 21.7→18.9건<span class="a-down">(−2.8건)</span>으로 줄었음.</b></div><div class="mq-row"><span class="mq-tag">영업일</span>23일→27일로 늘어 문의 합계가 늘었음. 일요일 제외, 문의 기록이 있는 날 기준이며 9월은 추석 연휴(9/24~26)에 기록이 없음.<div class="mq-chips"><div class="mq-chip"><small>9월 · 영업일 23일</small><b>일평균 21.7건</b></div><span class="mq-arrow">→</span><div class="mq-chip mq-hl"><small>10월 · 영업일 27일</small><b>일평균 18.9건</b></div></div></div><div class="mq-row"><span class="mq-tag">예약</span>439→468건<span class="a-up">(+29건)</span>, 예약률 88%→92%<span class="a-up">(+4%)</span>로 높아짐.</div><div class="mq-row"><span class="mq-tag">주간</span>첫 구간만 많았고(추석 연휴 직후라 문의가 많았던 영향, 현장 확인 내용) 이후는 101~117건 범위임.<div class="mq-chips"><div class="mq-chip mq-hl"><small>9/28~10/3</small><b>170건</b></div><span class="mq-arrow">→</span><div class="mq-chip"><small>10/5~10/10</small><b>112건</b></div><span class="mq-arrow">→</span><div class="mq-chip"><small>10/12~10/17</small><b>117건</b></div><span class="mq-arrow">→</span><div class="mq-chip"><small>10/19~10/24</small><b>101건</b></div><span class="mq-arrow">→</span><div class="mq-chip"><small>10/26~10/31</small><b>109건</b></div></div></div><div class="mq-row"><span class="mq-tag">과목별 예약률</span>헤어 73%→96%<span class="a-up">(+23%)</span>·SMP 68%→95%<span class="a-up">(+27%)</span>·치료 77%→82%<span class="a-up">(+5%)</span>로 높아짐. 이식 82%→82%·검사 97%→97%·처방전 100%→100%는 같은 수준.</div><div class="mq-row"><span class="mq-tag">과목별 문의</span>이식은 8·9·10월 146→157→134건으로 10월에 줄었고(9월 대비 <span class="a-down">−23건</span>), 치료는 35→35→61건으로 10월에 늘었음<span class="a-up">(+26건)</span>. 두 과목 모두 원인 확인 필요.<div class="mq-chips"><span class="mq-chipname">이식 문의</span><div class="mq-chip"><small>8월</small><b>146건</b></div><span class="mq-arrow">→</span><div class="mq-chip"><small>9월</small><b>157건</b></div><span class="mq-arrow">→</span><div class="mq-chip mq-hl"><small>10월</small><b>134건</b></div></div><div class="mq-chips"><span class="mq-chipname">치료 문의</span><div class="mq-chip"><small>8월</small><b>35건</b></div><span class="mq-arrow">→</span><div class="mq-chip"><small>9월</small><b>35건</b></div><span class="mq-arrow">→</span><div class="mq-chip mq-hl"><small>10월</small><b>61건</b></div></div></div><div class="mq-note">※ 과목별 합계는 표에서 제외한 '기타' 과목(전화 9월 1건·10월 4건) 때문에 전체 수치보다 9월 1건·10월 4건 적음.</div>`,
     },
   },
+  visitStatus: {
+    may: {"total_book":526,"cancel_pre":29,"remain":497,"cancel_pre_rate":5.5,"visit":451,"visit_rate":91,"final_visit_rate":86,"same_day_cancel":23,"noshow":23}, // 9월(비교용)
+    jun: {"total_book":640,"cancel_pre":36,"remain":604,"cancel_pre_rate":5.6,"visit":535,"visit_rate":89,"final_visit_rate":84,"same_day_cancel":44,"noshow":25}, // 10월
+    cats: ['모발이식','헤어라인','SMP','탈모치료','검사','기타이식','키오머','처방','기타'],
+    visit_by_cat: { may:[101,17,23,78,192,0,1,31,8], jun:[119,35,26,80,228,3,1,25,12] },
+    tableNote: '※ 원형탈모치료(원탈) 6건은 엑셀 과목 열이 없어 과목별 합(529건)이 내원 합계(535건)보다 6건 적음. 키오머·흉터재봉합은 두 달 모두 1건 이하라 표에는 키오머만 있음(흉터재봉합 0건 제외).',
+    analysis: `<div class="mq-row"><b>총 예약은 526→640건(<span class="a-up">+114건</span>), 내원은 451→535건(<span class="a-up">+84건</span>)으로 늘었지만 내원율은 91%→89%(<span class="a-down">−2%</span>), 최종내원율은 86%→84%(<span class="a-down">−2%</span>)로 낮아졌음.</b></div><div class="mq-row"><span class="mq-tag">취소·부도</span>내원전 취소는 29→36건(<span class="a-up">+7건</span>)이고 취소율은 5.5%→5.6%로 비슷함. 당일취소는 23→44건(<span class="a-up">+21건</span>)으로 늘었고, 부도는 23→25건(<span class="a-up">+2건</span>)임.</div><div class="mq-row"><span class="mq-tag">당일취소 사유</span>당일 업무 일정 변경, 아파서, 다른 곳 방문 후 시간이 맞지 않아서 등이 있었고, 추가 이유 설명 없이 일정 확인 후 다시 연락하겠다는 고객이 대부분임(현장 확인 내용).</div><div class="mq-row"><span class="mq-tag">과목</span>검사 192→228건(<span class="a-up">+36건</span>)이 가장 크게 늘었고, 모발이식 101→119건(<span class="a-up">+18건</span>)·헤어라인 17→35건(<span class="a-up">+18건</span>)도 늘었음. 처방은 31→25건(<span class="a-down">−6건</span>)으로 줄었음.</div><div class="mq-row"><span class="mq-tag">해외</span>해외 고객 내원은 40→37건(<span class="a-down">−3건</span>)으로 줄어 총 내원 대비 비중이 8.9%→6.9%(<span class="a-down">−2.0%</span>)가 되었음. 헤어라인 2→6건(<span class="a-up">+4건</span>)·검사 6→9건(<span class="a-up">+3건</span>)은 늘었고, 탈모치료 8→2건(<span class="a-down">−6건</span>)이 가장 크게 줄었음. 월별로는 8월 52건 → 9월 40건 → 10월 37건임.</div>`,
+  },
+  closingStatus: {
+    may: { visit:219, close:121, rate:55 }, // 9월(비교용, 최신 엑셀 기준)
+    jun: { visit:263, close:138, rate:52 }, // 10월
+    cats: ['모발이식','헤어라인','SMP','탈모치료','기타이식'],
+    byCat: { may: { visit:[101,17,23,78,0], close:[38,6,19,58,0], rate:[38,35,83,74,"—"] }, jun: { visit:[119,35,26,80,3], close:[43,17,16,62,0], rate:[36,49,62,78,0] } },
+    analysis: `<div class="mq-row"><b>상담은 219→263건(<span class="a-up">+44건</span>), 체결은 121→138건(<span class="a-up">+17건</span>)으로 늘었지만 체결률은 55%→52%(<span class="a-down">−3%</span>)로 낮아졌음.</b></div><div class="mq-row"><span class="mq-tag">체결률</span>헤어라인 35%→49%(<span class="a-up">+14%</span>)·탈모치료 74%→78%(<span class="a-up">+4%</span>)는 높아졌고, SMP 83%→62%(<span class="a-down">−21%</span>)·모발이식 38%→36%(<span class="a-down">−2%</span>)는 낮아졌음.</div><div class="mq-row"><span class="mq-tag">체결 건수</span>헤어라인 6→17건(<span class="a-up">+11건</span>)·모발이식 38→43건(<span class="a-up">+5건</span>)·탈모치료 58→62건(<span class="a-up">+4건</span>)은 늘었고, SMP 19→16건(<span class="a-down">−3건</span>)은 줄었음. SMP는 상담이 23→26건으로 적어 몇 건 차이로 체결률이 크게 달라짐.</div><div class="mq-row"><span class="mq-tag">9월 비교값</span>9월 체결은 9월 보고서(127건)보다 6건 적은 121건임. 이후 고객에게 연락해 취소한 건이 반영된 값임(현장 확인 내용).</div><div class="mq-row"><span class="mq-tag">내원과 상담</span>성사 현황 상담(263건)은 내원(535건) 중 모발이식·헤어라인·SMP·탈모치료·기타이식 상담만 센 값이라 내원과 숫자가 다름(검사·처방 등은 제외).</div>`,
+  },
+  doctorStatus: {
+    doctors: ['김진오 원장님','박주성 원장님','김진욱 원장님','조준상 원장님'],
+    cats: ['모발이식','헤어라인','SMP','탈모치료','기타이식'],
+    // 10월부터 과목 상세 카드에 이 과목을 표시(그 달 상담이 있는 과목 포함). 이 값이 없는 이전 보고서는 기존 고정 과목 그대로.
+    fixedSubjects: { '김진오 원장님':['모발이식','헤어라인','SMP','탈모치료','기타이식'], '박주성 원장님':['SMP','탈모치료'], '김진욱 원장님':['모발이식','헤어라인','기타이식'], '조준상 원장님':['모발이식','헤어라인','SMP','탈모치료'] },
+    may: {"total":{"visit":[97,93,12,17],"close":[38,74,4,5],"rate":[39,80,33,29]},"byCat":{"visit":[[76,15,1,5,0],[0,0,22,71,0],[12,0,0,0,0],[13,2,0,2,0]],"close":[[31,6,1,0,0],[0,0,18,56,0],[4,0,0,0,0],[3,0,0,2,0]],"rate":[[41,40,100,0,"—"],["—","—",82,79,"—"],[33,"—","—","—","—"],[23,0,"—",100,"—"]]}}, // 9월(비교용, 최신 엑셀 기준)
+    jun: {"total":{"visit":[126,101,20,16],"close":[54,74,2,8],"rate":[43,73,10,50]},"byCat":{"visit":[[90,32,0,3,1],[0,0,25,76,0],[17,1,0,0,2],[12,2,1,1,0]],"close":[[36,16,0,2,0],[0,0,15,59,0],[2,0,0,0,0],[5,1,1,1,0]],"rate":[[40,50,"—",67,0],["—","—",60,78,"—"],[12,0,"—","—",0],[42,50,100,100,"—"]]}}, // 10월
+    analysis: `<div class="mq-row"><b>박주성 원장님은 체결률이 80%→73%(<span class="a-down">−7%</span>)로 낮아졌지만 두 달 모두 가장 높고, 김진오 원장님은 39%→43%(<span class="a-up">+4%</span>)로 높아졌음.</b></div><div class="mq-row"><span class="mq-tag">김진오</span>상담 97→126건(<span class="a-up">+29건</span>), 체결 38→54건(<span class="a-up">+16건</span>). 헤어라인 체결률은 40%→50%(<span class="a-up">+10%</span>)로 높아졌고 모발이식은 41%→40%(<span class="a-down">−1%</span>)로 비슷함.</div><div class="mq-row"><span class="mq-tag">박주성</span>상담 93→101건(<span class="a-up">+8건</span>), 체결은 74→74건으로 같음. SMP 체결률이 82%→60%(<span class="a-down">−22%</span>)로 낮아졌고 탈모치료는 79%→78%(<span class="a-down">−1%</span>)로 비슷함.</div><div class="mq-row"><span class="mq-tag">김진욱·조준상</span>김진욱 원장님은 33%→10%(<span class="a-down">−23%</span>, 상담 12→20건, 체결 4→2건), 조준상 원장님은 29%→50%(<span class="a-up">+21%</span>, 상담 17→16건, 체결 5→8건)임. 두 분 모두 상담이 20건 이하라 몇 건 차이로 체결률이 크게 달라짐.</div>`,
+  },
+  staffStatus: {
+    // 김승희는 퇴사하여 9월 보고서부터 제외. 최무근 담당 과목은 SMP.
+    staff: ['전소영','손예진','신유지','조영은','최무근'],
+    cats: ['모발이식','헤어라인','SMP','탈모치료'],
+    may: {"total":{"visit":[43,46,46,37,23],"close":[22,29,25,18,19],"rate":[51,63,54,49,83]},"byCat":{"visit":[[20,6,0,17],[22,0,0,24],[26,5,0,15],[19,2,0,16],[0,0,23,0]],"close":[[8,1,0,13],[8,0,0,21],[12,1,0,12],[5,2,0,11],[0,0,19,0]],"rate":[[40,17,"—",76],[36,"—","—",88],[46,20,"—",80],[26,100,"—",69],["—","—",83,"—"]]}}, // 9월(비교용, 최신 엑셀 기준)
+    jun: {"total":{"visit":[55,62,47,47,21],"close":[36,35,28,20,14],"rate":[65,56,60,43,67]},"byCat":{"visit":[[25,8,1,21],[28,9,1,24],[23,8,0,16],[25,7,0,15],[0,0,21,0]],"close":[[10,7,1,18],[11,3,1,20],[10,4,0,14],[8,2,0,10],[0,0,14,0]],"rate":[[40,88,100,86],[39,33,100,83],[43,50,"—",88],[32,29,"—",67],["—","—",67,"—"]]}}, // 10월
+    analysis: `<div class="mq-row"><b>직원 5명 합산 체결률은 58%→57%(<span class="a-down">−1%</span>)로 비슷한 수준이고, 직원별로는 오르내림이 엇갈렸음.</b></div><div class="mq-row"><span class="mq-tag">높아진 직원</span>전소영 51%→65%(<span class="a-up">+14%</span>), 신유지 54%→60%(<span class="a-up">+6%</span>). 전소영은 탈모치료 76%→86%(<span class="a-up">+10%</span>), 헤어라인 17%→88%(<span class="a-up">+71%</span>)로 높아졌음(헤어라인 상담 6→8건으로 적음).</div><div class="mq-row"><span class="mq-tag">낮아진 직원</span>손예진 63%→56%(<span class="a-down">−7%</span>), 조영은 49%→43%(<span class="a-down">−6%</span>), SMP 전담인 최무근 83%→67%(<span class="a-down">−16%</span>).</div><div class="mq-row"><span class="mq-tag">SMP</span>최무근 직원(83%→67%)과 박주성 원장님(82%→60%)의 SMP 체결률이 함께 낮아졌고, 성사 현황의 SMP 체결률(83%→62%)과 같은 흐름임.</div><div class="mq-note">※ 김승희 직원은 퇴사로 제외. 직원 표는 모발이식·헤어라인·SMP·탈모치료 4개 과목만, 담당 직원이 있는 상담만 세므로 원장님이 직접 상담·성사한 건은 빠져 직원 합계(상담 232건, 체결 133건)가 전체(상담 263건, 체결 138건)보다 적음.</div>`,
+  },
+  revenueStatus: {
+    cats: ['모발이식','헤어라인','SMP','HairLap','키오머','기타'],
+    catColors: ['#29B6F6','#EC407A','#FFB300','#43A047','#8D6E63','#90A4AE'],
+    may: { revenue: [346487070,36643060,48068500,430038210,200000,7426700], total: 868863540 }, // 9월(비교용)
+    jun: { revenue: [344658370,48397380,60237000,380573600,0,7488860], total: 841355210 }, // 10월
+    analysis: `<div class="mq-row"><b>전체 매출은 8.69억→8.41억원(<span class="a-down">−2,751만원, −3.2%</span>)으로 줄었음.</b></div><div class="mq-row"><span class="mq-tag">과목</span>HairLap이 4.30억→3.81억원(<span class="a-down">−4,946만원, −11.5%</span>)으로 가장 크게 줄었고, 모발이식은 3.46억→3.45억원(<span class="a-down">−183만원, −0.5%</span>)으로 비슷함. SMP 4,807만→6,024만원(<span class="a-up">+1,217만원, +25.3%</span>)·헤어라인 3,664만→4,840만원(<span class="a-up">+1,175만원, +32.1%</span>)은 늘었음.</div><div class="mq-row"><span class="mq-tag">비중</span>HairLap 49.5%→45.2%, 모발이식 39.9%→41.0%임(두 과목 합계 89.4%→86.2%).</div><div class="mq-row"><span class="mq-tag">참고</span>수술은 별도 일정으로 진행되므로 매출은 같은 달 체결 건수와 일치하지 않음(체결 121→138건으로 늘었지만 매출은 줄었음).</div>`,
+  },
   // 해외 고객 현황(월간 신규): 플친·이메일=해외 고객만(입력 시트 국내·해외 열로 집계, 엑셀 해외문의/해외예약과 일치), 왓츠앱·위챗·라인=전체 해외, 네이버·게시판=3.현황 해외 칸
   // 해외 내원(내원현황 AB~AL열)은 내원현황 엑셀 도착 후 추가 예정
-  overseasStatus: { cats:['이식','헤어','SMP','치료','검사','처방전'], may:{"inq":[84,4,3,16,14,1],"book":[27,2,2,3,10,1],"total":{"inq":122,"book":45},"ch":{"kakao":[31,14],"email":[6,1],"naver":[0,0],"board":[0,0],"whatsapp":[66,25],"wechat":[4,2],"line":[15,3]},"vo":{"kakao":[14,0],"email":[1,0],"whatsapp":[23,2],"wechat":[1,1],"line":[1,2]},"nb":0}, jun:{"inq":[94,3,7,20,22,0],"book":[30,0,1,7,13,0],"total":{"inq":146,"book":51},"ch":{"kakao":[31,13],"email":[5,0],"naver":[0,0],"board":[3,2],"whatsapp":[73,26],"wechat":[11,4],"line":[23,6]},"vo":{"kakao":[12,1],"email":[0,0],"whatsapp":[24,2],"wechat":[3,1],"line":[2,4]},"nb":2}, analysis: `<div class="mq-row"><b>해외 신규 문의는 122→146건(<span class="a-up">+24건</span>), 예약은 45→51건(<span class="a-up">+6건</span>)으로 늘었지만 예약률은 37%→35%(<span class="a-down">−2%</span>)로 낮아졌음.</b></div><div class="mq-row"><span class="mq-tag">채널</span>라인 15→23건(<span class="a-up">+8건</span>)·왓츠앱 66→73건(<span class="a-up">+7건</span>)·위챗 4→11건(<span class="a-up">+7건</span>)·게시판 0→3건(<span class="a-up">+3건</span>)은 늘었고, 이메일 6→5건(<span class="a-down">−1건</span>)은 줄었음. 플친은 31→31건으로 같음.</div><div class="mq-row"><span class="mq-tag">과목</span>이식 84→94건(<span class="a-up">+10건</span>)·검사 14→22건(<span class="a-up">+8건</span>)·치료 16→20건(<span class="a-up">+4건</span>)·SMP 3→7건(<span class="a-up">+4건</span>)은 늘었고, 헤어 4→3건(<span class="a-down">−1건</span>)·처방전 1→0건(<span class="a-down">−1건</span>)은 줄었음.</div><div class="mq-row"><span class="mq-tag">예약률</span>라인 20%→26%(<span class="a-up">+6%</span>)는 높아졌고, 플친 45%→42%(<span class="a-down">−3%</span>)·왓츠앱 38%→36%(<span class="a-down">−2%</span>)·위챗 50%→36%(<span class="a-down">−14%</span>)·이메일 17%→0%(<span class="a-down">−17%</span>)는 낮아졌음. 위챗·이메일은 문의가 적음(위챗 4→11건, 이메일 6→5건).</div><div class="mq-row"><span class="mq-tag">방문/온라인</span>해외 예약 중 온라인은 5→8건(<span class="a-up">+3건</span>)으로 늘었고(라인 2→4건), 방문은 40→41건(<span class="a-up">+1건</span>)임. 게시판 해외 예약 2건은 방문/온라인 구분이 없음.</div><div class="mq-note">※ 해외 문의·예약은 플친·이메일의 해외 고객, 왓츠앱·위챗·라인 전체, 네이버·게시판의 해외 칸 기준(전화는 해외 구분이 없어 제외). 표에서 제외한 플친 해외 '기타' 9월 3건, 과목미확인 9월 1건·10월 1건. 해외 문의(채널 기준)는 해외 내원(내원현황 기준)과 정의가 달라 숫자를 맞추지 않고 따로 씀.</div>` },
+  overseasStatus: { cats:['이식','헤어','SMP','치료','검사','처방전'], may:{"inq":[84,4,3,16,14,1],"book":[27,2,2,3,10,1],"total":{"inq":122,"book":45},"ch":{"kakao":[31,14],"email":[6,1],"naver":[0,0],"board":[0,0],"whatsapp":[66,25],"wechat":[4,2],"line":[15,3]},"vo":{"kakao":[14,0],"email":[1,0],"whatsapp":[23,2],"wechat":[1,1],"line":[1,2]},"nb":0}, jun:{"inq":[94,3,7,20,22,0],"book":[30,0,1,7,13,0],"total":{"inq":146,"book":51},"ch":{"kakao":[31,13],"email":[5,0],"naver":[0,0],"board":[3,2],"whatsapp":[73,26],"wechat":[11,4],"line":[23,6]},"vo":{"kakao":[12,1],"email":[0,0],"whatsapp":[24,2],"wechat":[3,1],"line":[2,4]},"nb":2}, visit:{cats:['모발이식','헤어라인','SMP','탈모치료','검사','처방','기타'], may:[18,2,3,8,6,1,2], jun:[17,6,1,2,9,1,1], totalMay:451, totalJun:535}, analysis: `<div class="mq-row"><b>해외 신규 문의는 122→146건(<span class="a-up">+24건</span>), 예약은 45→51건(<span class="a-up">+6건</span>)으로 늘었지만 예약률은 37%→35%(<span class="a-down">−2%</span>)로 낮아졌음.</b></div><div class="mq-row"><span class="mq-tag">채널</span>라인 15→23건(<span class="a-up">+8건</span>)·왓츠앱 66→73건(<span class="a-up">+7건</span>)·위챗 4→11건(<span class="a-up">+7건</span>)·게시판 0→3건(<span class="a-up">+3건</span>)은 늘었고, 이메일 6→5건(<span class="a-down">−1건</span>)은 줄었음. 플친은 31→31건으로 같음.</div><div class="mq-row"><span class="mq-tag">과목</span>이식 84→94건(<span class="a-up">+10건</span>)·검사 14→22건(<span class="a-up">+8건</span>)·치료 16→20건(<span class="a-up">+4건</span>)·SMP 3→7건(<span class="a-up">+4건</span>)은 늘었고, 헤어 4→3건(<span class="a-down">−1건</span>)·처방전 1→0건(<span class="a-down">−1건</span>)은 줄었음.</div><div class="mq-row"><span class="mq-tag">예약률</span>라인 20%→26%(<span class="a-up">+6%</span>)는 높아졌고, 플친 45%→42%(<span class="a-down">−3%</span>)·왓츠앱 38%→36%(<span class="a-down">−2%</span>)·위챗 50%→36%(<span class="a-down">−14%</span>)·이메일 17%→0%(<span class="a-down">−17%</span>)는 낮아졌음. 위챗·이메일은 문의가 적음(위챗 4→11건, 이메일 6→5건).</div><div class="mq-row"><span class="mq-tag">방문/온라인</span>해외 예약 중 온라인은 5→8건(<span class="a-up">+3건</span>)으로 늘었고(라인 2→4건), 방문은 40→41건(<span class="a-up">+1건</span>)임. 게시판 해외 예약 2건은 방문/온라인 구분이 없음.</div><div class="mq-note">※ 해외 문의·예약은 플친·이메일의 해외 고객, 왓츠앱·위챗·라인 전체, 네이버·게시판의 해외 칸 기준(전화는 해외 구분이 없어 제외). 표에서 제외한 플친 해외 '기타' 9월 3건, 과목미확인 9월 1건·10월 1건. 해외 문의·예약은 해당 월에 들어온 건수이며, 해외 고객의 실제 내원은 내원 현황에서 따로 봄.</div>` },
   section02: {
     layout: 'v10', // 10월 월간부터: 채팅 채널 표에 방문/온라인·수술 열, 이메일 채널 추가, 카드 3열 배치(이전 보고서는 이 값이 없어 기존 표시 그대로)
     // 채팅 채널(플친·이메일·왓츠앱·위챗·라인): 엑셀 3.채팅 채널 '종합현황' 값(문의=총문의, 합계=기타·과목미확인 제외, 수술=예약 중 수술일 입력 건). 네이버·게시판: 엑셀 2.네이버·게시판 '3.현황'.
@@ -5090,6 +5144,33 @@ function renderSectionOverseasM(r) {
       .concat([['네이버·게시판', '—', '—', A.nb || '—', '—', '—', B.nb || '—']]),
     ['합계', sumV(A, 0), sumV(A, 1), A.nb, sumV(B, 0), sumV(B, 1), B.nb], false);
 
+  // ⑤ 해외 고객 내원 (내원현황 AB~AL열) — 데이터가 있을 때만 표시
+  const vb = document.getElementById('ovm-visit-block');
+  if (vb) vb.style.display = os.visit ? '' : 'none';
+  if (os.visit) {
+    const ov = os.visit, vc = ov.cats;
+    document.getElementById('ovm-visit-chart-title').textContent = '과목별 해외 고객 내원 ' + pl + ' vs ' + cl + ' 비교 그래프';
+    const tA = ov.may.reduce((x, y) => x + y, 0), tB = ov.jun.reduce((x, y) => x + y, 0);
+    const sh = (n, t) => t ? (n / t * 100).toFixed(1) + '%' : '—';
+    ovTable('tbl-ovm-visit', ['해외 내원'],
+      vc.map((c, i) => [c, ov.may[i], ov.jun[i], diff(ov.may[i], ov.jun[i])]),
+      ['합계', tA, tB, diff(tA, tB)], true);
+    const tbl = document.getElementById('tbl-ovm-visit');
+    [...tbl.tHead.rows[tbl.tHead.rows.length - 1].cells].forEach(c => { if (c.textContent.trim() === '문의') c.textContent = '건수'; });
+    const tr = tbl.tBodies[0].insertRow();
+    ['총 내원 대비 비중', sh(tA, ov.totalMay), sh(tB, ov.totalJun), ''].forEach((v, ci) => {
+      const td = tr.insertCell(); td.innerHTML = v; td.style.fontWeight = '700';
+      if (ci === 0) td.style.textAlign = 'left';
+      const n = 1; const gi = ci === 0 ? -1 : ci <= n ? 0 : ci <= n * 2 ? 1 : -1;
+      if (gi >= 0) td.style.background = BGv[gi][0];
+      if (ci > 0 && (ci === 1 || ci === 2 || ci === 3)) td.style.borderLeft = '2px solid #cbd5e1';
+    });
+    chLegend('lg-ovm-visit', [[PC[0], pl + ' 해외 내원'], [PC[1], cl + ' 해외 내원']]);
+    if (charts['chart-ovm-visit']) charts['chart-ovm-visit'].destroy();
+    charts['chart-ovm-visit'] = new Chart(document.getElementById('chart-ovm-visit'), {
+      type: 'bar', data: { labels: vc, datasets: [mkDS(pl + ' 해외 내원', ov.may, PC[0]), mkDS(cl + ' 해외 내원', ov.jun, PC[1])] }, options: BASE,
+    });
+  }
   renderAnalysis('ana-ovm', os.analysis || '', r);
 }
 
@@ -5800,6 +5881,7 @@ function renderSectionVisit(r) {
   legend('lg-v03-cats', [[C.aprInq,pl+' 내원'], [C.mayInq,cl+' 내원']]);
   mkChart('chart-v03-cats', cats, [mkDS(pl+' 내원', vc.may, C.aprInq), mkDS(cl+' 내원', vc.jun, C.mayInq)]);
 
+  { const nt = document.getElementById('v03-cats-note'); if (nt) { nt.innerHTML = v.tableNote || ''; nt.style.display = v.tableNote ? '' : 'none'; } }
   renderAnalysis('ana-v03', v.analysis, r);
 }
 
@@ -5889,7 +5971,7 @@ function renderDs05Detail(s, month) {
   grid.innerHTML = '';
   s.doctors.forEach((dr, di) => {
     // 고정 진료과목(DS05_SUBJECTS) 기준 — 그 기간에 상담이 없었어도 항상 노출
-    const fixedCats = (DS05_SUBJECTS[dr] || s.cats).filter(cat => s.cats.includes(cat));
+    const fixedCats = ((s.fixedSubjects || DS05_SUBJECTS)[dr] || s.cats).filter(cat => s.cats.includes(cat));
     if (fixedCats.length === 0) return;
     const bars = fixedCats.map(cat => {
       const ci = s.cats.indexOf(cat);
@@ -5920,7 +6002,7 @@ function updateDs05DetailValues(s, month) {
   s.doctors.forEach((dr, di) => {
     const badge = document.querySelector(`[data-ds05-badge="${di}"]`);
     if (badge) badge.textContent = '체결률 ' + d.total.rate[di] + '%';
-    const fixedCats = (DS05_SUBJECTS[dr] || s.cats).filter(cat => s.cats.includes(cat));
+    const fixedCats = ((s.fixedSubjects || DS05_SUBJECTS)[dr] || s.cats).filter(cat => s.cats.includes(cat));
     // 막대 길이 기준(100%)을 과목별이 아니라 "이 원장님 카드 전체, 6월+7월 통틀어 최댓값" 하나로 고정
     // → 과목 간 실제 규모 차이와 전달 대비 증감이 같은 척도 안에서 같이 보임
     const doctorMax = Math.max(...fixedCats.map(cat => {
