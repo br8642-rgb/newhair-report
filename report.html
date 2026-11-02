@@ -294,6 +294,19 @@ body.pdf-mode .page-wrapper { display: flex; flex-direction: column; }
 body.pdf-mode .dash-header { order: -1; }
 /* 차트는 인쇄 직전에 이미지로 바꿔서 넣음(인쇄 중 캔버스가 비어 보이는 문제 방지) */
 .pdf-chart-img { display: block; max-width: 100%; }
+
+/* 10월 월간 분석 상자 — 줄 이름(태그)·숫자 칸 (mq- 접두사, 이 보고서의 분석 문구에서만 사용) */
+.mq-row { margin-bottom:8px; }
+.mq-tag { display:inline-block; font-size:12px; font-weight:700; background:var(--gray-900); color:#fff; border-radius:4px; padding:1px 7px; margin-right:7px; line-height:1.6; vertical-align:1px; }
+.mq-chips { display:flex; align-items:center; gap:6px; margin:8px 0 4px; flex-wrap:nowrap; }
+.mq-chipname { flex:0 0 auto; font-size:13px; font-weight:700; color:var(--gray-700); margin-right:2px; }
+.mq-chip { flex:1 1 0; min-width:0; border-radius:8px; background:var(--gray-100); padding:7px 8px; text-align:center; line-height:1.3; }
+.mq-chip small { display:block; font-size:12px; color:var(--gray-500); }
+.mq-chip b { font-size:18px; color:var(--gray-900); }
+.mq-chip.mq-hl { background:#FFF3CD; }
+.mq-chip.mq-hl small { color:#8a6d00; }
+.mq-arrow { flex:0 0 auto; color:#aaa; font-size:14px; }
+.mq-note { font-size:13px; color:var(--gray-500); margin-top:6px; }
 </style>
 </head>
 <body style="display:none">
@@ -1873,6 +1886,34 @@ function showSaveToast(msg, isError) {
    데이터
 ════════════════════════════════════ */
 const ALL_REPORTS = [
+/* ── 2026년 10월 (월간) — 신규, 기존 보고서와 완전 분리 ──
+   기본 화면(index 0)으로 노출. 9월 보고서 자체는 전혀 안 건드리고, 비교용 9월 수치만 이 객체 안에 담음(키 이름 may=이전달(9월), jun=이번달(10월)은 기존 월간 객체와 같은 규칙).
+   현재는 section01(전화현황)만 확정됨 — 나머지 섹션은 엑셀 도착 시 순서대로 추가 예정. */
+{
+  meta: {
+    title: '뉴헤어 유입·내원 현황',
+    type: 'monthly',
+    label: '2026년 10월 (월간)',
+    period: '2026.09 — 2026.10',
+    compare: '2026년 9월 vs 10월',
+    prevLabel: '9월', currLabel: '10월',
+    ppAsPercent: true, // 비율 증감도 %p 대신 %로 표기(실장님 결정).
+  },
+  section01: {
+    sectionName: '전화 현황',
+    cats: ['이식','헤어','SMP','치료','검사','처방전'], // 기타 과목 제외(9월 1건/10월 4건) — 각주로 표기
+    phone: {
+      // 엑셀 콜현황 '신규문의 상세 현황'(20~22행 월간 기간) 값, 합계는 신규문의현황(12~15행)·로데이터 재집계와 일치(10월 511/468). 기타 포함 합계.
+      may: { inq:[157,26,25,35,233,22], book:[128,19,17,27,225,22], rate:[82,73,68,77,97,100] }, // 9월(비교용)
+      jun: { inq:[134,28,22,61,237,25], book:[110,27,21,50,231,25], rate:[82,96,95,82,97,100] }, // 10월(신규)
+      total_may: { inq:499, book:439, rate:88 },
+      total_jun: { inq:511, book:468, rate:92 },
+    },
+    analysis: {
+      phone: `<div class="mq-row"><b>전화 신규문의는 499→511건(+12건)으로 늘었지만, 일평균은 21.7→18.9건(−2.8건)으로 줄었음.</b></div><div class="mq-row"><span class="mq-tag">영업일</span>23일→27일로 늘어 문의 합계가 늘었음. 일요일 제외, 문의 기록이 있는 날 기준이며 9월은 추석 연휴(9/24~26)에 기록이 없음.<div class="mq-chips"><div class="mq-chip"><small>9월 · 영업일 23일</small><b>일평균 21.7건</b></div><span class="mq-arrow">→</span><div class="mq-chip mq-hl"><small>10월 · 영업일 27일</small><b>일평균 18.9건</b></div></div></div><div class="mq-row"><span class="mq-tag">예약</span>439→468건(+29건), 예약률 88%→92%(+4%)로 높아짐.</div><div class="mq-row"><span class="mq-tag">주간</span>첫 구간만 많았고(추석 연휴 직후라 문의가 많았던 영향, 현장 확인 내용) 이후는 101~117건 범위임.<div class="mq-chips"><div class="mq-chip mq-hl"><small>9/28~10/3</small><b>170건</b></div><span class="mq-arrow">→</span><div class="mq-chip"><small>10/5~10/10</small><b>112건</b></div><span class="mq-arrow">→</span><div class="mq-chip"><small>10/12~10/17</small><b>117건</b></div><span class="mq-arrow">→</span><div class="mq-chip"><small>10/19~10/24</small><b>101건</b></div><span class="mq-arrow">→</span><div class="mq-chip"><small>10/26~10/31</small><b>109건</b></div></div></div><div class="mq-row"><span class="mq-tag">과목별 예약률</span>헤어 73%→96%(+23%)·SMP 68%→95%(+27%)·치료 77%→82%(+5%)로 높아짐. 이식 82%→82%·검사 97%→97%·처방전 100%→100%는 같은 수준.</div><div class="mq-row"><span class="mq-tag">과목별 문의</span>이식은 8·9·10월 146→157→134건으로 10월에 줄었고(9월 대비 −23건), 치료는 35→35→61건으로 10월에 늘었음(+26건). 두 과목 모두 원인 확인 필요.<div class="mq-chips"><span class="mq-chipname">이식 문의</span><div class="mq-chip"><small>8월</small><b>146건</b></div><span class="mq-arrow">→</span><div class="mq-chip"><small>9월</small><b>157건</b></div><span class="mq-arrow">→</span><div class="mq-chip mq-hl"><small>10월</small><b>134건</b></div></div><div class="mq-chips"><span class="mq-chipname">치료 문의</span><div class="mq-chip"><small>8월</small><b>35건</b></div><span class="mq-arrow">→</span><div class="mq-chip"><small>9월</small><b>35건</b></div><span class="mq-arrow">→</span><div class="mq-chip mq-hl"><small>10월</small><b>61건</b></div></div></div><div class="mq-note">※ 과목별 합계는 표에서 제외한 '기타' 과목(전화 9월 1건·10월 4건) 때문에 전체 수치보다 9월 1건·10월 4건 적음.</div>`,
+    },
+  },
+},
 /* ── WQ: 2026년 9/28~10/17 (주간) — 신규, 기존 보고서와 완전 분리 ──
    기본 화면(index 0)으로 노출. 기존 9월 월간·8/24~9/12 주간 등 이전 보고서는 그대로 아래에 둠. 현재는 wq-01(전화현황) p1/p2/p3 데이터만 확정됨 — 나머지 섹션은 데이터 도착 시 순서대로 추가 예정. */
 {
