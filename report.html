@@ -277,6 +277,7 @@ body.pdf-mode #s02-kpi .ch-kpi-card { padding-left: 10px; padding-right: 10px; }
 body.pdf-mode .s02-charts-grid { grid-template-columns: 1fr 1fr !important; }
 body.pdf-mode .cat-channel-grid, body.pdf-mode .s06-staff-grid { grid-template-columns: repeat(3, 1fr) !important; }
 body.pdf-mode .pdf-hide { display: none !important; }
+body.pdf-mode .pdf-tight { zoom: 0.72; }
 body.pdf-mode .pdf-single { grid-template-columns: 1fr !important; }
 body.pdf-mode .pdf-wide { grid-column: 1 / -1 !important; display: grid; grid-template-columns: 1fr 1fr; gap: 0 14px; align-items: start; }
 body.pdf-mode .pdf-wide > .channel-header, body.pdf-mode .pdf-wide > .analysis-box, body.pdf-mode .pdf-wide > p { grid-column: 1 / -1; }
@@ -4131,6 +4132,10 @@ function exportReportPdf() {
       const title = ((card.querySelector('.card-title') || {}).textContent || '');
       if (/당일취소/.test(title) && /부도/.test(title) && card.querySelector('canvas')) tag(card, 'pdf-hide');
     });
+    if (COMPACT) {   // 10월 월간만: 내원 현황의 '과목별 내원 비교' 그래프는 PDF에서 뺌(바로 위 표와 같은 숫자), 전화 현황 머리·핵심 지표는 줄여 전화 표와 같은 쪽에 배치
+      p.querySelectorAll('#chart-v03-cats').forEach(cv => { const card = cv.closest('.card'); if (card) tag(card, 'pdf-hide'); });
+      if (p.dataset.pdfid === 'section-01') p.querySelectorAll(':scope > .section-header, :scope > .kpi-table-wrap').forEach(e => tag(e, 'pdf-tight'));
+    }
     p.querySelectorAll('.channel-section').forEach(cs => {   // 전화 구간은 표와 그래프를 옆으로 나란히
       const h = cs.querySelector('.channel-header');
       if (h && /전화/.test(h.textContent)) tag(cs, 'pdf-wide');
