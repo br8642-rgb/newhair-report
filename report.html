@@ -4540,7 +4540,7 @@ function refreshEditableContentFor(r) {
     const rev = r.reviewStatus;
     if (rev && rev.wins && rev.tasks) {
       renderEditableList('srv09-wins',  'srv09-wins-add',  rev.wins,  '✔', '#2E7D32', (isEditor && !LEGACY_REPORT_LABELS[r.meta.label] && !EDIT_DISABLED_LABELS[r.meta.label]), reportScopeId(r), 'srv09-wins');
-      renderEditableList('srv09-tasks', 'srv09-tasks-add', rev.tasks, '▲', '#C62828', (isEditor && !LEGACY_REPORT_LABELS[r.meta.label] && !EDIT_DISABLED_LABELS[r.meta.label]), reportScopeId(r), 'srv09-tasks');
+      renderEditableList('srv09-tasks', 'srv09-tasks-add', rev.tasks, (r.overseasStatus ? '•' : '▲'), '#C62828', (isEditor && !LEGACY_REPORT_LABELS[r.meta.label] && !EDIT_DISABLED_LABELS[r.meta.label]), reportScopeId(r), 'srv09-tasks');
     }
   }
 
@@ -6913,7 +6913,7 @@ function renderSectionReview(r) {
     </div>`).join('');
 
   renderEditableList('srv09-wins',  'srv09-wins-add',  rev.wins,  '✔', '#2E7D32', (isEditor && !LEGACY_REPORT_LABELS[r.meta.label] && !EDIT_DISABLED_LABELS[r.meta.label]), reportScopeId(r), 'srv09-wins');
-  renderEditableList('srv09-tasks', 'srv09-tasks-add', rev.tasks, '▲', '#C62828', (isEditor && !LEGACY_REPORT_LABELS[r.meta.label] && !EDIT_DISABLED_LABELS[r.meta.label]), reportScopeId(r), 'srv09-tasks');
+  renderEditableList('srv09-tasks', 'srv09-tasks-add', rev.tasks, (r.overseasStatus ? '•' : '▲'), '#C62828', (isEditor && !LEGACY_REPORT_LABELS[r.meta.label] && !EDIT_DISABLED_LABELS[r.meta.label]), reportScopeId(r), 'srv09-tasks');
 
   document.getElementById('srv09-focus').innerHTML = `
     <div style="display:grid;grid-template-columns:repeat(2,1fr);gap:12px;">
