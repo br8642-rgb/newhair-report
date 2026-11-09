@@ -201,6 +201,8 @@
    현재 보고서의 섹션 전체를 한 번에 펼쳐서 A4 가로로 출력하고, 섹션마다 새 페이지에서 시작. */
 .pdf-btn { font-family: Pretendard, sans-serif; font-size: 14px; font-weight: 600; padding: 9px 16px; border: 1px solid #ddd; border-radius: 8px; background: #fff; color: #1a1a1a; cursor: pointer; }
 .pdf-btn:hover { background: #f5f5f5; }
+.period-link-btn { display: inline-block; text-decoration: none; line-height: normal; color: #1a1a1a; margin-left: 8px; }
+.period-link-btn:hover { background: #f5f5f5; color: #1a1a1a; }
 @page { size: A4 landscape; margin: 10mm; }
 body.pdf-mode { background: #fff; -webkit-print-color-adjust: exact; print-color-adjust: exact; }
 body.pdf-mode #top-nav,
@@ -328,6 +330,7 @@ body.pdf-mode .dash-header { order: -1; }
   <div class="report-bar">
     <select id="report-select"></select>
     <button type="button" class="pdf-btn" id="pdf-btn" onclick="exportReportPdf()">PDF로 저장</button>
+    <a class="pdf-btn period-link-btn" id="period-link-btn" href="https://br8642-rgb.github.io/newhair-period/period.html" target="_blank" rel="noopener">기간별 조회 ↗</a>
   </div>
 
   <!-- 섹션 01 -->
